@@ -1,0 +1,69 @@
+<script>
+    $(document).ready(function () {
+        var dataArr = [];
+
+        var dataTable = $('#item-tbl').DataTable({
+            'destroy': true,
+            'processing': true,
+            'serverSide': true,
+            'paging': false,
+            'searching': false,
+            'info': false,
+            'scrollY': 400,
+            'scrollCollapse': true,
+            'serverMethod': 'GET',
+            'ajax': {
+                'url': '/locationtype/load',
+            },
+            'columns': [
+                { data: 'locationtypecode' },
+                { data: 'locationtypename' },
+                { data: 'createdby' },
+                { data: 'createddate' },
+            ]
+        });
+
+        $(document).on('click', "#saveBtn", function () {
+            var locationtypecode = $('#locationtypecode').val();
+            var locationtypename = $('#locationtypename').val();
+            var createdby = createdby == null ? 'CREATOR' : '';
+            var createddate = createddate == null ? '2022-10-26' : '';
+
+            var message = "";
+
+            if (locationtypecode == "") { message += "Account Code " }
+            if (locationtypename == "") { message += "Account Name " }
+          
+
+            if (message != "") { warning("Warning!", "Must fill-up " + message + " field!") }
+            else {
+                dataArr.push({
+                    'locationtypecode': locationtypecode,
+                    'locationtypename': locationtypename,
+                    'createdby': createdby,
+                    'createddate': createddate
+                });
+
+                var data = JSON.stringify(dataArr, null, 2);
+
+                $.ajax({
+                    type: "POST",
+                    url: "/locationtype/save",
+                    data: {
+                        locationtypename: locationtypename,
+                        data: data
+                    },
+                    success: function (result) {
+                        success('Saved!', 'Data saved!')
+                        $('#item-tbl').DataTable().ajax.reload();
+                        dataArr = [];
+                    },
+                    error: function (result) {
+                        error(result.data);
+                    }
+                });
+            }
+
+        });
+    })
+</script>

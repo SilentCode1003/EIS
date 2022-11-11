@@ -1,0 +1,96 @@
+<script>
+    $(document).ready(function () {
+        var dataArr = [];
+
+        var dataTable = $('#item-tbl').DataTable({
+            'destroy': true,
+            'processing': true,
+            'serverSide': true,
+            'paging': false,
+            'searching': false,
+            'info': false,
+            'scrollY': 400,
+            'scrollCollapse': true,
+            'serverMethod': 'get',
+            'ajax': {
+                'url': '/users/load',
+            },
+            'columns': [
+                { data: 'fullname' },
+                { data: 'username' },
+                { data: 'password' },
+                { data: 'accounttype' },
+                { data: 'createdby' },
+                { data: 'createddate' },
+            ]
+        });
+
+
+        $(document).on('click', "#saveBtn", function () {
+            var fullname = $('#fullname').val();
+            var username = $('#username').val();
+            var password = $('#password').val();
+            var accounttype = $('#accounttype').val() == '-' ? 'CREATOR': $('#accounttype').val();
+            var createdby = createdby == null ? 'CREATOR':'';
+            var createddate = createddate == null ? '2022-10-26':'';
+
+            var message = "";
+
+            if (fullname == "") { message += "Fullname " }
+            if (username == "") { message += "Username " }
+            if (password == "") { message += "Password " }
+            if (accounttype == "") { message += "Account Type " }
+
+            if (message != "") { warning("Warning!", "Must fill-up " + message + " field!") }
+            else {
+                dataArr.push({
+                    'fullname': fullname,
+                    'username': username,
+                    'password': password,
+                    'accounttype': accounttype,
+                    'createdby': createdby,
+                    'createddate': createddate
+                });
+
+                var data = JSON.stringify(dataArr, null, 2);
+
+                $.ajax({
+                    type: "POST",
+                    url: "/users/save",
+                    data: {
+                        fullname: fullname,
+                        data: data
+                    },
+                    success: function (result) {
+                        success('Saved!', 'Data saved!')
+                        $('#item-tbl').DataTable().ajax.reload();
+                        dataArr = [];
+                    },
+                    error: function (result) {
+                        error(result.data);
+                    }
+                });
+            }
+
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/accounttype/load",
+            success: function (result) {
+                console.log(result.data);
+                var data = result.data;
+
+                $.each(data, function (key, item) {
+                    var options = new Option(item.accountname, item.accountname);
+                    $(options).html(item.accountname);
+                    $('#accounttype').append(options);
+                    console.log(item.accountname);
+                });
+            },
+            error: function (result) {
+                alert('error: ' + result.data);
+            }
+        });
+    });
+</script>

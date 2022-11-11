@@ -1,0 +1,112 @@
+<!-- LOADER -->
+<div class="loader-wrapper">
+    <span class="loader"><span class="loader-inner"></span></span>
+</div>
+<!-- Bootstrap core JavaScript-->
+<script src="/vendor/jquery/jquery.min.js"></script>
+<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="/javascripts/js/sb-admin-2.min.js"></script>
+
+<!-- Page level plugins -->
+<script src="/vendor/chart.js/Chart.min.js"></script>
+
+<!-- Page level custom scripts -->
+<!-- <script src="/javascripts/js/demo/chart-area-demo.js"></script>
+<script src="/javascripts/js/demo/chart-pie-demo.js"></script> -->
+<!-- <script src="/javascripts/js/demo/chart-bar-demo.js"></script> -->
+
+<!-- DATA TABLE -->
+<script src="/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+<!-- SWEET ALERT -->
+<script src="/javascripts/sweetalert.min.js"></script>
+
+<!-- XLSX -->
+<script src="/javascripts/xlsx.mini.min.js"></script>
+
+<script>
+    let accounttype = '<%= accounttype%>';
+
+    if (accounttype == 'USER') {
+        $("#masters").toggle(0, function () {
+        });
+
+        $("#reports").toggle(0, function () {
+        });
+
+        $("#activity").toggle(0, function () {
+        });
+    }
+
+    hideload();
+    function success(title, text) {
+        swal({
+            title: title,
+            text: text,
+            icon: "success",
+        });
+    }
+    function warning(title, text) {
+        swal({
+            title: title,
+            text: text,
+            icon: "warning",
+        });
+    }
+    function info(title, text) {
+        swal({
+            title: title,
+            text: text,
+            icon: "info",
+        });
+    }
+    function error(err) {
+        swal({
+            title: "Error!",
+            text: err,
+            icon: "error",
+        });
+    }
+
+    $(document).on('click', "#logoutBtn", function () {
+        $.ajax({
+            type: "POST",
+            url: "/login/logout",
+            success: function (result) {
+                console.log(result);
+                if (result.msg == 'success') {
+                    success('Logout', 'Logout successfully...')
+                    location.replace("/");
+                }
+                else {
+                    error('ID & Password not match...');
+                }
+            },
+            error: function (result) {
+                error(result.msg);
+            }
+        });
+    });
+
+    function showloader() {
+        console.log('show loader');
+        $(".loader-wrapper").show();
+    }
+
+    function hideload() {
+        console.log('hide loader');
+        $(".loader-wrapper").hide();
+    }
+
+    function onloadloader() {
+        $(window).on("load", function () {
+            showloader();
+        });
+    }
+</script>

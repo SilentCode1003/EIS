@@ -1,0 +1,36 @@
+[
+  {
+    "personel": "JOSEPH ORENCIO",
+    "date": "2022-11-11 13:27",
+    "locationfrom": "MAIN OFFICE",
+    "locationto": "PAMPANGGA",
+    "remarks": "SITE SPARE REQUEST",
+    "status": "PENDING",
+    "details": [
+      {
+        "personel": "JOSEPH ORENCIO",
+        "brand": "CYBERPOWER",
+        "itemtype": "UPS CYBERPOWER UT650EGU",
+        "serial": "320445AW30000115",
+        "createddate": "2022-11-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JOSEPH ORENCIO",
+        "brand": "CYBERPOWER",
+        "itemtype": "UPS CYBERPOWER UT650EGU",
+        "serial": "320445AW30000116",
+        "createddate": "2022-11-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JOSEPH ORENCIO",
+        "brand": "CYBERPOWER",
+        "itemtype": "UPS CYBERPOWER UT650EGU",
+        "serial": "320445AW30000298",
+        "createddate": "2022-11-11",
+        "status": "PENDING"
+      }
+    ]
+  }
+]

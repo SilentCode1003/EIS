@@ -1,0 +1,501 @@
+<script>
+    $(document).ready(function () {
+        var dataArr = [];
+        let personel = '';
+
+        loadlist();
+
+        $("#togglefrom").toggle(0, function () { });
+        $("#toggleto").toggle(0, function () { });
+
+        let requestTabel = $('#request-tbl').DataTable({
+            'destroy': true,
+            'paging': false,
+            'searching': false,
+            'info': false,
+            'scrollCollapse': true,
+            'ajax': {
+                url: '/transfer/load',
+                type: 'GET',
+                dataSrc: (result) => {
+                    var finalData = [];
+                    var data = result.data;
+                    let details = '';
+
+                    $.each(data, (key, item) => {
+                        let date = item.date;
+                        let personel = item.personel;
+                        let locationfrom = item.locationfrom;
+                        let locationto = item.locationto;
+                        let remarks = item.remarks;
+                        let status = item.status;
+
+                        $.each(item.details, (key, item) => {
+                            details += `BRANDNAME: ${item.brand} ITEM TYPE: ${item.itemtype} ITEM SERIAL: ${item.serial}<br>`;
+                            console.log(details);
+                        })
+
+                        finalData.push({
+                            date: date,
+                            personel: personel,
+                            details: details,
+                            locationfrom: locationfrom,
+                            locationto: locationto,
+                            remarks: remarks,
+                            status: status,
+                        });
+                    })
+
+                    return finalData;
+                }
+            },
+            'columnDefs': [{
+                targets: 2,
+                className: 'td-indent',
+            }],
+            'columns': [
+                { data: 'date' },
+                { data: 'personel' },
+                { data: 'details' },
+                { data: 'locationfrom' },
+                { data: 'locationto' },
+                { data: 'remarks' },
+                { data: 'status' },
+            ]
+        });
+
+        var modal = document.getElementById("requestModal");
+        var span = document.getElementsByClassName("close")[0];
+
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        $(document).on('click', "#transferBtn", async function () {
+            modal.style.display = "block";
+        });
+
+        $(document).on('click', "#addBtn", async function () {
+            personel = $('#personel').val();
+            var brand = $('#brand').val();
+            var itemtype = $('#itemtype').val();
+            var serial = $('#serial').val();
+            var createddate = '<%= date%>';
+
+            var message = "";
+
+            if (personel == "-") { message += "PERSONEL " }
+            if (brand == "-") { message += "BRAND " }
+            if (itemtype == "-") { message += "ITEM TYPE " }
+            if (serial == "-") { message += "SERIAL " }
+
+            if (message != "") { warning("Warning!", "Must fill-up " + message + " field!") }
+            else {
+
+                if (dataArr.length == 0) {
+                    dataArr.push({
+                        personel: personel,
+                        brand: brand,
+                        itemtype: itemtype,
+                        serial: serial,
+                        createddate: createddate,
+                        status: 'PENDING'
+                    });
+
+                    var table = document.getElementById("requestlist-item-tbl");
+                    var row = table.insertRow(1);
+                    var _PERSONEL = row.insertCell(0);
+                    var _BRAND = row.insertCell(1);
+                    var _ITEMTYPE = row.insertCell(2);
+                    var _SERIAL = row.insertCell(3);
+
+                    _PERSONEL.innerHTML = personel;
+                    _BRAND.innerHTML = brand;
+                    _ITEMTYPE.innerHTML = itemtype;
+                    _SERIAL.innerHTML = serial;
+                } else {
+                    if (!dataArr.map(item => {
+                        if (item.serial == serial && item.itemtype) {
+                            return `${item.serial}${item.itemtype}`
+                        }
+
+                    }).includes(`${serial}${itemtype}`)) {
+                        dataArr.push({
+                            personel: personel,
+                            brand: brand,
+                            itemtype: itemtype,
+                            serial: serial,
+                            createddate: createddate,
+                            status: 'PENDING'
+                        });
+
+                        var table = document.getElementById("requestlist-item-tbl");
+                        var row = table.insertRow(1);
+                        var _PERSONEL = row.insertCell(0);
+                        var _BRAND = row.insertCell(1);
+                        var _ITEMTYPE = row.insertCell(2);
+                        var _SERIAL = row.insertCell(3);
+
+                        _PERSONEL.innerHTML = personel;
+                        _BRAND.innerHTML = brand;
+                        _ITEMTYPE.innerHTML = itemtype;
+                        _SERIAL.innerHTML = serial;
+                    } else {
+                        warning(`Already request ${itemtype} with serial ${serial}...`)
+                    }
+                }
+            }
+        });
+
+        $(document).on('click', "#saveBtn", async function () {
+            let locationfrom = $('#locationfrom').val();
+            let locationto = $('#locationto').val();
+            let date = '<%= date%>';
+            let remarks =  $('#remarks').val();
+            let data = JSON.stringify(dataArr, null, 2);
+
+
+            $.ajax({
+                type: "POST",
+                url: "/transfer/save",
+                data: {
+                    personel: personel,
+                    date: date,
+                    locationfrom: locationfrom,
+                    locationto: locationto,
+                    remarks: remarks,
+                    data: data
+                },
+                success: function (result) {
+                    success('Saved!', 'Data saved!');
+                    modal.style.display = "none";
+                    reloadTable();
+                    dataArr = [];
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+
+        });
+
+        $(document).on('change', "#brand", function () {
+            var brandname = $('#brand').val();
+            $("#itemtype").empty();
+
+            $.ajax({
+                type: "POST",
+                url: "/items/itemtype",
+                data: { brandname: brandname },
+                success: function (result) {
+                    var data = result.data;
+                    console.log(result.data);
+
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.itemname, item.itemname);
+                        $(options).html(item.itemname);
+                        $('#itemtype').append(options);
+                        console.log(item.itemname);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+        });
+
+        $(document).on('click', "#itemtype", function () {
+            var itemtype = $('#itemtype').val();
+            var brandname = $('#brand').val();
+            $("#serial").empty();
+
+            $.ajax({
+                type: "POST",
+                url: "/equipment/getequipment",
+                data: {
+                    itemtype: itemtype,
+                    brandname: brandname
+                },
+                success: function (result) {
+                    var data = result.data;
+                    console.log(result.data);
+
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.serial, item.serial);
+                        $(options).html(item.serial);
+                        $('#serial').append(options);
+                        console.log(item.serial);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+        });
+
+        $(document).on('click', "#officetypefrom", function () {
+            var office = $('#officetypefrom').val();
+            $("#clientnamefrom").empty();
+            $("#locationfrom").empty();
+
+            console.log(office);
+
+            //office
+            if (office == 'OFFICE') {
+                $.ajax({
+                    type: "GET",
+                    url: "/transfer/getofficedetails",
+                    success: function (result) {
+                        var data = result.data;
+                        console.log(result.data);
+
+                        $.each(data, function (key, item) {
+                            var options = new Option(item.location, item.location);
+                            $(options).html(item.location);
+                            $('#locationfrom').append(options);
+                            console.log(item.location);
+                        });
+                    },
+                    error: function (result) {
+                        alert('error: ' + result.data);
+                    }
+                });
+            }
+
+            //store
+            if (office == 'STORE') {
+                $("#togglefrom").toggle(1000, function () {
+
+                });
+
+                $.ajax({
+                    type: "GET",
+                    url: "/clientname/load",
+                    success: function (result) {
+                        var data = result.data;
+                        console.log(result.data);
+
+                        $.each(data, function (key, item) {
+                            var options = new Option(item.clientname, item.clientname);
+                            $(options).html(item.clientname);
+                            $('#clientnamefrom').append(options);
+                            console.log(item.clientname);
+                        });
+                    },
+                    error: function (result) {
+                        alert('error: ' + result.data);
+                    }
+                });
+            }
+
+        });
+
+        $(document).on('click', "#clientnamefrom", function () {
+            var clientname = $('#clientnamefrom').val();
+            $("#locationfrom").empty();
+
+            $.ajax({
+                type: "GET",
+                url: "/clientstores/load",
+                success: function (result) {
+                    var data = result.data;
+                    console.log(result.data);
+
+                    $.each(data, function (key, item) {
+                        let stonrename = `${item.storenumber} ${item.storename}`;
+                        var options = new Option(stonrename, stonrename);
+                        $(options).html(stonrename);
+                        $('#locationfrom').append(options);
+                        console.log(stonrename);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+        });
+
+        $(document).on('click', "#officetypeto", function () {
+            var office = $('#officetypeto').val();
+            $("#clientnameto").empty();
+            $("#locationto").empty();
+
+            console.log(office);
+
+            //office
+            if (office == 'OFFICE') {
+                $.ajax({
+                    type: "GET",
+                    url: "/transfer/getofficedetails",
+                    success: function (result) {
+                        var data = result.data;
+                        console.log(result.data);
+
+                        $.each(data, function (key, item) {
+                            var options = new Option(item.location, item.location);
+                            $(options).html(item.location);
+                            $('#locationto').append(options);
+                            console.log(item.location);
+                        });
+                    },
+                    error: function (result) {
+                        alert('error: ' + result.data);
+                    }
+                });
+            }
+
+            //store
+            if (office == 'STORE') {
+                $("#toggleto").toggle(1000, function () {
+
+                });
+
+                $.ajax({
+                    type: "GET",
+                    url: "/clientname/load",
+                    success: function (result) {
+                        var data = result.data;
+                        console.log(result.data);
+
+                        $.each(data, function (key, item) {
+                            var options = new Option(item.clientname, item.clientname);
+                            $(options).html(item.clientname);
+                            $('#clientnameto').append(options);
+                            console.log(item.clientname);
+                        });
+                    },
+                    error: function (result) {
+                        alert('error: ' + result.data);
+                    }
+                });
+            }
+
+        });
+
+        $(document).on('click', "#clientnameto", function () {
+            var clientname = $('#clientnamefrom').val();
+            $("#locationto").empty();
+
+            $.ajax({
+                type: "GET",
+                url: "/clientstores/load",
+                success: function (result) {
+                    var data = result.data;
+                    console.log(result.data);
+
+                    $.each(data, function (key, item) {
+                        let stonrename = `${item.storenumber} ${item.storename}`;
+                        var options = new Option(stonrename, stonrename);
+                        $(options).html(stonrename);
+                        $('#locationto').append(options);
+                        console.log(stonrename);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+        });
+
+        //office from
+        $.ajax({
+            type: "GET",
+            url: "/locationtype/load",
+            success: function (result) {
+                console.log(result.data);
+
+                $.each(result.data, function (key, item) {
+                    var options = new Option(item.locationtypename, item.locationtypename);
+                    $(options).html(item.locationtypename);
+                    $('#officetypefrom').append(options);
+                    console.log(item.locationtypename);
+                });
+            },
+            error: function (result) {
+                alert('error: ' + result.data);
+            }
+        });
+
+        //office to
+        $.ajax({
+            type: "GET",
+            url: "/locationtype/load",
+            success: function (result) {
+                console.log(result.data);
+
+                $.each(result.data, function (key, item) {
+                    var options = new Option(item.locationtypename, item.locationtypename);
+                    $(options).html(item.locationtypename);
+                    $('#officetypeto').append(options);
+                    console.log(item.locationtypename);
+                });
+            },
+            error: function (result) {
+                alert('error: ' + result.data);
+            }
+        });
+
+        function loadlist() {
+            $.ajax({
+                type: "GET",
+                url: "/items/brandname",
+                success: function (result) {
+                    console.log(result.data);
+                    var data = result.data;
+
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.brandname, item.brandname);
+                        $(options).html(item.brandname);
+                        $('#brand').append(options);
+                        console.log(item.brandname);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+
+            $.ajax({
+                type: "GET",
+                url: "/personel/load",
+                success: function (result) {
+                    console.log(result.data);
+                    var data = result.data;
+
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.fullname, item.fullname);
+                        $(options).html(item.fullname);
+                        $('#personel').append(options);
+                        console.log(item.fullname);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+        }
+
+        function reloadTable() {
+            showloader();
+            var requestitemTabel = $('#requestlist-item-tbl').DataTable({
+                'destroy': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollCollapse': true,
+            });
+
+            requestitemTabel.clear().draw();
+            requestTabel.ajax.reload();
+
+            window.location.reload();
+            hideload();
+        }
+    });
+</script>

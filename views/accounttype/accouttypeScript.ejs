@@ -1,0 +1,87 @@
+<script>
+    $(document).ready(function () {
+        var dataArr = [];
+
+        var dataTable = $('#item-tbl').DataTable({
+            'destroy': true,
+            'processing': true,
+            'serverSide': true,
+            'paging': false,
+            'searching': false,
+            'info': false,
+            'scrollY': 400,
+            'scrollCollapse': true,
+            'serverMethod': 'get',
+            'ajax': {
+                'url': '/accounttype/load',
+            },
+            'columns': [
+                { data: 'accountcode' },
+                { data: 'accountname' },
+                { data: 'createdby' },
+                { data: 'createddate' },
+            ]
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/positions/load",
+            success: function (result) {
+                console.log(result.data);
+
+                $.each(result.data, function (key, item) {
+                    var options = new Option(item.positionname, item.positionname);
+                    $(options).html(item.positionname);
+                    $('#positions').append(options);
+                    console.log(item.positionname);
+                });
+            },
+            error: function (result) {
+                alert('error: ' + result.data);
+            }
+        });
+
+        $(document).on('click', "#saveBtn", function () {
+            var accountcode = $('#accountcode').val();
+            var accountname = $('#accountname').val();
+            var createdby = createdby == null ? 'CREATOR' : '';
+            var createddate = createddate == null ? '2022-10-26' : '';
+
+            var message = "";
+
+            if (accountcode == "") { message += "Account Code " }
+            if (accountname == "") { message += "Account Name " }
+          
+
+            if (message != "") { warning("Warning!", "Must fill-up " + message + " field!") }
+            else {
+                dataArr.push({
+                    'accountcode': accountcode,
+                    'accountname': accountname,
+                    'createdby': createdby,
+                    'createddate': createddate
+                });
+
+                var data = JSON.stringify(dataArr, null, 2);
+
+                $.ajax({
+                    type: "POST",
+                    url: "/accounttype/save",
+                    data: {
+                        accountname: accountname,
+                        data: data
+                    },
+                    success: function (result) {
+                        success('Saved!', 'Data saved!')
+                        $('#item-tbl').DataTable().ajax.reload();
+                        dataArr = [];
+                    },
+                    error: function (result) {
+                        error(result.data);
+                    }
+                });
+            }
+
+        });
+    })
+</script>

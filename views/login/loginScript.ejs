@@ -1,0 +1,30 @@
+<script>
+    $(document).ready(function () {
+        $(document).on('click', "#loginBtn", function () {
+            var id = $('#idnumber').val();
+            var password = $('#password').val();
+           
+            $.ajax({
+                type: "POST",
+                url: "/login/authentication",
+                data: {
+                    id: id,
+                    password: password
+                },
+                success: function (result) {
+                    console.log(result);
+                    if(result.msg == 'success') {
+                        success('Login', 'Login successfully...')
+                        location.replace("/");
+                    }
+                    else{
+                        error('ID & Password not match...');
+                    }
+                },
+                error: function (result) {
+                    error(result.msg);
+                }
+            });
+        });
+    });
+</script>

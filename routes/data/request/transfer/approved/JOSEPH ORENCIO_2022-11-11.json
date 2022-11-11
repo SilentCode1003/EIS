@@ -1,0 +1,44 @@
+[
+  {
+    "personel": "JOSEPH ORENCIO",
+    "date": "2022-11-11 10:28",
+    "locationfrom": "MAIN OFFICE",
+    "locationto": "PANGASINAN",
+    "remarks": "SIRE SPARE REQUEST",
+    "status": "PENDING",
+    "details": [
+      {
+        "personel": "JOSEPH ORENCIO",
+        "brand": "CYBERPOWER",
+        "itemtype": "UPS CYBERPOWER UT650EGU",
+        "serial": "320225AV0000508",
+        "createddate": "2022-11-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JOSEPH ORENCIO",
+        "brand": "CYBERPOWER",
+        "itemtype": "UPS CYBERPOWER UT650EGU",
+        "serial": "320445AW0000054",
+        "createddate": "2022-11-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JOSEPH ORENCIO",
+        "brand": "CYBERPOWER",
+        "itemtype": "UPS CYBERPOWER UT650EGU",
+        "serial": "320445AW30000113",
+        "createddate": "2022-11-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JOSEPH ORENCIO",
+        "brand": "CYBERPOWER",
+        "itemtype": "UPS CYBERPOWER UT650EGU",
+        "serial": "320445AW30000114",
+        "createddate": "2022-11-11",
+        "status": "PENDING"
+      }
+    ]
+  }
+]

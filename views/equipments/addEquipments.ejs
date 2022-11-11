@@ -1,0 +1,50 @@
+<div class="row">
+    <div class="col-xl-4 col-lg-3">
+        <div class="entry-area">
+            <input type="text" class="entry-input" id="serial" name="serial" placeholder="SERIAL">
+        </div>
+        <div class="entry-area">
+            <select class="entry-input" id=brandname>
+                <option value="-" id="listbrandname">BRAND NAME</option>
+            </select>
+        </div>
+        <div class="entry-area">
+            <select class="entry-input" id=itemtype>
+                <option value="-" id="lisitemtype">ITEM TYPE</option>
+            </select>
+        </div>
+        <div class="entry-area">
+            <button class="" id="saveBtn" name="saveBtn">SAVE</button>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-lg-2">
+        <!-- <div>
+            <button id="importBTn">IMPORT EXCEL</button>
+        </div> -->
+        <input type="file" id="fileUpload" />
+        <input type="button" id="upload" value="Upload" />
+        <br />
+
+        <div id="ExcelTable"></div>
+        <div>
+            <progress id="progressbar"></progress>
+        </div>
+        <div>
+            <label id="statuslable"></label>
+        </div>
+    </div>
+</div>
+<hr>
+<div>
+    <table id="item-tbl">
+        <thead>
+            <th>SERIAL</th>
+            <th>ITEM BRAND</th>
+            <th>ITEM TYPE</th>
+            <th>RECEIVED BY</th>
+            <th>RECEIVED DATE</th>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>

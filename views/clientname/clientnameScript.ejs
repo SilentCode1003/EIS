@@ -1,0 +1,69 @@
+<script>
+    $(document).ready(function () {
+        var dataArr = [];
+
+        var dataTable = $('#item-tbl').DataTable({
+            'destroy': true,
+            'processing': true,
+            'serverSide': true,
+            'paging': false,
+            'searching': false,
+            'info': false,
+            'scrollY': 400,
+            'scrollCollapse': true,
+            'serverMethod': 'GET',
+            'ajax': {
+                'url': '/clientname/load',
+            },
+            'columns': [
+                { data: 'clientcode' },
+                { data: 'clientname' },
+                { data: 'createdby' },
+                { data: 'createddate' },
+            ]
+        });
+
+        $(document).on('click', "#saveBtn", function () {
+            var clientcode = $('#clientcode').val();
+            var clientname = $('#clientname').val();
+            var createdby = '<%= fullname%>';
+            var createddate = '<%= date%>';;
+
+            var message = "";
+
+            if (clientcode == "") { message += "Client Number " }
+            if (clientname == "") { message += "Client Name " }
+
+
+            if (message != "") { warning("Warning!", "Must fill-up " + message + " field!") }
+            else {
+                dataArr.push({
+                    'clientcode': clientcode,
+                    'clientname': clientname,
+                    'createdby': createdby,
+                    'createddate': createddate
+                });
+
+                var data = JSON.stringify(dataArr, null, 2);
+
+                $.ajax({
+                    type: "POST",
+                    url: "/clientname/save",
+                    data: {
+                        clientname: clientname,
+                        data: data
+                    },
+                    success: function (result) {
+                        success('Saved!', 'Data saved!')
+                        $('#item-tbl').DataTable().ajax.reload();
+                        dataArr = [];
+                    },
+                    error: function (result) {
+                        error(result.data);
+                    }
+                });
+            }
+
+        });
+    })
+</script>

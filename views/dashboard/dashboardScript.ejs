@@ -1,0 +1,700 @@
+<script>
+    $(document).ready(function () {
+        var filename = '';
+        var personel = '';
+        var date = '';
+        var dataTable;
+        var dataTable2;
+        EquipmentRequestLoadTables();
+
+        $.ajax({
+            type: "GET",
+            url: "/equipment/GetRequestSummary",
+            data: {
+                filename: filename
+            },
+            success: function (result) {
+                console.log(result.data)
+                $.each(result.data, function (key, item) {
+                    document.getElementById('itequipmentrequest').textContent = item.itrequest;
+                    document.getElementById('equipmentrequesttransfer').textContent = item.transfer;
+                    document.getElementById('cablingequipmentrequest').textContent = item.cablingrequest;
+                })
+            },
+            error: function (result) {
+                alert('error: ' + result.data);
+            }
+        });
+
+        function EquipmentRequestLoadTables() {
+            showloader();
+
+            //IT EQUIPMENT REQUEST
+            dataTable = $('#equipment-item-tbl').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'GET',
+                'ajax': {
+                    'url': '/requestequipment/load',
+                    'dataSrc': (json) => {
+                        var finalData = [];
+                        var data = json.data;
+                        var details = '';
+                        var createddate = '';
+                        var status = '';
+                        var personel = '';
+
+                        // console.log(data);
+                        $.each(data, (key, item) => {
+                            console.log(`${item.personel} ${item.createddate} ${item.status}`);
+                            personel = item.personel;
+                            createddate = item.createddate;
+                            status = item.status;
+
+                            $.each(item.data, (key, item) => {
+                                console.log(`${item.store} ${item.ticket} ${item.brandname} ${item.itemtype} ${item.quantity} ${item.remarks}`);
+                                details += `TICKET:${item.ticket}   STORE: ${item.store}    BRANDNAME:${item.brandname} ITEMTPE:${item.itemtype}    QUANTITY:${item.quantity}   REMARKS:${item.remarks}<br/>`;
+                            })
+
+                            if (status == "PENDING") {
+                                action = '<button class="assign-btn" id="assignBtn" name="assignBtn">ASSIGN SERIAL</button>'
+                            } else {
+                                action = '<button class="approve-btn" id="approvedBtn" name="approvedBtn">APPROVED</button><br><button class="edit-btn" id="editBtn" name="editBtn">EDIT</button>'
+                            }
+
+
+                            finalData.push({
+                                personel: personel,
+                                details: details,
+                                createddate: createddate,
+                                status: status,
+                                action: action
+                            })
+
+                            details = '';
+                        })
+
+                        return finalData;
+                    },
+                },
+                'columnDefs': [{
+                    targets: 1,
+                    className: 'td-indent',
+                }],
+                'columns': [
+                    { data: 'createddate' },
+                    { data: 'personel' },
+                    { data: 'details' },
+                    { data: 'status' },
+                    {
+                        data: 'action'
+                        // data: null, title: 'Action', wrap: false, "render": function () {
+
+                        // }
+                    }
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+
+            //EQUIPMENT TRANSFER REQUEST
+            dataTable2 = $('#transfer-equipment-item-tbl').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'GET',
+                'ajax': {
+                    'url': '/transfer/load',
+                    'dataSrc': (result) => {
+                        var finalData = [];
+                        var data = result.data;
+                        var details = '';
+
+                        $.each(data, (key, item) => {
+                            let date = item.date;
+                            let personel = item.personel;
+                            let locationfrom = item.locationfrom;
+                            let locationto = item.locationto;
+                            let remarks = item.remarks;
+                            let status = item.status;
+
+                            $.each(item.details, (key, item) => {
+                                details += `BRANDNAME: ${item.brand} ITEM TYPE: ${item.itemtype} ITEM SERIAL: ${item.serial}<br>`;
+                            })
+
+                            finalData.push({
+                                date: date,
+                                personel: personel,
+                                details: details,
+                                locationfrom: locationfrom,
+                                locationto: locationto,
+                                remarks: remarks,
+                                status: status,
+                                action: action = `<button class="approve-btn" id="approveTransferBtn" name="approveTransferBtn">APPROVED</button><button class="edit-btn" id="transferPrinttBtn" name="transferPrinttBtn">PRINT</button>`
+                            });
+                        })
+
+                        return finalData;
+                    }
+                },
+                'columnDefs': [{
+                    targets: 2,
+                    className: 'td-indent',
+                }],
+                'columns': [
+                    { data: 'date' },
+                    { data: 'personel' },
+                    { data: 'details' },
+                    { data: 'locationfrom' },
+                    { data: 'locationto' },
+                    { data: 'remarks' },
+                    { data: 'status' },
+                    { data: 'action' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+
+            //CABLING EQUIPMENT REQUEST
+            dataTable3 = $('#cabling-equipment-item-tbl').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'GET',
+                'ajax': {
+                    'url': '/cablingrequest/load',
+                    'dataSrc': (json) => {
+                        var finalData = [];
+                        var data = json.data;
+                        var details = '';
+                        var createddate = '';
+                        var status = '';
+                        var requestor = '';
+                        var remarks = '';
+
+                        console.log(data);
+                        $.each(data, (key, item) => {
+                            requestor = item.personel;
+                            createddate = item.date;
+                            status = item.status;
+                            remarks = item.remarks;
+
+                            // console.log(item.details);
+                            $.each(item.details, (key, item) => {
+                                console.log(`BRAND: ${item.brandname} ITEM TYPE: ${item.itemtype} ITEM COUNT: ${item.itemcount}`);
+                                details += `BRAND: ${item.brandname} ITEM TYPE: ${item.itemtype} ITEM COUNT: ${item.itemcount}<br/>`;
+                            })
+
+                            finalData.push({
+                                date: createddate,
+                                personel: requestor,
+                                details: details,
+                                remarks: remarks,
+                                status: status,
+                                action: action = `<button class="approve-btn" id="approveBtn-cabling" name="approveBtn-cabling">APPROVED</button><button class="edit-btn" id="PrinttBtn-cabling" name="PrinttBtn-cabling">PRINT</button>`
+                            })
+
+                            details = '';
+                        })
+
+                        return finalData;
+                    },
+                },
+                'columnDefs': [{
+                    targets: 2,
+                    className: 'td-indent',
+                }],
+                'columns': [
+                    { data: 'date' },
+                    { data: 'personel' },
+                    { data: 'details' },
+                    { data: 'remarks' },
+                    { data: 'status' },
+                    { data: 'action' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+
+            //IT EQUIPMENT STOCK TABLE
+            dataTableITEquipment = $('#IT-Equipment_Tbl').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'GET',
+                'ajax': {
+                    'url': '/equipment/GetDetailedEquipmentSummary'
+                },
+                'columns': [
+                    { data: 'itemname' },
+                    { data: 'itemcount' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+
+            //EQUIPMENT CABLING STOCK TABLE
+            dataTableITEquipment = $('#Cabling-Equipment_Tbl').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'GET',
+                'ajax': {
+                    'url': '/cabling/GetCablingEquipmentSummary'
+                },
+                'columns': [
+                    { data: 'itemname' },
+                    { data: 'itemcount' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+        }
+
+        var modal = document.getElementById("requestModal");
+        var modaltransfer = document.getElementById("transferModal");
+        var modalcabling = document.getElementById("cablingRequestModal");
+        var span = document.getElementsByClassName("close")[0];
+        var span2 = document.getElementById("transfermodalclose");
+        var span3 = document.getElementById("cablingmodalclose");
+
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        span2.onclick = function () {
+            modaltransfer.style.display = "none";
+        }
+
+        span3.onclick = function () {
+            modalcabling.style.display = "none";
+        }
+
+
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+            if (event.target == modaltransfer) {
+                modaltransfer.style.display = "none";
+            }
+            if (event.target == modalcabling) {
+                modalcabling.style.display = "none";
+            }
+        }
+
+        $('#transfer-equipment-item-tbl').on('click', 'td', function () {
+            var data = dataTable2.row(this).data();
+            let date = data.date;
+            const dateArr = date.split(" ");
+            filename = `${data.personel}_${dateArr[0]}.json`;
+        })
+
+        $('#cabling-equipment-item-tbl').on('click', 'td', function () {
+            var data = dataTable3.row(this).data();
+            let date = data.date;
+            const dateArr = date.split(" ");
+            filename = `${dateArr[0]}_${data.personel}.json`;
+        })
+
+        $('#equipment-item-tbl tbody').on('click', 'td', function () {
+            var data = dataTable.row(this).data();
+            filename = `${data.personel}_${data.createddate}.json`;
+            personel = data.personel;
+            date = data.createddate;
+        })
+
+        $('#requesttbl tbody').on('click', 'tr', function (e) {
+            e.preventDefault();
+
+            if ($(this).attr('edit_type') == 'button') {
+                return false;
+            }
+
+            //make div editable
+            $(this).closest('div').attr('contenteditable', 'true');
+            //add bg css
+            $(this).addClass('bg-success').css('padding', '5px');
+
+            $(this).focus();
+        });
+
+        $('#requestModal').on('hidden.bs.modal', function (e) {
+            window.location.reload();
+        });
+
+        $(document).on('click', "#saveBtn", async function () {
+            console.log('clicked!');
+            var data = $('#requesttbl tr');
+            var dataRaw = [];
+            console.log(data);
+            console.log(data.length);
+            var message = '';
+
+            var index = 1;
+            for (x = 1; x < data.length; x++) {
+                console.log(data[x].innerText);
+                var innerData = data[x].innerText;
+                innerData = innerData.split("\t");
+
+                if (innerData[4] == "") {
+                    message += `${innerData[0]}, `;
+                } else {
+                    dataRaw.push({
+                        ticket: innerData[0],
+                        store: innerData[1],
+                        brandname: innerData[2],
+                        itemtype: innerData[3],
+                        serial: innerData[4],
+                        status: 'ALLOCATE',
+                        index: index,
+                    });
+
+                    index += 1;
+                }
+
+            }
+
+            if (message != "") {
+                warning(`TICKET/S: ${message} no serial assigned!`)
+            } else {
+                console.log(personel, date, dataRaw);
+                dataRaw = JSON.stringify(dataRaw, null, 2);
+                await assignequipemnt(personel, date, dataRaw)
+            }
+        });
+
+        function assignequipemnt(personel, date, data) {
+            console.log(`${personel} ${date} ${data}`);
+            $.ajax({
+                type: "POST",
+                url: "/requestequipment/assign",
+                data: {
+                    personel: personel,
+                    date: date,
+                    data: data
+                },
+                success: function (result) {
+                    success('Saved!', 'Data saved!')
+                    window.location.reload();
+                },
+                error: function (result) {
+                    error(result.data);
+                }
+            });
+        }
+
+        $(document).on('click', "#approvedBtn", async function () {
+            console.log('hit');
+
+            $.ajax({
+                type: "POST",
+                url: "/requestequipment/approve",
+                data: {
+                    personel: personel,
+                    date: date,
+                    status: 'APPROVED'
+                },
+                success: function (result) {
+                    success('Approved!', 'Request approved!')
+                    window.location.reload();
+                },
+                error: function (result) {
+                    error(result.data);
+                }
+            });
+        });
+
+        $(document).on('click', "#assignBtn", async function () {
+            modal.style.display = "block";
+            var requestlistTabel = $('#requestlist').DataTable({
+                'destroy': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollCollapse': true,
+            });
+
+            var requestitemTabel = $('#requesttbl').DataTable({
+                'destroy': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollCollapse': true,
+            });
+
+            var index = [];
+            //request list
+            $.ajax({
+                type: "POST",
+                url: "/requestequipment/getdetails",
+                data: { filename: filename },
+                success: function (result) {
+                    requestlistTabel.clear().draw();
+                    var data = result.data;
+
+                    console.log(result.data);
+                    $.each(data, function (key, item) {
+                        $.each(item.data, (key, item) => {
+                            index.push({
+                                itemtype: item.itemtype,
+                                quantity: item.quantity
+                            });
+                            requestlistTabel.row.add([item.ticket, item.itemtype, item.quantity]).draw(false);
+                        })
+                    })
+                },
+                error: function (result) {
+                    error('error: ' + result.data);
+                }
+            });
+
+            //request items
+            $.ajax({
+                type: "POST",
+                url: "/requestequipment/getdetails",
+                data: { filename: filename },
+                success: function (result) {
+                    requestitemTabel.clear().draw();
+                    var data = result.data;
+
+                    console.log(result.data);
+                    $.each(data, (key, item) => {
+                        var x = 0;
+                        $.each(item.data, (key, item) => {
+                            var qty = index[x].quantity;
+                            for (i = 0; i < qty; i++) {
+                                requestitemTabel.row.add([item.ticket, item.store, item.brandname, item.itemtype, ""]).draw(false);
+                            }
+
+                            x += 1;
+                        })
+                    })
+                },
+                error: function (result) {
+                    error('error: ' + result.data);
+                }
+            });
+
+        });
+
+        $(document).on('click', "#editBtn", async function () {
+
+            var requestlistTabel = $('#requestlist').DataTable({
+                'destroy': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollCollapse': true,
+            });
+
+            var requestitemTabel = $('#requesttbl').DataTable({
+                'destroy': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollCollapse': true,
+            });
+
+
+
+            $.ajax({
+                type: "POST",
+                url: "/requestequipment/getdetails",
+                data: { filename: filename },
+                success: function (result) {
+                    requestlistTabel.clear().draw();
+                    var data = result.data;
+
+                    console.log(result.data);
+                    $.each(data, function (key, item) {
+                        $.each(item.data, (key, item) => {
+
+                            requestlistTabel.row.add([item.ticket, item.itemtype, item.quantity]).draw(false);
+                        })
+                    })
+                },
+                error: function (result) {
+                    error('error: ' + result.data);
+                }
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/requestequipment/getassign",
+                data: {
+                    personel: personel,
+                    date: date,
+                },
+                success: function (result) {
+                    requestitemTabel.clear().draw();
+                    var data = result.data;
+
+                    $.each(data, (key, item) => {
+
+                        requestitemTabel.row.add([item.ticket, item.store, item.brandname, item.itemtype, item.serial]).draw(false);
+                    })
+                },
+                error: function (result) {
+                    error('error: ' + result.data);
+                }
+            });
+
+            modal.style.display = "block";
+        });
+
+        $(document).on('click', "#transferPrinttBtn", async function () {
+
+            var t = $('#modalTransferItems').DataTable({
+                'destroy': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollCollapse': true,
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/transfer/gettransferdetails",
+                data: {
+                    filename: filename
+                },
+                success: function (result) {
+                    t.clear().draw();
+                    $.each(result.data, function (key, item) {
+                        t.row.add([item.brand, item.itemtype, item.serial]).draw(false);
+                    })
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+
+            modaltransfer.style.display = "block";
+        })
+
+        $(document).on('click', "#printBtn", function () {
+            console.log('clicked!');
+            var printContents = document.getElementById('PrintArea').innerHTML;
+            var originalContents = document.body.innerHTML;
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+            location.reload();
+        })
+
+        $(document).on('click', "#approveTransferBtn", function () {
+            $.ajax({
+                type: "POST",
+                url: "/transfer/transferitems",
+                data: {
+                    filename: filename
+                },
+                success: function (result) {
+                    success('Approved!', 'Transfer approved!')
+                    window.location.reload();
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+        });
+
+        $(document).on('click', "#approveBtn-cabling", function () {
+            $.ajax({
+                type: "POST",
+                url: "/cablingrequest/approve",
+                data: {
+                    filename: filename
+                },
+                success: function (result) {
+                    success('Approved!', 'Request approved!')
+                    window.location.reload();
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+        })
+
+        $(document).on('click', "#PrinttBtn-cabling", function () {
+
+            var t = $('#modalCablingItems').DataTable({
+                'destroy': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollCollapse': true,
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/cablingrequest/getcablingrequestdetail",
+                data: {
+                    filename: filename
+                },
+                success: function (result) {
+                    t.clear().draw();
+                    $.each(result.data, function (key, item) {
+                        let cost = parseFloat(item.itemcost);
+                        let count = parseFloat(item.itemcount);
+                        let total = cost * count;
+
+                        t.row.add([item.brandname, item.itemtype, item.itemcount, item.itemcost, `₱ ${total}`]).draw(false);
+                    })
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+
+            modalcabling.style.display = "block";
+        })
+
+        $(document).on('click', "#cabling-printBtn", function () {
+            console.log('clicked!');
+            var printContents = document.getElementById('cabling-PrintArea').innerHTML;
+            var originalContents = document.body.innerHTML;
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+            location.reload();
+        })
+    })
+</script>

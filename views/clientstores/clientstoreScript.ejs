@@ -1,0 +1,114 @@
+<script>
+    $(document).ready(function () {
+        var dataArr = [];
+
+        var dataTable = $('#item-tbl').DataTable({
+            'destroy': true,
+            'processing': true,
+            'serverSide': true,
+            'paging': false,
+            'searching': false,
+            'info': false,
+            'scrollY': 400,
+            'scrollCollapse': true,
+            'serverMethod': 'GET',
+            'ajax': {
+                'url': '/clientstores/load',
+            },
+            'columns': [
+                { data: 'clientname' },
+                { data: 'storenumber' },
+                { data: 'storename' },
+                { data: 'zone' },
+                { data: 'storetype' },
+                { data: 'contactnumber' },
+                { data: 'storeemail' },
+                { data: 'address' },
+            ]
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/clientname/load",
+            success: function (result) {
+                console.log(result.data);
+
+                $.each(result.data, function (key, item) {
+                    var options = new Option(item.clientname, item.clientname);
+                    $(options).html(item.clientname);
+                    $('#clientname').append(options);
+                    console.log(item.clientname);
+                });
+            },
+            error: function (result) {
+                alert('error: ' + result.data);
+            }
+        });
+
+        $(document).on('click', "#saveBtn", function () {
+            var storenumber = $('#storenumber').val();
+            var storename = $('#storename').val();
+            var zone = $('#zone').val();
+            var storetype = $('#storetype').val();
+            var storeemail = $('#storeemail').val();
+            var contactnumber = $('#contactnumber').val();
+            var address = $('#address').val();
+            var googlemapaddress = $('#googlemapaddress').val() == null ? 'N/A' : $('#googlemapaddress').val();
+            var clientname = $('#clientname').val();
+            var createdby = '<%= fullname%>';
+            var createddate = '<%= date%>';;
+
+            var message = "";
+
+            if (storenumber == "") { message += "Store Number " }
+            if (storename == "") { message += "Store Name " }
+            if (zone == "") { message += "Zone " }
+            if (storetype == "") { message += "Store Type " }
+            if (contactnumber == "") { message += "Contact Number " }
+            if (storeemail == "") { message += "Store Email " }
+            if (address == "") { message += "Address " }
+            if (clientname == "") { message += "Client Name " }
+
+
+            if (message != "") { warning("Warning!", "Must fill-up " + message + " field!") }
+            else {
+                dataArr.push({
+                    'storenumber': storenumber,
+                    'storename': storename,
+                    'zone': zone,
+                    'storetype': storetype,
+                    'contactnumber': contactnumber,
+                    'storeemail': storeemail,
+                    'address': address,
+                    'googlemapaddress': googlemapaddress,
+                    'clientname': clientname,
+                    'createdby': createdby,
+                    'createddate': createddate
+                });
+
+                console.log(clientname);
+                var data = JSON.stringify(dataArr, null, 2);
+
+                $.ajax({
+                    type: "POST",
+                    url: "/clientstores/save",
+                    data: {
+                        storenumber: storenumber,
+                        storename: storename,
+                        clientname: clientname,
+                        data: data
+                    },
+                    success: function (result) {
+                        success('Saved!', 'Data saved!')
+                        $('#item-tbl').DataTable().ajax.reload();
+                        dataArr = [];
+                    },
+                    error: function (result) {
+                        error(result.data);
+                    }
+                });
+            }
+
+        });
+    })
+</script>
