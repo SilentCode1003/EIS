@@ -9,6 +9,8 @@ const CablingReturnPath = `${__dirname}/data/request/cabling/return/`;
 const DeployCablingPath = `${__dirname}/data/deploy/cabling/`;
 const CablingPath = `${__dirname}/data/cabling/`;
 
+const mysql = require('./repository/dbconnect');
+
 /* GET home page. */
 router.get('/', isAuthAdmin, function (req, res, next) {
   res.render('cablingrequest', {
@@ -35,6 +37,7 @@ router.get('/load', (req, res) => {
 
       data.forEach((key, item) => {
         dataArr.push({
+          requestid: key.referenceid,
           date: key.date,
           personel: key.personel,
           details: key.details,
@@ -57,7 +60,7 @@ router.get('/load', (req, res) => {
   }
 });
 
-router.post('/save', (req, res) => {
+router.post('/save', async (req, res) => {
   try {
     let details = req.body.details;
     let personel = req.body.personel;
@@ -65,21 +68,168 @@ router.post('/save', (req, res) => {
     let datetime = date.split(" ");
     let remarks = req.body.remarks;
     let status = req.body.status;
-    let data = [];
     let filename = `${datetime[0]}_${personel}.json`;
     let targetDir = `${CablingPendingPath}${filename}`;
+    let todo = [];
+    let details_todo = [];
+    let count = 0;
+    let transaction_list = [];
+    let requestid = '';
+    let dataRequest = [];
 
-    data.push({
-      date: date,
-      personel: personel,
-      details: JSON.parse(details),
-      remarks: remarks,
-      status: status,
-    })
+    todo.push([datetime[0], personel, details, remarks, status]);
 
-    let dataJson = JSON.stringify(data, null, 2);
+    Save_Request = (data, callback) => {
+      let dataJson = JSON.stringify(data, null, 2);
+      callback(null, helper.CreateJSON(targetDir, dataJson));
+    }
 
-    helper.CreateJSON(targetDir, dataJson);
+    Execute_Cabling_Request_Details = (data, callback) => {
+      let stmt = `INSERT INTO request_cabling_details(
+        rcd_requestdate,
+        rcd_personel,
+        rcd_details,
+        rcd_remarks,
+        rcd_status) VALUES ?`;
+      callback(null, mysql.Insert(stmt, data));
+    }
+
+    Execute_Cabling_Request_Equipment_SingleData = (data, callback) => {
+      let stmt_tce = `INSERT INTO request_cabling_equipment(
+        rce_personel,
+        rce_requestdate,
+        rce_brandname,
+        rce_itemtype,
+        rce_quantity,
+        rce_cost,
+        rce_referenceid,
+        rce_status) VALUES ?`;
+
+      callback(null, mysql.Insert(stmt_tce, data));
+    }
+
+    Execute_Cabling_Request_Equipment = (data, callback) => {
+      let stmt_tce = `INSERT INTO request_cabling_equipment(
+        rce_personel,
+        rce_requestdate,
+        rce_brandname,
+        rce_itemtype,
+        rce_quantity,
+        rce_cost,
+        rce_referenceid,
+        rce_status) VALUES ?`;
+
+      callback(null, mysql.InsertMultiple(stmt_tce, data));
+    }
+
+    Insert_TransactionCablingEquipment = (data, callback) => {
+      let cmd = `INSERT INTO transaction_cabling_equipment (
+        tce_brandname,
+        tce_itemtype,
+        tce_itemcost,
+        tce_quantity,
+        tce_requestby,
+        tce_requestdate,
+        tce_approvedby,
+        tce_approveddate,
+        tce_requestid,
+        tce_status
+      ) VALUES ?`
+
+      callback(null, mysql.InsertMultiple(cmd, data));
+    }
+
+    await Execute_Cabling_Request_Details(todo, (err, data) => {
+      if (err) throw err;
+    });
+
+    let cmd = `SELECT * FROM request_cabling_details WHERE rcd_requestdate='${datetime[0]}' AND rcd_personel='${personel}'`;
+    mysql.SelectWhere(cmd, 'RequestCablingDetails', (err, result) => {
+      if (err) throw err;
+      result.forEach((key, item) => {
+        let detailsJson = JSON.parse(details);
+
+
+        requestid = key.requestid;
+
+        //request details
+        dataRequest.push({
+          referenceid: requestid,
+          date: date,
+          personel: personel,
+          details: JSON.parse(details),
+          remarks: remarks,
+          status: status,
+        })
+
+
+        detailsJson.forEach((key, item) => {
+          count += 1;
+
+          //equipment
+          details_todo.push([
+            key.personel,
+            datetime[0],
+            key.brandname,
+            key.itemtype,
+            key.itemcount,
+            key.itemcost,
+            requestid,
+            status]);
+
+          //transaction
+          transaction_list.push([
+            key.brandname,
+            key.itemtype,
+            key.itemcost,
+            key.itemcount,
+            key.personel,
+            datetime[0],
+            '',
+            '',
+            requestid,
+            status,
+          ]);
+        });
+
+
+
+
+        if (count == 1) {
+          Execute_Cabling_Request_Equipment_SingleData(details_todo, (err, data) => {
+            if (err) {
+              throw err;
+            };
+
+            console.log(`Execute_Cabling_Request_Equipment_SingleData`);
+          });
+
+          Save_Request(requestid, (err, result) => {
+            if (err) throw err;
+          });
+        }
+        if (count >= 2) {
+          Execute_Cabling_Request_Equipment(details_todo, (err, data) => {
+            if (err) {
+              throw err;
+            };
+
+            console.log(`Execute_Cabling_Request_Equipment`);
+          });
+
+          Insert_TransactionCablingEquipment(transaction_list, (err, data) => {
+            if (err) throw err;
+
+            console.log(`Insert_TransactionCablingEquipment`);
+          });
+
+          Save_Request(dataRequest, (err, result) => {
+            if (err) throw err;
+          });
+        }
+      });
+
+    });
 
     res.json({
       msg: 'success'
@@ -141,7 +291,6 @@ router.post('/approve', (req, res) => {
     let data = helper.ReadJSONFile(targetFile);
     let update_items_list = [];
 
-
     helper.CreateFolder(deployPathYearMonth);
 
     UpdateItemCount = async (data) => {
@@ -150,6 +299,7 @@ router.post('/approve', (req, res) => {
         helper.UpdateCablingItemCount(key.file, key.deduction);
       });
     }
+
 
     data.forEach((key, item) => {
       var dataJson = key.details;
@@ -180,7 +330,13 @@ router.post('/approve', (req, res) => {
           deduction: itemcount,
         });
         helper.CreateJSON(deployFilename, dataArrJson);
+
       });
+
+      let update = `UPDATE transaction_cabling_equipment SET tce_approvedby= '${req.session.fullname}', tce_approveddate='${helper.GetCurrentDate()}', tce_status='APPROVED' WHERE tce_requestid='${key.referenceid}'`;
+
+      mysql.Update(update);
+
     });
 
     UpdateItemCount(update_items_list);

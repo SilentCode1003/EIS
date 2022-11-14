@@ -191,6 +191,7 @@
                         var status = '';
                         var requestor = '';
                         var remarks = '';
+                        var requestid = '';
 
                         console.log(data);
                         $.each(data, (key, item) => {
@@ -198,6 +199,7 @@
                             createddate = item.date;
                             status = item.status;
                             remarks = item.remarks;
+                            requestid = item.requestid;
 
                             // console.log(item.details);
                             $.each(item.details, (key, item) => {
@@ -206,6 +208,7 @@
                             })
 
                             finalData.push({
+                                requestid: requestid,
                                 date: createddate,
                                 personel: requestor,
                                 details: details,
@@ -225,6 +228,7 @@
                     className: 'td-indent',
                 }],
                 'columns': [
+                    { data: 'requestid' },
                     { data: 'date' },
                     { data: 'personel' },
                     { data: 'details' },

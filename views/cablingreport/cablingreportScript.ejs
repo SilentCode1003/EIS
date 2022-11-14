@@ -1,0 +1,72 @@
+<script>
+    $(document).ready(function () {
+        loadtable();
+        let DataTable;
+
+        $("#dtbox").DateTimePicker({
+            dateFormat: "yyyy-MM-dd"
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/personel/load",
+            success: function (result) {
+                console.log(result.data);
+                var data = result.data;
+
+                $.each(data, function (key, item) {
+                    var options = new Option(item.fullname, item.fullname);
+                    $(options).html(item.fullname);
+                    $('#personel').append(options);
+                    console.log(item.fullname);
+                });
+            },
+            error: function (result) {
+                alert('error: ' + result.data);
+            }
+        });
+
+
+
+        $(document).on('click', "#searchBtn", function () {
+
+        })
+
+        function loadtable() {
+            showloader();
+            dataTable = $('#transaction-table').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'GET',
+                'ajax': {
+                    'url': '/cablingreport/load'
+                },
+                'columns': [
+
+                    { data: 'transactionid' },
+                    { data: 'requestby' },
+                    { data: 'requestdate' },
+                    { data: 'brandname' },
+                    { data: 'itemtype' },
+                    { data: 'itemcost' },
+                    { data: 'quantity' },
+                    { data: 'approvedby' },
+                    { data: 'approveddate' },
+                    { data: 'requestid' },
+                    { data: 'status' },
+
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+        };
+    })
+</script>

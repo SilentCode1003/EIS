@@ -26,6 +26,7 @@ var clientstoresRouter = require('./routes/clientstores');
 var locationtypeRouter = require('./routes/locationtype');
 var clientnameRouter = require('./routes/clientname');
 var cablingrequestRouter = require('./routes/cablingrequest');
+var cablingreportRouter = require('./routes/cablingreport');
 
 
 
@@ -85,6 +86,7 @@ app.use('/clientstores', clientstoresRouter);
 app.use('/locationtype', locationtypeRouter);
 app.use('/clientname', clientnameRouter);
 app.use('/cablingrequest', cablingrequestRouter);
+app.use('/cablingreport', cablingreportRouter);
 
 
 // catch 404 and forward to error handler
