@@ -37,7 +37,7 @@
 <script>
     let accounttype = '<%= accounttype%>';
 
-    if (accounttype == 'USER') {
+    if (accounttype == 'USER' || accounttype == 'CABLING') {
         $("#masters").toggle(0, function () {
         });
 

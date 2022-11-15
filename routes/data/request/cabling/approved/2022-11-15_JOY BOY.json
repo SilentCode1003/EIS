@@ -1,0 +1,29 @@
+[
+  {
+    "referenceid": 2,
+    "date": "2022-11-15 09:07",
+    "personel": "JOY BOY",
+    "details": [
+      {
+        "personel": "RHANNER REY HUELAR",
+        "brandname": "NO BRAND",
+        "itemtype": "SOLID WIRE - BLACK",
+        "itemcost": "750",
+        "itemcount": "2",
+        "createddate": "2022-11-15 09:07",
+        "status": "PENDING"
+      },
+      {
+        "personel": "RHANNER REY HUELAR",
+        "brandname": "VENDEX",
+        "itemtype": "uPVC Electrical Conduit 32 mm",
+        "itemcost": "150",
+        "itemcount": "200",
+        "createddate": "2022-11-15 09:07",
+        "status": "PENDING"
+      }
+    ],
+    "remarks": "FOR INSTALLATION",
+    "status": "PENDING"
+  }
+]

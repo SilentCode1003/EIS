@@ -204,7 +204,15 @@ router.post('/save', async (req, res) => {
             console.log(`Execute_Cabling_Request_Equipment_SingleData`);
           });
 
-          Save_Request(requestid, (err, result) => {
+          //insert transaction
+          Insert_TransactionCablingEquipment(transaction_list, (err, data) => {
+            if (err) throw err;
+
+            console.log(`Insert_TransactionCablingEquipment`);
+          });
+
+          //create json file
+          Save_Request(dataRequest, (err, result) => {
             if (err) throw err;
           });
         }
@@ -217,15 +225,19 @@ router.post('/save', async (req, res) => {
             console.log(`Execute_Cabling_Request_Equipment`);
           });
 
+          //insert transaction
           Insert_TransactionCablingEquipment(transaction_list, (err, data) => {
             if (err) throw err;
 
             console.log(`Insert_TransactionCablingEquipment`);
+
+             //create json file
+            Save_Request(dataRequest, (err, result) => {
+              if (err) throw err;
+            });
           });
 
-          Save_Request(dataRequest, (err, result) => {
-            if (err) throw err;
-          });
+
         }
       });
 

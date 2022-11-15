@@ -1,0 +1,180 @@
+<div class="tab">
+    <div class="entry-area">
+        <button class="approve-btn tablinks" id="searchBtn" name="searchBtn"><i class="fas fa-fw fa-search"></i>
+            SEARCH</button>
+        <button class="approve-btn tablinks" id="deplotBtn" name="deplotBtn"><i class="fas fa-fw fa-box-open"></i>
+            DEPLOY</button>
+        <button class="approve-btn tablinks" id="pulloutBtn" name="pulloutBtn"><i class="fas fa-fw fa-caravan"></i>
+            PULLOUT</button>
+    </div>
+</div>
+
+<div id="search" class="tabcontent">
+    <div class="row">
+        <div class="col-xl-6 col-lg-5">
+            <div class="entry-area">
+                <input type="text" class="entry-input" id="searchticket" name="searchticket" placeholder="TICKET">
+            </div>
+            <div class="entry-area">
+                <input type="text" class="entry-input" id="searchtrf" name="searchtrf" placeholder="TRF">
+            </div>
+
+            <div class="entry-area">
+                <input type="text" class="entry-input" id="searchserial" name="searchserial" placeholder="SERIAL">
+            </div>
+
+            <div class="entry-area">
+                <button class="approve-btn tablinks" id="findBtn" name="findBtn">FIND</button>
+            </div>
+        </div>
+    </div>
+    <hr>
+
+    <div>
+        <table id="search-tbl">
+            <thead>
+                <th>SERIAL</th>
+                <th>ITEM BRAND</th>
+                <th>ITEM TYPE</th>
+                <th>RECEIVED BY</th>
+                <th>RECEIVED DATE</th>
+                <th>TICKET</th>
+                <th>TRF</th>
+                <th>DEPLOY TO</th>
+                <th>DEPLOY BY</th>
+                <th>DEPLOY DATE</th>
+                <th>PULLOUT BRAND</th>
+                <th>PULLOUT ITEM TYPE</th>
+                <th>PULLOUT SERIAL</th>
+                <th>PULLOUT FROM</th>
+                <th>PULLOUT DATE</th>
+                <th>STATUS</th>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<div id="deploy" class="tabcontent">
+    <div class="row">
+        <div class="col-xl-6 col-lg-5">
+            <div class="entry-area">
+                <input type="text" class="entry-input" id="dployticket" name="dployticket" placeholder="TICKET">
+            </div>
+            <div class="entry-area">
+                <input type="text" class="entry-input" id="deploytrf" name="deploytrf" placeholder="TRF">
+            </div>
+
+            <div class="entry-area">
+                <input type="text" class="entry-input" id="deployserial" name="deployserial" placeholder="SERIAL">
+            </div>
+
+            <div class="entry-area">
+                <input type="text" class="entry-input" id="deployitembrand" name="deployitembrand"
+                    placeholder="ITEM BRAND">
+            </div>
+
+            <div class="entry-area">
+                <button class="approve-btn tablinks" id="pulloutEnterBtn" name="pulloutEnterBtn">ENTER</button>
+            </div>
+        </div>
+
+        <div class="col-xl-6 col-lg-5">
+            <div class="entry-area">
+                <input type="text" class="entry-input" id="deployitemtype" name="deployitemtype"
+                    placeholder="ITEM TYPE">
+            </div>
+
+            <div class="entry-area">
+                <input type="text" class="entry-input" id="deployfrom" name="deployto" placeholder="DEPLOY TO">
+            </div>
+
+            <div class="entry-area">
+                <input type="text" class="entry-input" id="deploydate" name="deploydate" placeholder="DEPLOY DATE">
+            </div>
+
+            <div class="entry-area">
+                <input type="text" class="entry-input" id="deployby" name="deployby" placeholder="DEPLOY BY">
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <div>
+        <table id="deploy-tbl">
+            <thead>
+                <th>SERIAL</th>
+                <th>ITEM BRAND</th>
+                <th>ITEM TYPE</th>
+                <th>DEPLOY TO</th>
+                <th>DEPLOY BY</th>
+                <th>DEPLOY DATE</th>
+                <th>TICKET</th>
+                <th>TRF</th>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<div id="pullout" class="tabcontent">
+    <div class="row">
+        <div class="col-xl-6 col-lg-5">
+            <div class="entry-area">
+                <input type="text" class="entry-input" id="pulloutticket" name="pulloutticket" placeholder="TICKET">
+            </div>
+            <div class="entry-area">
+                <input type="text" class="entry-input" id="pullouttrf" name="pullouttrf" placeholder="TRF">
+            </div>
+
+            <div class="entry-area">
+                <input type="text" class="entry-input" id="pulloutserial" name="pulloutserial" placeholder="SERIAL">
+            </div>
+
+            <div class="entry-area">
+                <input type="text" class="entry-input" id="pulloutitembrand" name="pulloutitembrand" placeholder="ITEM BRAND">
+            </div>
+
+            <div class="entry-area">
+                <button class="approve-btn tablinks" id="pulloutEnterBtn" name="pulloutEnterBtn">ENTER</button>
+            </div>
+        </div>
+
+        <div class="col-xl-6 col-lg-5">
+            <div class="entry-area">
+                <input type="text" class="entry-input" id="pulloutitemtype" name="pulloutitemtype" placeholder="ITEM TYPE">
+            </div>
+
+            <div class="entry-area">
+                <input type="text" class="entry-input" id="pulloutfrom" name="pulloutfrom" placeholder="PULLOUT FROM">
+            </div>
+
+            <div class="entry-area">
+                <input type="text" class="entry-input" id="pulloutdate" name="pulloutdate" placeholder="PULLOUT DATE">
+            </div>
+
+            <div class="entry-area">
+                <input type="text" class="entry-input" id="pulloutby" name="pulloutby" placeholder="PULLOUT BY">
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <div>
+        <table id="pullout-tble">
+            <thead>
+                <th>SERIAL</th>
+                <th>ITEM BRAND</th>
+                <th>ITEM TYPE</th>
+                <th>PULLOUT FROM</th>
+                <th>PULLOUT BY</th>
+                <th>PULLOUT DATE</th>
+                <th>TICKET</th>
+                <th>TRF</th>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>

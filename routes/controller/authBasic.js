@@ -18,6 +18,9 @@ const isAuthAdmin = (req, res, next) => {
     else if (req.session.isAuth && req.session.accounttype == "USER") {
         next();
     }
+    else if (req.session.isAuth && req.session.accounttype == "CABLING") {
+        next();
+    }
     else {
         res.redirect('/login');
     }

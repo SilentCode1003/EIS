@@ -2,19 +2,11 @@ const mysql = require('mysql');
 const model = require('../model/models');
 
 const connection = mysql.createConnection({
-    host: '192.168.1.200',
+    host: 'localhost',
     user: 'root',
-    password: 'Dev42@2022!',
+    password: '#Ebedaf19dd0d',
     database: 'EquipmentInventory'
 });
-
-const pool = mysql.createPool({
-    connectionLimit: 5,
-    host: '192.168.1.200',
-    user: 'root',
-    password: 'Dev42@2022!',
-    database: 'EquipmentInventory'
-})
 
 exports.Insert = async (stmt, todos) => {
     try {
