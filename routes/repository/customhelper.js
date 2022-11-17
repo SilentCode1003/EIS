@@ -279,3 +279,47 @@ exports.UpdateCablingItemCount = (target_file, itemcount) => {
     });
 }
 //#endregion
+
+//#region USE LINQ for filtering json data
+exports.GetByDeparmentItems = (data, index, callback) => {
+    try {
+        let arr = new LINQ(data)
+            .Where((d) => { return d.department === index; })
+            .Select((d) => { return { brandname: d.brandname } })
+            .ToArray();
+
+        callback(null, arr);
+
+    } catch (error) {
+        callback(null, error);
+    }
+}
+
+exports.GetByDeparmentPersonel = (data, index, callback) => {
+    try {
+        let arr = new LINQ(data)
+            .Where((d) => { return d.positions === index; })
+            .Select((d) => { return { fullname: d.fullname } })
+            .ToArray();
+
+        callback(null, arr);
+
+    } catch (error) {
+        callback(null, error);
+    }
+}
+
+exports.GetByClientStores = (data, index, callback) => {
+    try {
+        let arr = new LINQ(data)
+            .Where((d) => { return d.clientname === index; })
+            .Select((d) => { return { storename: `${d.storenumber} ${d.storename}` } })
+            .ToArray();
+
+        callback(null, arr);
+
+    } catch (error) {
+        callback(null, error);
+    }
+}
+//#endregion

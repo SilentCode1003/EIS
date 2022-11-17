@@ -98,7 +98,7 @@ router.post('/itemtype', (req, res) => {
     });
 
     var dataFilter = [];
-    var data = helper.Distinct(dataArr,'itemtype', brandname);
+    var data = helper.Distinct(dataArr, 'itemtype', brandname);
     data.forEach(d => {
       if (d == null) {
 
@@ -143,7 +143,7 @@ router.get('/brandname', (req, res) => {
     });
 
     var dataFilter = [];
-    var data = helper.Distinct(dataArr,'brandname', null);
+    var data = helper.Distinct(dataArr, 'brandname', null);
     data.forEach(d => {
       if (d == null) {
 
@@ -160,6 +160,44 @@ router.get('/brandname', (req, res) => {
       data: dataFilter
     });
 
+
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+
+});
+
+router.post('/brandnamedepartment', (req, res) => {
+  try {
+    var dataArr = [];
+    var files = helper.GetFiles(ItemPath);
+    let index = req.body.department;
+
+    console.log(index);
+
+    files.forEach(file => {
+      var fileDir = `${ItemPath}${file}`;
+      var data = helper.ReadJSONFile(fileDir);
+
+      data.forEach((key, item) => {
+        dataArr.push({
+          itemname: key.itemname,
+          brandname: key.brandname,
+          department: key.department,
+        })
+      })
+    });
+
+    helper.GetByDeparmentItems(dataArr, index, (err, result) => {
+      if (err) throw err;
+
+      res.json({
+        msg: 'success',
+        data: result
+      })
+    });
 
   } catch (error) {
     res.json({

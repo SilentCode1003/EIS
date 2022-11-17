@@ -91,7 +91,7 @@ router.post('/save', async (req, res) => {
         rcd_details,
         rcd_remarks,
         rcd_status) VALUES ?`;
-      callback(null, mysql.Insert(stmt, data));
+      callback(null, mysql.InsertMultiple(stmt, data));
     }
 
     Execute_Cabling_Request_Equipment_SingleData = (data, callback) => {
@@ -105,7 +105,7 @@ router.post('/save', async (req, res) => {
         rce_referenceid,
         rce_status) VALUES ?`;
 
-      callback(null, mysql.Insert(stmt_tce, data));
+      callback(null, mysql.InsertMultiple(stmt_tce, data));
     }
 
     Execute_Cabling_Request_Equipment = (data, callback) => {

@@ -76,3 +76,41 @@ router.get('/load', (req, res) => {
   }
 
 });
+
+router.post('/personelposition', (req, res) => {
+  try {
+    var dataArr = [];
+    var files = helper.GetFiles(PersonelPath);
+    let index = req.body.position;
+
+    console.log(index);
+
+    files.forEach(file => {
+      var fileDir = `${PersonelPath}${file}`;
+      var data = helper.ReadJSONFile(fileDir);
+
+      data.forEach((key, item) => {
+        dataArr.push({
+          fullname: key.fullname,
+          location: key.location,
+          positions: key.positions,
+        })
+      })
+    });
+
+    helper.GetByDeparmentPersonel(dataArr, index, (err, result) => {
+      if (err) throw err;
+
+      res.json({
+        msg: 'success',
+        data: result
+      })
+    });
+
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+
+});

@@ -1,5 +1,9 @@
 <script>
     $(document).ready(function () {
+        let wildcardbox = document.querySelector('#iswildcardsearch');
+        let iswildcardsearch = false;
+
+        LoadList();
 
         $(document).on('click', "#searchBtn", function () {
             var i, tabcontent, tablinks;
@@ -12,7 +16,8 @@
                 tablinks[i].className = tablinks[i].className.replace(" active", "");
             }
             document.getElementById('search').style.display = "block";
-            evt.currentTarget.className += " active";
+            // evt.currentTarget.className += " active";
+            TransactionITEquipmentTable();
         });
 
         $(document).on('click', "#deplotBtn", function () {
@@ -26,9 +31,37 @@
                 tablinks[i].className = tablinks[i].className.replace(" active", "");
             }
             document.getElementById('deploy').style.display = "block";
-            evt.currentTarget.className += " active";
+            // evt.currentTarget.className += " active";
+
+            DeployITEquipmentTable();
         });
 
+        $(document).on('change', "#deployitembrand", function () {
+            var brandname = $('#deployitembrand').val();
+            $("#deployitemtype").empty();
+
+            $.ajax({
+                type: "POST",
+                url: "/items/itemtype",
+                data: { brandname: brandname },
+                success: function (result) {
+                    var data = result.data;
+                    console.log(result.data);
+
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.itemname, item.itemname);
+                        $(options).html(item.itemname);
+                        $('#deployitemtype').append(options);
+                        console.log(item.itemname);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+
+
+        });
 
         $(document).on('click', "#pulloutBtn", function () {
             var i, tabcontent, tablinks;
@@ -41,7 +74,409 @@
                 tablinks[i].className = tablinks[i].className.replace(" active", "");
             }
             document.getElementById('pullout').style.display = "block";
-            evt.currentTarget.className += " active";
+            // evt.currentTarget.className += " active";
+
+            PulloutITEquipment();
         });
+
+        $(document).on('change', "#pulloutitembrand", function () {
+            var brandname = $('#pulloutitembrand').val();
+            $("#pulloutitemtype").empty();
+
+            $.ajax({
+                type: "POST",
+                url: "/items/itemtype",
+                data: { brandname: brandname },
+                success: function (result) {
+                    var data = result.data;
+                    console.log(result.data);
+
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.itemname, item.itemname);
+                        $(options).html(item.itemname);
+                        $('#pulloutitemtype').append(options);
+                        console.log(item.itemname);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+
+
+        });
+
+        $(document).on('click', "#findBtn", function () {
+            var searchticket = $('#searchticket').val();
+            var searchtrf = $('#searchtrf').val();
+            var searchserial = $('#searchserial').val();
+
+            showloader();
+            dataTable = $('#search-tbl').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'POST',
+                'ajax': {
+                    'url': '/equipmentreport/find',
+                    'data': {
+                        searchticket: searchticket,
+                        searchtrf: searchtrf,
+                        searchserial: searchserial,
+                        iswildcardsearch: iswildcardsearch
+                    }
+                },
+                'columns': [
+                    { data: 'serial' },
+                    { data: 'brandname' },
+                    { data: 'itemtype' },
+                    { data: 'receivedby' },
+                    { data: 'receiveddate' },
+                    { data: 'ticket' },
+                    { data: 'trf' },
+                    { data: 'deployto' },
+                    { data: 'deployby' },
+                    { data: 'deploydate' },
+                    { data: 'pulloutbrand' },
+                    { data: 'pulloutitemtype' },
+                    { data: 'pulloutserial' },
+                    { data: 'pulloutfrom' },
+                    { data: 'pulloutdate' },
+                    { data: 'status' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+        });
+
+        $(document).on('click', "#deployBtn", function () {
+            var deployticket = $('#dployticket').val();
+            var deploytrf = $('#deploytrf').val();
+            var deployserial = $('#deployserial').val();
+            var deployitembrand = $('#deployitembrand').val();
+            var deployitemtype = $('#deployitemtype').val();
+            var deployto = $('#deployto').val();
+            var deploydate = $('#deploydate').val();
+            var deployby = $('#deployby').val();
+
+            let data = [];
+            data.push({
+                deployticket: deployticket,
+                deploytrf: deploytrf,
+                deployserial: deployserial,
+                deployitembrand: deployitembrand,
+                deployitemtype: deployitemtype,
+                deployto: deployto,
+                deploydate: deploydate,
+                deployby: deployby
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/equipmentreport/deploy",
+                data: {
+                    deploydate: deploydate,
+                    deployby: deployby,
+                    data: data
+                },
+                success: function (result) {
+                    success('Saved!', 'Data saved!')
+                    DeployITEquipmentTable();
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+        });
+
+        $(document).on('change', "#iswildcardsearch", function () {
+            if (wildcardbox.checked) {
+                iswildcardsearch = true
+            } else {
+                iswildcardsearch = false;
+            }
+        });
+
+        $(document).on('click', "#pullouBtn", function () {
+            var pulloutticket = $('#pulloutticket').val();
+            var pullouttrf = $('#pullouttrf').val();
+            var pulloutserial = $('#pulloutserial').val();
+            var pulloutitembrand = $('#pulloutitembrand').val();
+            var pulloutitemtype = $('#pulloutitemtype').val();
+            var pulloutfrom = $('#pulloutfrom').val();
+            var pulloutdate = $('#pulloutdate').val();
+            var pulloutby = $('#pulloutby').val();
+
+            let data = [];
+            data.push({
+                pulloutticket: pulloutticket,
+                pullouttrf: pullouttrf,
+                pulloutserial: pulloutserial,
+                pulloutitembrand: pulloutitembrand,
+                pulloutitemtype: pulloutitemtype,
+                pulloutfrom: pulloutfrom,
+                pulloutdate: pulloutdate,
+                pulloutby: pulloutby
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/equipmentreport/pullout",
+                data: {
+                    pulloutdate: pulloutdate,
+                    pulloutby: pulloutby,
+                    data: data
+                },
+                success: function (result) {
+                    success('Saved!', 'Data saved!')
+                    PulloutITEquipment();
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+        });
+        function TransactionITEquipmentTable() {
+            showloader();
+            dataTable = $('#search-tbl').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'GET',
+                'ajax': {
+                    'url': '/equipmentreport/load'
+                },
+                'columns': [
+                    { data: 'serial' },
+                    { data: 'brandname' },
+                    { data: 'itemtype' },
+                    { data: 'receivedby' },
+                    { data: 'receiveddate' },
+                    { data: 'ticket' },
+                    { data: 'trf' },
+                    { data: 'deployto' },
+                    { data: 'deployby' },
+                    { data: 'deploydate' },
+                    { data: 'pulloutbrand' },
+                    { data: 'pulloutitemtype' },
+                    { data: 'pulloutserial' },
+                    { data: 'pulloutfrom' },
+                    { data: 'pulloutdate' },
+                    { data: 'status' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+        };
+
+        function DeployITEquipmentTable() {
+            showloader();
+            dataTable = $('#deploy-tbl').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'GET',
+                'ajax': {
+                    'url': '/equipmentreport/loaddeploy'
+                },
+                'columns': [
+                    { data: 'serial' },
+                    { data: 'itembrand' },
+                    { data: 'itemtype' },
+                    { data: 'deployto' },
+                    { data: 'deployby' },
+                    { data: 'deploydate' },
+                    { data: 'ticket' },
+                    { data: 'trf' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+        };
+
+        function PulloutITEquipment() {
+            showloader();
+            dataTable = $('#pullout-tbl').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'GET',
+                'ajax': {
+                    'url': '/equipmentreport/loadpullout'
+                },
+                'columns': [
+                    { data: 'serial' },
+                    { data: 'itembrand' },
+                    { data: 'itemtype' },
+                    { data: 'pulloutfrom' },
+                    { data: 'pulloutby' },
+                    { data: 'pulloutdate' },
+                    { data: 'ticket' },
+                    { data: 'trf' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+        };
+
+        function LoadList() {
+            $("#deploy-dtbox").DateTimePicker({
+                dateFormat: "yyyy-MM-dd"
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/items/brandnamedepartment",
+                data: { department: 'IT' },
+                success: function (result) {
+                    console.log(result.data);
+                    var data = result.data;
+
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.brandname, item.brandname);
+                        $(options).html(item.brandname);
+                        $('#deployitembrand').append(options);
+                        console.log(item.brandname);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/personel/personelposition",
+                data: { position: 'IT' },
+                success: function (result) {
+                    console.log(result.data);
+                    var data = result.data;
+
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.fullname, item.fullname);
+                        $(options).html(item.fullname);
+                        $('#deployby').append(options);
+                        console.log(item.fullname);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/clientstores/clientstore",
+                data: { clientname: '7ELEVEN' },
+                success: function (result) {
+                    console.log(result.data);
+                    var data = result.data;
+
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.storename, item.storename);
+                        $(options).html(item.storename);
+                        $('#deployto').append(options);
+                        console.log(item.storename);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+
+
+            $("#pullout-dtbox").DateTimePicker({
+                dateFormat: "yyyy-MM-dd"
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/items/brandnamedepartment",
+                data: { department: 'IT' },
+                success: function (result) {
+                    console.log(result.data);
+                    var data = result.data;
+
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.brandname, item.brandname);
+                        $(options).html(item.brandname);
+                        $('#pulloutitembrand').append(options);
+                        console.log(item.brandname);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/personel/personelposition",
+                data: { position: 'IT' },
+                success: function (result) {
+                    console.log(result.data);
+                    var data = result.data;
+
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.fullname, item.fullname);
+                        $(options).html(item.fullname);
+                        $('#pulloutby').append(options);
+                        console.log(item.fullname);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/clientstores/clientstore",
+                data: { clientname: '7ELEVEN' },
+                success: function (result) {
+                    console.log(result.data);
+                    var data = result.data;
+
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.storename, item.storename);
+                        $(options).html(item.storename);
+                        $('#pulloutfrom').append(options);
+                        console.log(item.storename);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+
+        }
     });
 </script>

@@ -29,7 +29,49 @@
 
 
         $(document).on('click', "#searchBtn", function () {
+            var dateto = $('#dateto').val();
+            var datefrom = $('#datefrom').val();
+            var personel = $('#personel').val();
 
+            showloader();
+            dataTable = $('#transaction-table').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'POST',
+                'ajax': {
+                    'url': '/cablingreport/search',
+                    'data': {
+                        personel: personel,
+                        dateto: dateto,
+                        datefrom: datefrom
+                    }
+                },
+                'columns': [
+
+                    { data: 'transactionid' },
+                    { data: 'requestby' },
+                    { data: 'requestdate' },
+                    { data: 'brandname' },
+                    { data: 'itemtype' },
+                    { data: 'itemcost' },
+                    { data: 'quantity' },
+                    { data: 'approvedby' },
+                    { data: 'approveddate' },
+                    { data: 'requestid' },
+                    { data: 'status' },
+
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
         })
 
         function loadtable() {

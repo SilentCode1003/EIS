@@ -9,6 +9,7 @@ const ItEquipmentRequest = `${__dirname}/data/request/equipment/pending/`;
 const TransferEquipmentRequest = `${__dirname}/data/request/transfer/pending/`;
 const CablingEquipmentRequest = `${__dirname}/data/request/cabling/pending/`;
 const MasterItemPath = `${__dirname}/data/masters/items/`;
+const mysql = require('./repository/dbconnect');
 
 
 /* GET home page. */
@@ -25,7 +26,7 @@ router.get('/', function (req, res, next) {
 
 module.exports = router;
 
-router.post('/save', (req, res) => {
+router.post('/save', async (req, res) => {
   try {
     var serial = req.body.serial;
     var brandname = req.body.brandname;
@@ -39,10 +40,18 @@ router.post('/save', (req, res) => {
     helper.CreateFolder(folder);
     helper.CreateJSON(fileDir, data);
 
+    await Execute_TransactionItEquipment(data, (err) => {
+      if (err) throw err;
+
+    });
+
+    await Execute_RegisterItEquipment(data, (err) => {
+      if (err) throw err;
+    })
+
     res.json({
       msg: 'success'
     })
-
 
   } catch (error) {
     res.json({
@@ -95,8 +104,10 @@ router.get('/load', (req, res) => {
 
 router.post('/saveexceldata', async (req, res) => {
   try {
-    var data = await req.body.data;
-    var dataraw = await JSON.parse(data);
+    var data = req.body.data;
+    var dataraw = JSON.parse(data);
+    let excelData = [];
+    let excelTransaction = [];
 
     //console.log(`${dataraw}`);
     var dataArr = [];
@@ -141,18 +152,56 @@ router.post('/saveexceldata', async (req, res) => {
         'createddate': createddate
       });
 
+      excelData.push([
+        serial,
+        brandname,
+        itemtype,
+        receivedby,
+        helper.GetCurrentDate(),
+        'ACTIVE'
+      ])
+
+      excelTransaction.push([
+        brandname,
+        itemtype,
+        serial,
+        receivedby,
+        helper.GetCurrentDate(),
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        'ACTIVE'
+      ])
+
       var data = JSON.stringify(dataArr, null, 2);
 
       //console.log(`Target Dir: ${folder}\n Data:${dataArr} \nFilename: ${fileDir}`);
 
       helper.CreateFolder(folder);
       helper.CreateJSON(fileDir, data);
+
+
       dataArr = [];
-    }).then(
-      res.json({
-        msg: 'success'
-      })
-    )
+    });
+
+    await Execute_ExcelRegisterItEquipment(excelData, (err) => {
+      if (err) throw err;
+    })
+
+    await Execute_ExecelTransactionItEquipment(excelTransaction, (err) => {
+      if (err) throw err;
+    })
+
+    res.json({
+      msg: 'success'
+    })
 
   } catch (error) {
     res.json({
@@ -234,10 +283,100 @@ router.get('/GetDetailedEquipmentSummary', (req, res) => {
       msg: 'success',
       data: data
     })
-    
+
   } catch (error) {
     res.json({
       msg: error
     })
   }
 })
+
+
+//SQL Functions
+Execute_TransactionItEquipment = (data, callback) => {
+  let dataJson = JSON.parse(data);
+  let stmt = '';
+
+  dataJson.forEach((key, item) => {
+    stmt = `INSERT INTO transaction_it_equipment(
+      tie_brandname,
+      tie_itemtype,
+      tie_serial,
+      tie_receivedby,
+      tie_receiveddate,
+      tie_ticket,
+      tie_trf,
+      tie_deployto,
+      tie_deployby,
+      tie_deploydate,
+      tie_pulloutbrand,
+      tie_pulloutitemtype,
+      tie_pulloutserial,
+      tie_pulloutfrom,
+      tie_pulloutdate,
+      tie_status
+      ) VALUES('${key.brandname}','${key.itemtype}','${key.serial}','${key.receivedby}','${key.receiveddate}','','','','','','','','','','','ACTIVE')`;
+  });
+
+  callback(null, mysql.Insert(stmt));
+
+}
+
+Execute_RegisterItEquipment = (data, callback) => {
+  let dataJson = JSON.parse(data);
+  let stmt = '';
+
+  dataJson.forEach((key, item) => {
+    stmt = `INSERT INTO register_it_equipment(
+      rie_serial,
+      rie_itembrand,
+      rie_itemtype,
+      rie_receivedby,
+      rie_receiveddate,
+      rie_status
+      ) VALUES('${key.serial}','${key.brandname}','${key.itemtype}','${key.receivedby}','${key.receiveddate}','ACTIVE')`;
+  });
+
+  callback(null, mysql.Insert(stmt));
+}
+
+Execute_ExecelTransactionItEquipment = (data, callback) => {
+  let stmt = '';
+
+  stmt = `INSERT INTO transaction_it_equipment(
+    tie_brandname,
+    tie_itemtype,
+    tie_serial,
+    tie_receivedby,
+    tie_receiveddate,
+    tie_ticket,
+    tie_trf,
+    tie_deployto,
+    tie_deployby,
+    tie_deploydate,
+    tie_pulloutbrand,
+    tie_pulloutitemtype,
+    tie_pulloutserial,
+    tie_pulloutfrom,
+    tie_pulloutdate,
+    tie_status
+    ) VALUES ?`;
+
+  callback(null, mysql.InsertMultiple(stmt, data));
+
+}
+
+Execute_ExcelRegisterItEquipment = (data, callback) => {
+  let stmt = '';
+
+  stmt = `INSERT INTO register_it_equipment(
+      rie_serial,
+      rie_itembrand,
+      rie_itemtype,
+      rie_receivedby,
+      rie_receiveddate,
+      rie_status
+      ) VALUES ?`;
+
+  callback(null, mysql.InsertMultiple(stmt, data));
+}

@@ -1,0 +1,29 @@
+[
+  {
+    "referenceid": 1,
+    "date": "2022-11-17 14:04",
+    "personel": "JOSEPH ORENCIO",
+    "details": [
+      {
+        "personel": "MATILOK TILOK",
+        "brandname": "VENDEX",
+        "itemtype": "uPVC Electrical Conduit 32 mm",
+        "itemcost": "150",
+        "itemcount": "100",
+        "createddate": "2022-11-17 14:04",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MATILOK TILOK",
+        "brandname": "NO BRAND",
+        "itemtype": "SOLID WIRE - BLACK",
+        "itemcost": "750",
+        "itemcount": "2",
+        "createddate": "2022-11-17 14:04",
+        "status": "PENDING"
+      }
+    ],
+    "remarks": "FOR INSTALLATION",
+    "status": "PENDING"
+  }
+]

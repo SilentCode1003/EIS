@@ -88,3 +88,45 @@ router.get('/load', (req, res) => {
     })
   }
 });
+
+router.post('/clientstore', (req, res) => {
+  try {
+    var dataArr = [];
+    let index = req.body.clientname;
+    let targetFolder = `${ClientStorePath}/${index}/`;
+    var files = helper.GetFiles(targetFolder);
+
+    console.log(index);
+
+    files.forEach(file => {
+      var fileDir = `${targetFolder}${file}`;
+      var data = helper.ReadJSONFile(fileDir);
+
+      data.forEach((key, item) => {
+        dataArr.push({
+          clientname: key.clientname,
+          storename: key.storename,
+          storenumber: key.storenumber,
+          contactnumber: key.contactnumber,
+          address: key.address,
+          googlemapaddress: key.googlemapaddress,
+        })
+      })
+    });
+
+    helper.GetByClientStores(dataArr, index, (err, result) => {
+      if (err) throw err;
+
+      res.json({
+        msg: 'success',
+        data: result
+      })
+    });
+
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+
+});

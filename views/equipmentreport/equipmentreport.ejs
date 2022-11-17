@@ -21,6 +21,8 @@
 
             <div class="entry-area">
                 <input type="text" class="entry-input" id="searchserial" name="searchserial" placeholder="SERIAL">
+                <input type="checkbox" id="iswildcardsearch" name="iswildcardsearch">
+                <label style="color: black;" for="iswildcardsearch">Serial Wildcard Search</label>
             </div>
 
             <div class="entry-area">
@@ -70,31 +72,45 @@
             </div>
 
             <div class="entry-area">
-                <input type="text" class="entry-input" id="deployitembrand" name="deployitembrand"
-                    placeholder="ITEM BRAND">
+                <select class="entry-input" id=deployitembrand>
+                    <option value="-" id="listbrandname">ITEM BRAND</option>
+                </select>
+                <!-- <input type="text" class="entry-input" id="deployitembrand" name="deployitembrand"
+                    placeholder="ITEM BRAND"> -->
             </div>
 
             <div class="entry-area">
-                <button class="approve-btn tablinks" id="pulloutEnterBtn" name="pulloutEnterBtn">ENTER</button>
+                <button class="approve-btn tablinks" id="deployBtn" name="deployBtn">SUBMIT</button>
             </div>
         </div>
 
         <div class="col-xl-6 col-lg-5">
             <div class="entry-area">
-                <input type="text" class="entry-input" id="deployitemtype" name="deployitemtype"
-                    placeholder="ITEM TYPE">
+                <select class="entry-input" id=deployitemtype>
+                    <option value="-" id="lisitemtype">ITEM TYPE</option>
+                </select>
+                <!-- <input type="text" class="entry-input" id="deployitemtype" name="deployitemtype"
+                    placeholder="ITEM TYPE"> -->
             </div>
 
             <div class="entry-area">
-                <input type="text" class="entry-input" id="deployfrom" name="deployto" placeholder="DEPLOY TO">
+                <select class="entry-input" id=deployto>
+                    <option value="-" id="lisistores">DEPLOY TO</option>
+                </select>
+                <!-- <input type="text" class="entry-input" id="deployfrom" name="deployto" placeholder="DEPLOY TO"> -->
             </div>
 
             <div class="entry-area">
-                <input type="text" class="entry-input" id="deploydate" name="deploydate" placeholder="DEPLOY DATE">
+                <input class="entry-input" type="text" data-field="date" placeholder="DATE FROM" readonly id="deploydate" name="deploydate">
+            <div id="deploy-dtbox"></div>
+                <!-- <input type="text" class="entry-input" id="deploydate" name="deploydate" placeholder="DEPLOY DATE"> -->
             </div>
 
             <div class="entry-area">
-                <input type="text" class="entry-input" id="deployby" name="deployby" placeholder="DEPLOY BY">
+                <select class="entry-input" id=deployby>
+                    <option value="-" id="listpersonel">DEPLOY BY</option>
+                </select>
+                <!-- <input type="text" class="entry-input" id="deployby" name="deployby" placeholder="DEPLOY BY"> -->
             </div>
         </div>
     </div>
@@ -133,29 +149,45 @@
             </div>
 
             <div class="entry-area">
-                <input type="text" class="entry-input" id="pulloutitembrand" name="pulloutitembrand" placeholder="ITEM BRAND">
+                <select class="entry-input" id=pulloutitembrand>
+                    <option value="-" id="listbrandname">ITEM BRAND</option>
+                </select>
+                <!-- <input type="text" class="entry-input" id="pulloutitembrand" name="pulloutitembrand"
+                    placeholder="ITEM BRAND"> -->
             </div>
 
             <div class="entry-area">
-                <button class="approve-btn tablinks" id="pulloutEnterBtn" name="pulloutEnterBtn">ENTER</button>
+                <button class="approve-btn tablinks" id="pullouBtn" name="pullouBtn">SUBMIT</button>
             </div>
         </div>
 
         <div class="col-xl-6 col-lg-5">
             <div class="entry-area">
-                <input type="text" class="entry-input" id="pulloutitemtype" name="pulloutitemtype" placeholder="ITEM TYPE">
+                <select class="entry-input" id=pulloutitemtype>
+                    <option value="-" id="lisitemtype">ITEM TYPE</option>
+                </select>
+                <!-- <input type="text" class="entry-input" id="pulloutitemtype" name="pulloutitemtype"
+                    placeholder="ITEM TYPE"> -->
             </div>
 
             <div class="entry-area">
-                <input type="text" class="entry-input" id="pulloutfrom" name="pulloutfrom" placeholder="PULLOUT FROM">
+                <select class="entry-input" id=pulloutfrom>
+                    <option value="-" id="lisistores">PULLOUT FROM</option>
+                </select>
+                <!-- <input type="text" class="entry-input" id="pulloutfrom" name="pulloutfrom" placeholder="PULLOUT FROM"> -->
             </div>
 
             <div class="entry-area">
-                <input type="text" class="entry-input" id="pulloutdate" name="pulloutdate" placeholder="PULLOUT DATE">
+                <input class="entry-input" type="text" data-field="date" placeholder="PULLOUT DATE" readonly id="pulloutdate" name="pulloutdate">
+                <div id="pullout-dtbox"></div>
+                <!-- <input type="text" class="entry-input" id="pulloutdate" name="pulloutdate" placeholder="PULLOUT DATE"> -->
             </div>
 
             <div class="entry-area">
-                <input type="text" class="entry-input" id="pulloutby" name="pulloutby" placeholder="PULLOUT BY">
+                <select class="entry-input" id=pulloutby>
+                    <option value="-" id="listpersonel">PULLOUT BY</option>
+                </select>
+                <!-- <input type="text" class="entry-input" id="pulloutby" name="pulloutby" placeholder="PULLOUT BY"> -->
             </div>
         </div>
     </div>
@@ -163,7 +195,7 @@
     <hr>
 
     <div>
-        <table id="pullout-tble">
+        <table id="pullout-tbl">
             <thead>
                 <th>SERIAL</th>
                 <th>ITEM BRAND</th>

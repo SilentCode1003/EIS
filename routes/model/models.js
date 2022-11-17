@@ -82,3 +82,72 @@ exports.RequestCablingDetails = (data) => {
 
     return dataResult;
 }
+
+exports.TransactionItEquipment = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            transactionid: key.tie_transactionid,
+            brandname: key.tie_brandname,
+            itemtype: key.tie_itemtype,
+            serial: key.tie_serial,
+            receivedby: key.tie_receivedby,
+            receiveddate: key.tie_receiveddate,
+            ticket: key.tie_ticket,
+            trf: key.tie_trf,
+            deployto: key.tie_deployto,
+            deployby: key.tie_deployby,
+            deploydate: key.tie_deploydate,
+            pulloutbrand: key.tie_pulloutbrand,
+            pulloutitemtype: key.tie_pulloutitemtype,
+            pulloutserial: key.tie_pulloutserial,
+            pulloutfrom: key.tie_pulloutfrom,
+            pulloutdate: key.tie_pulloutdate,
+            status: key.tie_status,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.DeployITEquipment = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            serial: key.die_serial,
+            itembrand: key.die_itembrand,
+            itemtype: key.die_itemtype,
+            deployto: key.die_deployto,
+            deployby: key.die_deployby,
+            deploydate: key.die_deploydate,
+            ticket: key.die_ticket,
+            trf: key.die_trf,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.PulloutITEquipment = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            serial: key.pie_serial,
+            itembrand: key.pie_brandname,
+            itemtype: key.pie_itemtype,
+            pulloutfrom: key.pie_pulloutfrom,
+            pulloutby: key.pie_pulloutby,
+            pulloutdate: key.pie_pulloutdate,
+            ticket: key.pie_ticket,
+            trf: key.pie_trf,
+        })
+    });
+
+    return dataResult;
+}

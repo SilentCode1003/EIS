@@ -1,6 +1,13 @@
 const mysql = require('mysql');
 const model = require('../model/models');
 
+// const connection = mysql.createConnection({
+//     host: '192.168.1.250',
+//     user: 'root',
+//     password: 'Dev42@2022!',
+//     database: 'EquipmentInventory'
+// });
+
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -8,13 +15,13 @@ const connection = mysql.createConnection({
     database: 'EquipmentInventory'
 });
 
-exports.Insert = async (stmt, todos) => {
+exports.Insert = async (stmt) => {
     try {
 
         // console.log(`statement: ${stmt} data: ${todos}`);
         connection.connect((err) => { return err; })
 
-        connection.query(stmt, [todos], (err, results, fields) => {
+        connection.query(stmt, (err, results, fields) => {
             if (err) {
                 return console.error(err.message);
             }
@@ -31,7 +38,7 @@ exports.Insert = async (stmt, todos) => {
 exports.InsertMultiple = async (stmt, todos) => {
     try {
         connection.connect((err) => { return err; })
-        // console.log(`statement: ${stmt} data: ${todos}`);
+        console.log(`statement: ${stmt} data: ${todos}`);
 
         connection.query(stmt, [todos], (err, results, fields) => {
             if (err) {
@@ -50,6 +57,9 @@ exports.Select = async (sql, table, callback) => {
     try {
         connection.connect((err) => { return err; })
         connection.query(sql, (error, results, fields) => {
+
+            // console.log(results);
+
             if (error) {
                 callback(error, null)
             }
@@ -61,6 +71,21 @@ exports.Select = async (sql, table, callback) => {
             if (table == 'RequestCablingEquipment') {
 
                 callback(null, model.RequestCablingEquipment(results));
+            }
+
+            if (table == 'TransactionItEquipment') {
+
+                callback(null, model.TransactionItEquipment(results));
+            }
+
+            if (table == 'DeployITEquipment') {
+
+                callback(null, model.DeployITEquipment(results));
+            }
+
+            if (table == 'PulloutITEquipment') {
+
+                callback(null, model.PulloutITEquipment(results));
             }
         });
 
