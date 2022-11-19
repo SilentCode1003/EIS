@@ -33,6 +33,10 @@
             document.getElementById('deploy').style.display = "block";
             // evt.currentTarget.className += " active";
 
+            $("#deploy-dtbox").DateTimePicker({
+                dateFormat: "yyyy-MM-dd"
+            });
+
             DeployITEquipmentTable();
         });
 
@@ -75,6 +79,10 @@
             }
             document.getElementById('pullout').style.display = "block";
             // evt.currentTarget.className += " active";
+
+            $("#pullout-dtbox").DateTimePicker({
+                dateFormat: "yyyy-MM-dd"
+            });
 
             PulloutITEquipment();
         });
@@ -348,10 +356,6 @@
         };
 
         function LoadList() {
-            $("#deploy-dtbox").DateTimePicker({
-                dateFormat: "yyyy-MM-dd"
-            });
-
             $.ajax({
                 type: "POST",
                 url: "/items/brandnamedepartment",
@@ -412,10 +416,6 @@
                 }
             });
 
-
-            $("#pullout-dtbox").DateTimePicker({
-                dateFormat: "yyyy-MM-dd"
-            });
 
             $.ajax({
                 type: "POST",

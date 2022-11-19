@@ -188,8 +188,19 @@ router.post('/deploy', async (req, res) => {
     let filename = `${targetFolder}/${date}_${deployby}.json`
     let dataJson = JSON.stringify(data, null, 2);
     let sqldata = [];
+    let serial = '';
+    let deployto = '';
+    let deploydate = '';
+    let deploytrf = '';
+    let deployticket = '';
 
     data.forEach((key, item) => {
+      serial = key.deployserial;
+      deployto = key.deployto;
+      deploydate = key.deploydate;
+      deployticket = key.deployticket;
+      deploytrf = key.deploytrf;
+
       sqldata.push([
         key.deployserial,
         key.deployitembrand,
@@ -216,18 +227,20 @@ router.post('/deploy', async (req, res) => {
       callback(null, mysql.InsertMultiple(sql, data));
     }
 
-    Update_TransactionITEquipment = (data, callback) => {
-      let sql = `INSERT INTO deploy_it_equipment(
-        die_serial,
-        die_itembrand,
-        die_itemtype,
-        die_deployto,
-        die_deployby,
-        die_deploydate,
-        die_ticket,
-        die_trf) VALUES ?`
+    Update_TransactionITEquipment = (serial, ticket, trf, deployto, deployby, deploydate, callback) => {
+      let sql = `UPDATE transaction_it_equipment 
+      SET tie_ticket='${ticket}', 
+      tie_trf='${trf}', 
+      tie_deployto='${deployto}',
+      tie_deployby='${deployby}',
+      tie_deploydate='${deploydate}',
+      tie_status= 'DEPLOY' 
+      WHERE tie_serial='${serial}'`;
 
-      callback(null, mysql.InsertMultiple(sql, data));
+      mysql.Update(sql, (err, result) => {
+        if (err) callback(err, null);
+        callback(null, result)
+      });
     }
 
     helper.CreateFolder(targetFolder);
@@ -237,6 +250,12 @@ router.post('/deploy', async (req, res) => {
       if (err) throw err;
       console.log('Insert_DeployITEquipment');
     });
+
+    await Update_TransactionITEquipment(serial, deployticket, deploytrf, deployto, deployby, deploydate, (err, result) => {
+      if (err) throw err;
+
+      console.log(Update_TransactionITEquipment);
+    })
 
     res.json({
       msg: 'success'
@@ -261,8 +280,23 @@ router.post('/pullout', async (req, res) => {
     let filename = `${targetFolder}/${date}_${deployby}.json`
     let dataJson = JSON.stringify(data, null, 2);
     let sqldata = [];
+    let serial = '';
+    let pulloutfrom = '';
+    let pulloutdate = '';
+    let pullouttrf = '';
+    let pulloutticket = '';
+    let pulloutbrand = '';
+    let pulloutitemtype = '';
 
     data.forEach((key, item) => {
+      serial = key.pulloutserial;
+      pulloutfrom = key.pulloutfrom;
+      pulloutdate = key.pulloutdate;
+      pulloutticket = key.pulloutticket;
+      pullouttrf = key.pullouttrf;
+      pulloutbrand = key.pulloutitembrand;
+      pulloutitemtype = key.pulloutitemtype;
+
       sqldata.push([
         key.pulloutserial,
         key.pulloutitembrand,
@@ -289,18 +323,19 @@ router.post('/pullout', async (req, res) => {
       callback(null, mysql.InsertMultiple(sql, data));
     }
 
-    Update_TransactionITEquipment = (data, callback) => {
-      let sql = `INSERT INTO deploy_it_equipment(
-        die_serial,
-        die_itembrand,
-        die_itemtype,
-        die_deployto,
-        die_deployby,
-        die_deploydate,
-        die_ticket,
-        die_trf) VALUES ?`
+    Update_TransactionITEquipment = (ticket, pulloutbrand, pulloutitemtype, pulloutserial, pulloutfrom, pulloutdate, callback) => {
+      let sql = `UPDATE transaction_it_equipment  SET
+      tie_pulloutbrand='${pulloutbrand}',
+      tie_pulloutitemtype='${pulloutitemtype}',
+      tie_pulloutserial='${pulloutserial}',
+      tie_pulloutfrom= '${pulloutfrom}',
+      tie_pulloutdate= '${pulloutdate}'
+      WHERE tie_ticket='${ticket}'`;
 
-      callback(null, mysql.InsertMultiple(sql, data));
+      mysql.Update(sql, (err, result) => {
+        if (err) callback(err, null);
+        callback(null, result)
+      });
     }
 
     helper.CreateFolder(targetFolder);
@@ -310,6 +345,11 @@ router.post('/pullout', async (req, res) => {
       if (err) throw err;
       console.log('Insert_PulloutITEquipment');
     });
+
+    await Update_TransactionITEquipment(pulloutticket, pulloutbrand, pulloutitemtype, serial, pulloutfrom, pulloutdate, (err, result) => {
+      if (err) throw err;
+      console.log('Update_TransactionITEquipment');
+    })
 
     res.json({
       msg: 'success'
