@@ -37,7 +37,7 @@ router.get('/load', (req, res) => {
 
       data.forEach((key, item) => {
         dataArr.push({
-          requestid: key.referenceid,
+          requestid: key.requestid,
           date: key.date,
           personel: key.personel,
           details: key.details,
@@ -72,15 +72,16 @@ router.post('/save', async (req, res) => {
     let targetDir = `${CablingPendingPath}${filename}`;
     let todo = [];
     let details_todo = [];
-    let count = 0;
     let transaction_list = [];
     let requestid = '';
     let dataRequest = [];
+    let detailsJson = JSON.parse(details);
 
     todo.push([datetime[0], personel, details, remarks, status]);
 
     Save_Request = (data, callback) => {
       let dataJson = JSON.stringify(data, null, 2);
+
       callback(null, helper.CreateJSON(targetDir, dataJson));
     }
 
@@ -91,21 +92,8 @@ router.post('/save', async (req, res) => {
         rcd_details,
         rcd_remarks,
         rcd_status) VALUES ?`;
+
       callback(null, mysql.InsertMultiple(stmt, data));
-    }
-
-    Execute_Cabling_Request_Equipment_SingleData = (data, callback) => {
-      let stmt_tce = `INSERT INTO request_cabling_equipment(
-        rce_personel,
-        rce_requestdate,
-        rce_brandname,
-        rce_itemtype,
-        rce_quantity,
-        rce_cost,
-        rce_referenceid,
-        rce_status) VALUES ?`;
-
-      callback(null, mysql.InsertMultiple(stmt_tce, data));
     }
 
     Execute_Cabling_Request_Equipment = (data, callback) => {
@@ -115,7 +103,6 @@ router.post('/save', async (req, res) => {
         rce_brandname,
         rce_itemtype,
         rce_quantity,
-        rce_cost,
         rce_referenceid,
         rce_status) VALUES ?`;
 
@@ -126,7 +113,6 @@ router.post('/save', async (req, res) => {
       let cmd = `INSERT INTO transaction_cabling_equipment (
         tce_brandname,
         tce_itemtype,
-        tce_itemcost,
         tce_quantity,
         tce_requestby,
         tce_requestdate,
@@ -139,112 +125,104 @@ router.post('/save', async (req, res) => {
       callback(null, mysql.InsertMultiple(cmd, data));
     }
 
-    await Execute_Cabling_Request_Details(todo, (err, data) => {
+    Check_RequestExist = (date, personel, callback) => {
+      let cmd = `SELECT * FROM request_cabling_details WHERE rcd_requestdate='${date}' AND rcd_personel='${personel}'`;
+
+      mysql.Select(cmd, 'RequestCablingDetails', (err, results) => {
+        if (err) throw err;
+
+        callback(null, results);
+      });
+    }
+
+    await Check_RequestExist(datetime[0], personel, (err, result) => {
       if (err) throw err;
-    });
 
-    let cmd = `SELECT * FROM request_cabling_details WHERE rcd_requestdate='${datetime[0]}' AND rcd_personel='${personel}'`;
-    mysql.SelectWhere(cmd, 'RequestCablingDetails', (err, result) => {
-      if (err) throw err;
-      result.forEach((key, item) => {
-        let detailsJson = JSON.parse(details);
-
-
-        requestid = key.requestid;
-
-        //request details
-        dataRequest.push({
-          referenceid: requestid,
-          date: date,
-          personel: personel,
-          details: JSON.parse(details),
-          remarks: remarks,
-          status: status,
-        })
-
-
-        detailsJson.forEach((key, item) => {
-          count += 1;
-
-          //equipment
-          details_todo.push([
-            key.personel,
-            datetime[0],
-            key.brandname,
-            key.itemtype,
-            key.itemcount,
-            key.itemcost,
-            requestid,
-            status]);
-
-          //transaction
-          transaction_list.push([
-            key.brandname,
-            key.itemtype,
-            key.itemcost,
-            key.itemcount,
-            key.personel,
-            datetime[0],
-            '',
-            '',
-            requestid,
-            status,
-          ]);
+      if (result.length == 0) {
+        Execute_Cabling_Request_Details(todo, (err, data) => {
+          if (err) throw err;
+          console.log('Execute_Cabling_Request_Details');
         });
 
 
+        let sql = `SELECT * FROM request_cabling_details WHERE rcd_requestdate='${datetime[0]}' AND rcd_personel='${personel}'`;
+        mysql.SelectResult(sql, 'RequestCablingDetails', (err, data) => {
+          if (err) throw err;
 
+          console.log(data);
 
-        if (count == 1) {
-          Execute_Cabling_Request_Equipment_SingleData(details_todo, (err, data) => {
-            if (err) {
-              throw err;
-            };
+          data.forEach((key, item) => {
+            requestid = key.requestid;
+            console.log(`REQUEST ID: ${requestid}`);
 
-            console.log(`Execute_Cabling_Request_Equipment_SingleData`);
-          });
+            dataRequest.push({
+              requestid: requestid,
+              personel: personel,
+              date: date,
+              details: detailsJson,
+              remarks: remarks,
+              status: status,
+            });
 
-          //insert transaction
-          Insert_TransactionCablingEquipment(transaction_list, (err, data) => {
-            if (err) throw err;
+            details = JSON.parse(details);
+            details.forEach((key, items) => {
+              //equipment
+              details_todo.push([
+                key.personel,
+                datetime[0],
+                key.brandname,
+                key.itemtype,
+                key.itemcount,
+                requestid,
+                status]);
 
-            console.log(`Insert_TransactionCablingEquipment`);
-          });
+              //transaction
+              transaction_list.push([
+                key.brandname,
+                key.itemtype,
+                key.itemcount,
+                key.personel,
+                datetime[0],
+                '',
+                '',
+                requestid,
+                status,
+              ]);
+            })
 
-          //create json file
-          Save_Request(dataRequest, (err, result) => {
-            if (err) throw err;
-          });
-        }
-        if (count >= 2) {
-          Execute_Cabling_Request_Equipment(details_todo, (err, data) => {
-            if (err) {
-              throw err;
-            };
-
-            console.log(`Execute_Cabling_Request_Equipment`);
-          });
-
-          //insert transaction
-          Insert_TransactionCablingEquipment(transaction_list, (err, data) => {
-            if (err) throw err;
-
-            console.log(`Insert_TransactionCablingEquipment`);
-
-             //create json file
-            Save_Request(dataRequest, (err, result) => {
+            //insert request equipment
+            console.log(details_todo);
+            Execute_Cabling_Request_Equipment(details_todo, (err, data) => {
               if (err) throw err;
             });
+
+            //insert transaction equipment
+            console.log(transaction_list);
+            Insert_TransactionCablingEquipment(transaction_list, (err, data) => {
+              if (err) throw err;
+
+              console.log(`Insert_TransactionCablingEquipment`);
+            });
+
+
           });
 
+          Save_Request(dataRequest, (err, result) => {
+            if (err) throw err;
+            console.log('Save_Request');
+          })
 
-        }
-      });
+        });
 
-    });
-
-    res.json({
-      msg: 'success'
+        res.json({
+          msg: 'success'
+        })
+      }
+      if (result.length == 1) {
+        res.json({
+          msg: 'warning'
+        })
+      }
     })
 
   } catch (error) {
@@ -302,6 +280,7 @@ router.post('/approve', (req, res) => {
     let deployPathYearMonth = `${DeployCablingPath}${year}${month}`;
     let data = helper.ReadJSONFile(targetFile);
     let update_items_list = [];
+    let requestid = '';
 
     helper.CreateFolder(deployPathYearMonth);
 
@@ -313,6 +292,7 @@ router.post('/approve', (req, res) => {
     }
 
 
+    console.log(data);
     data.forEach((key, item) => {
       var dataJson = key.details;
 
@@ -345,9 +325,21 @@ router.post('/approve', (req, res) => {
 
       });
 
-      let update = `UPDATE transaction_cabling_equipment SET tce_approvedby= '${req.session.fullname}', tce_approveddate='${helper.GetCurrentDate()}', tce_status='APPROVED' WHERE tce_requestid='${key.referenceid}'`;
+      let update = `UPDATE transaction_cabling_equipment SET tce_approvedby= '${req.session.fullname}', tce_approveddate='${helper.GetCurrentDate()}', tce_status='APPROVED' WHERE tce_requestid='${key.requestid}'`;
+      let update_rce = `UPDATE request_cabling_equipment SET rce_status='APPROVED' WHERE rce_referenceid='${key.requestid}'`;
+      let update_rcd = `UPDATE request_cabling_details SET rcd_status='APPROVED' WHERE rcd_requestid='${key.requestid}'`;
 
-      mysql.Update(update);
+      mysql.Update(update, (err, result) => {
+        if (err) throw err;
+      });
+
+      mysql.Update(update_rce, (err, result) => {
+        if (err) throw err;
+      });
+  
+      mysql.Update(update_rcd, (err, result) => {
+        if (err) throw err;
+      });
 
     });
 

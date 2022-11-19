@@ -1,25 +1,48 @@
 [
   {
     "referenceid": 1,
-    "date": "2022-11-17 14:04",
+    "date": "2022-11-17 16:03",
     "personel": "JOSEPH ORENCIO",
     "details": [
       {
-        "personel": "MATILOK TILOK",
+        "personel": "JOSEPH ORENCIO",
         "brandname": "VENDEX",
         "itemtype": "uPVC Electrical Conduit 32 mm",
-        "itemcost": "150",
-        "itemcount": "100",
-        "createddate": "2022-11-17 14:04",
+        "itemcount": "200",
+        "createddate": "2022-11-17 16:03",
         "status": "PENDING"
       },
       {
-        "personel": "MATILOK TILOK",
+        "personel": "JOSEPH ORENCIO",
         "brandname": "NO BRAND",
         "itemtype": "SOLID WIRE - BLACK",
-        "itemcost": "750",
-        "itemcount": "2",
-        "createddate": "2022-11-17 14:04",
+        "itemcount": "3",
+        "createddate": "2022-11-17 16:03",
+        "status": "PENDING"
+      }
+    ],
+    "remarks": "FOR INSTALLATION",
+    "status": "PENDING"
+  },
+  {
+    "referenceid": 2,
+    "date": "2022-11-17 16:03",
+    "personel": "JOSEPH ORENCIO",
+    "details": [
+      {
+        "personel": "JOSEPH ORENCIO",
+        "brandname": "VENDEX",
+        "itemtype": "uPVC Electrical Conduit 32 mm",
+        "itemcount": "200",
+        "createddate": "2022-11-17 16:03",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JOSEPH ORENCIO",
+        "brandname": "NO BRAND",
+        "itemtype": "SOLID WIRE - BLACK",
+        "itemcount": "3",
+        "createddate": "2022-11-17 16:03",
         "status": "PENDING"
       }
     ],

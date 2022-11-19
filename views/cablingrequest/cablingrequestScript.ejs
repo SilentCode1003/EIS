@@ -39,6 +39,7 @@
                 warning('You have no request? IDIOT!');
             } else {
                 let data = JSON.stringify(dataArr, null, 2);
+                // let data = dataArr;
                 let remarks = $('#remarks').val();
 
                 console.log(remarks);
@@ -51,7 +52,7 @@
             var brandname = $('#brandname').val();
             var itemtype = $('#itemtype').val();
             var itemcount = $('#itemcount').val();
-            var itemcost = $('#itemcost').val();
+            // var itemcost = $('#itemcost').val();
             // var remarks = $('#remarks').val();
             var createddate = '<%= date%>';
 
@@ -61,7 +62,7 @@
             if (brandname == "-") { message += "BRAND NAME " }
             if (itemtype == "-") { message += "ITEM TYPE " }
             if (itemcount == "") { message += "QUANTITY " }
-            if (itemcost == "") { message += "COST PER UNIT " }
+            // if (itemcost == "") { message += "COST PER UNIT " }
 
             if (message != "") { warning("Warning!", "Must fill-up " + message + " field!") }
             else {
@@ -71,7 +72,7 @@
                         personel: personel,
                         brandname: brandname,
                         itemtype: itemtype,
-                        itemcost: itemcost,
+                        // itemcost: itemcost,
                         itemcount: itemcount,
                         createddate: createddate,
                         status: 'PENDING'
@@ -83,13 +84,13 @@
                     var BRAND_NAME = row.insertCell(1);
                     var ITEM_NAME = row.insertCell(2);
                     var ITEM_COUNT = row.insertCell(3);
-                    var ITEM_COST = row.insertCell(4);
+                    // var ITEM_COST = row.insertCell(4);
 
                     FE_NAME.innerHTML = personel;
                     BRAND_NAME.innerHTML = brandname;
                     ITEM_NAME.innerHTML = itemtype;
                     ITEM_COUNT.innerHTML = itemcount;
-                    ITEM_COST.innerHTML = itemcost;
+                    // ITEM_COST.innerHTML = itemcost;
 
                 } else {
                     if (!dataArr.map(item => {
@@ -102,7 +103,7 @@
                             personel: personel,
                             brandname: brandname,
                             itemtype: itemtype,
-                            itemcost: itemcost,
+                            // itemcost: itemcost,
                             itemcount: itemcount,
                             createddate: createddate,
                             status: 'PENDING'
@@ -114,13 +115,13 @@
                         var BRAND_NAME = row.insertCell(1);
                         var ITEM_NAME = row.insertCell(2);
                         var ITEM_COUNT = row.insertCell(3);
-                        var ITEM_COST = row.insertCell(4);
+                        // var ITEM_COST = row.insertCell(4);
 
                         FE_NAME.innerHTML = personel;
                         BRAND_NAME.innerHTML = brandname;
                         ITEM_NAME.innerHTML = itemtype;
                         ITEM_COUNT.innerHTML = itemcount;
-                        ITEM_COST.innerHTML = itemcost;
+                        // ITEM_COST.innerHTML = itemcost;
                     } else {
                         warning(`Already request ${itemtype} with item count of ${itemcount}...`)
                     }
@@ -207,9 +208,14 @@
                     status: 'PENDING',
                 },
                 success: function (result) {
+                    if (result.msg == 'success') {
+                        success('Saved!', 'Data saved!')
+                    }
+                    else{
+                        warning('Use you own account to make request. System detected that this user was already request equipment today!')
+                    }
                     loadtable();
                     table_request.clear().draw();
-                    success('Saved!', 'Data saved!')
                     modal.style.display = "none";
                     dataArr = [];
                 },
@@ -252,8 +258,8 @@
 
                             // console.log(item.details);
                             $.each(item.details, (key, item) => {
-                                console.log(`BRAND: ${item.brandname} ITEM TYPE: ${item.itemtype} ITEM COUNT: ${item.itemcount} COST PER UNIT: ${item.itemcost}`);
-                                details += `BRAND: ${item.brandname} ITEM TYPE: ${item.itemtype} ITEM COUNT: ${item.itemcount} COST PER UNIT: ${item.itemcost}<br/>`;
+                                console.log(`BRAND: ${item.brandname} ITEM TYPE: ${item.itemtype} ITEM COUNT: ${item.itemcount}`);
+                                details += `BRAND: ${item.brandname} ITEM TYPE: ${item.itemtype} ITEM COUNT: ${item.itemcount}<br/>`;
                             })
 
                             finalData.push({

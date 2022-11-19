@@ -676,11 +676,11 @@
                 success: function (result) {
                     t.clear().draw();
                     $.each(result.data, function (key, item) {
-                        let cost = parseFloat(item.itemcost);
-                        let count = parseFloat(item.itemcount);
-                        let total = cost * count;
+                        // let cost = parseFloat(item.itemcost);
+                        // let count = parseFloat(item.itemcount);
+                        // let total = cost * count;
 
-                        t.row.add([item.brandname, item.itemtype, item.itemcount, item.itemcost, `₱ ${total}`]).draw(false);
+                        t.row.add([item.brandname, item.itemtype, item.itemcount]).draw(false);
                     })
                 },
                 error: function (result) {

@@ -28,6 +28,7 @@ exports.Insert = async (stmt) => {
 
             console.log(`Row inserted: ${results.affectedRows}`);
 
+            return 1;
         });
 
     } catch (error) {
@@ -38,7 +39,7 @@ exports.Insert = async (stmt) => {
 exports.InsertMultiple = async (stmt, todos) => {
     try {
         connection.connect((err) => { return err; })
-        console.log(`statement: ${stmt} data: ${todos}`);
+        // console.log(`statement: ${stmt} data: ${todos}`);
 
         connection.query(stmt, [todos], (err, results, fields) => {
             if (err) {
@@ -46,6 +47,7 @@ exports.InsertMultiple = async (stmt, todos) => {
             }
             console.log(`Row inserted: ${results.affectedRows}`);
 
+            return 1;
         });
 
     } catch (error) {
@@ -53,7 +55,7 @@ exports.InsertMultiple = async (stmt, todos) => {
     }
 }
 
-exports.Select = async (sql, table, callback) => {
+exports.Select = (sql, table, callback) => {
     try {
         connection.connect((err) => { return err; })
         connection.query(sql, (error, results, fields) => {
@@ -87,37 +89,46 @@ exports.Select = async (sql, table, callback) => {
 
                 callback(null, model.PulloutITEquipment(results));
             }
-        });
-
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-exports.SelectWhere = (sql, tablename, callback) => {
-    try {
-        connection.connect((err) => { return err; })
-        connection.query(sql, (error, results, fields) => {
-            if (error) {
-                return console.error(error.message);
-            }
-
-            if (tablename == 'RequestCablingDetails') {
+            if (table == 'RequestCablingDetails') {
                 callback(null, model.RequestCablingDetails(results));
             }
         });
+
     } catch (error) {
         console.log(error);
     }
 }
 
-exports.Update = (sql) => {
+exports.SelectResult = async (sql, table, callback) => {
+    try {
+        connection.connect((err) => { return err; })
+        connection.query(sql, (error, results, fields) => {
+
+            // console.log(results);
+
+            if (error) {
+                callback(error, null);
+            }
+
+            if (table == 'RequestCablingDetails') {
+                callback(null, model.RequestCablingDetails(results));
+            }
+        });
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.Update = async (sql, callback) => {
     try {
         connection.query(sql, (error, results, fields) => {
             if (error) {
-                return console.error(error.message);
+                callback(error, null)
             }
             console.log('Rows affected:', results.affectedRows);
+
+            callback(null, results.affectedRows);
         });
     } catch (error) {
         console.log(error);
