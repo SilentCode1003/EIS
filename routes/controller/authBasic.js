@@ -15,7 +15,7 @@ const isAuthAdmin = (req, res, next) => {
     else if (req.session.isAuth && req.session.accounttype == "ADMINISTRATOR") {
         next();
     }
-    else if (req.session.isAuth && req.session.accounttype == "USER") {
+    else if (req.session.isAuth && req.session.accounttype == "IT") {
         next();
     }
     else if (req.session.isAuth && req.session.accounttype == "CABLING") {

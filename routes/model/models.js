@@ -151,3 +151,210 @@ exports.PulloutITEquipment = (data) => {
 
     return dataResult;
 }
+
+exports.CablingEquipment = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            brandname: key.ie_brandname,
+            itemtype: key.ie_itemtype,
+            itemcount: key.ie_itemcount,
+            updateitemcount: key.ie_updateitemcount,
+            updateby: key.ie_updateby,
+            updatedate: key.ie_updatedate,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.ITEquipmentTracker = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            brandname: key.iet_brandname,
+            itemtype: key.iet_itemtype,
+            serial: key.iet_serial,
+            status: key.iet_status,
+            datetime: key.iet_datetime,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.MasterPersonnel = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            fullname: key.mp_fullname,
+            assignedlocation: key.mp_assignedlocation,
+            popsition: key.mp_position,
+            createdby: key.mp_createdby,
+            createddate: key.mp_createddate,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.MasterItems = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            itemid: key.mi_itemid,
+            department: key.mi_itemdepartment,
+            itemname: key.mi_itemname,
+            brandname: key.mi_brandname,
+            creadtedby: key.mi_createdby,
+            createddate: key.mi_createddate,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.MasterClientStore = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            clientname: key.mcs_clientname,
+            storenumber: key.msc_storenumber,
+            storename: key.msc_storename,
+            zone: key.msc_zone,
+            storetype: key.msc_storetype,
+            contractnumber: key.msc_contractnumber,
+            storeemail: key.msc_storeemail,
+            address: key.msc_address,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.MasterPosition = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            positionid: key.mp_positionid,
+            positionname: key.mp_positionname,
+            createdby: key.mp_createdby,
+            createddate: key.mp_createddate,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.MasterLocationType = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            positionid: key.mlt_locationtypeid,
+            positionname: key.mlt_locationtypename,
+            createdby: key.mlt_createdby,
+            createddate: key.mlt_createddate,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.MasterLocation = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            positionid: key.ml_locationid,
+            positionname: key.ml_locationname,
+            createdby: key.ml_createdby,
+            createddate: key.ml_createddate,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.MasterAccountType = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            accountid: key.mat_accountid,
+            accountname: key.mat_accountname,
+            createdby: key.may_createdby,
+            createddate: key.may_createddate,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.MasterClientName = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            clientid: key.mcn_clientid,
+            clientname: key.mcn_clientname,
+            createdby: key.mcn_createdby,
+            createddate: key.mcn_createddate,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.MasterUser = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            fullname: key.mu_fullname,
+            username: key.mu_username,
+            password: key.mu_password,
+            accounttype: key.mu_accounttype,
+            createdby: key.mu_createdby,
+            createddate: key.mu_createddate,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.TrackerSystemLogs = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            datetime: key.tsl_datetime,
+            department: key.tsl_department,
+            serial: key.tsl_serial,
+            type: key.tsl_type,
+            user: key.tsl_user,
+            activity: key.tsl_activity,
+            status: key.tsl_status,
+        })
+    });
+
+    return dataResult;
+}

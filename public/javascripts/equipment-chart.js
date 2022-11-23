@@ -69,21 +69,21 @@ $.ajax({
         scales: {
           xAxes: [{
             time: {
-              unit: 'month'
+              unit: 'items'
             },
             gridLines: {
               display: false,
               drawBorder: false
             },
             ticks: {
-              maxTicksLimit: 6
+              maxTicksLimit: 100
             },
-            maxBarThickness: 25,
+            maxBarThickness: 6,
           }],
           yAxes: [{
             ticks: {
               min: 0,
-              max: 3000,
+              max: 1000,
               maxTicksLimit: 5,
               padding: 10,
               // Include a dollar sign in the ticks
@@ -177,14 +177,14 @@ $.ajax({
               drawBorder: false
             },
             ticks: {
-              maxTicksLimit: 6
+              maxTicksLimit: 100
             },
-            maxBarThickness: 25,
+            maxBarThickness: 6,
           }],
           yAxes: [{
             ticks: {
               min: 0,
-              max: 3000,
+              max: 1000,
               maxTicksLimit: 5,
               padding: 10,
               // Include a dollar sign in the ticks

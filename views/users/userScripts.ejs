@@ -30,9 +30,9 @@
             var fullname = $('#fullname').val();
             var username = $('#username').val();
             var password = $('#password').val();
-            var accounttype = $('#accounttype').val() == '-' ? 'CREATOR': $('#accounttype').val();
-            var createdby = createdby == null ? 'CREATOR':'';
-            var createddate = createddate == null ? '2022-10-26':'';
+            var accounttype = $('#accounttype').val() == '-' ? 'CREATOR' : $('#accounttype').val();
+            var createdby = '<%= fullname%>';
+            var createddate = '<%= date%>';
 
             var message = "";
 

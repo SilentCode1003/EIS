@@ -1,5 +1,18 @@
 const mysql = require('mysql');
 const model = require('../model/models');
+require('dotenv').config();
+const crypt = require('./crytography');
+
+const tce = 'transaction_cabling_equipment';
+const rcd = 'request_cabling_details';
+const rce = 'request_cabling_equipment';
+const rie = 'register_it_equipment';
+const tie = 'transaction_it_equipment';
+const die = 'deploy_it_equipment';
+const pie = 'pullout_it_equipment';
+const ce = 'cabling_equipment';
+const iet = 'it_equipment_tracker';
+const tsl = 'tracker_system_logs';
 
 // const connection = mysql.createConnection({
 //     host: '192.168.1.250',
@@ -8,11 +21,25 @@ const model = require('../model/models');
 //     database: 'EquipmentInventory'
 // });
 
+// crypt.Encrypter(process.env._PASSWORD, (err, result) => {
+//     if (err) throw err;
+//     console.log(`${result}`);
+// });
+
+let password = '';
+crypt.Decrypter(process.env._PASSWORD, (err, result) => {
+    if (err) throw err;
+
+    password = result;
+    console.log(`${result}`);
+});
+
+
 const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '#Ebedaf19dd0d',
-    database: 'EquipmentInventory'
+    host: process.env._HOST,
+    user: process.env._USER,
+    password: password,
+    database: process.env._DATABASE
 });
 
 exports.Insert = async (stmt) => {
@@ -92,6 +119,12 @@ exports.Select = (sql, table, callback) => {
             if (table == 'RequestCablingDetails') {
                 callback(null, model.RequestCablingDetails(results));
             }
+            if (table == 'CablingEquipment') {
+                callback(null, model.CablingEquipment(results));
+            }
+            if (table == 'ITEquipmentTracker') {
+                callback(null, model.ITEquipmentTracker(results));
+            }
         });
 
     } catch (error) {
@@ -132,6 +165,22 @@ exports.Update = async (sql, callback) => {
         });
     } catch (error) {
         console.log(error);
+    }
+}
+
+exports.SelectDistinct = (rows, table, callback) => {
+    try {
+        let sql = `SELECT DISTINCT ${rows} FROM ${table}`;
+        connection.query(sql, (error, result, fields) => {
+            if (error) callback(error, null);
+
+            if (table == ce) {
+                callback(null, model.CablingEquipment(result));
+            }
+
+        })
+    } catch (error) {
+        callback(error, null);
     }
 }
 

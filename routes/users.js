@@ -3,6 +3,8 @@ var router = express.Router();
 
 const { isAuthAdmin } = require('./controller/authBasic');
 const helper = require('./repository/customhelper');
+const crypt = require('./repository/crytography');
+const { json } = require('express');
 
 var UserPath = `${__dirname}/data/masters/users/`;
 
@@ -14,7 +16,8 @@ router.get('/', isAuthAdmin, function (req, res, next) {
     user: req.session.username,
     password: req.session.passowrd,
     fullname: req.session.fullname,
-    accounttype: req.session.accounttype
+    accounttype: req.session.accounttype,
+    date: helper.GetCurrentDate()
   });
 });
 
@@ -26,8 +29,30 @@ router.post('/save', (req, res) => {
     var fullname = req.body.fullname;
     var data = req.body.data;
     var filename = `${UserPath}${fullname}.json`;
+    let dataJson = [];
 
-    helper.CreateJSON(filename, data);
+    let dataArr = JSON.parse(data);
+    dataArr.forEach((key, item) => {
+      crypt.Encrypter(key.password, (err, result) => {
+        if (err) throw err;
+
+        console.log(result);
+
+        dataJson.push({
+          fullname: key.fullname,
+          username: key.username,
+          password: result,
+          accounttype: key.accounttype,
+          createdby: key.createdby,
+          createddate: key.createddate,
+        })
+      });
+    });
+
+    dataJson = JSON.stringify(dataJson, null, 2);
+
+
+    helper.CreateJSON(filename, dataJson);
 
     res.json({
       msg: 'success'

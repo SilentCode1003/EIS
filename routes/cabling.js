@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 const helper = require('./repository/customhelper');
+const mysql = require('./repository/dbconnect')
 var CablingPath = `${__dirname}/data/cabling/`;
 const { isAuthAdmin } = require('./controller/authBasic');
 
@@ -25,16 +26,57 @@ router.post('/save', (req, res) => {
     var data = req.body.data;
     var folder = `${CablingPath}${brandname}`;
     var fileDir = `${folder}/${itemtype}_${brandname}.json`;
+    var dataraw = JSON.parse(data);
+    var data_sql = [];
+    var createdby = req.session.fullname;
+    var createddate = helper.GetCurrentDate();
 
-    console.log(`Target Dir: ${folder}\n Data:${data} \nFilename: ${fileDir}`);
+    // console.log(`Target Dir: ${folder}\n Data:${data} \nFilename: ${fileDir}`);
 
-    helper.CreateFolder(folder);
-    helper.CreateJSON(fileDir, data);
+    Insert_CablingEquipment = (data, callback) => {
+      let sql = `INSERT INTO cabling_equipment(
+        ie_brandname,
+        ie_itemtype,
+        ie_itemcount,
+        ie_updateitemcount,
+        ie_updateby,
+        ie_updatedate
+      ) VALUES ? `;
 
-    res.json({
-      msg: 'success'
-    })
+      callback(null, mysql.InsertMultiple(sql, data));
+    }
 
+    dataraw.forEach((key, item) => {
+
+      data_sql.push([
+        key.brandname,
+        key.itemtype,
+        key.itemcount,
+        '',
+        '',
+        '',
+      ])
+    });
+
+    let check_exist = helper.CreateFolder(folder);
+
+    if (check_exist == 'exist') {
+      res.json({
+        msg: 'warning',
+        data: itemtype
+      })
+    } else {
+      Insert_CablingEquipment(data_sql, (err, result) => {
+        if (err) throw err;
+
+        console.log('Insert_CablingEquipment');
+      });
+      helper.CreateJSON(fileDir, data);
+
+      res.json({
+        msg: 'success'
+      })
+    }
 
   } catch (error) {
     res.json({
@@ -92,10 +134,25 @@ router.post('/saveexceldata', async (req, res) => {
   try {
     var data = await req.body.data;
     var dataraw = await JSON.parse(data);
+    let data_sql = [];
+    var dataArr = [];
 
     //console.log(`${dataraw}`);
-    var dataArr = [];
-    await dataraw.forEach(async (key, item) => {
+
+    Insert_CablingEquipment = (data, callback) => {
+      let sql = `INSERT INTO cabling_equipment(
+        ie_brandname,
+        ie_itemtype,
+        ie_itemcount,
+        ie_updateitemcount,
+        ie_updateby,
+        ie_updatedate
+      ) VALUES ? `;
+
+      callback(null, mysql.InsertMultiple(sql, data));
+    }
+
+    dataraw.forEach((key, item) => {
 
       var folder = `${CablingPath}${key.brandname}`;
       var fileDir = `${folder}/${key.itemtype}_${key.brandname}.json`;
@@ -103,10 +160,11 @@ router.post('/saveexceldata', async (req, res) => {
       var brandname = key.brandname;
       var itemtype = key.itemtype;
       var itemcount = key.itemcount;
+      var updateitemcount = '';
       var updateby = '';
       var updatedate = '';
-      var createdby = createdby == null ? 'CREATOR' : '';
-      var createddate = createddate == null ? '2022-10-26' : '';
+      var createdby = req.session.fullname;
+      var createddate = helper.GetCurrentDate();
 
       dataArr.push({
         'brandname': brandname,
@@ -118,6 +176,15 @@ router.post('/saveexceldata', async (req, res) => {
         'createddate': createddate
       });
 
+      data_sql.push([
+        brandname,
+        itemtype,
+        itemcount,
+        updateitemcount,
+        updateby,
+        updatedate,
+      ]);
+
       var data = JSON.stringify(dataArr, null, 2);
 
       //console.log(`Target Dir: ${folder}\n Data:${dataArr} \nFilename: ${fileDir}`);
@@ -125,11 +192,15 @@ router.post('/saveexceldata', async (req, res) => {
       helper.CreateFolder(folder);
       helper.CreateJSON(fileDir, data);
       dataArr = [];
-    }).then(
+    });
+
+    await Insert_CablingEquipment(data_sql, (err, result) => {
+      if (err) throw err;
+      console.log('Insert_CablingEquipment');
+    }),
       res.json({
         msg: 'success'
       })
-    )
 
   } catch (error) {
     res.json({
@@ -140,18 +211,18 @@ router.post('/saveexceldata', async (req, res) => {
 });
 
 router.get('/GetCablingEquipmentSummary', (req, res) => {
-try {
-  let data = helper.GetCablingEquipmentSummary(CablingPath);
+  try {
+    let data = helper.GetCablingEquipmentSummary(CablingPath);
 
-  res.json({
-    data: data
-  })
-  
-} catch (error) {
-  res.json({
-    msg: error
-  })
-}
+    res.json({
+      data: data
+    })
+
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
 });
 
 router.get('/GetDetailedEquipmentSummary', (req, res) => {
@@ -163,7 +234,22 @@ router.get('/GetDetailedEquipmentSummary', (req, res) => {
       msg: 'success',
       data: data
     })
+
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+})
+
+router.post('/update', (req, res) => {
+  try {
+    let brandname = req.body.brandname;
+    let itemtype = req.body.itemtype;
+    let itemcount = req.body.itemcount;
+
     
+
   } catch (error) {
     res.json({
       msg: error

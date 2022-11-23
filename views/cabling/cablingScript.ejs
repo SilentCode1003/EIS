@@ -7,9 +7,37 @@
         var dataArr = [];
         var dataTable = null;
 
+
+        $(document).on('click', "#searchBtn", function () {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById('register').style.display = "block";
+        })
+
+        $(document).on('click', "#deplotBtn", function () {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById('update').style.display = "block";
+        })
+
         $.ajax({
-            type: "GET",
-            url: "/items/brandname",
+            type: "POST",
+            url: "/items/brandnamedepartment",
+            data: { department: 'CABLING' },
             success: function (result) {
                 console.log(result.data);
                 var data = result.data;
@@ -70,6 +98,20 @@
             // var data = getExcel_data('C:\Users\5L Solutions\Documents\DATA\test.xlsx', 'sheet 1');
             // console.log(data);
             await UploadProcess();
+        })
+
+        $(document).on('click', "#updateBtn", function () {
+            var brandname = $('#updatebrandname').val();
+            var itemtype = $('#listbrandname').val();
+            var itemcount = $('#updateitemcount').val();
+
+            var data = [];
+            data.push({
+                brandname: brandname,
+                itemtype: itemtype,
+                itemcount: itemcount,
+            })
+
         })
 
         async function UploadProcess() {
@@ -213,8 +255,13 @@
                         data: data
                     },
                     success: function (result) {
-                        loadtable();
-                        success('Saved!', 'Data saved!')
+                        if (result.msg == 'warning') {
+                            warning('Warning!', `${result.data} is already registered, to update item count, click the update tab...`)
+                        } else {
+                            loadtable();
+                            success('Saved!', 'Data saved!')
+                        }
+
                         dataArr = [];
                     },
                     error: function (result) {

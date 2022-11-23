@@ -8,8 +8,9 @@
         });
 
         $.ajax({
-            type: "GET",
-            url: "/personel/load",
+            type: "POST",
+            url: "/personel/personelposition",
+            data: { position: 'CABLING' },
             success: function (result) {
                 console.log(result.data);
                 var data = result.data;

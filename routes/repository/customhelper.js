@@ -11,7 +11,7 @@ exports.ReadJSONFile = function (filepath) {
 };
 
 exports.GetFolderList = function (dir) {
-    console.log(`Content: ${dir}`);
+    // console.log(`Content: ${dir}`);
     var data = fs.readdirSync(dir);
     return data;
 };
@@ -23,7 +23,7 @@ exports.GetFiles = function (dir) {
 };
 
 exports.CreateJSON = (filenamepath, data) => {
-    console.log(`Create JSON Path: ${filenamepath} Content: ${data}`);
+    // console.log(`Create JSON Path: ${filenamepath} Content: ${data}`);
     fs.writeFileSync(filenamepath, data, (err) => {
         return err;
     })
@@ -43,7 +43,7 @@ exports.CreateFolder = (dir) => {
 };
 
 exports.RequestDetails = (data) => {
-    console.log(`Request Details Extract: ${data}`);
+    // console.log(`Request Details Extract: ${data}`);
     var result = [];
     data.forEach((k, i) => {
         result.push({
@@ -71,7 +71,7 @@ exports.Distinct = (data, indetifier, target) => {
         });
     }
 
-    if (indetifier == 'brandname') { // itemtype
+    if (indetifier == 'brandname') { // brandname
         unique = [...new Set(data.map(item => item.brandname))];
     }
 

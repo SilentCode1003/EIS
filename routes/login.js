@@ -4,6 +4,7 @@ var router = express.Router();
 
 var helper = require('./repository/customhelper')
 var UserPath = `${__dirname}/data/masters/users/`;
+const crypt = require('./repository/crytography');
 
 /* GET home page. */
 router.get('/', function (req, res) {
@@ -27,24 +28,37 @@ router.post('/authentication', (req, res) => {
     var files = helper.GetFiles(UserPath);
     var message = "";
 
+    console.log(`USERNAME: ${username}`)
+
     message = "error";
     files.forEach(file => {
 
       var filename = `${UserPath}/${file}`;
       var data = helper.ReadJSONFile(filename);
-      console.log(data);
-
 
       data.forEach((key, item) => {
-        console.log(`user:${key.idnumber} password:${key.password}`)
-        if (key.idnumber == username && key.password == password) {
+
+        if (key.username == username) {
           message = 'success';
 
-          //store data to session
-          req.session.isAuth = true;
-          req.session.username = key.username;
-          req.session.accounttype = key.accounttype;
-          req.session.fullname = key.fullname;
+          console.log(`user:${key.username} password:${key.password}`);
+
+          crypt.Encrypter(password, (err, result) => {
+            if (err) console.log(err);
+
+            console.log(result);
+
+            if (key.password == result) {
+              req.session.isAuth = true;
+              req.session.username = key.username;
+              req.session.accounttype = key.accounttype;
+              req.session.fullname = key.fullname;
+            }
+            else {
+              message = 'error';
+            }
+          });
+
         }
       })
     })

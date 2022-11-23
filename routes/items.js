@@ -19,7 +19,6 @@ router.get('/', isAuthAdmin, function (req, res, next) {
 
 module.exports = router;
 
-
 router.post('/save', (req, res) => {
   try {
     var itemname = req.body.itemname;
@@ -193,9 +192,22 @@ router.post('/brandnamedepartment', (req, res) => {
     helper.GetByDeparmentItems(dataArr, index, (err, result) => {
       if (err) throw err;
 
+      var dataFilter = [];
+      var data = helper.Distinct(result, 'brandname', null)
+      data.forEach(d => {
+        if(d == null){
+
+        }else{
+          dataFilter.push({
+            brandname: d
+          })
+        }
+
+      });
+
       res.json({
         msg: 'success',
-        data: result
+        data: dataFilter
       })
     });
 

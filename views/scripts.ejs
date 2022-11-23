@@ -37,7 +37,7 @@
 <script>
     let accounttype = '<%= accounttype%>';
 
-    if (accounttype == 'USER' || accounttype == 'CABLING') {
+    if (accounttype == 'IT' || accounttype == 'CABLING') {
         $("#masters").toggle(0, function () {
         });
 
@@ -45,6 +45,15 @@
         });
 
         $("#activity").toggle(0, function () {
+        });
+
+        $("#equipments-it").toggle(0, function () {
+        });
+
+        $("#equipments-it-transfer").toggle(0, function () {
+        });
+
+        $("#cabling-equipment-request").toggle(0, function () {
         });
     }
 

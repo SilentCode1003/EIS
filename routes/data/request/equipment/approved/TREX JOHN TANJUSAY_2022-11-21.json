@@ -1,0 +1,25 @@
+[
+  {
+    "personel": "TREX JOHN TANJUSAY",
+    "data": [
+      {
+        "store": "ST1506 SAN NARCISO",
+        "ticket": "INC-4587548",
+        "brandname": "STAR",
+        "itemtype": "STAR CLIQQ PRINTER",
+        "quantity": "1",
+        "remarks": "FOR REPLACEMENT"
+      },
+      {
+        "store": "ST1506 SAN NARCISO",
+        "ticket": "INC-4587548",
+        "brandname": "ZEBRA",
+        "itemtype": "ZEBRA SCANNER",
+        "quantity": "2",
+        "remarks": "FOR REPLACEMENT"
+      }
+    ],
+    "createddate": "2022-11-21",
+    "status": "APPROVED"
+  }
+]
