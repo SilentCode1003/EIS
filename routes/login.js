@@ -43,6 +43,12 @@ router.post('/authentication', (req, res) => {
 
           console.log(`user:${key.username} password:${key.password}`);
 
+          crypt.Decrypter(key.password, (err, result) => {
+            if (err) throw err;
+
+            console.log(result);
+          })
+
           crypt.Encrypter(password, (err, result) => {
             if (err) console.log(err);
 

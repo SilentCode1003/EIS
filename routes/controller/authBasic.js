@@ -21,6 +21,15 @@ const isAuthAdmin = (req, res, next) => {
     else if (req.session.isAuth && req.session.accounttype == "CABLING") {
         next();
     }
+    else if (req.session.isAuth && req.session.accounttype == "CYBERPOWER") {
+        next();
+    }
+    else if (req.session.isAuth && req.session.accounttype == "ACCOUNTING") {
+        next();
+    }
+    else if (req.session.isAuth && req.session.accounttype == "PURCHASING") {
+        next();
+    }
     else {
         res.redirect('/login');
     }

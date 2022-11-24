@@ -1,62 +1,129 @@
+<div class="tab">
+    <div class="entry-area">
+        <button class="approve-btn tablinks" id="sofBtn" name="sofBtn"><i class="fas fa-fw fa-search"></i>
+            REQUEST MATERIALS</button>
+        <button class="approve-btn tablinks" id="stocksBtn" name="stocksBtn"><i class="fas fa-fw fa-box-open"></i>
+            REQUEST STOCKS</button>
+    </div>
+</div>
 <br>
-<div class="row">
-    <div class="col-xl-4 col-lg-3">
-        <div class="entry-area">
-            <select class="entry-input" id=personel>
-                <option value="-" id="listpersonel">PERSONEL</option>
-            </select>
+<div class="tabcontent" id="materials">
+    <div class="row">
+        <div class="col-xl-4 col-lg-3">
+            <!-- <div class="entry-area">
+                <select class="entry-input" id=personel>
+                    <option value="-" id="listpersonel">PERSONEL</option>
+                </select>
+            </div> -->
+            <div class="entry-area">
+                <select class="entry-input" id=brandname>
+                    <option value="-" id="listbrandname">BRAND NAME</option>
+                </select>
+            </div>
+            <div class="entry-area">
+                <select class="entry-input" id=itemtype>
+                    <option value="-" id="listitemtpye">ITEM TYPE</option>
+                </select>
+            </div>
+            <!-- <div class="entry-area">
+                <input type="text" class="entry-input" id="itemcost" name="itemcost" placeholder="COST PER UNIT">
+            </div> -->
+            <div class="entry-area">
+                <input type="text" class="entry-input" id="itemcount" name="itemcount" placeholder="QUANTITY">
+            </div>
+            <div class="entry-area">
+                <button class="" id="addBtn" name="addBtn">ADD</button>
+            </div>
         </div>
-        <div class="entry-area">
-            <select class="entry-input" id=brandname>
-                <option value="-" id="listbrandname">BRAND NAME</option>
-            </select>
-        </div>
-        <div class="entry-area">
-            <select class="entry-input" id=itemtype>
-                <option value="-" id="listitemtpye">ITEM TYPE</option>
-            </select>
-        </div>
-        <!-- <div class="entry-area">
-            <input type="text" class="entry-input" id="itemcost" name="itemcost" placeholder="COST PER UNIT">
-        </div> -->
-        <div class="entry-area">
-            <input type="text" class="entry-input" id="itemcount" name="itemcount" placeholder="QUANTITY">
-        </div>
-        <div class="entry-area">
-            <button class="" id="addBtn" name="addBtn">ADD</button>
+
+        <div class="col-xl-6 col-lg-5">
+            <table id="request-list-tbl">
+                <thead>
+                    <th>PERSONEL</th>
+                    <th>BRAND</th>
+                    <th>ITEM TYPE</th>
+                    <th>ITEM COUNT</th>
+                    <!-- <th>COST</th> -->
+                </thead>
+                <tbody></tbody>
+            </table>
+
+            <div class="entry-area">
+                <button id="requestBtn" name="requestBtn">REQUEST</button>
+            </div>
         </div>
     </div>
-
-    <div class="col-xl-6 col-lg-5">
-        <table id="request-list-tbl">
+    <hr>
+    <div>
+        <table id="request-tbl">
             <thead>
+                <th>DATE</th>
                 <th>PERSONEL</th>
-                <th>BRAND</th>
-                <th>ITEM TYPE</th>
-                <th>ITEM COUNT</th>
-                <!-- <th>COST</th> -->
+                <th>DETAILS</th>
+                <th>REMARKS</th>
+                <th>STATUS</th>
             </thead>
             <tbody></tbody>
         </table>
-
-        <div class="entry-area">
-            <button id="requestBtn" name="requestBtn">REQUEST</button>
-        </div>
     </div>
 </div>
-<hr>
-<div>
-    <table id="request-tbl">
-        <thead>
-            <th>DATE</th>
-            <th>PERSONEL</th>
-            <th>DETAILS</th>
-            <th>REMARKS</th>
-            <th>STATUS</th>
-        </thead>
-        <tbody></tbody>
-    </table>
+
+<div class="tabcontent" id="stocks">
+    <div class="row">
+        <div class="col-xl-4 col-lg-3">
+            <div class="entry-area">
+                <select class="entry-input" id=stocksbrandname>
+                    <option value="-" id="liststocksbrandname">BRAND NAME</option>
+                </select>
+            </div>
+            <div class="entry-area">
+                <select class="entry-input" id=stocksitemtype>
+                    <option value="-" id="liststocksitemtpye">ITEM TYPE</option>
+                </select>
+            </div>
+            <!-- <div class="entry-area">
+                <input type="text" class="entry-input" id="itemcost" name="itemcost" placeholder="COST PER UNIT">
+            </div> -->
+            <div class="entry-area">
+                <input type="text" class="entry-input" id="stocksitemcount" name="stocksitemcount" placeholder="QUANTITY">
+            </div>
+            <div class="entry-area">
+                <button class="" id="addStocksBtn" name="addStocksBtn">ADD</button>
+            </div>
+        </div>
+
+        <div class="col-xl-6 col-lg-5">
+            <table id="request-stocks-list-tbl">
+                <thead>
+                    <th>PERSONEL</th>
+                    <th>BRAND</th>
+                    <th>ITEM TYPE</th>
+                    <th>ITEM COUNT</th>
+                    <!-- <th>COST</th> -->
+                </thead>
+                <tbody></tbody>
+            </table>
+
+            <div class="entry-area">
+                <button id="requeststocksBtn" name="requeststocksBtn">REQUEST</button>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div>
+        <table id="request-stocks-tbl">
+            <thead>
+                <th>DATE</th>
+                <th>PERSONEL</th>
+                <th>DETAILS</th>
+                <th>REMARKS</th>
+                <th>STATUS</th>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 </div>
+
 
 <!-- The Modal -->
 <div id="requestModal" class="modal card shadow mb-4">
@@ -69,6 +136,32 @@
             <div class="row input-area center-content">
                 <textarea id="remarks" name="remarks" rows="10" cols="100"
                     placeholder="REMARKS / REQUEST MESSAGE"></textarea>
+            </div>
+            <!-- <div
+                style="background: linear-gradient(to bottom, #3399ff 0%, #00ffff 100%); position: relative; align-content: center;">
+
+            </div> -->
+        </div>
+
+
+        <div id="modal-button-container" class="center-content">
+            <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
+            <button class="btn-glow-modal" id="saveBtn" name="saveBtn">SAVE</button>
+        </div>
+    </div>
+</div>
+
+<!-- The Modal -->
+<div id="requeststocksModal" class="modal card shadow mb-4">
+    <!-- Modal content -->
+    <div id="transfermodal" class="modal-content">
+        <div class="modal-button-container">
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="row input-area center-content">
+                <textarea id="remarks" name="remarks" rows="10" cols="100"
+                    placeholder="REMARKS / REQUEST STOCKS MESSAGE"></textarea>
             </div>
             <!-- <div
                 style="background: linear-gradient(to bottom, #3399ff 0%, #00ffff 100%); position: relative; align-content: center;">

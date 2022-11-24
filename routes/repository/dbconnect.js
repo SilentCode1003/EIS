@@ -13,6 +13,8 @@ const pie = 'pullout_it_equipment';
 const ce = 'cabling_equipment';
 const iet = 'it_equipment_tracker';
 const tsl = 'tracker_system_logs';
+const rcsd = 'request_cabling_stocks_details';
+const rcse = 'request_cabling_stocks_equipments';
 
 // const connection = mysql.createConnection({
 //     host: '192.168.1.250',
@@ -125,6 +127,9 @@ exports.Select = (sql, table, callback) => {
             if (table == 'ITEquipmentTracker') {
                 callback(null, model.ITEquipmentTracker(results));
             }
+            if (table == 'RequestCablingStocksDatails') {
+                callback(null, model.RequestCablingStocksDetails(results));
+            }
         });
 
     } catch (error) {
@@ -145,6 +150,9 @@ exports.SelectResult = async (sql, table, callback) => {
 
             if (table == 'RequestCablingDetails') {
                 callback(null, model.RequestCablingDetails(results));
+            }
+            if (table == 'RequestCablingStocksDatails') {
+                callback(null, model.RequestCablingStocksDetails(results));
             }
         });
 

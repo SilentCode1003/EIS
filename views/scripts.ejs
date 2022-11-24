@@ -37,23 +37,91 @@
 <script>
     let accounttype = '<%= accounttype%>';
 
-    if (accounttype == 'IT' || accounttype == 'CABLING') {
+    if (accounttype == 'IT' || accounttype == 'CABLING' || accounttype == 'CYBERPOWER' || accounttype == 'ACCOUNTING' || accounttype == 'PURCHASING') {
         $("#masters").toggle(0, function () {
         });
-
-        $("#reports").toggle(0, function () {
-        });
-
-        $("#activity").toggle(0, function () {
-        });
-
         $("#equipments-it").toggle(0, function () {
         });
-
         $("#equipments-it-transfer").toggle(0, function () {
         });
-
         $("#cabling-equipment-request").toggle(0, function () {
+        });
+    }
+
+    if (accounttype == 'CYBERPOWER') {
+        $("#it").toggle(0, function () {
+        });
+
+        $("#cabling").toggle(0, function () {
+        });
+
+        $("#accounting").toggle(0, function () {
+        });
+
+        $("#purchasing").toggle(0, function () {
+        });
+
+    }
+
+    if (accounttype == 'IT') {
+        $("#cyberpower").toggle(0, function () {
+        });
+
+        $("#cabling").toggle(0, function () {
+        });
+
+        $("#accounting").toggle(0, function () {
+        });
+
+        $("#purchasing").toggle(0, function () {
+        });
+    }
+
+    if (accounttype == 'CABLING') {
+        $("#cyberpower").toggle(0, function () {
+        });
+
+        $("#it").toggle(0, function () {
+        });
+
+        $("#accounting").toggle(0, function () {
+        });
+
+        $("#purchasing").toggle(0, function () {
+        });
+    }
+
+    if (accounttype == 'ACCOUNTING') {
+        $("#cyberpower").toggle(0, function () {
+        });
+
+        $("#it").toggle(0, function () {
+        });
+
+        $("#tracker").toggle(0, function () {
+        });
+
+        $("#cabling").toggle(0, function () {
+        });
+
+        $("#purchasing").toggle(0, function () {
+        });
+    }
+
+    if (accounttype == 'PURCHASING') {
+        $("#cyberpower").toggle(0, function () {
+        });
+
+        $("#it").toggle(0, function () {
+        });
+
+        $("#tracker").toggle(0, function () {
+        });
+
+        $("#cabling").toggle(0, function () {
+        });
+
+        $("#accounting").toggle(0, function () {
         });
     }
 

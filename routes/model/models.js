@@ -358,3 +358,41 @@ exports.TrackerSystemLogs = (data) => {
 
     return dataResult;
 }
+
+exports.RequestCablingStocksEquipments = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            requestid: key.rcse_requestid,
+            requestdate: key.rcse_requestdate,
+            requestby: key.rcse_requestby,
+            brandname: key.rcse_brandname,
+            itemtype: key.rcse_itemtype,
+            quantity: key.rcse_quantity,
+            referenceid: key.rcse_referenceid,
+            status: key.rcse_status,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.RequestCablingStocksDetails = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            requestid: key.rcsd_requestid,
+            requestdate: key.rcsd_requestdate,
+            requestby: key.rcsd_requestby,
+            details: key.rcsd_details,
+            remarks: key.rcsd_remarks,
+            status: key.rcsd_status,
+        })
+    });
+
+    return dataResult;
+}
