@@ -130,6 +130,9 @@ exports.Select = (sql, table, callback) => {
             if (table == 'RequestCablingStocksDatails') {
                 callback(null, model.RequestCablingStocksDetails(results));
             }
+            if (table == 'CablingItemMaster') {
+                callback(null, model.CablingItemMaster(results));
+            }
         });
 
     } catch (error) {
@@ -154,6 +157,9 @@ exports.SelectResult = async (sql, table, callback) => {
             if (table == 'RequestCablingStocksDatails') {
                 callback(null, model.RequestCablingStocksDetails(results));
             }
+            if (table == 'CablingItemMaster') {
+                callback(null, model.CablingItemMaster(results));
+            }
         });
 
     } catch (error) {
@@ -164,6 +170,21 @@ exports.SelectResult = async (sql, table, callback) => {
 exports.Update = async (sql, callback) => {
     try {
         connection.query(sql, (error, results, fields) => {
+            if (error) {
+                callback(error, null)
+            }
+            console.log('Rows affected:', results.affectedRows);
+
+            callback(null, results.affectedRows);
+        });
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.UpdateWithPayload = async (sql, data, callback) => {
+    try {
+        connection.query(sql, data, (error, results, fields) => {
             if (error) {
                 callback(error, null)
             }

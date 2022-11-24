@@ -396,3 +396,24 @@ exports.RequestCablingStocksDetails = (data) => {
 
     return dataResult;
 }
+
+exports.CablingItemMaster = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            itemid: key.cim_itemid,
+            brandname: key.cim_brandname,
+            itemtype: key.cim_itemtype,
+            minstocks: key.cim_minstocks,
+            maxstocks: key.cim_maxstocks,
+            updateby: key.cim_updateby,
+            updatedate: key.cim_updatedate,
+            createdby: key.cim_createdby,
+            createddate: key.cim_createddate,
+        })
+    });
+
+    return dataResult;
+}

@@ -1,0 +1,129 @@
+<script>
+    $(document).ready(function () {
+
+        LoadList();
+        LoadTable();
+
+        $(document).on('click', "#saveBtn", function () {
+            var brandname = $('#brandname').val();
+            var itemtype = $('#itemtype').val();
+            var minstocks = $('#minstocks').val();
+            var maxstocks = $('#maxstocks').val();
+            var message = '';
+
+            if (brandname == '-') message += 'BRAND NAME ';
+            if (itemtype == '-') message += 'ITEM TYPE ';
+            if (minstocks == '') message += 'MIN STOCKS ';
+            if (maxstocks == '') message += 'MAX STOCKS ';
+
+            if (message != '') {
+                warning(`Warning, Please fill-up ${message}`)
+            }
+            else {
+                $.ajax({
+                    type: "POST",
+                    url: "/cablingitemmaster/save",
+                    data: {
+                        brandname: brandname,
+                        itemtype: itemtype,
+                        minstocks: minstocks,
+                        maxstocks: maxstocks,
+                    },
+                    success: function (result) {
+                        if (result.msg == 'success') {
+                            success('Saved!', 'Data saved!')
+                        }
+                        else {
+                            success('Update!',`${brandname} - ${itemtype} min & max stocks update successfully...`);
+                        }
+                        LoadTable();
+                    },
+                    error: function (result) {
+                        error(result.data);
+                    }
+                });
+            }
+
+        })
+
+        $(document).on('change', "#brandname", function () {
+            var brandname = $('#brandname').val();
+            $("#itemtype").empty();
+
+            $.ajax({
+                type: "POST",
+                url: "/items/itemtype",
+                data: { brandname: brandname },
+                success: function (result) {
+                    var data = result.data;
+                    console.log(result.data);
+
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.itemname, item.itemname);
+                        $(options).html(item.itemname);
+                        $('#itemtype').append(options);
+                        console.log(item.itemname);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+        });
+
+        function LoadTable() {
+            showloader();
+            dataTable = $('#cablingitemmaster-tbl').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'GET',
+                'ajax': {
+                    'url': '/cablingitemmaster/load',
+                },
+                'columns': [
+                    { data: 'itemid' },
+                    { data: 'brandname' },
+                    { data: 'itemtype' },
+                    { data: 'minstocks' },
+                    { data: 'maxstocks' },
+                    { data: 'updateby' },
+                    { data: 'updatedate' },
+                    { data: 'createdby' },
+                    { data: 'createddate' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+        }
+
+        function LoadList() {
+            $.ajax({
+                type: "POST",
+                url: "/items/brandnamedepartment",
+                data: { department: 'CABLING' },
+                success: function (result) {
+                    console.log(result.data);
+                    var data = result.data;
+
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.brandname, item.brandname);
+                        $(options).html(item.brandname);
+                        $('#brandname').append(options);
+                        console.log(item.brandname);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+        }
+    })
+</script>
