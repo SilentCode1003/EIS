@@ -6,6 +6,23 @@
         let date = '<%= date%>'
         let selection = '';
 
+
+        // var material_list_tbl = $('#request-list-tbl').DataTable({
+        //     'paging': false,
+        //     'scrollY': 400,
+        //     'scrollCollapse': true,
+        //     'searching': false,
+        //     'info': false,
+        // });
+
+        // var stock_list_tbl = $('#request-stocks-list-tbl').DataTable({
+        //     'paging': false,
+        //     'scrollY': 400,
+        //     'scrollCollapse': true,
+        //     'searching': false,
+        //     'info': false,
+        // });
+
         //initialize data
         loadlist();
         // loadtable();
@@ -46,11 +63,14 @@
 
         var modal = document.getElementById("requestModal");
         var modalstocks = document.getElementById("requeststocksModal");
-        var span = document.getElementsByClassName("close")[0];
-        var spanstocks = document.getElementsByClassName("close")[1];
+        var span = document.getElementById("requestmateiral");
+        var spanstocks = document.getElementById("requeststocks");
 
         span.onclick = function () {
             modal.style.display = "none";
+        }
+
+        spanstocks.onclick = function () {
             modalstocks.style.display = "none";
         }
 
@@ -90,6 +110,18 @@
             }
         })
 
+        $(document).on('click', "#requeststocksaveBtn", async function () {
+            if (dataArr.length == 0) {
+                warning('You have no request? IDIOT!');
+            } else {
+                let data = JSON.stringify(dataArr, null, 2);
+                // let data = dataArr;
+                let remarks = $('#requeststockremarks').val();
+                console.log(remarks);
+                savedata(data, remarks, selection);
+            }
+        })
+
         $(document).on('click', "#addBtn", function () {
             var personel = '<%= fullname%>'
             var brandname = $('#brandname').val();
@@ -121,8 +153,8 @@
                         status: 'PENDING'
                     });
 
-                    var table = document.getElementById("request-list-tbl");
-                    var row = table.insertRow(1);
+                    material_list_tbl = document.getElementById("request-list-tbl");
+                    var row = material_list_tbl.insertRow(1);
                     var FE_NAME = row.insertCell(0);
                     var BRAND_NAME = row.insertCell(1);
                     var ITEM_NAME = row.insertCell(2);
@@ -152,8 +184,8 @@
                             status: 'PENDING'
                         });
 
-                        var table = document.getElementById("request-list-tbl");
-                        var row = table.insertRow(1);
+                        material_list_tbl = document.getElementById("request-list-tbl");
+                        var row = material_list_tbl.insertRow(1);
                         var FE_NAME = row.insertCell(0);
                         var BRAND_NAME = row.insertCell(1);
                         var ITEM_NAME = row.insertCell(2);
@@ -203,8 +235,8 @@
                         status: 'PENDING'
                     });
 
-                    var table = document.getElementById("request-stocks-list-tbl");
-                    var row = table.insertRow(1);
+                    stock_list_tbl = document.getElementById("request-stocks-list-tbl");
+                    var row = stock_list_tbl.insertRow(1);
                     var FE_NAME = row.insertCell(0);
                     var BRAND_NAME = row.insertCell(1);
                     var ITEM_NAME = row.insertCell(2);
@@ -234,8 +266,8 @@
                             status: 'PENDING'
                         });
 
-                        var table = document.getElementById("request-stocks-list-tbl");
-                        var row = table.insertRow(1);
+                        stock_list_tbl = document.getElementById("request-stocks-list-tbl");
+                        var row = stock_list_tbl.insertRow(1);
                         var FE_NAME = row.insertCell(0);
                         var BRAND_NAME = row.insertCell(1);
                         var ITEM_NAME = row.insertCell(2);
@@ -387,9 +419,10 @@
                         else {
                             warning('Use you own account to make request. System detected that this user was already request equipment today!')
                         }
-                        $('#request-list-tbl').clear().draw();
                         modal.style.display = "none";
+                        LoadMaterialRequestTbl();
                         dataArr = [];
+                        ClearListTable('request-list-tbl');
                     },
                     error: function (result) {
                         error(result.data);
@@ -410,19 +443,23 @@
                     },
                     success: function (result) {
                         if (result.msg == 'success') {
+
                             success('Saved!', 'Data saved!')
                         }
                         else {
                             warning('Use you own account to make request. System detected that this user was already request equipment today!')
                         }
-                        $('#request-list-tbl').clear().draw();
                         modalstocks.style.display = "none";
+                        LoadStocksRequestTbl();
                         dataArr = [];
+                        ClearListTable('request-stocks-list-tbl');
                     },
                     error: function (result) {
                         error(result.data);
                     }
                 });
+
+
             }
         }
 
@@ -495,6 +532,13 @@
             });
         };
 
+        function ClearListTable(tablename) {
+            // stock_list_tbl = document.getElementById("request-stocks-list-tbl");
+            $(`#${tablename}`).find("tr:gt(0)").remove();
+            // console.log(stock_list_tbl.tBodies);
+            // stock_list_tbl.innerText = '';
+        }
+
         function LoadMaterialRequestTbl() {
             showloader();
             dataTable = $('#request-tbl').DataTable({
@@ -566,7 +610,7 @@
 
         function LoadStocksRequestTbl() {
             showloader();
-            dataTable = $('#request-stocks-tbl').DataTable({
+            dataTableStocks = $('#request-stocks-tbl').DataTable({
                 'destroy': true,
                 'processing': true,
                 'serverSide': true,

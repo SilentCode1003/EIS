@@ -91,8 +91,6 @@ router.get('/load', (req, res) => {
     var dataArr = [];
     var folders = helper.GetFolderList(CablingPath);
 
-    console.log('hit');
-
     folders.forEach(folder => {
       var targetFolder = `${CablingPath}${folder}`;
       var files = helper.GetFiles(targetFolder);
@@ -242,14 +240,16 @@ router.get('/GetDetailedEquipmentSummary', (req, res) => {
   }
 })
 
-router.post('/update', (req, res) => {
+router.get('/stockin', (req, res) => {
   try {
-    let brandname = req.body.brandname;
-    let itemtype = req.body.itemtype;
-    let itemcount = req.body.itemcount;
-
-    
-
+    let sql = 'SELECT * FROM transaction_cabling_stocks_details';
+    mysql.Select(sql, 'TransactionCablingStocksDetails', (err, result) => {
+      if (err) throw err;
+      res.json({
+        msg: 'success',
+        data: result
+      })
+    })
   } catch (error) {
     res.json({
       msg: error

@@ -283,6 +283,7 @@ router.post('/requeststocks', async (req, res) => {
     let requestid = '';
     let dataRequest = [];
     let detailsJson = JSON.parse(details);
+    let tcsd_data = [];
 
     todo.push([datetime[0], personel, details, remarks, status]);
 
@@ -324,6 +325,20 @@ router.post('/requeststocks', async (req, res) => {
       callback(null, mysql.InsertMultiple(sql, data));
     }
 
+    Insert_TransactionCablingStocksDetails = (data, callback) => {
+      let sql = `INSERT INTO transaction_cabling_stocks_details(
+        tcsd_requestby,
+        tcsd_requestdate,
+        tcsd_details,
+        tcsd_pruchasingofficer,
+        tcsd_accountofficer,
+        tcsd_status
+      ) VALUES ?`;
+
+      callback(null, mysql.InsertMultiple(sql, data));
+
+    }
+
     Check_RequestExist = (date, personel, callback) => {
       let cmd = `SELECT * FROM request_cabling_stocks_details WHERE rcsd_requestdate='${date}' AND rcsd_requestby='${personel}'`;
 
@@ -363,6 +378,15 @@ router.post('/requeststocks', async (req, res) => {
               status: status,
             });
 
+            tcsd_data.push([
+              personel,
+              date,
+              details,
+              '',
+              '',
+              status
+            ]);
+
             details = JSON.parse(details);
             details.forEach((key, items) => {
               //equipment
@@ -383,6 +407,13 @@ router.post('/requeststocks', async (req, res) => {
 
               console.log(`Insert_RequestCablingStocksEquipments`);
             });
+
+            console.log(tcsd_data);
+            Insert_TransactionCablingStocksDetails(tcsd_data, (err, data) => {
+              if (err) throw err;
+
+              console.log('Insert_TransactionCablingStocksDetails');
+            })
 
 
           });

@@ -1,78 +1,72 @@
 <div class="tab">
     <div class="entry-area">
-        <button class="approve-btn tablinks" id="searchBtn" name="searchBtn"><i class="fas fa-fw fa-search"></i>
+        <button class="approve-btn tablinks" id="registerBtn" name="registerBtn"><i class="fas fa-fw fa-search"></i>
             REGISTER</button>
-        <button class="approve-btn tablinks" id="deplotBtn" name="deplotBtn"><i class="fas fa-fw fa-box-open"></i>
+        <button class="approve-btn tablinks" id="stockinBtn" name="stockinBtn"><i class="fas fa-fw fa-box-open"></i>
             STOCK-IN</button>
     </div>
 </div>
 
-<div id="register" class="row tabcontent">
-    <div class="col-xl-6 col-lg-5">
-        <!-- <div class="entry-area">
-            <input type="text" class="entry-input" id="serial" name="serial" placeholder="SERIAL">
-        </div> -->
-        <div class="entry-area">
-            <select class="entry-input" id=brandname>
-                <option value="-" id="listbrandname">BRAND NAME</option>
-            </select>
+<div id="register" class="tabcontent">
+    <div class="row">
+        <div class="col-xl-5 col-lg-4">
+            <div class="entry-area">
+                <select class="entry-input" id=brandname>
+                    <option value="-" id="listbrandname">BRAND NAME</option>
+                </select>
+            </div>
+            <div class="entry-area">
+                <select class="entry-input" id=itemtype>
+                    <option value="-" id="listitemtpye">ITEM TYPE</option>
+                </select>
+            </div>
+            <div class="entry-area">
+                <input type="text" class="entry-input" id="itemcount" name="itemcount" placeholder="ITEM COUNT">
+            </div>
+            <div class="entry-area">
+                <button class="approve-btn" id="saveBtn" name="saveBtn">REGISTER</button>
+            </div>
         </div>
-        <div class="entry-area">
-            <select class="entry-input" id=itemtype>
-                <option value="-" id="listitemtpye">ITEM TYPE</option>
-            </select>
-        </div>
-        <div class="entry-area">
-            <input type="text" class="entry-input" id="itemcount" name="itemcount" placeholder="ITEM COUNT">
-        </div>
-        <div class="entry-area">
-            <button class="approve-btn" id="saveBtn" name="saveBtn">REGISTER</button>
-        </div>
-        <div class="entry-area">
-            <input type="file" id="fileUpload" />
-            <input type="button" id="upload" value="Upload" />
-            <br />
+        <div class="col-xl-5 col-lg-4">
+            <div class="entry-area">
+                <input type="file" id="fileUpload" />
+                <input type="button" id="upload" value="Upload" />
+                <br />
 
-            <div id="ExcelTable"></div>
+                <div id="ExcelTable"></div>
+            </div>
         </div>
+    </div>
+
+    <hr>
+    <div>
+        <table id="item-tbl">
+            <thead>
+                <th>ITEM BRAND</th>
+                <th>ITEM TYPE</th>
+                <th>ITEM COUNT</th>
+                <th>UPDATE BY</th>
+                <th>UPDATE DATE</th>
+                <th>CREATED BY</th>
+                <th>CREATED DATE</th>
+            </thead>
+            <tbody></tbody>
+        </table>
     </div>
 </div>
 
-<div id="update" class="row tabcontent">
-    <div class="col-xl-4 col-lg-3">
-        <!-- <div class="entry-area">
-            <input type="text" class="entry-input" id="serial" name="serial" placeholder="SERIAL">
-        </div> -->
-        <div class="entry-area">
-            <select class="entry-input" id=updatebrandname>
-                <option value="-" id="listbrandname">BRAND NAME</option>
-            </select>
-        </div>
-        <div class="entry-area">
-            <select class="entry-input" id=updateitemtype>
-                <option value="-" id="listitemtpye">ITEM TYPE</option>
-            </select>
-        </div>
-        <div class="entry-area">
-            <input type="text" class="entry-input" id="updateitemcount" name="updateitemcount"
-                placeholder="ADD ITEM COUNT">
-        </div>
-        <div class="entry-area">
-            <button class="approve-btn" id="updateBtn" name="updateBtn">UPDATE</button>
-        </div>
-    </div>
-</div>
-<hr>
-<div>
-    <table id="item-tbl">
+<div id="stockin" class="tabcontent">
+    <br>
+    <table id="stockin-tbl">
         <thead>
-            <th>ITEM BRAND</th>
-            <th>ITEM TYPE</th>
-            <th>ITEM COUNT</th>
-            <th>UPDATE BY</th>
-            <th>UPDATE DATE</th>
-            <th>CREATED BY</th>
-            <th>CREATED DATE</th>
+            <th>REQUEST ID</th>
+            <th>REQUEST BY</th>
+            <th>DATE</th>
+            <th>DETAILS</th>
+            <th>PURCHASING OFFICER</th>
+            <th>ACCOUNTING OFFICER</th>
+            <th>STATUS</th>
+            <th>ACTIONS</th>
         </thead>
         <tbody></tbody>
     </table>

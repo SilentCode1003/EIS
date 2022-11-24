@@ -2,11 +2,11 @@
   {
     "brandname": "NO BRAND",
     "itemtype": "20mm Ø uPVC Pipes x 3m",
-    "minstocks": "200",
-    "maxstocks": "2000",
-    "updateby": "DEV42DEV",
-    "updatedate": "2022-11-24 10:51",
+    "minstocks": "100",
+    "maxstocks": "1000",
+    "updateby": "",
+    "updatedate": "",
     "createdby": "DEV42DEV",
-    "createddate": "2022-11-24 10:02"
+    "createddate": "2022-11-24 11:26"
   }
 ]

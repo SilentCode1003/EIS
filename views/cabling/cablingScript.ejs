@@ -3,12 +3,11 @@
 
 <script>
     $(document).ready(function () {
-        loadtable();
         var dataArr = [];
         var dataTable = null;
 
 
-        $(document).on('click', "#searchBtn", function () {
+        $(document).on('click', "#registerBtn", function () {
             var i, tabcontent, tablinks;
             tabcontent = document.getElementsByClassName("tabcontent");
             for (i = 0; i < tabcontent.length; i++) {
@@ -19,9 +18,11 @@
                 tablinks[i].className = tablinks[i].className.replace(" active", "");
             }
             document.getElementById('register').style.display = "block";
+
+            RegisterItemTable();
         })
 
-        $(document).on('click', "#deplotBtn", function () {
+        $(document).on('click', "#stockinBtn", function () {
             var i, tabcontent, tablinks;
             tabcontent = document.getElementsByClassName("tabcontent");
             for (i = 0; i < tabcontent.length; i++) {
@@ -31,7 +32,9 @@
             for (i = 0; i < tablinks.length; i++) {
                 tablinks[i].className = tablinks[i].className.replace(" active", "");
             }
-            document.getElementById('update').style.display = "block";
+            document.getElementById('stockin').style.display = "block";
+
+            StockinTable();
         })
 
         $.ajax({
@@ -295,7 +298,7 @@
 
         }
 
-        function loadtable() {
+        function RegisterItemTable() {
             showloader();
             dataTable = $('#item-tbl').DataTable({
                 'destroy': true,
@@ -324,6 +327,86 @@
                     hideload();
                 }
             });
-        };
+        }
+
+        function StockinTable() {
+            showloader();
+            dataTableStocks = $('#stockin-tbl').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'GET',
+                'ajax': {
+                    'url': '/cabling/stockin',
+                    'dataSrc': (json) => {
+                        var finalData = [];
+                        var data = json.data;
+                        var details = '';
+                        var action = '';
+
+
+                        console.log(data);
+                        $.each(data, (key, item) => {
+
+                            var dataJson = JSON.parse(item.details);
+                            console.log(dataJson);
+                            $.each(dataJson, (key, item) => {
+                                console.log(`BRAND: ${item.brandname} ITEM TYPE: ${item.itemtype} ITEM COUNT: ${item.itemcount}`);
+                                details += `BRAND: ${item.brandname} ITEM TYPE: ${item.itemtype} ITEM COUNT: ${item.itemcount}<br/>`;
+                            })
+
+                            if (item.status == 'PENDING') {
+                                action = 'NO ACTIONS';
+                            }
+                            if (item.status == 'APPROVED') {
+                                action = '<button class="approve-btn" id="approveBtn-cabling" name="approveBtn-cabling">APPROVED</button><button class="edit-btn" id="PrinttBtn-cabling" name="PrinttBtn-cabling">PRINT</button>';
+                            }
+                            if(item.status == 'DONE'){
+                                action = '<button class="edit-btn" id="PrinttBtn-cabling" name="PrinttBtn-cabling">PRINT</button>';
+                            }
+
+
+                            finalData.push({
+                                requestid: item.requestid,
+                                requestby: item.requestby,
+                                requestdate: item.requestdate,
+                                details: details,
+                                pruchasingofficer: item.pruchasingofficer,
+                                accountofficer: item.accountofficer,
+                                status: item.status,
+                                action: action,
+                            })
+
+                            details = '';
+                        })
+
+                        return finalData;
+                    },
+                },
+                'columnDefs': [{
+                    targets: 1,
+                    className: 'td-indent',
+                }],
+                'columns': [
+                    { data: 'requestid' },
+                    { data: 'requestby' },
+                    { data: 'requestdate' },
+                    { data: 'details' },
+                    { data: 'pruchasingofficer' },
+                    { data: 'accountofficer' },
+                    { data: 'status' },
+                    { data: 'action' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+        }
     })
 </script>

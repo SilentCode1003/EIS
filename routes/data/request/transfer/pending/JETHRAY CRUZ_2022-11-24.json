@@ -1,0 +1,60 @@
+[
+  {
+    "personel": "JETHRAY CRUZ",
+    "date": "2022-11-24 13:57",
+    "locationfrom": "MAIN OFFICE",
+    "locationto": "ILOILO",
+    "remarks": "SITE SPARE REQUEST",
+    "status": "PENDING",
+    "details": [
+      {
+        "personel": "JETHRAY CRUZ",
+        "brand": "POSIFLEX",
+        "itemtype": "PP9000 POS PRINTER",
+        "serial": "PPI4587",
+        "createddate": "2022-11-24",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JETHRAY CRUZ",
+        "brand": "POSIFLEX",
+        "itemtype": "PP9000 POS PRINTER",
+        "serial": "PPI48754",
+        "createddate": "2022-11-24",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JETHRAY CRUZ",
+        "brand": "POSIFLEX",
+        "itemtype": "PP9000 POS PRINTER",
+        "serial": "PPIB4587",
+        "createddate": "2022-11-24",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JETHRAY CRUZ",
+        "brand": "POSIFLEX",
+        "itemtype": "PP9000 POS PRINTER",
+        "serial": "PPLC0632",
+        "createddate": "2022-11-24",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JETHRAY CRUZ",
+        "brand": "POSIFLEX",
+        "itemtype": "PP9000 POS PRINTER",
+        "serial": "PPLC0905",
+        "createddate": "2022-11-24",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JETHRAY CRUZ",
+        "brand": "POSIFLEX",
+        "itemtype": "PP9000 POS PRINTER",
+        "serial": "PPLC0906",
+        "createddate": "2022-11-24",
+        "status": "PENDING"
+      }
+    ]
+  }
+]

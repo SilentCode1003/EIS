@@ -4,6 +4,7 @@ var router = express.Router();
 const { isAuthAdmin } = require('./controller/authBasic');
 
 const helper = require('./repository/customhelper');
+const mysql = require('./repository/dbconnect');
 var ItemPath = `${__dirname}/data/masters/items/`;
 
 /* GET home page. */
@@ -195,9 +196,9 @@ router.post('/brandnamedepartment', (req, res) => {
       var dataFilter = [];
       var data = helper.Distinct(result, 'brandname', null)
       data.forEach(d => {
-        if(d == null){
+        if (d == null) {
 
-        }else{
+        } else {
           dataFilter.push({
             brandname: d
           })

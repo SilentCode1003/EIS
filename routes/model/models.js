@@ -417,3 +417,22 @@ exports.CablingItemMaster = (data) => {
 
     return dataResult;
 }
+
+exports.TransactionCablingStocksDetails = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            requestid: key.tcsd_requestid,
+            requestby: key.tcsd_requestby,
+            requestdate: key.tcsd_requestdate,
+            details: key.tcsd_details,
+            pruchasingofficer: key.tcsd_pruchasingofficer,
+            accountofficer: key.tcsd_accountofficer,
+            status: key.tcsd_status,
+        })
+    });
+
+    return dataResult;
+}

@@ -1,0 +1,35 @@
+[
+  {
+    "requestid": 1,
+    "personel": "DEV42DEV",
+    "date": "2022-11-24 12:33",
+    "details": [
+      {
+        "personel": "DEV42DEV",
+        "brandname": "VENDEX",
+        "itemtype": "uPVC Electrical Conduit 20 mm",
+        "itemcount": "100",
+        "createddate": "2022-11-24 12:33",
+        "status": "PENDING"
+      },
+      {
+        "personel": "DEV42DEV",
+        "brandname": "VENDEX",
+        "itemtype": "uPVC Electrical Conduit 32 mm",
+        "itemcount": "100",
+        "createddate": "2022-11-24 12:33",
+        "status": "PENDING"
+      },
+      {
+        "personel": "DEV42DEV",
+        "brandname": "NO BRAND",
+        "itemtype": "SOLID WIRE - BLACK",
+        "itemcount": "5",
+        "createddate": "2022-11-24 12:33",
+        "status": "PENDING"
+      }
+    ],
+    "remarks": "FOR INSTALLATION",
+    "status": "PENDING"
+  }
+]
