@@ -436,3 +436,69 @@ exports.TransactionCablingStocksDetails = (data) => {
 
     return dataResult;
 }
+
+exports.PurchaseDatails = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            requestid: key.pd_requestid,
+            requestby: key.pd_requestdate,
+            requestdate: key.pd_requestby,
+            details: key.pd_details,
+            totalbudget: key.pd_totalbudget,
+            remarks: key.pd_remarks,
+            status: key.pd_status,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.PurchaseItems = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            purchaseitemid: key.pi_purchaseitemid,
+            brandname: key.pi_brandname,
+            itemtype: key.pi_itemtype,
+            quantity: key.pi_quantity,
+            cost: key.pi_cost,
+            requestid: key.pi_requestid,
+            officer: key.pi_officer,
+            orderdate: key.pi_orderdate,
+            status: key.pi_status,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.TransactionPurchaseItem = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            purchaseitemid: key.tpi_transactionid,
+            brandname: key.tpi_brandname,
+            itemtype: key.tpi_itemtype,
+            quantity: key.tpi_quantity,
+            cost: key.tpi_cost,
+            subtotal: key.tpi_subtotal,
+            requestby: key.tpi_requestby,
+            requestdate: key.tpi_requestdate,
+            purchasingofficer: key.tpi_purchasingofficer,
+            purchasedate: key.tpi_purchasedate,
+            ponumber: key.tpi_ponumber,
+            podate: key.tpi_podate,
+            requestid: key.tpi_requestid,
+            status: key.tpi_status,
+        })
+    });
+
+    return dataResult;
+}

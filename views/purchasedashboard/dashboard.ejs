@@ -1,0 +1,220 @@
+<div>
+    <div>
+        <h1>STOCKS REQUEST</h1>
+    </div>
+    <div>
+        <table id="stocks-request-tbl">
+            <thead>
+                <th>REQUEST ID</th>
+                <th>REQUEST DATE</th>
+                <th>REQUEST BY</th>
+                <th>DETAILS</th>
+                <th>BUDGET</th>
+                <th>REMARKS</th>
+                <th>STATUS</th>
+                <th>ACTION</th>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<br>
+<hr>
+<br>
+
+<div>
+    <div>
+        <h1>BUDGET REQUEST</h1>
+    </div>
+    <div>
+        <table id="budget-request-tbl">
+            <thead>
+                <th>REQUEST ID</th>
+                <th>REQUEST DATE</th>
+                <th>REQUEST BY</th>
+                <th>DETAILS</th>
+                <th>BUDGET</th>
+                <th>APPROVED BY</th>
+                <th>APPROVED DATE</th>
+                <th>REMARKS</th>
+                <th>STATUS</th>
+                <th>ACTION</th>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- The Modal -->
+<div id="stocksrequestModal" class="modal card shadow mb-4">
+    <!-- Modal content -->
+    <div class="modal-content modal-print-background">
+        <div class="modal-button-container modal-print-background">
+            <span id="stocksrequest" class="close">&times;</span>
+        </div>
+        <!-- AREA TO PRINT ONLY -->
+        <div id="PrintArea">
+            <div class="modal-header center-content modal-print-background">
+                <div class="row">
+                    <div class="col-xl-3 col-lg-2">
+                        <img class="logo" src="/images/img/logo.jpg" alt="...">
+                    </div>
+                </div>
+            </div>
+
+            <div class="center-text modal-print-background">
+                <div class="modal-print-background modal-company-header">
+                    <p><strong><span class="report-header">5L SOLUTIONS SUPPLY &amp; ALLIED SERVICES
+                                CORP.</span></strong></p>
+                </div>
+                <div class="modal-print-background">
+                    <p><span class="report-subheader">Phase 3B Block 18 Lot 15, Golf Drive Street Pacita
+                            Complex 1,
+                            City of Bi&ntilde;an, Laguna</span></p>
+                </div>
+                <div class="modal-print-background">
+                    <p><span class="report-subheader">Tel.Nos: 273-44-69/952-15-60</span></p>
+                </div>
+            </div>
+
+            <div class="modal-body modal-print-background">
+                <div>
+                    <h2 class='report-header' style="text-align: center"> PURCHASE ORDER REQUEST</h2>
+                    <br>
+                    <br>
+
+                    <div class="row modal-signature-info">
+                        <div class="col-sm-4">
+                            <p><strong>REQUEST ID : <span id="requestid"></span> </strong></p>
+                        </div>
+                    </div>
+
+                    <div class="row modal-signature-info">
+                        <div class="col-sm-4">
+                            <p><strong>REQUEST DATE : <span id="requestby"></strong></p>
+                        </div>
+                    </div>
+
+                    <div class="row modal-signature-info">
+                        <div class="col-sm-4">
+                            <p><strong>REQUEST BY : <span id="requestdate"></strong></p>
+                        </div>
+                    </div>
+
+                    <div class="row modal-signature-info">
+                        <div class="col-sm-4">
+                            <p><strong>REMARKS : <span id="remarks"></strong></p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <table id="stocks-equipments-tbl">
+                            <thead>
+                                <th>BRANDNAME</th>
+                                <th>TYPE</th>
+                                <th>QUATITY</th>
+                                <th>COST</th>
+                                <th>SUB TOTAL</th>
+                            </thead>
+                            <tbody></tbody>
+
+                        </table>
+                    </div>
+                    <br>
+                    <div class="row modal-signature-info">
+                        <div class="col-sm-3">
+                            <p><strong>TOTAL COST : <span id="totalcost"> </strong></p>
+                        </div>
+                    </div>
+                    <div class="row modal-signature-info">
+                        <div class="col-sm-3">
+                            <p><strong>PURCHASING OFFICER : <span id="officer"> </strong></p>
+                        </div>
+                    </div>
+                    <div class="row modal-signature-info">
+                        <div class="col-sm-3">
+                            <p><strong>DATE : <span id="date"> </strong></p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <br>
+            <br>
+            <br>
+            <!-- SIGNATURE AREA -->
+            <div class="row modal-signature-info center-content">
+                <div class="col-sm-3 center-content">
+                    <p><strong>____________________</strong></p>
+                </div>
+                <div class="col-sm-3 center-content">
+                    <p><strong>____________________</strong></p>
+                </div>
+            </div>
+            <!-- LABLE AREA -->
+            <div class="row modal-signature-info center-content">
+                <div class="col-sm-3 center-content">
+                    <p><strong>REQUEST BY</strong></p>
+                </div>
+                <div class="col-sm-3 center-content">
+                    <p><strong>PURCHASING OFFICER</strong></p>
+                </div>
+            </div>
+            <!-- DATES -->
+            <div class="row modal-signature-info center-content">
+                <div class="col-sm-3 center-content">
+                    <p><strong>
+                            <%= date%>
+                        </strong></p>
+                </div>
+                <div class="col-sm-3 center-content">
+                    <p><strong>
+                            <%= date%>
+                        </strong></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="modal-button-container" class="center-content">
+            <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
+            <button class="approve-btn" id="printStockRequestBtn" name="printStockRequestBtn">PRINT</button>
+        </div>
+    </div>
+</div>
+
+<!-- The Modal -->
+<div id="equipmentrequestModal" class="modal card shadow mb-4">
+    <!-- Modal content -->
+    <div class="modal-content modal-print-background">
+        <div class="modal-button-container modal-print-background">
+            <span id="equipmentrequestrequest" class="close">&times;</span>
+        </div>
+
+        <div class="modal-body modal-print-background">
+            <div>
+                <h2 class='report-header' style="text-align: center"> STOCKS REQUEST</h2>
+                <br>
+                <br>
+                <div>
+                    <table id="modal-stocks-request-tbl">
+                        <thead>
+                            <th>BRAND</th>
+                            <th>TYPE</th>
+                            <th>QUANTITY</th>
+                            <th>COST</th>
+                        </thead>
+                        <tbody></tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="modal-button-container" class="center-content">
+            <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
+            <button class="approve-btn" id="saveRequestStocksBtn" name="saveRequestStocksBtn">SAVE</button>
+        </div>
+    </div>
+</div>

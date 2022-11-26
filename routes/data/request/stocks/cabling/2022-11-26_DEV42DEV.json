@@ -1,0 +1,27 @@
+[
+  {
+    "requestid": 1,
+    "personel": "DEV42DEV",
+    "date": "2022-11-26 08:34",
+    "details": [
+      {
+        "personel": "DEV42DEV",
+        "brandname": "NO BRAND",
+        "itemtype": "SOLID WIRE - BLACK",
+        "itemcount": "50",
+        "createddate": "2022-11-26 08:34",
+        "status": "PENDING"
+      },
+      {
+        "personel": "DEV42DEV",
+        "brandname": "NO BRAND",
+        "itemtype": "20mm Ø uPVC Pipes x 3m",
+        "itemcount": "300",
+        "createddate": "2022-11-26 08:34",
+        "status": "PENDING"
+      }
+    ],
+    "remarks": "REQUEST NEW STOCKS",
+    "status": "PENDING"
+  }
+]

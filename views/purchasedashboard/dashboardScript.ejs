@@ -1,0 +1,356 @@
+<script>
+    $(document).ready(function () {
+        let requestid = '';
+        let requestby = '';
+        let requestdate = '';
+        let remarks = '';
+        LoadTableData();
+
+        function LoadTableData() {
+            stocksrequest = $('#stocks-request-tbl').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'GET',
+                'ajax': {
+                    'url': '/purchasedashboard/load',
+                    'dataSrc': (json) => {
+                        var finalData = [];
+                        var data = json.data;
+
+                        // console.log(data);
+                        $.each(data, (key, item) => {
+                            var action = '';
+                            var details = '';
+                            var detailsjson = JSON.parse(item.details);
+                            var status = item.status;
+                            var budget = parseFloat(item.totalbudget);
+
+                            $.each(detailsjson, (key, item) => {
+                                console.log(`${item.brandname} ${item.itemtype} ${item.itemcount}`);
+                                details += `BRAND: ${item.brandname} TYPE: ${item.itemtype} QUANTITY: ${item.itemcount}<br/>`;
+                            })
+
+                            if (status == 'PENDING') {
+                                action = '<button class="assign-btn" id="assignBtn" name="assignBtn">ASSIGN COST</button>'
+                            }
+                            if (status == 'REQUEST BUDGET') {
+                                action = '<button class="approve-btn" id="printBtn" name="printBtn">PRINT</button><br><button class="approve-btn" id="editBtn" name="editBtn">EDIT</button><br><button class="edit-btn" id="requestBudgetBtn" name="requestBudgetBtn">REQUEST BUDGET</button>'
+                            }
+                            if (status == 'WAITING') {
+                                action = '<button class="approve-btn" id="cancelRequestBtn" name="cancelRequestBtn">CANCEL</button>'
+                            }
+
+                            budget = `₱ ${(budget).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+
+
+
+                            finalData.push({
+                                requestid: item.requestid,
+                                requestby: item.requestby,
+                                requestdate: item.requestdate,
+                                details: details,
+                                totalbudget: budget,
+                                remarks: item.remarks,
+                                status: item.status,
+                                action: action
+                            })
+
+                            details = '';
+                        })
+
+                        return finalData;
+                    },
+                },
+                'columnDefs': [{
+                    targets: 1,
+                    className: 'td-indent',
+                }],
+                'columns': [
+                    { data: 'requestid' },
+                    { data: 'requestby' },
+                    { data: 'requestdate' },
+                    { data: 'details' },
+                    { data: 'totalbudget' },
+                    { data: 'remarks' },
+                    { data: 'status' },
+                    {
+                        data: 'action'
+                        // data: null, title: 'Action', wrap: false, "render": function () {
+
+                        // }
+                    }
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+        }
+
+        //MODAL
+        var stocksmodal = document.getElementById("stocksrequestModal");
+        var equipmentrequestmodal = document.getElementById("equipmentrequestModal");
+
+        var stocksmodalspan = document.getElementById("stocksrequest");
+        var equipmentrequestspan = document.getElementById("equipmentrequestrequest");
+
+        stocksmodalspan.onclick = function () {
+            stocksmodal.style.display = "none";
+        }
+        equipmentrequestspan.onclick = function () {
+            equipmentrequestmodal.style.display = "none";
+        }
+
+        window.onclick = function () {
+            if (event.target == stocksmodal) {
+                stocksmodal.style.display = "none";
+            }
+            if (event.target == equipmentrequestmodal) {
+                equipmentrequestmodal.style.display = "none";
+            }
+        }
+
+        $('#stocks-request-tbl tbody').on('click', 'td', function () {
+            var data = stocksrequest.row(this).data();
+            requestid = data.requestid;
+            requestby = data.requestby;
+            requestdate = data.requestdate;
+            remarks = data.remarks;
+            // console.log(data);
+        })
+
+        $('#modal-stocks-request-tbl tbody').on('click', 'tr', function (e) {
+            e.preventDefault();
+
+            if ($(this).attr('edit_type') == 'button') {
+                return false;
+            }
+
+            //make div editable
+            $(this).closest('div').attr('contenteditable', 'true');
+            //add bg css
+            $(this).addClass('bg-success').css('padding', '5px');
+
+            $(this).focus();
+        });
+
+        $(document).on('click', "#printStocksBtn", function () {
+            stocksmodal.style.display = "block";
+        })
+
+        $(document).on('click', "#assignBtn", function () {
+
+            var requestitemTabel = $('#modal-stocks-request-tbl').DataTable({
+                'destroy': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollCollapse': true,
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/purchasedashboard/getdetails",
+                data: { requestid: requestid },
+                success: function (result) {
+                    requestitemTabel.clear().draw();
+                    var data = result.data;
+
+                    // console.log(result.data);
+                    $.each(data, (key, item) => {
+                        var datajson = JSON.parse(item.details);
+                        // console.log(datajson);
+                        $.each(datajson, (key, item) => {
+                            requestitemTabel.row.add([item.brandname, item.itemtype, item.itemcount, ""]).draw(false);
+                        })
+                    })
+                },
+                error: function (result) {
+                    error('error: ' + result);
+                }
+            });
+
+            equipmentrequestmodal.style.display = "block";
+        })
+
+        $(document).on('click', "#editBtn", function () {
+            var requestitemTabel = $('#modal-stocks-request-tbl').DataTable({
+                'destroy': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollCollapse': true,
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/purchasedashboard/getdetailitems",
+                data: { requestid: requestid },
+                success: function (result) {
+                    requestitemTabel.clear().draw();
+                    var data = result.data;
+
+                    // console.log(result.data);
+                    $.each(data, (key, item) => {
+                        requestitemTabel.row.add([item.brandname, item.itemtype, item.quantity, item.cost]).draw(false);
+                    })
+                },
+                error: function (result) {
+                    error('error: ' + result);
+                }
+            });
+
+            equipmentrequestmodal.style.display = "block";
+        })
+
+        $(document).on('click', "#requestBudgetBtn", function () {
+
+        })
+
+        $(document).on('click', "#requestBudgetBtn", function () {
+            $.ajax({
+                type: "POST",
+                url: "/purchasedashboard/requestbudget",
+                data: { requestid: requestid },
+                success: function (result) {
+
+                },
+                error: function (result) {
+                    error('error: ' + result);
+                }
+            });
+        })
+
+        $(document).on('click', "#printBtn", function () {
+            var requestitemTabel = $('#stocks-equipments-tbl').DataTable({
+                'destroy': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollCollapse': true,
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/purchasedashboard/gettransactionpurchseitems",
+                data: { requestid: requestid },
+                success: function (result) {
+                    requestitemTabel.clear().draw();
+                    var data = result.data;
+                    var totalcost = 0;
+                    var officer = '';
+                    var date = '';
+
+                    // console.log(result.data);
+                    $.each(data, (key, item) => {
+                        requestitemTabel.row.add([item.brandname, item.itemtype, item.quantity, item.cost, item.subtotal]).draw(false);
+
+                        totalcost += parseFloat(item.subtotal);
+                        officer = item.purchasingofficer;
+                        date = item.purchasedate;
+                    })
+
+                    totalcost = `₱ ${(totalcost).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+
+                    document.getElementById('requestid').innerText = requestid;
+                    document.getElementById('requestby').innerText = requestby;
+                    document.getElementById('requestdate').innerText = requestdate;
+                    document.getElementById('remarks').innerText = remarks;
+                    document.getElementById('totalcost').innerText = totalcost;
+                    document.getElementById('officer').innerText = officer;
+                    document.getElementById('date').innerText = date;
+                },
+                error: function (result) {
+                    error('error: ' + result);
+                }
+            });
+            stocksmodal.style.display = "block";
+        })
+
+        $(document).on('click', "#printStockRequestBtn", function () {
+            console.log('clicked!');
+            var printContents = document.getElementById('PrintArea').innerHTML;
+            var originalContents = document.body.innerHTML;
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+            location.reload();
+        })
+
+        $(document).on('click', "#saveRequestStocksBtn", async function () {
+            console.log('clicked!');
+            var data = $('#modal-stocks-request-tbl tr');
+            var dataRaw = [];
+            console.log(data);
+            console.log(data.length);
+            var message = '';
+            var est_budget = 0;
+            var purchaseDetails = [];
+
+            var index = 1;
+            for (x = 1; x < data.length; x++) {
+                console.log(data[x].innerText);
+                var innerData = data[x].innerText;
+                innerData = innerData.split("\t");
+
+                if (innerData[3] == "") {
+                    message += `${innerData[1]}, `;
+                } else {
+                    dataRaw.push({
+                        brandname: innerData[0],
+                        itemtype: innerData[1],
+                        itemcount: innerData[2],
+                        itemcost: innerData[3],
+                    });
+
+                    est_budget += (parseFloat(innerData[3]) * parseFloat(innerData[2]));
+                    index += 1;
+                }
+
+            }
+
+            if (message != "") {
+                warning(`ITEM/S: ${message} cost prt piece not assigned!`)
+            } else {
+                console.log(dataRaw);
+                dataRaw = JSON.stringify(dataRaw, null, 2);
+
+                // purchaseDetails.push({
+                //     requestid: requestid,
+                //     requestby: requestby,
+                //     requestdate: requestdate,
+                //     totalcost: est_budget,
+                //     details: dataRaw
+                // })
+
+                // purchaseDetails = JSON.stringify(purchaseDetails, null, 2);
+
+                $.ajax({
+                    type: "POST",
+                    url: "/purchasedashboard/updatestockrequest",
+                    data: {
+                        requestid: requestid,
+                        requestby: requestby,
+                        requestdate: requestdate,
+                        totalcost: est_budget,
+                        details: dataRaw
+                    },
+                    success: function (result) {
+                        equipmentrequestmodal.style.display = 'NONE';
+                        success('Saved!', 'Data Saved!');
+                        LoadTableData();
+                    },
+                    error: function (result) {
+                        error('error: ' + result);
+                    }
+                });
+            }
+        });
+    })
+</script>

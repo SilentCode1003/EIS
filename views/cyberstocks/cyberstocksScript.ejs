@@ -1,0 +1,27 @@
+<script>
+    $(document).ready(function () {
+        $("#dtbox").DateTimePicker({
+            dateFormat: "yyyy-MM-dd"
+        });
+    })
+
+    $.ajax({
+            type: "POST",
+            url: "/item/itemtype",
+            data: { brandname: 'CYBERPOWER' },
+            success: function (result) {
+                console.log(result.data);
+                var data = result.data;
+
+                $.each(data, function (key, item) {
+                    var options = new Option(item.itemname, item.itemname);
+                    $(options).html(item.itemname);
+                    $('#itemtype').append(options);
+                    console.log(item.itemname);
+                });
+            },
+            error: function (result) {
+                alert('error: ' + result.data);
+            }
+        });
+</script>

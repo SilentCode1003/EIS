@@ -136,6 +136,15 @@ exports.Select = (sql, table, callback) => {
             if (table == 'TransactionCablingStocksDetails') {
                 callback(null, model.TransactionCablingStocksDetails(results));
             }
+            if (table == 'PurchaseDatails') {
+                callback(null, model.PurchaseDatails(results));
+            }
+            if (table == 'PurchaseItems') {
+                callback(null, model.PurchaseItems(results));
+            }
+            if (table == 'TransactionPurchaseItem') {
+                callback(null, model.TransactionPurchaseItem(results));
+            }
         });
 
     } catch (error) {
@@ -162,6 +171,9 @@ exports.SelectResult = async (sql, table, callback) => {
             }
             if (table == 'CablingItemMaster') {
                 callback(null, model.CablingItemMaster(results));
+            }
+            if (table == 'PurchaseDatails') {
+                callback(null, model.PurchaseDatails(results));
             }
         });
 
@@ -211,6 +223,20 @@ exports.SelectDistinct = (rows, table, callback) => {
             }
 
         })
+    } catch (error) {
+        callback(error, null);
+    }
+}
+
+exports.StoredProcedure = (sql, data, callback) => {
+    try {
+
+        connection.query(sql, data, (error, results, fields) => {
+            if (error) {
+                callback(error.message, null);
+            }
+            callback(null, results[0])
+        });
     } catch (error) {
         callback(error, null);
     }

@@ -284,6 +284,7 @@ router.post('/requeststocks', async (req, res) => {
     let dataRequest = [];
     let detailsJson = JSON.parse(details);
     let tcsd_data = [];
+    let purchase_details = [];
 
     todo.push([datetime[0], personel, details, remarks, status]);
 
@@ -292,12 +293,6 @@ router.post('/requeststocks', async (req, res) => {
 
       callback(null, helper.CreateJSON(targetDir, dataJson));
     }
-
-    Save_Request(details, (err, result) => {
-      if (err) throw err;
-
-      console.log('Save_Request');
-    })
 
     Insert_RequestCablingStocksDatails = (data, callback) => {
       let sql = `INSERT INTO request_cabling_stocks_details(
@@ -339,6 +334,15 @@ router.post('/requeststocks', async (req, res) => {
 
     }
 
+    Insert_PurchaseDetails = (data, callback) => {
+      let sql = `call PurchaseDetails(?)`;
+
+      mysql.StoredProcedure(sql, data, (err, result) => {
+        if (err) callback(err, null);
+        callback(null, result);
+      })
+    }
+
     Check_RequestExist = (date, personel, callback) => {
       let cmd = `SELECT * FROM request_cabling_stocks_details WHERE rcsd_requestdate='${date}' AND rcsd_requestby='${personel}'`;
 
@@ -378,6 +382,15 @@ router.post('/requeststocks', async (req, res) => {
               status: status,
             });
 
+            purchase_details.push([
+              helper.GetCurrentDatetime(),
+              personel,
+              details,
+              '',
+              remarks,
+              status,
+            ]);
+
             tcsd_data.push([
               personel,
               date,
@@ -401,18 +414,25 @@ router.post('/requeststocks', async (req, res) => {
             })
 
             //insert request stocks equipment
-            console.log(transaction_list);
+            console.log(`equipments: ${transaction_list}`);
             Insert_RequestCablingStocksEquipments(details_todo, (err, data) => {
               if (err) throw err;
 
               console.log(`Insert_RequestCablingStocksEquipments`);
             });
 
-            console.log(tcsd_data);
+            console.log(`details: ${tcsd_data}`);
             Insert_TransactionCablingStocksDetails(tcsd_data, (err, data) => {
               if (err) throw err;
 
               console.log('Insert_TransactionCablingStocksDetails');
+            })
+
+            console.log(`purchase: ${purchase_details}`);
+            Insert_PurchaseDetails(purchase_details, (err, result) => {
+              if (err) throw err;
+
+              console.log('Insert_PurchaseDetails')
             })
 
 

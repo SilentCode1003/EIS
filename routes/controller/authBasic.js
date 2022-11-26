@@ -30,6 +30,9 @@ const isAuthAdmin = (req, res, next) => {
     else if (req.session.isAuth && req.session.accounttype == "PURCHASING") {
         next();
     }
+    else if (req.session.isAuth && req.session.accounttype == "CUSTODIAN") {
+        next();
+    }
     else {
         res.redirect('/login');
     }

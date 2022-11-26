@@ -37,7 +37,7 @@
 <script>
     let accounttype = '<%= accounttype%>';
 
-    if (accounttype == 'IT' || accounttype == 'CABLING' || accounttype == 'CYBERPOWER' || accounttype == 'ACCOUNTING' || accounttype == 'PURCHASING') {
+    if (accounttype == 'IT' || accounttype == 'CABLING' || accounttype == 'CYBERPOWER' || accounttype == 'ACCOUNTING' || accounttype == 'PURCHASING' || accounttype == 'CUSTODIAN') {
         $("#masters").toggle(0, function () {
         });
         $("#equipments-it").toggle(0, function () {
@@ -77,7 +77,7 @@
         });
     }
 
-    if (accounttype == 'CABLING') {
+    if (accounttype == 'CABLING' || accounttype == 'CUSTODIAN') {
         $("#cyberpower").toggle(0, function () {
         });
 

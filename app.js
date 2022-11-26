@@ -29,8 +29,13 @@ var cablingrequestRouter = require('./routes/cablingrequest');
 var cablingreportRouter = require('./routes/cablingreport');
 var equipmentreportRouter = require('./routes/equipmentreport');
 var cablingitemmasterRouter = require('./routes/cablingitemmaster');
-
-
+var cyberreportRouter = require('./routes/cyberreport');
+var cyberrequestRouter = require('./routes/cyberrequest');
+var cyberdashboardRouter = require('./routes/cyberdashboard');
+var cyberstocksRouter = require('./routes/cyberstocks');
+var purchasedashboardRouter = require('./routes/purchasedashboard');
+var purchaserequestRouter = require('./routes/purchaserequest');
+var purchasereportRouter = require('./routes/purchasereport');
 
 var app = express();
 
@@ -91,6 +96,13 @@ app.use('/cablingrequest', cablingrequestRouter);
 app.use('/cablingreport', cablingreportRouter);
 app.use('/equipmentreport', equipmentreportRouter);
 app.use('/cablingitemmaster', cablingitemmasterRouter);
+app.use('/cyberreport', cyberreportRouter);
+app.use('/cyberrequest', cyberrequestRouter);
+app.use('/cyberdashboard', cyberdashboardRouter);
+app.use('/cyberstocks', cyberstocksRouter);
+app.use('/purchasedashboard', purchasedashboardRouter);
+app.use('/purchaserequest', purchaserequestRouter);
+app.use('/purchasereport', purchasereportRouter);
 
 
 // catch 404 and forward to error handler
