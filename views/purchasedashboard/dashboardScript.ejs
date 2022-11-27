@@ -4,9 +4,12 @@
         let requestby = '';
         let requestdate = '';
         let remarks = '';
+        let budgetrequest = '';
+        let detailrequest = '';
         LoadTableData();
 
         function LoadTableData() {
+            //REQUEST STOCKS
             stocksrequest = $('#stocks-request-tbl').DataTable({
                 'destroy': true,
                 'processing': true,
@@ -33,7 +36,7 @@
 
                             $.each(detailsjson, (key, item) => {
                                 console.log(`${item.brandname} ${item.itemtype} ${item.itemcount}`);
-                                details += `BRAND: ${item.brandname} TYPE: ${item.itemtype} QUANTITY: ${item.itemcount}<br/>`;
+                                details += `${item.brandname}${item.itemtype}${item.itemcount}<br>`;
                             })
 
                             if (status == 'PENDING') {
@@ -91,6 +94,41 @@
                     hideload();
                 }
             });
+
+            //REQUEST BUDGET
+            budgetrequesttable = $('#budget-request-tbl').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'GET',
+                'ajax': {
+                    'url': '/purchasedashboard/loadbudgetrequest',
+                },
+                'columnDefs': [{
+                    targets: 1,
+                    className: 'td-indent',
+                }],
+                'columns': [
+                    { data: 'requestid' },
+                    { data: 'requestdate' },
+                    { data: 'requestby' },
+                    { data: 'details' },
+                    { data: 'budget' },
+                    { data: 'approvedby' },
+                    { data: 'approveddate' },
+                    { data: 'remarks' },
+                    { data: 'status' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
         }
 
         //MODAL
@@ -121,7 +159,13 @@
             requestid = data.requestid;
             requestby = data.requestby;
             requestdate = data.requestdate;
+            budgetrequest = data.totalbudget;
+            detailrequest = data.details;
             remarks = data.remarks;
+
+            // budgetrequest = budgetrequest.replace(/₱ /g,'');
+            // budgetrequest = budgetrequest.replace(/,/g,'');
+            // detailrequest = detailrequest.replace(/<br>/g,'')
             // console.log(data);
         })
 
@@ -217,9 +261,14 @@
             $.ajax({
                 type: "POST",
                 url: "/purchasedashboard/requestbudget",
-                data: { requestid: requestid },
+                data: {
+                    requestid: requestid,
+                    budget: budgetrequest,
+                    details: detailrequest,
+                },
                 success: function (result) {
-
+                    success('Success', 'Request Successfully!')
+                    LoadTableData();
                 },
                 error: function (result) {
                     error('error: ' + result);

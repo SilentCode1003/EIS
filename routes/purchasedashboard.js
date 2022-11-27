@@ -1,3 +1,4 @@
+const { json } = require('express');
 var express = require('express');
 const { route } = require('./cablingrequest');
 var router = express.Router();
@@ -222,11 +223,82 @@ router.post('/gettransactionpurchseitems', (req, res) => {
 router.post('/requestbudget', (req, res) => {
   try {
     let requestid = req.body.requestid;
+    let budget = req.body.budget;
+    let details = req.body.details;
+    let request_budget_details = [];
 
-    
+    console.log(`${requestid} ${budget} ${details}`)
+
+    request_budget_details.push([
+      helper.GetCurrentDatetime(),
+      req.session.fullname,
+      details,
+      budget,
+      requestid,
+      '',
+      '',
+      '',
+      'PENDING'
+    ]);
+
+    Insert_RequestBudgetDetails = (data, callback) => {
+      let sql = `CALL RequestBudgetDetails(?)`;
+
+      mysql.StoredProcedure(sql, data, (err, result) => {
+        if (err) callback(err, null)
+
+        callback(null, result);
+      });
+    }
+
+    Update_PurchaseDatails = (id, callback) => {
+      let sql = `UPDATE purchase_details 
+      SET pd_status='WAITING'
+      WHERE pd_requestid='${id}'`;
+
+      mysql.Update(sql, (err, result) => {
+        if (err) callback(err, null);
+        callback(null, result);
+      })
+
+    }
+
+    Insert_RequestBudgetDetails(request_budget_details, (err, result) => {
+      if (err) throw err;
+      console.log('Insert_RequestBudgetDetails');
+    })
+
+    Update_PurchaseDatails(requestid, (err, result) => {
+      if (err) throw err;
+      console.log('Update_PurchaseDatails');
+    })
+
+    res.json({
+      msg: 'success'
+    })
+
   } catch (error) {
     res.json({
       msg: 'success'
+    })
+  }
+})
+
+router.get('/loadbudgetrequest', (req, res) => {
+  try {
+
+    let sql = `select * from request_budget_details`;
+    mysql.Select(sql, 'RequestBudgetDetails', (err, result) => {
+      res.json({
+        msg: 'success',
+        data: result
+      })
+    })
+
+
+  } catch (error) {
+    res.json({
+      msg: error
     })
   }
 })

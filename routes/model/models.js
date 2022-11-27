@@ -502,3 +502,66 @@ exports.TransactionPurchaseItem = (data) => {
 
     return dataResult;
 }
+
+exports.RequestBudgetDetails = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            requestid: key.rbd_requestid,
+            requestdate: key.rbd_requestdate,
+            requestby: key.rbd_requestby,
+            details: key.rbd_details,
+            budget: key.rbd_budget,
+            stockrequestid: key.rbd_stockrequestid,
+            approvedby: key.rbd_approvedby,
+            remarks: key.rbd_remarks,
+            status: key.rbd_status,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.TransactionRequestBudget = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            transactionid: key.trb_transactionid,
+            requestby: key.trb_requestby,
+            requestdate: key.trb_requestdate,
+            details: key.trb_details,
+            budget: key.trb_budget,
+            approvedby: key.trb_approvedby,
+            approveddate: key.trb_approveddate,
+            requestid: key.trb_requestid,
+            status: key.trb_status,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.RequestBudgetDetails = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            requestid: key.rbd_requestid,
+            requestdate: key.rbd_requestdate,
+            requestby: key.rbd_requestby,
+            details: key.rbd_details,
+            budget: key.rbd_budget,
+            approvedby: key.rbd_approvedby,
+            approveddate: key.rbd_approveddate,
+            remarks: key.rbd_remarks,
+            status: key.rbd_status,
+        })
+    });
+
+    return dataResult;
+}
