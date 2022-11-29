@@ -36,6 +36,9 @@ var cyberstocksRouter = require('./routes/cyberstocks');
 var purchasedashboardRouter = require('./routes/purchasedashboard');
 var purchaserequestRouter = require('./routes/purchaserequest');
 var purchasereportRouter = require('./routes/purchasereport');
+var accountingdashboardRouter = require('./routes/accountingdashboard');
+var accountingrequestRouter = require('./routes/accountingrequest');
+var accountingreportRouter = require('./routes/accountingreport');
 
 var app = express();
 
@@ -103,6 +106,9 @@ app.use('/cyberstocks', cyberstocksRouter);
 app.use('/purchasedashboard', purchasedashboardRouter);
 app.use('/purchaserequest', purchaserequestRouter);
 app.use('/purchasereport', purchasereportRouter);
+app.use('/accountingdashboard', accountingdashboardRouter);
+app.use('/accountingrequest', accountingrequestRouter);
+app.use('/accountingreport', accountingreportRouter);
 
 
 // catch 404 and forward to error handler

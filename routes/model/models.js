@@ -516,6 +516,7 @@ exports.RequestBudgetDetails = (data) => {
             budget: key.rbd_budget,
             stockrequestid: key.rbd_stockrequestid,
             approvedby: key.rbd_approvedby,
+            approveddate: key.rbd_approveddate,
             remarks: key.rbd_remarks,
             status: key.rbd_status,
         })
@@ -533,7 +534,6 @@ exports.TransactionRequestBudget = (data) => {
             transactionid: key.trb_transactionid,
             requestby: key.trb_requestby,
             requestdate: key.trb_requestdate,
-            details: key.trb_details,
             budget: key.trb_budget,
             approvedby: key.trb_approvedby,
             approveddate: key.trb_approveddate,
@@ -545,21 +545,39 @@ exports.TransactionRequestBudget = (data) => {
     return dataResult;
 }
 
-exports.RequestBudgetDetails = (data) => {
+exports.PurchaseOrderItem = (data) => {
     let dataResult = [];
 
     data.forEach((key, item) => {
 
         dataResult.push({
-            requestid: key.rbd_requestid,
-            requestdate: key.rbd_requestdate,
-            requestby: key.rbd_requestby,
-            details: key.rbd_details,
-            budget: key.rbd_budget,
-            approvedby: key.rbd_approvedby,
-            approveddate: key.rbd_approveddate,
-            remarks: key.rbd_remarks,
-            status: key.rbd_status,
+            orderitemid: key.poi_orderitemid,
+            podate: key.poi_podate,
+            ponumber: key.poi_ponumber,
+            brand: key.poi_brand,
+            type: key.poi_type,
+            quantity: key.poi_quantity,
+            poi_cost: key.poi_cost,
+            subtotal: key.poi_subtotal,
+            requestid: key.poi_requestid,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.PurchaseOrderDetails = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            orderdetailsid: key.pod_orderdetailsid,
+            podate: key.pod_podate,
+            details: key.pod_details,
+            officer: key.pod_officer,
+            entrydate: key.pod_entrydate,
+            status: key.pod_status,
         })
     });
 

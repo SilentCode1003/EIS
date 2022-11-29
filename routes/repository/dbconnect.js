@@ -151,6 +151,12 @@ exports.Select = (sql, table, callback) => {
             if (table == 'TransactionRequestBudget') {
                 callback(null, model.TransactionRequestBudget(results));
             }
+            if (table == 'PurchaseOrderDetails') {
+                callback(null, model.PurchaseOrderDetails(results));
+            }
+            if (table == 'PurchaseOrderItem') {
+                callback(null, model.PurchaseOrderItem(results));
+            }
         });
 
     } catch (error) {

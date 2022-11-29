@@ -1,30 +1,5 @@
 <div>
     <div>
-        <h1>STOCKS REQUEST</h1>
-    </div>
-    <div>
-        <table id="stocks-request-tbl">
-            <thead>
-                <th>REQUEST ID</th>
-                <th>REQUEST DATE</th>
-                <th>REQUEST BY</th>
-                <th>DETAILS</th>
-                <th>BUDGET</th>
-                <th>REMARKS</th>
-                <th>STATUS</th>
-                <th>ACTION</th>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
-</div>
-
-<br>
-<hr>
-<br>
-
-<div>
-    <div>
         <h1>BUDGET REQUEST</h1>
     </div>
     <div>
@@ -39,7 +14,7 @@
                 <th>APPROVED DATE</th>
                 <th>REMARKS</th>
                 <th>STATUS</th>
-                <!-- <th>ACTION</th> -->
+                <th>ACTION</th>
             </thead>
             <tbody></tbody>
         </table>
@@ -47,11 +22,11 @@
 </div>
 
 <!-- The Modal -->
-<div id="stocksrequestModal" class="modal card shadow mb-4">
+<div id="accountingModal" class="modal card shadow mb-4">
     <!-- Modal content -->
     <div class="modal-content modal-print-background">
         <div class="modal-button-container modal-print-background">
-            <span id="stocksrequest" class="close">&times;</span>
+            <span id="accountingrequest" class="close">&times;</span>
         </div>
         <!-- AREA TO PRINT ONLY -->
         <div id="PrintArea">
@@ -80,7 +55,7 @@
 
             <div class="modal-body modal-print-background">
                 <div>
-                    <h2 class='report-header' style="text-align: center"> PURCHASE ORDER REQUEST</h2>
+                    <h2 class='report-header' style="text-align: center"> BUDGET REQUEST</h2>
                     <br>
                     <br>
 
@@ -129,7 +104,7 @@
                     </div>
                     <div class="row modal-signature-info">
                         <div class="col-sm-6">
-                            <p><strong>PURCHASING OFFICER : <span id="officer"> </strong></p>
+                            <p><strong>ACCOUNTING OFFICER : <span id="officer"> </strong></p>
                         </div>
                     </div>
                     <div class="row modal-signature-info">
@@ -146,6 +121,7 @@
             <br>
             <!-- SIGNATURE AREA -->
             <div class="row modal-signature-info center-content">
+               
                 <div class="col-sm-3 center-content">
                     <p><strong>____________________</strong></p>
                 </div>
@@ -155,15 +131,17 @@
             </div>
             <!-- LABLE AREA -->
             <div class="row modal-signature-info center-content">
-                <div class="col-sm-3 center-content">
-                    <p><strong>REQUEST BY</strong></p>
-                </div>
+               
                 <div class="col-sm-3 center-content">
                     <p><strong>PURCHASING OFFICER</strong></p>
+                </div>
+                <div class="col-sm-3 center-content">
+                    <p><strong>ACCOUNTING OFFICER</strong></p>
                 </div>
             </div>
             <!-- DATES -->
             <div class="row modal-signature-info center-content">
+                
                 <div class="col-sm-3 center-content">
                     <p><strong>
                             <%= date%>
@@ -180,41 +158,6 @@
         <div id="modal-button-container" class="center-content">
             <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
             <button class="approve-btn" id="printStockRequestBtn" name="printStockRequestBtn">PRINT</button>
-        </div>
-    </div>
-</div>
-
-<!-- The Modal -->
-<div id="equipmentrequestModal" class="modal card shadow mb-4">
-    <!-- Modal content -->
-    <div class="modal-content modal-print-background">
-        <div class="modal-button-container modal-print-background">
-            <span id="equipmentrequestrequest" class="close">&times;</span>
-        </div>
-
-        <div class="modal-body modal-print-background">
-            <div>
-                <h2 class='report-header' style="text-align: center"> STOCKS REQUEST</h2>
-                <br>
-                <br>
-                <div>
-                    <table id="modal-stocks-request-tbl">
-                        <thead>
-                            <th>BRAND</th>
-                            <th>TYPE</th>
-                            <th>QUANTITY</th>
-                            <th>COST</th>
-                        </thead>
-                        <tbody></tbody>
-
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div id="modal-button-container" class="center-content">
-            <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
-            <button class="approve-btn" id="saveRequestStocksBtn" name="saveRequestStocksBtn">SAVE</button>
         </div>
     </div>
 </div>

@@ -6,6 +6,7 @@
         let remarks = '';
         let budgetrequest = '';
         let detailrequest = '';
+        let data = [];
         LoadTableData();
 
         function LoadTableData() {
@@ -26,7 +27,7 @@
                         var finalData = [];
                         var data = json.data;
 
-                        // console.log(data);
+                        console.log(data);
                         $.each(data, (key, item) => {
                             var action = '';
                             var details = '';
@@ -36,7 +37,7 @@
 
                             $.each(detailsjson, (key, item) => {
                                 console.log(`${item.brandname} ${item.itemtype} ${item.itemcount}`);
-                                details += `${item.brandname}${item.itemtype}${item.itemcount}<br>`;
+                                details += `${item.brandname}${item.itemtype}@${item.itemcount}<br>`;
                             })
 
                             if (status == 'PENDING') {
@@ -48,10 +49,11 @@
                             if (status == 'WAITING') {
                                 action = '<button class="approve-btn" id="cancelRequestBtn" name="cancelRequestBtn">CANCEL</button>'
                             }
+                            if (status == 'APPROVED') {
+                                action = '<button class="approve-btn" id="printBtn" name="printBtn">PRINT</button>'
+                            }
 
                             budget = `₱ ${(budget).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
-
-
 
                             finalData.push({
                                 requestid: item.requestid,
@@ -107,7 +109,7 @@
                 'scrollCollapse': true,
                 'serverMethod': 'GET',
                 'ajax': {
-                    'url': '/purchasedashboard/loadbudgetrequest',
+                    'url': '/accountingdashboard/loadbudgetrequest',
                 },
                 'columnDefs': [{
                     targets: 1,
@@ -154,14 +156,21 @@
             }
         }
 
-        $('#stocks-request-tbl tbody').on('click', 'td', function () {
-            var data = stocksrequest.row(this).data();
-            requestid = data.requestid;
-            requestby = data.requestby;
-            requestdate = data.requestdate;
-            budgetrequest = data.totalbudget;
-            detailrequest = data.details;
-            remarks = data.remarks;
+        $('#stocks-request-tbl tbody').on('click', 'tr', function (e) {
+            // var data = stocksrequest.row(this).data();
+            $(this).closest('tr').find('td').each(function () {
+                data.push([$(this).text()]);
+
+            });
+
+            console.log(data);
+
+            requestid = data[0];
+            requestdate = data[1];
+            requestby = data[2];
+            detailrequest = data[3];
+            budgetrequest = data[4];
+            remarks = data[5]
 
             // budgetrequest = budgetrequest.replace(/₱ /g,'');
             // budgetrequest = budgetrequest.replace(/,/g,'');
@@ -258,6 +267,7 @@
         })
 
         $(document).on('click', "#requestBudgetBtn", function () {
+
             $.ajax({
                 type: "POST",
                 url: "/purchasedashboard/requestbudget",
@@ -298,7 +308,12 @@
 
                     // console.log(result.data);
                     $.each(data, (key, item) => {
-                        requestitemTabel.row.add([item.brandname, item.itemtype, item.quantity, item.cost, item.subtotal]).draw(false);
+                        var cost = parseFloat(item.cost);
+                        var subtotal = parseFloat(item.subtotal);
+                        cost = `₱ ${(cost).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+                        subtotal = `₱ ${(subtotal).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+
+                        requestitemTabel.row.add([item.brandname, item.itemtype, item.quantity, cost, subtotal]).draw(false);
 
                         totalcost += parseFloat(item.subtotal);
                         officer = item.purchasingofficer;
@@ -367,18 +382,10 @@
             if (message != "") {
                 warning(`ITEM/S: ${message} cost prt piece not assigned!`)
             } else {
-                console.log(dataRaw);
+                // console.log(dataRaw);
                 dataRaw = JSON.stringify(dataRaw, null, 2);
 
-                // purchaseDetails.push({
-                //     requestid: requestid,
-                //     requestby: requestby,
-                //     requestdate: requestdate,
-                //     totalcost: est_budget,
-                //     details: dataRaw
-                // })
-
-                // purchaseDetails = JSON.stringify(purchaseDetails, null, 2);
+                console.log(`${requestby} ${requestdate}`)
 
                 $.ajax({
                     type: "POST",

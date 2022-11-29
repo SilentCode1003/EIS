@@ -1,6 +1,4 @@
-const { json } = require('express');
 var express = require('express');
-const { route } = require('./cablingrequest');
 var router = express.Router();
 
 const { isAuthAdmin } = require('./controller/authBasic');
@@ -26,7 +24,8 @@ module.exports = router;
 router.get('/load', (req, res) => {
   try {
 
-    let sql = `select * from purchase_details`;
+    let sql = `select * from purchase_details where not pd_status='APPROVED'`;
+    // let sql = `select * from purchase_details`;
     mysql.Select(sql, 'PurchaseDatails', (err, result) => {
       res.json({
         msg: 'success',
@@ -92,6 +91,8 @@ router.post('/updatestockrequest', (req, res) => {
     let purchase_items = [];
     let transaction_purchase_items = [];
 
+    console.log(`${requestid} ${requestby} ${requestdate}`);
+
     Insert_PurchaseItems = (data, callback) => {
       let sql = `INSERT INTO purchase_item (
         pi_brandname,
@@ -132,6 +133,17 @@ router.post('/updatestockrequest', (req, res) => {
       SET pd_totalbudget='${budget}',
       pd_status='REQUEST BUDGET'
       WHERE pd_requestid='${id}'`;
+
+      mysql.Update(sql, (err, result) => {
+        if (err) callback(err, null);
+        callback(null, result);
+      })
+    }
+
+    Update_TransactionCablingStocksDetails = (id, officer, callback) => {
+      let sql = `UPDATE transaction_cabling_stocks_details 
+      SET tcsd_pruchasingofficer='${officer}'
+      WHERE tcsd_requestid='${id}'`;
 
       mysql.Update(sql, (err, result) => {
         if (err) callback(err, null);
@@ -190,6 +202,12 @@ router.post('/updatestockrequest', (req, res) => {
       console.log('Update_PurchaseDetails');
     })
 
+    Update_TransactionCablingStocksDetails(requestid, req.session.fullname, (err, result) => {
+      if (err) throw err;
+
+      console.log('Update_TransactionCablingStocksDetails');
+    })
+
     res.json({
       msg: 'success'
     })
@@ -226,6 +244,7 @@ router.post('/requestbudget', (req, res) => {
     let budget = req.body.budget;
     let details = req.body.details;
     let request_budget_details = [];
+    let transaction_request_budget = [];
 
     console.log(`${requestid} ${budget} ${details}`)
 
@@ -241,8 +260,28 @@ router.post('/requestbudget', (req, res) => {
       'PENDING'
     ]);
 
+    transaction_request_budget.push([
+      req.session.fullname,
+      helper.GetCurrentDatetime(),
+      budget,
+      '',
+      '',
+      requestid,
+      'PENDING'
+    ])
+
     Insert_RequestBudgetDetails = (data, callback) => {
       let sql = `CALL RequestBudgetDetails(?)`;
+
+      mysql.StoredProcedure(sql, data, (err, result) => {
+        if (err) callback(err, null)
+
+        callback(null, result);
+      });
+    }
+
+    Insert_TransactionRequestBudget = (data, callback) => {
+      let sql = `CALL TransactionRequestBudget(?)`;
 
       mysql.StoredProcedure(sql, data, (err, result) => {
         if (err) callback(err, null)
@@ -268,6 +307,11 @@ router.post('/requestbudget', (req, res) => {
       console.log('Insert_RequestBudgetDetails');
     })
 
+    Insert_TransactionRequestBudget(transaction_request_budget, (err, result) => {
+      if (err) throw err;
+      console.log('Insert_RequestBudgetDetails');
+    })
+
     Update_PurchaseDatails(requestid, (err, result) => {
       if (err) throw err;
       console.log('Update_PurchaseDatails');
@@ -284,21 +328,3 @@ router.post('/requestbudget', (req, res) => {
   }
 })
 
-router.get('/loadbudgetrequest', (req, res) => {
-  try {
-
-    let sql = `select * from request_budget_details`;
-    mysql.Select(sql, 'RequestBudgetDetails', (err, result) => {
-      res.json({
-        msg: 'success',
-        data: result
-      })
-    })
-
-
-  } catch (error) {
-    res.json({
-      msg: error
-    })
-  }
-})

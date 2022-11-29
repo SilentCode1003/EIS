@@ -261,7 +261,7 @@
                         if (result.msg == 'warning') {
                             warning('Warning!', `${result.data} is already registered, to update item count, click the update tab...`)
                         } else {
-                            loadtable();
+                            StockinTable();
                             success('Saved!', 'Data saved!')
                         }
 
@@ -288,7 +288,7 @@
                 success: function (result) {
                     // success('Saved!', 'Data saved!')
                     // $('#item-tbl').DataTable().ajax.reload();
-                    loadtable();
+                    StockinTable();
                     dataArr = [];
                 },
                 error: function (result) {
@@ -363,10 +363,10 @@
                             if (item.status == 'PENDING') {
                                 action = 'NO ACTIONS';
                             }
-                            if (item.status == 'APPROVED') {
-                                action = '<button class="approve-btn" id="approveBtn-cabling" name="approveBtn-cabling">APPROVED</button><button class="edit-btn" id="PrinttBtn-cabling" name="PrinttBtn-cabling">PRINT</button>';
+                            if (item.status == 'NEW STOCKS') {
+                                action = '<button class="edit-btn" id="confirmBtn" name="confirmBtn">CONFIRM</button>';
                             }
-                            if(item.status == 'DONE'){
+                            if(item.status == ''){
                                 action = '<button class="edit-btn" id="PrinttBtn-cabling" name="PrinttBtn-cabling">PRINT</button>';
                             }
 
