@@ -1,68 +1,31 @@
+<!-- XLSX -->
+<script src="/javascripts/xlsx.full.min.js"></script>
 <script>
     $(document).ready(function () {
         var dataArr = [];
 
-        var dataTable = $('#item-tbl').DataTable({
-            'destroy': true,
-            'processing': true,
-            'serverSide': true,
-            'paging': false,
-            'searching': false,
-            'info': false,
-            'scrollY': 400,
-            'scrollCollapse': true,
-            'serverMethod': 'get',
-            'ajax': {
-                'url': '/items/load',
-            },
-            'columns': [
-                { data: 'itemcode' },
-                { data: 'department' },
-                { data: 'itemname' },
-                { data: 'brandname' },
-                { data: 'createdby' },
-                { data: 'createddate' },
-            ]
-        });
-
-        $.ajax({
-            type: "GET",
-            url: "/positions/load",
-            success: function (result) {
-                console.log(result.data);
-
-                $.each(result.data, function (key, item) {
-                    var options = new Option(item.positionname, item.positionname);
-                    $(options).html(item.positionname);
-                    $('#positions').append(options);
-                    console.log(item.positionname);
-                });
-            },
-            error: function (result) {
-                alert('error: ' + result.data);
-            }
-        });
+        //load table
+        LoadTable();
 
         $(document).on('click', "#saveBtn", function () {
-            var itemcode = $('#itemcode').val();
+            // var itemcode = $('#itemcode').val();
             var department = $('#department').val();
             var itemname = $('#itemname').val();
             var brandname = $('#brandname').val();
-            var createdby = createdby == null ? 'CREATOR' : '';
-            var createddate = createddate == null ? '2022-10-26' : '';
+            var createdby = '<%= fullname%>';
+            var createddate = '<%= date%>';
 
             var message = "";
 
-            if (itemcode == "") { message += "Item Code " }
+            // if (itemcode == "") { message += "Item Code " }
             if (itemname == "") { message += "Item Name " }
             if (brandname == "") { message += "Brand Name " }
             if (department == "-") { message += "Department " }
-          
+
 
             if (message != "") { warning("Warning!", "Must fill-up " + message + " field!") }
             else {
                 dataArr.push({
-                    'itemcode': itemcode,
                     'department': department,
                     'itemname': itemname,
                     'brandname': brandname,
@@ -77,7 +40,6 @@
                     url: "/items/save",
                     data: {
                         itemname: itemname,
-                        itemcode: itemcode,
                         department: department,
                         data: data
                     },
@@ -93,5 +55,146 @@
             }
 
         });
+
+        $(document).on('click', "#upload", async function () {
+            await UploadProcess();
+        })
+
+        function LoadTable(){
+            var dataTable = $('#item-tbl').DataTable({
+            'destroy': true,
+            'processing': true,
+            'serverSide': true,
+            'paging': false,
+            'searching': false,
+            'info': false,
+            'scrollY': 400,
+            'scrollCollapse': true,
+            'serverMethod': 'get',
+            'ajax': {
+                'url': '/items/load',
+            },
+            'columns': [
+                { data: 'itemid' },
+                { data: 'department' },
+                { data: 'itemname' },
+                { data: 'brandname' },
+                { data: 'createdby' },
+                { data: 'createddate' },
+            ]
+        });
+        }
+
+        function UploadProcess() {
+            //Reference the FileUpload element.
+            var fileUpload = document.getElementById("fileUpload");
+
+            //Validate whether File is valid Excel file.
+            var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xls|.xlsx|.csv|.ods)$/;
+            if (regex.test(fileUpload.value.toLowerCase())) {
+                if (typeof (FileReader) != "undefined") {
+                    var reader = new FileReader();
+
+                    //For Browsers other than IE.
+                    if (reader.readAsBinaryString) {
+                        reader.onload = function (e) {
+                            GetTableFromExcel(e.target.result);
+                        };
+                        reader.readAsBinaryString(fileUpload.files[0]);
+                    } else {
+                        //For IE Browser.
+                        reader.onload = function (e) {
+                            var data = "";
+                            var bytes = new Uint8Array(e.target.result);
+                            for (var i = 0; i < bytes.byteLength; i++) {
+                                data += String.fromCharCode(bytes[i]);
+                            }
+                            GetTableFromExcel(data);
+                        };
+                        reader.readAsArrayBuffer(fileUpload.files[0]);
+                    }
+                } else {
+                    alert("This browser does not support HTML5.");
+                }
+            } else {
+                alert("Please upload a valid Excel file.");
+            }
+        };
+
+        async function ExcelDataSave(data) {
+            var dataraw = JSON.stringify(data, null, 2);
+            showloader();
+            await $.ajax({
+                type: "POST",
+                url: "/items/saveexceldata",
+                data: {
+                    data: dataraw
+                },
+                success: function (result) {
+                    LoadTable();
+                    dataArr = [];
+                },
+                error: function (result) {
+                    error(result.data);
+                }
+            });
+
+            hideload();
+        }
+
+        async function GetTableFromExcel(data) {
+            //Read the Excel File data in binary
+            var workbook = XLSX.read(data, {
+                type: 'binary'
+            });
+
+            //get the name of First Sheet.
+            var Sheet = workbook.SheetNames[0];
+
+            //Read all rows from First Sheet into an JSON array.
+            var excelRows = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[Sheet]);
+            var columns = Object.keys(excelRows[0]);
+            // progressbar.max = excelRows.length;
+
+
+            //Create a HTML Table element.
+            var myTable = document.createElement("table");
+            myTable.border = "1";
+
+            //Add the header row.
+            var row = myTable.insertRow(-1);
+
+            //Add the header cells.
+            var headerCell = document.createElement("TH");
+            for (var j = 0; j < columns.length; j++) {
+                headerCell = document.createElement("TH");
+                headerCell.innerHTML = columns[j];
+                row.appendChild(headerCell);
+            }
+
+            var dataExcelArr = [];
+            //Add the data rows from Excel file.
+            for (var i = 0; i < excelRows.length; i++) {
+                //Add the data row.
+                var data = [];
+                var row = myTable.insertRow(-1);
+                for (var j = 0; j < columns.length; j++) {
+                    var cell = row.insertCell(-1);
+                    cell.innerHTML = excelRows[i][columns[j]];
+                    await data.push({
+                        item: excelRows[i][columns[j]]
+                    });
+                }
+                dataExcelArr.push({
+                    department: data[0].item,
+                    brandname: data[1].item,
+                    itemname: data[2].item,
+                });
+
+            }
+            console.log(dataExcelArr)
+
+            await ExcelDataSave(dataExcelArr);
+        };
     })
 </script>

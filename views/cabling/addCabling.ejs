@@ -47,8 +47,6 @@
                 <th>ITEM COUNT</th>
                 <th>UPDATE BY</th>
                 <th>UPDATE DATE</th>
-                <th>CREATED BY</th>
-                <th>CREATED DATE</th>
             </thead>
             <tbody></tbody>
         </table>
@@ -70,4 +68,41 @@
         </thead>
         <tbody></tbody>
     </table>
+</div>
+
+
+<!-- The Modal -->
+<div id="stockinModal" class="modal card shadow mb-4">
+    <!-- Modal content -->
+    <div class="modal-content modal-print-background">
+        <div class="modal-button-container modal-print-background">
+            <span id="stockinspan" class="close">&times;</span>
+        </div>
+
+        <div class="modal-body modal-print-background">
+            <div>
+                <h2 class='report-header' style="text-align: center"> PURCHASE ORDER DETAILS</h2>
+                <br>
+                <br>
+                <div>
+                    <table id="po-item-list">
+                        <thead>
+                            <th>PO DATE</th>
+                            <th>PO NUMBER</th>
+                            <th>BRAND</th>
+                            <th>TYPE</th>
+                            <th>QUATITY</th>
+                        </thead>
+                        <tbody></tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="modal-button-container" class="center-content">
+            <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
+            <button class="approve-btn" id="stockinModalBtn" name="stockinModalBtn">CONFIRM STOCKS</button>
+        </div>
+    </div>
 </div>

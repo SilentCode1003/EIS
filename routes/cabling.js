@@ -88,38 +88,16 @@ router.post('/save', (req, res) => {
 
 router.get('/load', (req, res) => {
   try {
-    var dataArr = [];
-    var folders = helper.GetFolderList(CablingPath);
 
-    folders.forEach(folder => {
-      var targetFolder = `${CablingPath}${folder}`;
-      var files = helper.GetFiles(targetFolder);
+    let sql = `SELECT * FROM cabling_equipment`;
+    mysql.Select(sql, 'CablingEquipment', (err, result) => {
+      if (err) throw err;
 
-      files.forEach(file => {
-        var filename = `${targetFolder}/${file}`;
-        var data = helper.ReadJSONFile(filename);
-
-        data.forEach((key, item) => {
-          dataArr.push({
-            brandname: key.brandname,
-            itemtype: key.itemtype,
-            itemcount: key.itemcount,
-            updateby: key.updateby,
-            updatedate: key.updatedate,
-            createdby: key.createdby,
-            createddate: key.createddate
-          })
-        })
-
+      res.json({
+        msg: 'success',
+        data: result
       })
-
-    });
-
-    res.json({
-      msg: 'success',
-      data: dataArr
-    });
-
+    })
   } catch (error) {
     res.json({
       msg: error
@@ -249,6 +227,116 @@ router.get('/stockin', (req, res) => {
         msg: 'success',
         data: result
       })
+    })
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+})
+
+router.post('/addnewstocks', (req, res) => {
+  try {
+    let requestid = req.body.requestid;
+    let requestby = req.body.requestby;
+    let requestdate = req.body.requestdate;
+    let data = req.body.data;
+    let transaction_cabling_stocks_equipments = [];
+
+    data.forEach((key, item) => {
+      transaction_cabling_stocks_equipments.push([
+        requestdate,
+        requestby,
+        key.brand,
+        key.type,
+        key.quantity,
+        req.session.fullname,
+        helper.GetCurrentDatetime(),
+        requestid,
+        'APPROVED',
+      ])
+    });
+
+    console.log(transaction_cabling_stocks_equipments);
+
+    Insert_TransactionCalingStocksEquipment = (data, callback) => {
+      let sql = `INSERT INTO transaction_cabling_stocks_equipments(
+        tcse_requestdate,
+        tcse_requestby,
+        tcse_brandname,
+        tcse_itemtype,
+        tcse_quantity,
+        tcse_approvedby,
+        tcse_approvedate,
+        tcse_referenceid,
+        tcse_status ) VALUES ?`;
+
+      mysql.InsertMultiple(sql, data, (err, result) => {
+        if (err) callback(err, null);
+
+        callback(null, result);
+      })
+    }
+
+    Update_RequestCablingStocksDetails = (requestid, callback) => {
+      let sql = `UPDATE request_cabling_stocks_details 
+      SET rcsd_status='APPROVED'
+      WHERE rcsd_requestid='${requestid}'`;
+
+      mysql.Update(sql, (err, result) => {
+        if (err) callback(err, null);
+        callback(null, result);
+      })
+    }
+
+    Update_RequestCablingStocksEquipment = (requestid, callback) => {
+      let sql = `UPDATE request_cabling_stocks_equipments 
+      SET rcse_status='APPROVED'
+      WHERE rcse_referenceid='${requestid}'`;
+
+      mysql.Update(sql, (err, result) => {
+        if (err) callback(err, null);
+        callback(null, result);
+      })
+    }
+
+    Update_TransactionCablingStocksDetails = (requestid, callback) => {
+      let sql = `UPDATE transaction_cabling_stocks_details 
+      SET tcsd_status='DONE'
+      WHERE tcsd_requestid='${requestid}'`;
+
+      mysql.Update(sql, (err, result) => {
+        if (err) callback(err, null);
+        callback(null, result);
+      })
+    }
+
+    Insert_TransactionCalingStocksEquipment(transaction_cabling_stocks_equipments, (err, result) => {
+      if (err) throw err;
+
+      console.log('Insert_TransactionCalingStocksEquipment');
+    })
+
+    Update_TransactionCablingStocksDetails(requestid, (err, result) => {
+      if (err) throw err;
+
+      console.log('Update_TransactionCablingStocksDetails');
+    })
+
+    Update_RequestCablingStocksEquipment(requestid, (err, result) => {
+      if (err) throw err;
+
+      console.log('Update_RequestCablingStocksEquipment');
+    })
+
+    Update_RequestCablingStocksDetails(requestid, (err, result) => {
+      if (err) throw err;
+
+      console.log('Update_RequestCablingStocksDetails');
+    })
+
+    res.json({
+      msg: 'success',
     })
   } catch (error) {
     res.json({

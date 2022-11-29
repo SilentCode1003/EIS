@@ -5,7 +5,24 @@
     $(document).ready(function () {
         var dataArr = [];
         var dataTable = null;
+        let requestid = '';
+        let requestdate = '';
+        let requestby = '';
+        let newStocksArr = [];
 
+        //MODAL
+        var stocksmodal = document.getElementById("stockinModal");
+        var stocksmodalspan = document.getElementById("stockinspan");
+
+        stocksmodalspan.onclick = function () {
+            stocksmodal.style.display = "none";
+        }
+
+        window.onclick = function () {
+            if (event.target == stocksmodal) {
+                stocksmodal.style.display = "none";
+            }
+        }
 
         $(document).on('click', "#registerBtn", function () {
             var i, tabcontent, tablinks;
@@ -115,6 +132,83 @@
                 itemcount: itemcount,
             })
 
+        })
+
+        $('#stockin-tbl tbody').on('click', 'tr', function (e) {
+            // var data = stocksrequest.row(this).data();
+            var data = [];
+            $(this).closest('tr').find('td').each(function () {
+                data.push([$(this).text()]);
+
+            });
+
+            console.log(data);
+
+            requestid = data[0];
+            requestdate = data[1];
+            requestby = data[2];
+        })
+
+        $(document).on('click', "#confirmBtn", function () {
+            var requestitemTabel = $('#po-item-list').DataTable({
+                'destroy': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollCollapse': true,
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/purchaserequest/poitems",
+                data: { requestid: requestid },
+                success: function (result) {
+                    requestitemTabel.clear().draw();
+                    var data = result.data;
+
+                    // console.log(result.data);
+                    $.each(data, (key, item) => {
+                        newStocksArr.push({
+                            podate: item.podate,
+                            ponumber: item.ponumber,
+                            brand: item.brand,
+                            type: item.type,
+                            quantity: item.quantity
+                        })
+                        requestitemTabel.row.add([item.podate, item.ponumber, item.brand, item.type, item.quantity]).draw(false);
+                    })
+                },
+                error: function (result) {
+                    error('error: ' + result);
+                }
+            });
+
+            stocksmodal.style.display = "block";
+        })
+
+        $(document).on('click', "#stockinModalBtn", function () {
+            // newStocksArr = JSON.stringify(newStocksArr, null, 2);
+
+            $.ajax({
+                type: "POST",
+                url: "/cabling/addnewstocks",
+                data: {
+                    requestid: requestid,
+                    requestdate: requestdate,
+                    requestby: requestby,
+                    data: newStocksArr,
+                },
+                success: function (result) {
+                    success('Success!', 'Successfully added new stocks!');
+                },
+                error: function (result) {
+                    error('error: ' + result);
+                }
+            });
+
+            StockinTable();
+            newStocksArr = [];
+            stocksmodal.style.display = "none";
         })
 
         async function UploadProcess() {
@@ -319,8 +413,6 @@
                     { data: 'itemcount' },
                     { data: 'updateby' },
                     { data: 'updatedate' },
-                    { data: 'createdby' },
-                    { data: 'createddate' },
                 ],
                 initComplete: function () {
                     console.log('init complete');
@@ -366,7 +458,7 @@
                             if (item.status == 'NEW STOCKS') {
                                 action = '<button class="edit-btn" id="confirmBtn" name="confirmBtn">CONFIRM</button>';
                             }
-                            if(item.status == ''){
+                            if (item.status == 'DONE') {
                                 action = '<button class="edit-btn" id="PrinttBtn-cabling" name="PrinttBtn-cabling">PRINT</button>';
                             }
 

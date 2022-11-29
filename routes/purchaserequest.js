@@ -160,3 +160,23 @@ router.get('/load', (req, res) => {
     })
   }
 })
+
+router.post('/poitems', (req, res) => {
+  try {
+    let requestid = req.body.requestid;
+    let sql = `select * from purchase_order_item where poi_requestid='${requestid}'`;
+
+    mysql.Select(sql, 'PurchaseOrderItem', (err, result) => {
+      if (err) throw err;
+
+      res.json({
+        msg: 'success',
+        data: result
+      })
+    })
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+})

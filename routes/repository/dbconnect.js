@@ -157,6 +157,9 @@ exports.Select = (sql, table, callback) => {
             if (table == 'PurchaseOrderItem') {
                 callback(null, model.PurchaseOrderItem(results));
             }
+            if (table == 'MasterItems') {
+                callback(null, model.MasterItems(results));
+            }
         });
 
     } catch (error) {

@@ -583,3 +583,21 @@ exports.PurchaseOrderDetails = (data) => {
 
     return dataResult;
 }
+
+exports.MasterItems = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            itemid: key.mi_itemid,
+            department: key.mi_department,
+            itemname: key.mi_itemname,
+            brandname: key.mi_brandname,
+            createdby: key.mi_createdby,
+            createddate: key.mi_createddate,
+        })
+    });
+
+    return dataResult;
+}
