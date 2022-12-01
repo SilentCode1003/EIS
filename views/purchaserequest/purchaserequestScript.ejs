@@ -170,6 +170,7 @@
                     },
                     success: function (result) {
                         success('Done!', 'Done Request!');
+                        ClearListTable('po-list-tbl');
                         LoadTable();
                     },
                     error: function (result) {

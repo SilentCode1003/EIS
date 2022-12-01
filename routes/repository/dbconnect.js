@@ -257,6 +257,28 @@ exports.StoredProcedure = (sql, data, callback) => {
     }
 }
 
+exports.SelectSingleResult = (sql, result) => {
+    try {
+        try {
+            connection.connect((err) => { return err; })
+            connection.query(sql, (error, results, fields) => {
+                // console.log(results);
+                if (error) console.log(error);
+
+                results.forEach((key, item) => {
+                    return result(key.ie_itemcount);
+                });
+
+            });
+
+        } catch (error) {
+            console.log(error);
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 exports.CloseConnect = () => {
     connection.end();
 }

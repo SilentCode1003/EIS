@@ -254,10 +254,10 @@
                 'scrollCollapse': true,
                 'serverMethod': 'GET',
                 'ajax': {
-                    'url': '/equipment/GetDetailedEquipmentSummary'
+                    'url': '/equipment/GetEquipmentSummary'
                 },
                 'columns': [
-                    { data: 'itemname' },
+                    { data: 'itemtype' },
                     { data: 'itemcount' },
                 ],
                 initComplete: function () {
@@ -281,7 +281,7 @@
                     'url': '/cabling/GetCablingEquipmentSummary'
                 },
                 'columns': [
-                    { data: 'itemname' },
+                    { data: 'itemtype' },
                     { data: 'itemcount' },
                 ],
                 initComplete: function () {

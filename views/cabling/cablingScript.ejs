@@ -14,13 +14,24 @@
         var stocksmodal = document.getElementById("stockinModal");
         var stocksmodalspan = document.getElementById("stockinspan");
 
+        var stockinmodal = document.getElementById("stockinreportModal");
+        var stockinspan = document.getElementById("stockinmodalspan");
+
         stocksmodalspan.onclick = function () {
             stocksmodal.style.display = "none";
+        }
+
+        stockinspan.onclick = function () {
+            stockinmodal.style.display = "none";
         }
 
         window.onclick = function () {
             if (event.target == stocksmodal) {
                 stocksmodal.style.display = "none";
+            }
+
+            if (event.target == stockinmodal) {
+                stockinmodal.style.display = "none";
             }
         }
 
@@ -150,6 +161,7 @@
         })
 
         $(document).on('click', "#confirmBtn", function () {
+            newStocksArr = [];
             var requestitemTabel = $('#po-item-list').DataTable({
                 'destroy': true,
                 'paging': false,
@@ -209,6 +221,58 @@
             StockinTable();
             newStocksArr = [];
             stocksmodal.style.display = "none";
+        })
+
+        $(document).on('click', "#PrinttBtn-cabling", function () {
+            var stockindetails = $('#stocks-equipments-tbl').DataTable({
+                'destroy': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollCollapse': true,
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/cabling/stockindetails",
+                data: { requestid: requestid },
+                success: function (result) {
+                    stockindetails.clear().draw();
+                    var data = result.data;
+
+                    console.log(data);
+                    $.each(data, (key, item) => {
+                        var details = JSON.parse(item.details);
+
+                        console.log(item.details);
+
+                        $.each(details, (key, item) => {
+                            stockindetails.row.add([item.brandname, item.itemtype, item.itemcount]).draw(false);
+                        })
+
+                        document.getElementById('requestid').innerText = item.requestid;
+                        document.getElementById('requestby').innerText = item.requestby;
+                        document.getElementById('requestdate').innerText = item.requestdate;
+                        document.getElementById('purchaseofficer').innerText = item.pruchasingofficer;
+                        document.getElementById('accountingofficer').innerText = item.accountofficer;
+
+                    })
+                },
+                error: function (result) {
+                    error('error: ' + result);
+                }
+            });
+            stockinmodal.style.display = "block";
+        })
+
+        $(document).on('click', "#printStockRequestBtn", function (){
+            console.log('clicked!');
+            var printContents = document.getElementById('PrintArea').innerHTML;
+            var originalContents = document.body.innerHTML;
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+            location.reload();
         })
 
         async function UploadProcess() {
@@ -382,7 +446,7 @@
                 success: function (result) {
                     // success('Saved!', 'Data saved!')
                     // $('#item-tbl').DataTable().ajax.reload();
-                    StockinTable();
+                    RegisterItemTable();
                     dataArr = [];
                 },
                 error: function (result) {

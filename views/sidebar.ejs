@@ -6,8 +6,7 @@
     <div class="sidebar-brand-text mx-3">EIS</div>
 </a>
 
-
-<div id="masters">
+<div id="dashboard">
     <!-- Divider -->
     <hr class="sidebar-divider my-0">
     <!-- Nav Item - Dashboard -->
@@ -16,6 +15,9 @@
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span></a>
     </li>
+</div>
+
+<div id="masters">
     <!-- Divider -->
     <hr class="sidebar-divider">
     <!-- Heading -->
@@ -121,50 +123,51 @@
     </div>
     <!-- Nav Item - Pages Collapse Menu -->
     <li class="nav-item">
+        <div id="custodianonly">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseItemMaster"
+                aria-expanded="true" aria-controls="collapseItemMaster">
+                <i class="fas fa-fw fa-money-bill-wave"></i>
+                <span>ITEM MASTER</span>
+            </a>
+            <div id="collapseItemMaster" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">SELECTIONS:</h6>
+                    <a class="collapse-item" href="/cablingitemmaster"><i class="fas fa-fw fa-file-alt"></i><span>
+                            EQUIPMENTS</span></a>
 
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseItemMaster"
-            aria-expanded="true" aria-controls="collapseItemMaster">
-            <i class="fas fa-fw fa-money-bill-wave"></i>
-            <span>ITEM MASTER</span>
-        </a>
-        <div id="collapseItemMaster" class="collapse" aria-labelledby="headingTwo"
-            data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">SELECTIONS:</h6>
-                <a class="collapse-item" href="/cablingitemmaster"><i class="fas fa-fw fa-file-alt"></i><span>
-                        EQUIPMENTS</span></a>
-
+                </div>
             </div>
-        </div>
 
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePulloutInventory"
-            aria-expanded="true" aria-controls="collapsePulloutInventory">
-            <i class="fas fa-fw fa-money-bill-wave"></i>
-            <span>STOCKS</span>
-        </a>
-        <div id="collapsePulloutInventory" class="collapse" aria-labelledby="headingTwo"
-            data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">SELECTIONS:</h6>
-                <a class="collapse-item" href="/cabling"><i class="fas fa-fw fa-file-alt"></i><span>
-                        EQUIPMENTS</span></a>
-
-            </div>
-        </div>
-
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCablingReports"
-            aria-expanded="true" aria-controls="collapseCablingReports">
-            <i class="fas fa-fw fa-money-bill-wave"></i>
-            <span>REPORTS</span>
-            <div id="collapseCablingReports" class="collapse" aria-labelledby="headingTwo"
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePulloutInventory"
+                aria-expanded="true" aria-controls="collapsePulloutInventory">
+                <i class="fas fa-fw fa-money-bill-wave"></i>
+                <span>STOCKS</span>
+            </a>
+            <div id="collapsePulloutInventory" class="collapse" aria-labelledby="headingTwo"
                 data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">SELECTIONS:</h6>
-                    <a class="collapse-item" href="/cablingreport"><i class="fas fa-fw fa-money-check"></i><span>
-                            CABLING</span></a>
+                    <a class="collapse-item" href="/cabling"><i class="fas fa-fw fa-file-alt"></i><span>
+                            EQUIPMENTS</span></a>
+
                 </div>
             </div>
-        </a>
+
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCablingReports"
+                aria-expanded="true" aria-controls="collapseCablingReports">
+                <i class="fas fa-fw fa-money-bill-wave"></i>
+                <span>REPORTS</span>
+                <div id="collapseCablingReports" class="collapse" aria-labelledby="headingTwo"
+                    data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">SELECTIONS:</h6>
+                        <a class="collapse-item" href="/cablingreport"><i class="fas fa-fw fa-money-check"></i><span>
+                                CABLING</span></a>
+                    </div>
+                </div>
+            </a>
+
+        </div>
 
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCablingRequest"
             aria-expanded="true" aria-controls="collapseCablingRequest">

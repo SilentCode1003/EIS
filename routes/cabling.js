@@ -188,10 +188,15 @@ router.post('/saveexceldata', async (req, res) => {
 
 router.get('/GetCablingEquipmentSummary', (req, res) => {
   try {
-    let data = helper.GetCablingEquipmentSummary(CablingPath);
+    // let data = helper.GetCablingEquipmentSummary(CablingPath);
+    let sql = `SELECT * FROM cabling_equipment`;
 
-    res.json({
-      data: data
+    mysql.Select(sql, 'CablingEquipment', (err, result) => {
+      if (err) throw err;
+
+      res.json({
+        data: result
+      })
     })
 
   } catch (error) {
@@ -242,6 +247,7 @@ router.post('/addnewstocks', (req, res) => {
     let requestdate = req.body.requestdate;
     let data = req.body.data;
     let transaction_cabling_stocks_equipments = [];
+    let update_cabling_equipment = [];
 
     data.forEach((key, item) => {
       transaction_cabling_stocks_equipments.push([
@@ -255,9 +261,15 @@ router.post('/addnewstocks', (req, res) => {
         requestid,
         'APPROVED',
       ])
+
+      update_cabling_equipment.push({
+        brandname: key.brand,
+        itemtype: key.type,
+        quantity: key.quantity
+      });
     });
 
-    console.log(transaction_cabling_stocks_equipments);
+    // console.log(transaction_cabling_stocks_equipments);
 
     Insert_TransactionCalingStocksEquipment = (data, callback) => {
       let sql = `INSERT INTO transaction_cabling_stocks_equipments(
@@ -276,6 +288,36 @@ router.post('/addnewstocks', (req, res) => {
 
         callback(null, result);
       })
+    }
+
+    Update_Cablingequipment = (data, callback) => {
+      data.forEach((key, item) => {
+        console.log(`Paramenters: ${key.brandname} ${key.itemtype} ${key.quantity}`)
+        let result = `SELECT ie_itemcount FROM cabling_equipment 
+        WHERE ie_brandname='${key.brandname}' 
+        AND ie_itemtype='${key.itemtype}'`;
+
+        mysql.SelectSingleResult(result, data => {
+          var current_quantity = parseFloat(data);
+          var additional_quantity = parseFloat(key.quantity)
+          var new_quantity = current_quantity + additional_quantity;
+
+          console.log(`Current Quantity: ${data}`)
+          let sql = `UPDATE cabling_equipment 
+          SET ie_itemcount='${new_quantity}',
+          ie_updateitemcount='${additional_quantity}',
+          ie_updateby='${req.session.fullname}',
+          ie_updatedate='${helper.GetCurrentDatetime()}' 
+          WHERE ie_brandname='${key.brandname}' 
+          AND ie_itemtype='${key.itemtype}'`;
+
+          mysql.Update(sql, (err, result) => {
+            if (err) console.log(err);
+            console.log(result)
+          })
+        })
+      })
+      callback(null, 'DONE UPDATE!');
     }
 
     Update_RequestCablingStocksDetails = (requestid, callback) => {
@@ -335,8 +377,31 @@ router.post('/addnewstocks', (req, res) => {
       console.log('Update_RequestCablingStocksDetails');
     })
 
+    Update_Cablingequipment(update_cabling_equipment, (err, result) => {
+      if (err) throw err;
+      console.log(result);
+    })
+
     res.json({
       msg: 'success',
+    })
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+})
+
+router.post('/stockindetails', (req, res) => {
+  try {
+    let requestid = req.body.requestid;
+    let sql = `SELECT * FROM transaction_cabling_stocks_details WHERE tcsd_requestid='${requestid}'`;
+    mysql.Select(sql, 'TransactionCablingStocksDetails', (err, result) => {
+      if (err) throw err;
+      res.json({
+        msg: 'success',
+        data: result
+      })
     })
   } catch (error) {
     res.json({

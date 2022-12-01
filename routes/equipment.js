@@ -245,11 +245,15 @@ router.post('/getequipment', (req, res) => {
 
 router.get('/GetEquipmentSummary', (req, res) => {
   try {
+    // let data = helper.GetEquipmentSummary(EquipmentPath);
+    let sql = `SELECT * FROM cabling_equipment`;
 
-    let data = helper.GetEquipmentSummary(EquipmentPath);
+    mysql.Select(sql, 'CablingEquipment', (err, result) => {
+      if (err) throw err;
 
-    res.json({
-      data: data
+      res.json({
+        data: result
+      })
     })
   } catch (error) {
     res.json({

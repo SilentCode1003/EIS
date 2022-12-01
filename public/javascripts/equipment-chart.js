@@ -37,7 +37,7 @@ $.ajax({
     let itemcount = [];
 
     $.each(result.data, (key, item) => {
-      itemname.push(item.itemname);
+      itemname.push(item.itemtype);
       itemcount.push(item.itemcount);
     })
 
@@ -138,7 +138,7 @@ $.ajax({
     let itemcount = [];
 
     $.each(result.data, (key, item) => {
-      itemname.push(item.itemname);
+      itemname.push(item.itemtype);
       itemcount.push(item.itemcount);
     })
 

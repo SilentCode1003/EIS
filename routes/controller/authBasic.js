@@ -1,3 +1,5 @@
+const helper = require('../repository/customhelper')
+
 const isAuth = (req, res, next) => {
     if (req.session.isAuth) {
         next();
@@ -38,4 +40,4 @@ const isAuthAdmin = (req, res, next) => {
     }
 };
 
-module.exports = { isAuth, isAuthAdmin}
+module.exports = { isAuth, isAuthAdmin }
