@@ -524,6 +524,12 @@ router.post('/approve', (req, res) => {
       });
     }
 
+    Update_CablingEquipment = (sql, callback) => {
+      mysql.Update(sql, (err, result) => {
+        if (err) callback(err, null);
+        callback(null, result);
+      })
+    }
 
     console.log(data);
     data.forEach((key, item) => {
@@ -541,7 +547,7 @@ router.post('/approve', (req, res) => {
           itemcost: key.itemcost,
           itemcount: key.itemcount,
           createddate: key.createddate,
-          status: key.status
+          status: 'APPROVED'
         });
 
         var dataArrJson = JSON.stringify(dataArr, null, 2);
@@ -554,9 +560,25 @@ router.post('/approve', (req, res) => {
           file: cablingitemFilename,
           deduction: itemcount,
         });
-        helper.CreateJSON(deployFilename, dataArrJson);
 
+        let result = `SELECT * FROM cabling_equipment WHERE ie_brandname='${key.brandname}' AND ie_itemtype='${key.itemtype}'`;
+        mysql.SelectSingleResult(result, data => {
+          let currentcount = parseFloat(data);
+          let requestcount = parseFloat(key.itemcount);
+          let difference = currentcount - requestcount;
+          console.log(`${currentcount} ${requestcount} ${difference} ${key.brandname} ${key.itemtype}`);
+
+          let update_ce = `UPDATE cabling_equipment SET ie_itemcount='${difference}' WHERE ie_brandname='${key.brandname}' AND ie_itemtype='${key.itemtype}'`;
+          Update_CablingEquipment(update_ce, (err, result) => {
+            if (err) throw err;
+            console.log(result);
+          })
+        })
+
+        helper.CreateJSON(deployFilename, dataArrJson);
       });
+
+
 
       let update = `UPDATE transaction_cabling_equipment SET tce_approvedby= '${req.session.fullname}', tce_approveddate='${helper.GetCurrentDate()}', tce_status='APPROVED' WHERE tce_requestid='${key.requestid}'`;
       let update_rce = `UPDATE request_cabling_equipment SET rce_status='APPROVED' WHERE rce_referenceid='${key.requestid}'`;
@@ -579,7 +601,6 @@ router.post('/approve', (req, res) => {
     UpdateItemCount(update_items_list);
 
     helper.MoveFile(targetFile, approvedFile);
-
     res.json({
       msg: 'success'
     })

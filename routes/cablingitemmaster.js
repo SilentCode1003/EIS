@@ -168,3 +168,22 @@ router.post('/save', (req, res) => {
     })
   }
 })
+
+router.get('/getmincount', (req, res) => {
+  try {
+    let sql = `call GetMinItemCount()`;
+    mysql.StoredProcedureResult(sql, (err, result) => {
+      if (err) throw err;
+
+      console.log(result);
+      res.json({
+        msg: 'success',
+        data: result
+      })
+    })
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+})

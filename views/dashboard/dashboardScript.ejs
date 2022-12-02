@@ -289,6 +289,32 @@
                     hideload();
                 }
             });
+
+            //NEED TO RESTOCK
+             needrestocktbl = $('#restockstble').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'GET',
+                'ajax': {
+                    'url': '/cablingitemmaster/getmincount'
+                },
+                'columns': [
+                    { data: 'brandname' },
+                    { data: 'itemtype' },
+                    { data: 'itemcount' },
+                    { data: 'minstocks' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
         }
 
         var modal = document.getElementById("requestModal");

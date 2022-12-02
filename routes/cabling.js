@@ -5,6 +5,7 @@ const helper = require('./repository/customhelper');
 const mysql = require('./repository/dbconnect')
 var CablingPath = `${__dirname}/data/cabling/`;
 const { isAuthAdmin } = require('./controller/authBasic');
+const { json } = require('express');
 
 /* GET home page. */
 router.get('/', isAuthAdmin, function (req, res, next) {
@@ -28,6 +29,7 @@ router.post('/save', (req, res) => {
     var fileDir = `${folder}/${itemtype}_${brandname}.json`;
     var dataraw = JSON.parse(data);
     var data_sql = [];
+    var localdata = [];
     var createdby = req.session.fullname;
     var createddate = helper.GetCurrentDate();
 
@@ -56,6 +58,15 @@ router.post('/save', (req, res) => {
         '',
         '',
       ])
+
+      localdata.push({
+        brandname: key.brandname,
+        itemtype: key.itemtype,
+        itemcount: key.itemcount,
+        updateitemcount: '',
+        updateby: '',
+        updatedate: '',
+      })
     });
 
     let check_exist = helper.CreateFolder(folder);
@@ -71,7 +82,10 @@ router.post('/save', (req, res) => {
 
         console.log('Insert_CablingEquipment');
       });
-      helper.CreateJSON(fileDir, data);
+
+      localdata = JSON.stringify(localdata, null, 2);
+
+      helper.CreateJSON(fileDir, localdata);
 
       res.json({
         msg: 'success'
@@ -139,17 +153,14 @@ router.post('/saveexceldata', async (req, res) => {
       var updateitemcount = '';
       var updateby = '';
       var updatedate = '';
-      var createdby = req.session.fullname;
-      var createddate = helper.GetCurrentDate();
 
       dataArr.push({
-        'brandname': brandname,
-        'itemtype': itemtype,
-        'itemcount': itemcount,
-        'updateby': updateby,
-        'updatedate': updatedate,
-        'createdby': createdby,
-        'createddate': createddate
+        brandname: brandname,
+        itemtype: itemtype,
+        itemcount: itemcount,
+        updateitemcount: updateitemcount,
+        updateby: updateby,
+        updatedate: updatedate,
       });
 
       data_sql.push([
@@ -290,7 +301,14 @@ router.post('/addnewstocks', (req, res) => {
       })
     }
 
+    Update_CablingEquipmengJSONFile = (tragetDir, foldername, dataJson, callback) => {
+      helper.CreateFolder(foldername);
+      helper.CreateJSON(tragetDir, dataJson)
+      callback(null, `Path: ${tragetDir} Data:${dataJson}`)
+    }
+
     Update_Cablingequipment = (data, callback) => {
+
       data.forEach((key, item) => {
         console.log(`Paramenters: ${key.brandname} ${key.itemtype} ${key.quantity}`)
         let result = `SELECT ie_itemcount FROM cabling_equipment 
@@ -298,6 +316,7 @@ router.post('/addnewstocks', (req, res) => {
         AND ie_itemtype='${key.itemtype}'`;
 
         mysql.SelectSingleResult(result, data => {
+          let dataJson = [];
           var current_quantity = parseFloat(data);
           var additional_quantity = parseFloat(key.quantity)
           var new_quantity = current_quantity + additional_quantity;
@@ -311,11 +330,33 @@ router.post('/addnewstocks', (req, res) => {
           WHERE ie_brandname='${key.brandname}' 
           AND ie_itemtype='${key.itemtype}'`;
 
+          dataJson.push({
+            brandname: key.brandname,
+            itemtype: key.itemtype,
+            itemcount: new_quantity,
+            updateitemcount: additional_quantity,
+            updateby: req.session.fullname,
+            updatedate: helper.GetCurrentDatetime(),
+          });
+
+          dataJson = JSON.stringify(dataJson, null, 2);
+
+          let foldername = `${CablingPath}${key.brandname}`;
+          let filename = `${key.itemtype}_${key.brandname}.json`;
+          let tragetDir = `${foldername}/${filename}`;
+
           mysql.Update(sql, (err, result) => {
             if (err) console.log(err);
             console.log(result)
           })
+
+          Update_CablingEquipmengJSONFile(tragetDir, foldername, dataJson, (err, result) => {
+            if (err) throw err;
+            // console.log(result);
+          });
+
         })
+
       })
       callback(null, 'DONE UPDATE!');
     }
