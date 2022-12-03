@@ -43,6 +43,13 @@
     }
 
     if (accounttype == 'CYBERPOWER') {
+        
+        $("#purchasing").toggle(0, function () {
+        });
+
+        $("#itrequest").toggle(0, function () {
+        });
+
         $("#it").toggle(0, function () {
         });
 
@@ -52,7 +59,25 @@
         $("#accounting").toggle(0, function () {
         });
 
-        $("#purchasing").toggle(0, function () {
+        $("#equipmentrequest").toggle(0, function () {
+        });
+
+        $("#itdashboard").toggle(0, function () {
+        });
+
+        $("#equipments-it").toggle(0, function () {
+        });
+
+        $("#equipments-it-transfer").toggle(0, function () {
+        });
+
+        $("#cablingrequest").toggle(0, function () {
+        });
+
+        $("#cablingequipmentrequesttable").toggle(0, function () {
+        });
+
+        $("#cabling-dashboard").toggle(0, function () {
         });
 
     }
@@ -93,10 +118,10 @@
         $("#cablingrequest").toggle(0, function () {
         });
 
-        $("#equipmentrequest").toggle(0, function () {
+        $("#itrequest").toggle(0, function () {
         });
 
-        $("#itequipmentrequest").toggle(0, function () {
+        $("#equipmentrequest").toggle(0, function () {
         });
 
         $("#itdashboard").toggle(0, function () {
@@ -125,14 +150,15 @@
         $("#it").toggle(0, function () {
         });
 
+        $("#itrequest").toggle(0, function () {
+        });
+
         $("#accounting").toggle(0, function () {
         });
 
         $("#purchasing").toggle(0, function () {
         });
 
-        $("#itequipmentrequest").toggle(0, function () {
-        });
 
         $("#equipmentrequest").toggle(0, function () {
         });
@@ -157,14 +183,15 @@
         $("#tracker").toggle(0, function () {
         });
 
+        $("#itrequest").toggle(0, function () {
+        });
+
         $("#cabling").toggle(0, function () {
         });
 
         $("#purchasing").toggle(0, function () {
         });
 
-        $("#itequipmentrequest").toggle(0, function () {
-        });
 
         $("#equipmentrequest").toggle(0, function () {
         });
@@ -193,6 +220,9 @@
         $("#cyberpower").toggle(0, function () {
         });
 
+        $("#itrequest").toggle(0, function () {
+        });
+
         $("#it").toggle(0, function () {
         });
 
@@ -203,9 +233,6 @@
         });
 
         $("#accounting").toggle(0, function () {
-        });
-
-        $("#itequipmentrequest").toggle(0, function () {
         });
 
         $("#equipmentrequest").toggle(0, function () {
@@ -229,7 +256,6 @@
         $("#cabling-dashboard").toggle(0, function () {
         });
     }
-
     hideload();
     function success(title, text) {
         swal({

@@ -5,13 +5,76 @@
         });
     })
 
+
+    LoadTable();
+
     $.ajax({
+        type: "POST",
+        url: "/items/brandnamedepartment",
+        data: { department: 'CYBERPOWER' },
+        success: function (result) {
+            console.log(result.data);
+            var data = result.data;
+
+            $.each(data, function (key, item) {
+                var options = new Option(item.brandname, item.brandname);
+                $(options).html(item.brandname);
+                $('#modelname').append(options);
+                console.log(item.brandname);
+            });
+        },
+        error: function (result) {
+            alert('error: ' + result.data);
+        }
+    });
+
+    $(document).on('click', "#saveBtn", function () {
+        let modelname = $('#modelname').val();
+        let itemtype = $('#itemtype').val();
+        let serial = $('#serial').val();
+        let ponumber = $('#ponumber').val();
+        let podate = $('#podate').val();
+        let dataArr = [];
+
+        dataArr.push({
+            modelname: modelname,
+            itemtype: itemtype,
+            serial: serial,
+            ponumber: ponumber,
+            podate: podate,
+        })
+
+        dataArr = JSON.stringify(dataArr, null, 2);
+
+        $.ajax({
             type: "POST",
-            url: "/item/itemtype",
-            data: { brandname: 'CYBERPOWER' },
+            url: "/cyberstocks/save",
+            data: {
+                data: dataArr
+            },
             success: function (result) {
-                console.log(result.data);
+                success('Saved!', 'Data saved!')
+                LoadTable();
+                dataArr = [];
+            },
+            error: function (result) {
+                error(result.data);
+            }
+        });
+
+    })
+
+    $(document).on('change', "#modelname", function () {
+        var brandname = $('#modelname').val();
+        $("#itemtype").empty();
+
+        $.ajax({
+            type: "POST",
+            url: "/items/itemtype",
+            data: { brandname: brandname },
+            success: function (result) {
                 var data = result.data;
+                console.log(result.data);
 
                 $.each(data, function (key, item) {
                     var options = new Option(item.itemname, item.itemname);
@@ -24,4 +87,159 @@
                 alert('error: ' + result.data);
             }
         });
+    });
+
+    $(document).on('click', "#upload", async function () {
+        // var data = getExcel_data('C:\Users\5L Solutions\Documents\DATA\test.xlsx', 'sheet 1');
+        // console.log(data);
+        await UploadProcess();
+    })
+
+    async function UploadProcess() {
+        //Reference the FileUpload element.
+        var fileUpload = document.getElementById("fileUpload");
+
+        //Validate whether File is valid Excel file.
+        var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xls|.xlsx|.csv|.ods)$/;
+        if (regex.test(fileUpload.value.toLowerCase())) {
+            if (typeof (FileReader) != "undefined") {
+                var reader = new FileReader();
+
+                //For Browsers other than IE.
+                if (reader.readAsBinaryString) {
+                    reader.onload = function (e) {
+                        GetTableFromExcel(e.target.result);
+                    };
+                    reader.readAsBinaryString(fileUpload.files[0]);
+                } else {
+                    //For IE Browser.
+                    reader.onload = function (e) {
+                        var data = "";
+                        var bytes = new Uint8Array(e.target.result);
+                        for (var i = 0; i < bytes.byteLength; i++) {
+                            data += String.fromCharCode(bytes[i]);
+                        }
+                        GetTableFromExcel(data);
+                    };
+                    reader.readAsArrayBuffer(fileUpload.files[0]);
+                }
+            } else {
+                alert("This browser does not support HTML5.");
+            }
+        } else {
+            alert("Please upload a valid Excel file.");
+        }
+    };
+
+    async function GetTableFromExcel(data) {
+        //Read the Excel File data in binary
+        var workbook = XLSX.read(data, {
+            type: 'binary'
+        });
+
+        //get the name of First Sheet.
+        var Sheet = workbook.SheetNames[0];
+
+        //Read all rows from First Sheet into an JSON array.
+        var excelRows = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[Sheet]);
+        var columns = Object.keys(excelRows[0]);
+
+
+        //Create a HTML Table element.
+        var myTable = document.createElement("table");
+        myTable.border = "1";
+
+        //Add the header row.
+        var row = myTable.insertRow(-1);
+
+        //Add the header cells.
+        var headerCell = document.createElement("TH");
+        for (var j = 0; j < columns.length; j++) {
+            headerCell = document.createElement("TH");
+            headerCell.innerHTML = columns[j];
+            row.appendChild(headerCell);
+        }
+
+        var dataExcelArr = [];
+        //Add the data rows from Excel file.
+        for (var i = 0; i < excelRows.length; i++) {
+            //Add the data row.
+            var data = [];
+            var row = myTable.insertRow(-1);
+            for (var j = 0; j < columns.length; j++) {
+                var cell = row.insertCell(-1);
+                cell.innerHTML = excelRows[i][columns[j]];
+                await data.push({
+                    item: excelRows[i][columns[j]]
+                });
+            }
+            dataExcelArr.push({
+                modelname: data[0].item,
+                itemtype: data[1].item,
+                serial: data[2].item,
+                ponumber: data[3].item,
+                podate: data[4].item,
+            });
+
+        }
+        // console.log(dataExcelArr)
+
+        await excelDataSave(dataExcelArr);
+
+        // var ExcelTable = document.getElementById("ExcelTable");
+        // ExcelTable.innerHTML = "";
+        // ExcelTable.appendChild(myTable);
+    };
+
+    async function excelDataSave(data) {
+        var dataraw = JSON.stringify(data, null, 2);
+
+        showloader();
+
+        await $.ajax({
+            type: "POST",
+            url: "/cyberstocks/exceldatasave",
+            data: {
+                data: dataraw
+            },
+            success: function (result) {
+                success('Saved!', 'Data saved!')
+                LoadTable();
+                dataArr = [];
+            },
+            error: function (result) {
+                error(result.data);
+            }
+        });
+        hideload();
+    }
+
+    function LoadTable() {
+        dataTable = $('#cyberpower-tbl').DataTable({
+            'destroy': true,
+            'processing': true,
+            'serverSide': true,
+            'paging': false,
+            'searching': false,
+            'info': false,
+            'scrollY': 400,
+            'scrollCollapse': true,
+            'serverMethod': 'GET',
+            'ajax': {
+                'url': '/cyberstocks/load',
+            },
+            'columns': [
+                { data: 'itemmodel' },
+                { data: 'itemtype' },
+                { data: 'itemserial' },
+                { data: 'ponumber' },
+                { data: 'podate' },
+                { data: 'status' },
+            ],
+            initComplete: function () {
+                console.log('init complete');
+                hideload();
+            }
+        });
+    }
 </script>
