@@ -16,6 +16,27 @@ exports.GetFolderList = function (dir) {
     return data;
 };
 
+exports.GetFileListContains = (path, contains) => {
+    try {
+        var dataArr = [];
+        var data = fs.readdirSync(path, 'utf-8');
+
+        data.forEach(d => {
+            if (d.includes(contains)) {
+                // console.log(d);
+                dataArr.push({
+                    file: d
+                })
+            }
+        })
+
+        return dataArr;
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 exports.GetFiles = function (dir) {
     //console.log(`Content: ${dir}`);
     var data = fs.readdirSync(dir);

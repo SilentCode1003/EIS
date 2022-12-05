@@ -64,35 +64,45 @@ router.post('/save', async (req, res) => {
 router.get('/load', (req, res) => {
 
   try {
-    var dataArr = [];
-    var folders = helper.GetFolderList(EquipmentPath);
+    // var dataArr = [];
+    // var folders = helper.GetFolderList(EquipmentPath);
 
-    folders.forEach(folder => {
-      var targetFolder = `${EquipmentPath}${folder}`;
-      var files = helper.GetFiles(targetFolder);
+    // folders.forEach(folder => {
+    //   var targetFolder = `${EquipmentPath}${folder}`;
+    //   var files = helper.GetFiles(targetFolder);
 
-      files.forEach(file => {
-        var filename = `${targetFolder}/${file}`;
-        var data = helper.ReadJSONFile(filename);
+    //   files.forEach(file => {
+    //     var filename = `${targetFolder}/${file}`;
+    //     var data = helper.ReadJSONFile(filename);
 
-        data.forEach((key, item) => {
-          dataArr.push({
-            serial: key.serial,
-            brandname: key.brandname,
-            itemtype: key.itemtype,
-            receivedby: key.receivedby,
-            receiveddate: key.receiveddate,
-          })
-        })
+    //     data.forEach((key, item) => {
+    //       dataArr.push({
+    //         serial: key.serial,
+    //         brandname: key.brandname,
+    //         itemtype: key.itemtype,
+    //         receivedby: key.receivedby,
+    //         receiveddate: key.receiveddate,
+    //       })
+    //     })
 
+    //   })
+
+    // });
+
+    // res.json({
+    //   msg: 'success',
+    //   data: dataArr
+    // });
+
+    let sql = `SELECT * FROM register_it_equipment WHERE rie_status='ACTIVE'`;
+    mysql.Select(sql, 'RegisterITEquipment', (err, result) => {
+      if(err) throw err;
+
+      res.json({
+        msg: 'success',
+        data: result
       })
-
-    });
-
-    res.json({
-      msg: 'success',
-      data: dataArr
-    });
+    })
 
   } catch (error) {
     res.json({
@@ -246,12 +256,11 @@ router.post('/getequipment', (req, res) => {
 router.get('/GetEquipmentSummary', (req, res) => {
   try {
     // let data = helper.GetEquipmentSummary(EquipmentPath);
-    let sql = `SELECT * FROM cabling_equipment`;
+    let sql = `call GetITEquipmentCount()`;
 
-    mysql.Select(sql, 'CablingEquipment', (err, result) => {
-      if (err) throw err;
-
+    mysql.StoredProcedureResult(sql, (err, result) => {
       res.json({
+        msg: 'success',
         data: result
       })
     })

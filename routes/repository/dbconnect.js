@@ -160,6 +160,9 @@ exports.Select = (sql, table, callback) => {
             if (table == 'MasterItems') {
                 callback(null, model.MasterItems(results));
             }
+            if (table == 'RegisterITEquipment') {
+                callback(null, model.RegisterITEquipment(results));
+            }
         });
 
     } catch (error) {

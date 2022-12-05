@@ -9,8 +9,9 @@
         var dataTable = null;
 
         $.ajax({
-            type: "GET",
-            url: "/items/brandname",
+            type: "POST",
+            url: "/items/brandnamedepartment",
+            data: { department: 'IT' },
             success: function (result) {
                 console.log(result.data);
                 var data = result.data;
@@ -26,7 +27,6 @@
                 alert('error: ' + result.data);
             }
         });
-
         $(document).on('click', "#saveBtn", function () {
             var serial = $('#serial').val();
             var brandname = $('#brandname').val();

@@ -663,3 +663,21 @@ exports.TransactionCyberpowerEquipments = (data) => {
 
     return dataResult;
 }
+
+exports.RegisterITEquipment = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            serial: key.rie_serial,
+            brandname: key.rie_itembrand,
+            itemtype: key.rie_itemtype,
+            receivedby: key.rie_receivedby,
+            receiveddate: key.rie_receiveddate,
+            status: key.rie_status,
+        })
+    });
+
+    return dataResult;
+}

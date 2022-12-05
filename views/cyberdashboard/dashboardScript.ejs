@@ -1,0 +1,34 @@
+<script>
+    $(document).ready(function () {
+        LoadTable();
+
+        function LoadTable() {
+            showloader();
+
+            //IT EQUIPMENT REQUEST
+            cyberpowerTbl = $('#cyberpower-tbl').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'GET',
+                'ajax': {
+                    'url': '/cyberdashboard/loadinventory',
+                },
+                'columns': [
+                    { data: 'itemmodel' },
+                    { data: 'itemtype' },
+                    { data: 'itemcount' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+        }
+    })
+</script>

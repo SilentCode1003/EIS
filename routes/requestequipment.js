@@ -8,6 +8,7 @@ const RequestEquipmentPathPending = `${__dirname}/data/request/equipment/pending
 const RequestEquipmentPathApprove = `${__dirname}/data/request/equipment/approved/`
 const RequestEquipmentPathReturn = `${__dirname}/data/request/equipment/return/`
 const RequestEquipmentPathAssigned = `${__dirname}/data/request/equipment/assigned/`
+const mysql = require('./repository/dbconnect')
 
 const { isAuthAdmin, isAuth } = require('./controller/authBasic');
 /* GET home page. */
@@ -270,9 +271,12 @@ router.post('/approve', (req, res) => {
         var status = req.body.status;
         var pendingFile = `${RequestEquipmentPathPending}${personel}_${date}.json`;
         var approveFile = `${RequestEquipmentPathApprove}${personel}_${date}.json`;
+        var assignFile = `${RequestEquipmentPathAssigned}`
+        var dataAssign = helper.GetFileListContains(assignFile, `${personel}_${date}`)
         var dataFile = helper.ReadJSONFile(pendingFile);
         var dataArr = [];
 
+        // console.log(dataAssign);
         function Update() {
             return new Promise((resolve) => {
                 dataFile.forEach(UpdatePendingRequestEquipment);
@@ -295,6 +299,33 @@ router.post('/approve', (req, res) => {
         Update();
 
         helper.MoveFile(pendingFile, approveFile)
+
+        Update_RegisterITEquipment = (data, callback) => {
+            console.log(data);
+            data.forEach((key, item) => {
+                var target = `${RequestEquipmentPathAssigned}${key.file}`;
+                console.log(target);
+                var dataJson = helper.ReadJSONFile(target)
+
+                console.log(dataJson);
+                dataJson.forEach((key, item) => {
+                    let sql = `UPDATE register_it_equipment SET rie_status='SPARE' WHERE rie_serial='${key.serial}'`;
+                    mysql.Update(sql, (err, result) => {
+                        if (err) throw err;
+                    })
+
+                    let sql2 = `UPDATE transaction_it_equipment SET tie_status='SPARE' WHERE tie_serial='${key.serial}'`;
+                    mysql.Update(sql2, (err, result) => {
+                        if (err) throw err;
+                    })
+                })
+            })
+        }
+
+        Update_RegisterITEquipment(dataAssign, (err, result) => {
+            if (err) throw err;
+
+        })
 
         // fs.renameSync(pendingFile, approveFile);
         // console.log(`Moved ${pendingFile} to ${approveFile}`);

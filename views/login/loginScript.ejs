@@ -1,9 +1,39 @@
 <script>
     $(document).ready(function () {
+
+        document.addEventListener("keyup", function (event) {
+            if (event.keyCode === 13) {
+                var username = $('#username').val();
+                var password = $('#password').val();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/login/authentication",
+                    data: {
+                        username: username,
+                        password: password
+                    },
+                    success: function (result) {
+                        console.log(result);
+                        if (result.msg == 'success') {
+                            success('Login', 'Login successfully...')
+                            location.replace("/");
+                        }
+                        else {
+                            error('ID & Password not match...');
+                        }
+                    },
+                    error: function (result) {
+                        error(result.msg);
+                    }
+                });
+            }
+        });
+
         $(document).on('click', "#loginBtn", function () {
             var username = $('#username').val();
             var password = $('#password').val();
-           
+
             $.ajax({
                 type: "POST",
                 url: "/login/authentication",
@@ -13,11 +43,11 @@
                 },
                 success: function (result) {
                     console.log(result);
-                    if(result.msg == 'success') {
+                    if (result.msg == 'success') {
                         success('Login', 'Login successfully...')
                         location.replace("/");
                     }
-                    else{
+                    else {
                         error('ID & Password not match...');
                     }
                 },

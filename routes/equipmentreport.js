@@ -176,7 +176,7 @@ router.post('/find', (req, res) => {
   }
 })
 
-router.post('/deploy', async (req, res) => {
+router.post('/deploy', async (req, res) => {    
   try {
     var date = req.body.deploydate;
     var data = req.body.data;
@@ -239,8 +239,15 @@ router.post('/deploy', async (req, res) => {
 
       mysql.Update(sql, (err, result) => {
         if (err) callback(err, null);
-        callback(null, result)
       });
+
+      let sql2 = `UPDATE register_it_equipment SET rie_status='DEPLOY' WHERE rie_serial='${serial}'`;
+      mysql.Update(sql2, (err, result) => {
+        if (err) callback(err, null);
+      });
+
+      callback(null, 'DONE')
+
     }
 
     helper.CreateFolder(targetFolder);
