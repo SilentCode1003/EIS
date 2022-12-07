@@ -143,3 +143,50 @@ router.post('/exceldatasave', (req, res) => {
     })
   }
 })
+
+router.post('/getserials', (req, res) => {
+  try {
+    let modelname = req.body.modelname;
+    let itemtype = req.body.itemtype;
+    let sql = `select * from cyberpower_equipments WHERE ce_itemmodel='${modelname}' AND ce_itemtype='${itemtype}'`;
+
+    mysql.Select(sql, 'CyberpowerEquipments', (err, result) => {
+      if (err) throw err;
+      res.json({
+        msg: 'success',
+        data: result
+      })
+    })
+
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+})
+
+router.post('/assignserial', (req, res) => {
+  try {
+    let requestid = req.body.requestid;
+    let modelname = req.body.modelname;
+    let itemtype = req.body.itemtype;
+    let serials = req.body.serials;
+
+    let sql = `UPDATE transaction_cyberpower_outgoing_equipment 
+    SET tcoe_unitserial='${serials}'
+    WHERE tcoe_requestid='${requestid}'`;
+
+    mysql.Update(sql, (err, result) => {
+      if (err) throw err;
+
+      res.json({
+        msg: 'success'
+      })
+    })
+
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+})

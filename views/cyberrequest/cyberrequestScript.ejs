@@ -1,0 +1,262 @@
+<script>
+    $(document).ready(function () {
+        let dataArr = [];
+        LoadList();
+
+        $(document).on('click', "#equipmentBtn", function () {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById('equipment').style.display = "block";
+            // evt.currentTarget.className += " active";
+
+            EquipmentRequestTable();
+        });
+
+        $(document).on('click', "#restockBtn", function () {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById('restock').style.display = "block";
+            // evt.currentTarget.className += " active";
+
+        });
+
+        $(document).on('change', "#brandname", function () {
+            var brandname = $('#brandname').val();
+            $("#itemtype").empty();
+
+            $.ajax({
+                type: "POST",
+                url: "/items/itemtype",
+                data: { brandname: brandname },
+                success: function (result) {
+                    var data = result.data;
+                    console.log(result.data);
+
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.itemname, item.itemname);
+                        $(options).html(item.itemname);
+                        $('#itemtype').append(options);
+                        console.log(item.itemname);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+        });
+
+        $(document).on('click', "#addBtn", function () {
+            let modelname = $('#brandname').val();
+            let itemtype = $('#itemtype').val();
+            let clientname = $('#clientname').val();
+            let itemcount = $('#itemcount').val();
+
+            var message = '';
+
+            if (brandname == "-") { message += "BRAND NAME " }
+            if (itemtype == "-") { message += "ITEM TYPE " }
+            if (clientname == "-") { message += "CLIENT NAME " }
+            if (itemcount == "-") { message += "ITEM COUNT " }
+
+            if (message != "") { warning("Warning!", "Must fill-up " + message + " field!") }
+            else {
+                if (dataArr.length == 0) {
+                    dataArr.push({
+                        modelname: modelname,
+                        itemtype: itemtype,
+                        clientname: clientname,
+                        itemcount: itemcount,
+                    })
+
+                    equipment_list_tbl = document.getElementById("equipment-list-tbl");
+                    var row = equipment_list_tbl.insertRow(1);
+                    var MODEL_NAME = row.insertCell(0);
+                    var ITEM_NAME = row.insertCell(1);
+                    var CLIENT = row.insertCell(2);
+                    var COUNT = row.insertCell(3);
+
+                    MODEL_NAME.innerHTML = modelname;
+                    ITEM_NAME.innerHTML = itemtype;
+                    CLIENT.innerHTML = clientname;
+                    COUNT.innerHTML = itemcount;
+                } else {
+
+                    if (!dataArr.map(item => {
+                        if (item.itemtype == itemtype) {
+                            return `${item.itemtype}`;
+                        }
+                    }).includes(`${itemtype}`)) {
+                        dataArr.push({
+                            modelname: modelname,
+                            itemtype: itemtype,
+                            clientname: clientname,
+                            itemcount: itemcount,
+                        })
+
+                        equipment_list_tbl = document.getElementById("equipment-list-tbl");
+                        var row = equipment_list_tbl.insertRow(1);
+                        var MODEL_NAME = row.insertCell(0);
+                        var ITEM_NAME = row.insertCell(1);
+                        var CLIENT = row.insertCell(2);
+                        var COUNT = row.insertCell(3);
+
+                        MODEL_NAME.innerHTML = modelname;
+                        ITEM_NAME.innerHTML = itemtype;
+                        CLIENT.innerHTML = clientname;
+                        COUNT.innerHTML = itemcount;
+                    } else {
+                        warning(`Already request ${itemtype} with item count of ${itemcount}...`)
+                    }
+                }
+            }
+
+
+        })
+
+        $(document).on('click', "#requestBtn", function () {
+            if (dataArr.length == 0) {
+                warning('You have no request? IDIOT!');
+            } else {
+                let data = JSON.stringify(dataArr, null, 2);
+
+                $.ajax({
+                    type: "POST",
+                    url: "/cyberrequest/requestequipment",
+                    data: {
+                        data: data,
+                    },
+                    success: function (result) {
+                        if (result.msg == 'success') {
+                            success('Saved!', 'Data saved!')
+                        }
+                        else {
+                            warning('Use you own account to make request. System detected that this user was already request equipment today!')
+                        }
+
+                        dataArr = [];
+                        ClearListTable('equipment-list-tbl');
+                        EquipmentRequestTable();
+                    },
+                    error: function (result) {
+                        error(result.data);
+                    }
+                });
+
+            }
+        })
+
+        function LoadList() {
+            $.ajax({
+                type: "POST",
+                url: "/items/brandnamedepartment",
+                data: { department: 'CYBERPOWER' },
+                success: function (result) {
+                    console.log(result.data);
+                    var data = result.data;
+
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.brandname, item.brandname);
+                        $(options).html(item.brandname);
+                        $('#brandname').append(options);
+                        console.log(item.brandname);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+        }
+
+        function EquipmentRequestTable() {
+            showloader();
+            dataTable = $('#equipment-request-tbl').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'GET',
+                'ajax': {
+                    'url': '/cyberrequest/equipmentrequestload',
+                    'dataSrc': (json) => {
+                        var finalData = [];
+                        var data = json.data;
+                        var details = '';
+                        var createddate = '';
+                        var status = '';
+                        var requestby = '';
+                        var remarks = '';
+                        var clientname = '';
+                        var requestid = '';
+
+                        console.log(data);
+                        $.each(data, (key, item) => {
+                            requestby = item.requestby;
+                            requestdate = item.requestdate;
+                            status = item.status;
+                            remarks = item.remarks;
+                            clientname = item.clientname;
+                            requestid = item.requestid;
+
+                            // console.log(item.details);
+                            var dataJson = JSON.parse(item.details)
+                            $.each(dataJson, (key, item) => {
+                                console.log(`BRAND: ${item.modelname} ITEM TYPE: ${item.itemtype} ITEM COUNT: ${item.itemcount}`);
+                                details += `BRAND: ${item.modelname} ITEM TYPE: ${item.itemtype} ITEM COUNT: ${item.itemcount}<br/>`;
+                            })
+
+                            finalData.push({
+                                requestid: requestid,
+                                requestby: requestby,
+                                requestdate: requestdate,
+                                clientname: clientname,
+                                details: details,
+                                remarks: remarks,
+                                status: status,
+                            })
+
+                            details = '';
+                        })
+
+                        return finalData;
+                    },
+                },
+                'columnDefs': [{
+                    targets: 1,
+                    className: 'td-indent',
+                }],
+                'columns': [
+
+                    { data: 'requestid' },
+                    { data: 'requestby' },
+                    { data: 'requestdate' },
+                    { data: 'clientname' },
+                    { data: 'details' },
+                    { data: 'remarks' },
+                    { data: 'status' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+        }
+    })
+</script>

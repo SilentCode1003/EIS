@@ -61,6 +61,14 @@ exports.Select = (sql, table, callback) => {
             if (table == 'TransactionCyberpowerEquipments') {
                 callback(null, model.TransactionCyberpowerEquipments(results));
             }
+
+            if (table == 'CyberpowerOutgoingDetails') {
+                callback(null, model.CyberpowerOutgoingDetails(results));
+            }
+
+            if (table == 'TransactionCyberpowerOutgoingEquipments') {
+                callback(null, model.TransactionCyberpowerOutgoingEquipments(results));
+            }
         });
 
     } catch (error) {
@@ -93,6 +101,21 @@ exports.StoredProcedureResult = (sql, callback) => {
         });
     } catch (error) {
         callback(error, null);
+    }
+}
+
+exports.Update = async (sql, callback) => {
+    try {
+        connection.query(sql, (error, results, fields) => {
+            if (error) {
+                callback(error, null)
+            }
+            console.log('Rows affected:', results.affectedRows);
+
+            callback(null, results.affectedRows);
+        });
+    } catch (error) {
+        console.log(error);
     }
 }
 

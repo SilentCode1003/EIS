@@ -17,6 +17,7 @@
                 <th>MODEL</th>
                 <th>TYPE</th>
                 <th>COUNT</th>
+                <th>ACTION</th>
             </thead>
             <tbody></tbody>
         </table>
@@ -25,11 +26,42 @@
         <h1>OUTGOING</h1>
         <table id="outgoing-tbl">
             <thead>
+                <th>REQUEST ID</th>
                 <th>MODEL</th>
                 <th>TYPE</th>
                 <th>COUNT</th>
+                <th>ACTION</th>
             </thead>
             <tbody></tbody>
         </table>
+    </div>
+</div>
+
+
+<!-- The Modal -->
+<div id="outgoingModal" class="modal card shadow mb-4">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <div class="modal-button-container">
+            <span id="outgoingspan" class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <h1 class="center-text">ASSIGN SERIAL/S</h1>
+            <div>
+                <table id="outgoing-request-table">
+                    <thead>
+                        <th>MODEL</th>
+                        <th>TYPE</th>
+                        <th>SERIAL</th>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="modal-button-container" class="center-content">
+            <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
+            <button class="btn-glow-modal" id="saveoutgoingBtn" name="saveoutgoingBtn">SAVE</button>
+        </div>
     </div>
 </div>

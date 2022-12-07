@@ -1,0 +1,126 @@
+<div class="tab">
+    <div class="entry-area">
+        <button class="approve-btn tablinks" id="equipmentBtn" name="equipmentBtn"><i
+                class="fas fa-fw fa-box-open"></i>EQUIPMENT</button>
+        <button class="approve-btn tablinks" id="restockBtn" name="restockBtn"><i
+                class="fas fa-fw fa-box"></i>RESTOCK</button>
+    </div>
+</div>
+<br>
+
+<div class="tabcontent" id="equipment">
+    <h1 class="center-text">OUTGOING STOCKS</h1>
+    <div class="row">
+        <div class="col-sm-6 col-lg-5">
+            <div class="entry-area">
+                <select class="entry-input" id=brandname>
+                    <option value="-" id="listbrandname">MODEL NAME</option>
+                </select>
+            </div>
+            <div class="entry-area">
+                <select class="entry-input" id=itemtype>
+                    <option value="-" id="listitemtpye">ITEM TYPE</option>
+                </select>
+            </div>
+
+            <div class="entry-area">
+                <input type="text" class="entry-input" id="clientname" name="clientname" placeholder="CLIENT NAME">
+            </div>
+
+            <div class="entry-area">
+                <input type="text" class="entry-input" id="itemcount" name="itemcount" placeholder="QUANTITY">
+            </div>
+
+            <div class="entry-area">
+                <button class="" id="addBtn" name="addBtn">ADD</button>
+            </div>
+
+        </div>
+        <div class="col-sm-6 col-lg-5">
+            <div>
+                <table id="equipment-list-tbl">
+                    <thead>
+                        <th>MODEL</th>
+                        <th>TYPE</th>
+                        <th>CLIENT</th>
+                        <th>COUNT</th>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="entry-area">
+                <button class="" id="requestBtn" name="requestBtn">REQUEST</button>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div>
+        <table id="equipment-request-tbl">
+            <thead>
+                <th>REQUEST ID</th>
+                <th>REQUEST BY</th>
+                <th>REQUEST DATE</th>
+                <th>CLIENT</th>
+                <th>DETAILS</th>
+                <th>REMARKS</th>
+                <th>STATUS</th>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<div class="tabcontent" id="restock">
+    <h1 class="center-text">INCOMMING STOCKS</h1>
+    <div class="row">
+        <div class="col-sm-6 col-lg-5">
+            <div class="entry-area">
+                <select class="entry-input" id=restockbrandname>
+                    <option value="-" id="listrestockbrandname">BRAND NAME</option>
+                </select>
+            </div>
+            <div class="entry-area">
+                <select class="entry-input" id=restockitemtype>
+                    <option value="-" id="listrestockitemtype">ITEM TYPE</option>
+                </select>
+            </div>
+
+            <div class="entry-area">
+                <input type="text" class="entry-input" id="restockitemcount" name="restockitemcount" placeholder="QUANTITY">
+            </div>
+
+            <div class="entry-area">
+                <button class="" id="addrestockBtn" name="addrestockBtn">ADD</button>
+            </div>
+
+        </div>
+        <div class="col-sm-6 col-lg-5">
+            <div>
+                <table id="restock-list-tbl">
+                    <thead>
+                        <th>MODEL</th>
+                        <th>TYPE</th>
+                        <th>COUNT</th>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="entry-area">
+                <button class="" id="requestrestockBtn" name="requestrestockBtn">REQUEST</button>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div>
+        <table id="equipment-restock-tbl">
+            <thead>
+                <th>REQUEST ID</th>
+                <th>REQUEST BY</th>
+                <th>REQUEST DATE</th>
+                <th>DETAILS</th>
+                <th>STATUS</th>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>

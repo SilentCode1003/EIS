@@ -77,3 +77,44 @@ exports.TransactionCyberpowerEquipments = (data) => {
 
     return dataResult;
 }
+
+exports.CyberpowerOutgoingDetails = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            requestid: key.cod_requestid,
+            requestby: key.cod_requestby,
+            requestdate: key.cod_requestdate,
+            clientname: key.cod_client,
+            details: key.cod_details,
+            remarks: key.cod_remarks,
+            status: key.cod_status,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.TransactionCyberpowerOutgoingEquipments = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            transactionid: key.tcoe_transactionid,
+            transactiondate: key.tcoe_transactiondate,
+            clientname: key.tcoe_clientname,
+            quantity: key.tcoe_quantity,
+            modelname: key.tcoe_modelname,
+            itemtype: key.tcoe_itemtype,
+            unitserial: key.tcoe_unitserial,
+            requestid: key.tcoe_requestid,
+            remarks: key.tcoe_remarks,
+            status: key.tcoe_status,
+        })
+    });
+
+    return dataResult;
+}

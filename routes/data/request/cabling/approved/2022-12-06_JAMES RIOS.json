@@ -1,0 +1,43 @@
+[
+  {
+    "requestid": 2,
+    "personel": "JAMES RIOS",
+    "date": "2022-12-06 15:08",
+    "details": [
+      {
+        "personel": "JAMES RIOS",
+        "brandname": "NO BRAND",
+        "itemtype": "50mm Ø uPVC Pipes x 3m",
+        "itemcount": "450",
+        "createddate": "2022-12-06 15:08",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JAMES RIOS",
+        "brandname": "NO BRAND",
+        "itemtype": "40mm Ø uPVC Pipes x 3m",
+        "itemcount": "450",
+        "createddate": "2022-12-06 15:08",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JAMES RIOS",
+        "brandname": "NO BRAND",
+        "itemtype": "32mm Ø uPVC Pipes x 3m",
+        "itemcount": "450",
+        "createddate": "2022-12-06 15:08",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JAMES RIOS",
+        "brandname": "NO BRAND",
+        "itemtype": "25mm Ø uPVC Pipes x 3m",
+        "itemcount": "450",
+        "createddate": "2022-12-06 15:08",
+        "status": "PENDING"
+      }
+    ],
+    "remarks": "FOR INSTALLATION",
+    "status": "PENDING"
+  }
+]

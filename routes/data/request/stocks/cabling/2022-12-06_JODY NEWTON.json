@@ -1,0 +1,19 @@
+[
+  {
+    "requestid": 1,
+    "personel": "JODY NEWTON",
+    "date": "2022-12-06 14:55",
+    "details": [
+      {
+        "personel": "JODY NEWTON",
+        "brandname": "NO BRAND",
+        "itemtype": "20mm Ø uPVC Pipes x 3m",
+        "itemcount": "200",
+        "createddate": "2022-12-06 14:55",
+        "status": "PENDING"
+      }
+    ],
+    "remarks": "FOR ADDITIONAL STOCKS",
+    "status": "PENDING"
+  }
+]

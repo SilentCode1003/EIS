@@ -1,6 +1,164 @@
 <script>
     $(document).ready(function () {
+        let _requestid = '';
+        let _modelname = '';
+        let _itemtype = '';
+        let _itemcount = '';
+
+
         LoadTable();
+        var modal = document.getElementById("outgoingModal");
+        var span = document.getElementById("outgoingspan");
+
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        $('#outgoing-tbl tbody').on('click', 'tr', function (e) {
+            var data = [];
+            $(this).closest('tr').find('td').each(function () {
+                data.push([$(this).text()]);
+            });
+
+            console.log(data);
+
+            _requestid = data[0];
+            _modelname = data[1];
+            _itemtype = data[2];
+            _itemcount = data[3];
+        })
+
+        $('#outgoing-request-table tbody').on('click', 'tr', function (e) {
+            e.preventDefault();
+
+            if ($(this).attr('edit_type') == 'button') {
+                return false;
+            }
+
+            //make div editable
+            $(this).closest('div').attr('contenteditable', 'true');
+            //add bg css
+            $(this).addClass('bg-success').css('padding', '5px');
+
+            $(this).focus();
+        });
+
+        $(document).on('click', "#assignBtn", function () { //excel upload for batch upload
+            var requestlistTabel = $('#outgoing-request-table').DataTable({
+                'destroy': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollCollapse': true,
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/cyberrequest/getdetails",
+                data: {
+                    requestid: _requestid,
+                },
+                success: function (result) {
+                    requestlistTabel.clear().draw();
+                    var data = result.data;
+                    var count = parseInt(_itemcount);
+
+                    console.log(data);
+                    $.each(data, function (key, value) {
+                        var dataJson = value.unitserial;
+
+                        console.log(dataJson);
+                        if (dataJson == '') {
+                            for (x = 0; x < count; x++) {
+                                requestlistTabel.row.add([
+                                    value.modelname,
+                                    value.itemtype,
+                                    ''
+                                ]).draw(false);
+                            }
+                        } else {
+                            dataJson = JSON.parse(dataJson);
+                            console.log(dataJson);
+                            $.each(dataJson, (key, item) => {
+                                requestlistTabel.row.add([
+                                    value.modelname,
+                                    value.itemtype,
+                                    item.serial
+                                ]).draw(false);
+                            })
+                        }
+                    })
+                },
+                error: function (result) {
+                    error('error: ' + result.data);
+                }
+            });
+
+            modal.style.display = "block";
+        })
+
+        $(document).on('click', "#saveoutgoingBtn", function () {
+            console.log('clicked!');
+            var data = $('#outgoing-request-table tr');
+            var dataRaw = [];
+            console.log(data);
+            console.log(data.length);
+            var message = '';
+            // var est_budget = 0;
+            var purchaseDetails = [];
+
+            var index = 1;
+            for (x = 1; x < data.length; x++) {
+                console.log(data[x].innerText);
+                var innerData = data[x].innerText;
+                innerData = innerData.split("\t");
+
+                if (innerData[2] == "") {
+                    message += `${innerData[1]} row: ${x}, `;
+                } else {
+                    dataRaw.push({
+                        serial: innerData[2],
+                    });
+
+                    // est_budget += (parseFloat(innerData[3]) * parseFloat(innerData[2]));
+                    index += 1;
+                }
+
+            }
+
+            if (message != "") {
+                warning(`No serial ${message}`);
+            } else {
+                // console.log(dataRaw);
+                dataRaw = JSON.stringify(dataRaw, null, 2);
+
+                $.ajax({
+                    type: "POST",
+                    url: "/cyberstocks/assignserial",
+                    data: {
+                        requestid: _requestid,
+                        modelname: _modelname,
+                        itemtype: _itemtype,
+                        itemcount: _itemcount,
+                        serials: dataRaw
+                    },
+                    success: function (result) {
+                        modal.style.display = 'NONE';
+                        success('Saved!', 'Data Saved!');
+                        LoadTable();
+                    },
+                    error: function (result) {
+                        error('error: ' + result);
+                    }
+                });
+            }
+        })
 
         function LoadTable() {
             showloader();
@@ -23,6 +181,73 @@
                     { data: 'itemmodel' },
                     { data: 'itemtype' },
                     { data: 'itemcount' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+
+
+            //OUTGOING STOCKS
+            outgoingTable = $('#outgoing-tbl').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'GET',
+                'ajax': {
+                    'url': '/cyberrequest/equipmentrequestload',
+                    'dataSrc': (json) => {
+                        var finalData = [];
+                        var data = json.data;
+
+                        console.log(data);
+                        $.each(data, (key, item) => {
+                            var modelname = '';
+                            var itemtype = '';
+                            var itemcount = '';
+                            var status = item.status;
+                            var action = '';
+                            // console.log(item.details);
+                            var dataJson = JSON.parse(item.details)
+                            $.each(dataJson, (key, item) => {
+                                // console.log(`BRAND: ${item.modelname} ITEM TYPE: ${item.itemtype} ITEM COUNT: ${item.itemcount}`);
+                                // details += `BRAND: ${item.modelname} ITEM TYPE: ${item.itemtype} ITEM COUNT: ${item.itemcount}<br/>`;
+                                modelname = item.modelname;
+                                itemtype = item.itemtype;
+                                itemcount = item.itemcount;
+                            })
+
+                            if (status == 'REQ') { action = '<button class="assign-btn" id="assignBtn" name="assignBtn">ASSIGN SERIAL</button>'; }
+
+                            finalData.push({
+                                requestid: item.requestid,
+                                modelname: modelname,
+                                itemtype: itemtype,
+                                itemcount: itemcount,
+                                action: action,
+                            })
+
+                        })
+
+                        return finalData;
+                    },
+                },
+                'columnDefs': [{
+                    targets: 1,
+                    className: 'td-indent',
+                }],
+                'columns': [
+                    { data: 'requestid' },
+                    { data: 'modelname' },
+                    { data: 'itemtype' },
+                    { data: 'itemcount' },
+                    { data: 'action' },
                 ],
                 initComplete: function () {
                     console.log('init complete');
