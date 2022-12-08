@@ -29,6 +29,7 @@ exports.CyberpowerEquipments = (data) => {
             podate: key.ce_podate,
             receivedby: key.ce_receivedby,
             receiveddate: key.ce_receiveddate,
+            remarks: key.ce_remarks,
             status: key.ce_status,
         })
     });

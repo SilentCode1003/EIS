@@ -23,7 +23,7 @@ module.exports = router;
 
 router.get('/load', (req, res) => {
   try {
-    let sql = `select * from cyberpower_equipments where not ce_status='SLD'`;
+    let sql = `select * from cyberpower_equipments where not ce_status='${dictionary.SLD()}'`;
     mysql.Select(sql, 'CyberpowerEquipments', (err, result) => {
       if (err) throw err;
 
@@ -56,29 +56,17 @@ router.post('/save', (req, res) => {
         key.podate,
         req.session.fullname,
         helper.GetCurrentDatetime(),
-        'WH',
+        `${dictionary.GetValue(dictionary.WH())}`,
+        `${dictionary.WH()}`,
       ])
     });
 
-    Insert_CyberpowerEquipment = (data, callback) => {
-      let sql = `INSERT INTO cyberpower_equipments(
-        ce_itemmodel,
-        ce_itemtype,
-        ce_itemserial,
-        ce_ponumber,
-        ce_podate,
-        ce_receivedby,
-        ce_receiveddate,
-        ce_status) VALUES ?`;
 
-      callback(null, mysql.InsertMultiple(sql, data));
-    }
 
     // console.log(cyberpower_equipments);
     Insert_CyberpowerEquipment(cyberpower_equipments, (err, result) => {
-      if (err) throw err;
-
-      console.log('Insert_CyberpowerEquipment');
+      if (err) console.log(err);
+      console.log(result);
     })
 
     res.json({
@@ -108,31 +96,16 @@ router.post('/exceldatasave', (req, res) => {
         key.podate,
         req.session.fullname,
         helper.GetCurrentDatetime(),
-        'WH',
+        `${dictionary.GetValue(dictionary.WH())}`,
+        `${dictionary.WH()}`,
       ])
     });
 
-    Insert_CyberpowerEquipment = (data, callback) => {
-      let sql = `INSERT INTO cyberpower_equipments(
-        ce_itemmodel,
-        ce_itemtype,
-        ce_itemserial,
-        ce_ponumber,
-        ce_podate,
-        ce_receivedby,
-        ce_receiveddate,
-        ce_status) VALUES ?`;
-
-      callback(null, mysql.InsertMultiple(sql, data));
-    }
-
     // console.log(cyberpower_equipments);
     Insert_CyberpowerEquipment(cyberpower_equipments, (err, result) => {
-      if (err) throw err;
-
-      console.log('Insert_CyberpowerEquipment');
+      if (err) console.log(err);
+      console.log(result);
     })
-
 
     res.json({
       msg: 'success'
@@ -166,3 +139,12 @@ router.post('/getserials', (req, res) => {
   }
 })
 
+
+//Functions
+function Insert_CyberpowerEquipment(data, callback) {
+  mysql.InsertTable('cyberpower_equipments', data, (err, result) => {
+    if (err) callback(err, null);
+
+    callback(null, result);
+  })
+}

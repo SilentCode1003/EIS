@@ -114,12 +114,27 @@ exports.Update = async (sql, callback) => {
             if (error) {
                 callback(error, null)
             }
-            console.log('Rows affected:', results.affectedRows);
+            // console.log('Rows affected:', results.affectedRows);
 
             callback(null, `Rows affected: ${results.affectedRows}`);
         });
     } catch (error) {
         callback(error, null)
+    }
+}
+
+exports.UpdateMultiple = async (sql, data, callback) => {
+    try {
+        connection.query(sql, data, (error, results, fields) => {
+            if (error) {
+                callback(error, null)
+            }
+            // console.log('Rows affected:', results.affectedRows);
+
+            callback(null, `Rows affected: ${results.affectedRows}`);
+        });
+    } catch (error) {
+        console.log(error);
     }
 }
 
@@ -157,6 +172,26 @@ exports.InsertTable = (tablename, data, callback) => {
             tc_crnumber,
             tc_remarks,
             tc_status) VALUES ?`;
+
+        this.Insert(sql, data, (err, result) => {
+            if (err) {
+                callback(err, null);
+            }
+            callback(null, result)
+        })
+    }
+
+    if (tablename == 'cyberpower_equipments') {
+        let sql = `INSERT INTO cyberpower_equipments(
+            ce_itemmodel,
+            ce_itemtype,
+            ce_itemserial,
+            ce_ponumber,
+            ce_podate,
+            ce_receivedby,
+            ce_receiveddate,
+            ce_remarks,
+            ce_status) VALUES ?`;
 
         this.Insert(sql, data, (err, result) => {
             if (err) {
