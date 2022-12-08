@@ -43,7 +43,7 @@
     }
 
     if (accounttype == 'CYBERPOWER') {
-        
+
         $("#purchasing").toggle(0, function () {
         });
 
@@ -142,7 +142,7 @@
         $("#restockstab").toggle(0, function () {
         });
     }
-    
+
     if (accounttype == 'CUSTODIAN') {
         $("#cyberpower").toggle(0, function () {
         });
@@ -327,5 +327,9 @@
         $(`#${tablename}`).find("tr:gt(0)").remove();
         // console.log(stock_list_tbl.tBodies);
         // stock_list_tbl.innerText = '';
+    }
+
+    function ClearTable(tablename) { 
+        $(`#${tablename}`).find("tr:gt(0)").remove();
     }
 </script>

@@ -69,6 +69,10 @@ exports.Select = (sql, table, callback) => {
             if (table == 'TransactionCyberpowerOutgoingEquipments') {
                 callback(null, model.TransactionCyberpowerOutgoingEquipments(results));
             }
+
+            if (table == 'TransactionCyberpower') {
+                callback(null, model.TransactionCyberpower(results));
+            }
         });
 
     } catch (error) {
@@ -112,13 +116,53 @@ exports.Update = async (sql, callback) => {
             }
             console.log('Rows affected:', results.affectedRows);
 
-            callback(null, results.affectedRows);
+            callback(null, `Rows affected: ${results.affectedRows}`);
         });
     } catch (error) {
-        console.log(error);
+        callback(error, null)
     }
 }
 
 exports.CloseConnect = () => {
     connection.end();
+}
+
+exports.Insert = (stmt, todos, callback) => {
+    try {
+        connection.connect((err) => { return err; })
+        // console.log(`statement: ${stmt} data: ${todos}`);
+
+        connection.query(stmt, [todos], (err, results, fields) => {
+            if (err) {
+                callback(err, null);
+            }
+            callback(null, `Row inserted: ${results.affectedRows}`);
+            // console.log(`Row inserted: ${results.affectedRows}`);
+        });
+
+    } catch (error) {
+        callback(error, null);
+    }
+}
+
+
+exports.InsertTable = (tablename, data, callback) => {
+    if (tablename == 'transaction_cyberpower') {
+        let sql = `INSERT INTO transaction_cyberpower(
+            tc_transactiondate,
+            tc_requestid,
+            tc_ponumber,
+            tc_drnumber,
+            tc_sinumber,
+            tc_crnumber,
+            tc_remarks,
+            tc_status) VALUES ?`;
+
+        this.Insert(sql, data, (err, result) => {
+            if (err) {
+                callback(err, null);
+            }
+            callback(null, result)
+        })
+    }
 }

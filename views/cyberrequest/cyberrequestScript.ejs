@@ -80,6 +80,7 @@
                         itemtype: itemtype,
                         clientname: clientname,
                         itemcount: itemcount,
+                        status: 'PENDING',
                     })
 
                     equipment_list_tbl = document.getElementById("equipment-list-tbl");
@@ -132,11 +133,13 @@
                 warning('You have no request? IDIOT!');
             } else {
                 let data = JSON.stringify(dataArr, null, 2);
+                let clientname = $('#clientname').val();
 
                 $.ajax({
                     type: "POST",
                     url: "/cyberrequest/requestequipment",
                     data: {
+                        clientname: clientname,
                         data: data,
                     },
                     success: function (result) {

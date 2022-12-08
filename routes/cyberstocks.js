@@ -4,6 +4,7 @@ var router = express.Router();
 const { isAuthAdmin } = require('./controller/authBasic');
 const helper = require('./repository/customhelper');
 const mysql = require('./repository/cyberpowerdb');
+const dictionary = require('./repository/dictionary');
 
 /* GET home page. */
 router.get('/', isAuthAdmin, function (req, res, next) {
@@ -165,28 +166,3 @@ router.post('/getserials', (req, res) => {
   }
 })
 
-router.post('/assignserial', (req, res) => {
-  try {
-    let requestid = req.body.requestid;
-    let modelname = req.body.modelname;
-    let itemtype = req.body.itemtype;
-    let serials = req.body.serials;
-
-    let sql = `UPDATE transaction_cyberpower_outgoing_equipment 
-    SET tcoe_unitserial='${serials}'
-    WHERE tcoe_requestid='${requestid}'`;
-
-    mysql.Update(sql, (err, result) => {
-      if (err) throw err;
-
-      res.json({
-        msg: 'success'
-      })
-    })
-
-  } catch (error) {
-    res.json({
-      msg: error
-    })
-  }
-})

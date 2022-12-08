@@ -1,3 +1,4 @@
+<!-- STOCKS INVENTORY -->
 <div class="row">
     <div class="col-sm-4 col-lg-4 center-text">
         <h1>INVENTORY</h1>
@@ -10,33 +11,198 @@
             <tbody></tbody>
         </table>
     </div>
-    <div class="col-sm-4 col-lg-4 center-text">
-        <h1>INCOMMING</h1>
-        <table id="incomming-tbl">
-            <thead>
-                <th>MODEL</th>
-                <th>TYPE</th>
-                <th>COUNT</th>
-                <th>ACTION</th>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
-    <div class="col-sm-4 col-lg-4 center-text">
-        <h1>OUTGOING</h1>
-        <table id="outgoing-tbl">
-            <thead>
-                <th>REQUEST ID</th>
-                <th>MODEL</th>
-                <th>TYPE</th>
-                <th>COUNT</th>
-                <th>ACTION</th>
-            </thead>
-            <tbody></tbody>
-        </table>
+</div>
+<hr>
+<!-- INCOMMING STOCKS -->
+<div class="center-text">
+    <h1>INCOMMING</h1>
+    <table id="incomming-tbl">
+        <thead>
+            <th>MODEL</th>
+            <th>TYPE</th>
+            <th>COUNT</th>
+            <th>ACTION</th>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+<hr>
+<!-- OUTGOING STOCKS -->
+<div class="center-text">
+    <h1>OUTGOING</h1>
+    <table id="outgoing-tbl">
+        <thead>
+            <th>REQUEST ID</th>
+            <th>REQUEST BY</th>
+            <th>REQUEST DATE</th>
+            <th>CLIENT NAME</th>
+            <th>DETAILS</th>
+            <th>ACTION</th>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<!-- The Modal -->
+<div id="paidModal" class="modal card shadow mb-4">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <div class="modal-button-container">
+            <span id="paidspan" class="close">&times;</span>
+        </div>
+
+        <div class="modal-body">
+            <h1 class="center-text">RECEIPT/S</h1>
+            <div class="ebtry-area center-content">
+                <input type="text" class="entry-input" id="ponumber" name="ponumber" placeholder="PO NUMBER">
+            </div>
+            <br>
+            <div class="ebtry-area center-content">
+                <input type="text" class="entry-input" id="drnumber" name="drnumber" placeholder="DR NUMBER">
+            </div>
+            <br>
+            <div class="ebtry-area center-content">
+                <input type="text" class="entry-input" id="sinumber" name="sinumber" placeholder="SI NUMBER">
+            </div>
+            <br>
+            <div class="ebtry-area center-content">
+                <input type="text" class="entry-input" id="crnumber" name="crnumber" placeholder="CR NUMBER">
+            </div>
+        </div>
+
+        <div id="modal-button-container" class="center-content">
+            <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
+            <button class="approve-btn" id="savetransactionBtn" name="savetransactionBtn">SAVE</button>
+        </div>
     </div>
 </div>
 
+<!-- The Modal -->
+<div id="printModal" class="modal card shadow mb-4">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <div class="modal-button-container">
+            <span id="modalspan" class="close">&times;</span>
+        </div>
+        <!-- AREA TO PRINT ONLY -->
+        <div id="PrintArea">
+            <div class="modal-header center-content modal-print-background">
+                <div class="row">
+                    <div class="col-xl-3 col-lg-2">
+                        <img class="logo" src="/images/img/logo.jpg" alt="...">
+                    </div>
+                </div>
+            </div>
+
+            <div class="center-text modal-print-background">
+                <div class="modal-print-background modal-company-header">
+                    <p><strong><span class="report-header">5L SOLUTIONS SUPPLY &amp; ALLIED SERVICES
+                                CORP.</span></strong></p>
+                </div>
+                <div class="modal-print-background">
+                    <p><span class="report-subheader">Phase 3B Block 18 Lot 15, Golf Drive Street Pacita
+                            Complex 1,
+                            City of Bi&ntilde;an, Laguna</span></p>
+                </div>
+                <div class="modal-print-background">
+                    <p><span class="report-subheader">Tel.Nos: 273-44-69/952-15-60</span></p>
+                </div>
+            </div>
+
+            <div class="modal-body modal-print-background">
+                <div>
+                    <h2 class='report-header' style="text-align: center"> SALES INVOICE</h2>
+                    <br>
+                    <br>
+
+                    <div class="row modal-signature-info">
+                        <div class="col-sm-6">
+                            <p><strong>TRANSACTION ID : <span id="transactionid"></span> </strong></p>
+                        </div>
+                    </div>
+
+                    <div class="row modal-signature-info">
+                        <div class="col-sm-6">
+                            <p><strong>TRANSACTION DATE : <span id="transactiondate"></strong></p>
+                        </div>
+                    </div>
+
+                    <div class="row modal-signature-info">
+                        <div class="col-sm-6">
+                            <p><strong>CLIENTNAME : <span id="clientname"></strong></p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <table id="stocks-equipments-tbl">
+                            <thead>
+                                <th>MODEL NAME</th>
+                                <th>ITEM TYPE</th>
+                                <th>SERIALS</th>
+                            </thead>
+                            <tbody></tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <br>
+            <div class="modal-print-background">
+                <!-- SIGNATURE AREA -->
+                <div class="row modal-signature-info">
+                    <div class="col-sm-6">
+                        <p><strong>CASHIER: <%= fullname%></strong></p>
+                    </div>
+                </div>
+                <!-- DATES -->
+                <div class="row modal-signature-info">
+                    <div class="col-sm-6">
+                        <p><strong>
+                                <%= date%>
+                            </strong></p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="modal-button-container" class="center-content">
+            <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
+            <button class="approve-btn" id="printStockRequestBtn" name="printStockRequestBtn">PRINT</button>
+        </div>
+    </div>
+</div>
+
+<!-- The Modal -->
+<div id="assignoutgoingModal" class="modal card shadow mb-4">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <div class="modal-button-container">
+            <span id="assignoutgoingspan" class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <h1 class="center-text">ASSIGN SERIAL/S</h1>
+            <div>
+                <table id="assign-outgoing-request-table">
+                    <thead>
+                        <th>REQUEST ID</th>
+                        <th>MODEL</th>
+                        <th>TYPE</th>
+                        <th>COUNT</th>
+                        <th>ACTION</th>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="modal-button-container" class="center-content">
+            <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
+            <!-- <button class="btn-glow-modal" id="saveoutgoingBtn" name="saveoutgoingBtn">SAVE</button> -->
+        </div>
+    </div>
+</div>
 
 <!-- The Modal -->
 <div id="outgoingModal" class="modal card shadow mb-4">
@@ -62,6 +228,31 @@
         <div id="modal-button-container" class="center-content">
             <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
             <button class="btn-glow-modal" id="saveoutgoingBtn" name="saveoutgoingBtn">SAVE</button>
+        </div>
+    </div>
+</div>
+
+<!-- The Modal -->
+<div id="outgoinBatchUploadgModal" class="modal card shadow mb-4">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <div class="modal-button-container">
+            <span id="outgoingbatchuploadspan" class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <h1 class="center-text">ASSIGN SERIAL/S</h1>
+            <div id="excel-upload" class="entry-area">
+                <input type="file" id="fileUpload" />
+                <input type="button" id="upload" value="Upload" />
+                <br />
+
+                <div id="ExcelTable"></div>
+            </div>
+        </div>
+
+        <div id="modal-button-container" class="center-content">
+            <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
+            <button class="btn-glow-modal" id="saveoutgoinbatchgBtn" name="saveoutgoinbatchgBtn">SAVE</button>
         </div>
     </div>
 </div>

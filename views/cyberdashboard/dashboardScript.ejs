@@ -4,19 +4,70 @@
         let _modelname = '';
         let _itemtype = '';
         let _itemcount = '';
+        let _clientname = '';
 
 
         LoadTable();
         var modal = document.getElementById("outgoingModal");
         var span = document.getElementById("outgoingspan");
 
+        var modal2 = document.getElementById("outgoinBatchUploadgModal");
+        var span2 = document.getElementById("outgoingbatchuploadspan");
+
+        var modal3 = document.getElementById("assignoutgoingModal");
+        var span3 = document.getElementById("assignoutgoingspan");
+
+        var modal4 = document.getElementById("paidModal");
+        var span4 = document.getElementById("paidspan");
+
+        var modal5 = document.getElementById("printModal");
+        var span5 = document.getElementById("modalspan");
+
+
         span.onclick = function () {
             modal.style.display = "none";
+            ClearTable('outgoing-request-table');
+        }
+
+        span2.onclick = function () {
+            modal2.style.display = "none";
+            ClearTable('outgoingbatchtable');
+        }
+
+        span3.onclick = function () {
+            modal3.style.display = "none";
+        }
+
+        span4.onclick = function () {
+            modal4.style.display = "none";
+        }
+
+        span5.onclick = function () {
+            modal5.style.display = "none";
         }
 
         window.onclick = function (event) {
             if (event.target == modal) {
+                ClearTable('outgoing-request-table');
                 modal.style.display = "none";
+            }
+
+            if (event.target == modal2) {
+                ClearTable('outgoingbatchtable');
+                modal2.style.display = "none";
+            }
+
+            if (event.target == modal3) {
+                ClearTable('outgoingbatchtable');
+                modal3.style.display = "none";
+            }
+
+            if (event.target == modal4) {
+                modal4.style.display = "none";
+            }
+
+            if (event.target == modal5) {
+                modal5.style.display = "none";
             }
         }
 
@@ -29,9 +80,25 @@
             console.log(data);
 
             _requestid = data[0];
+            // _modelname = data[1];
+            // _itemtype = data[2];
+            // _itemcount = data[3];
+            // _clientname = data[4];
+        })
+
+        $('#assign-outgoing-request-table tbody').on('click', 'tr', function (e) {
+            var data = [];
+            $(this).closest('tr').find('td').each(function () {
+                data.push([$(this).text()]);
+            });
+
+            console.log(data);
+
+            _requestid = data[0];
             _modelname = data[1];
             _itemtype = data[2];
             _itemcount = data[3];
+            _clientname = data[4];
         })
 
         $('#outgoing-request-table tbody').on('click', 'tr', function (e) {
@@ -49,7 +116,12 @@
             $(this).focus();
         });
 
-        $(document).on('click', "#assignBtn", function () { //excel upload for batch upload
+        $(document).on('click', "#assignBtn", function () {
+            RequestDetailsTable();
+            modal3.style.display = "block";
+        })
+
+        $(document).on('click', "#assignbreakdownBtn", function () {
             var requestlistTabel = $('#outgoing-request-table').DataTable({
                 'destroy': true,
                 'paging': false,
@@ -63,6 +135,8 @@
                 url: "/cyberrequest/getdetails",
                 data: {
                     requestid: _requestid,
+                    modelname: _modelname,
+                    itemtype: _itemtype,
                 },
                 success: function (result) {
                     requestlistTabel.clear().draw();
@@ -99,8 +173,53 @@
                     error('error: ' + result.data);
                 }
             });
-
+            RequestDetailsTable();
             modal.style.display = "block";
+        })
+
+        $(document).on('click', "#paidBtn", function () {
+            modal4.style.display = "block";
+        })
+
+        $(document).on('click', "#printBtn", function () {
+            modal5.style.display = "block";
+        })
+
+        $(document).on('click', "#savetransactionBtn", function () {
+            let ponumber = $('#ponumber').val();
+            let drnumber = $('#drnumber').val();
+            let sinumber = $('#sinumber').val();
+            let crnumber = $('#crnumber').val();
+
+            if (ponumber == '' && drnumber == '' && sinumber == '' && crnumber == '') {
+                warning('Warning', 'No receipt reference!');
+            }
+            else {
+                $.ajax({
+                    type: 'POST',
+                    url: '/cyberrequest/transaction',
+                    data: {
+                        requestid: _requestid,
+                        ponumber: ponumber,
+                        drnumber: drnumber,
+                        sinumber: sinumber,
+                        crnumber: crnumber,
+                    },
+                    success(result) {
+                        success('Saved', 'Data saved!')
+                        LoadTable();
+                    },
+                    error(result) {
+                        error(result);
+                    }
+                });
+            }
+            modal4.style.display = "none";
+        })
+
+        $(document).on('click', "#batchBtn", function () {
+            ClearTable('outgoingbatchtable');
+            modal2.style.display = "block";
         })
 
         $(document).on('click', "#saveoutgoingBtn", function () {
@@ -140,12 +259,13 @@
 
                 $.ajax({
                     type: "POST",
-                    url: "/cyberstocks/assignserial",
+                    url: "/cyberrequest/assignserial",
                     data: {
                         requestid: _requestid,
                         modelname: _modelname,
                         itemtype: _itemtype,
                         itemcount: _itemcount,
+                        clientname: _clientname,
                         serials: dataRaw
                     },
                     success: function (result) {
@@ -158,8 +278,94 @@
                     }
                 });
             }
+            modal.style.display = "none";
         })
 
+        $(document).on('click', "#saveoutgoinbatchgBtn", function () {
+            console.log('clicked!');
+            var data = $('#outgoingbatchtable tr');
+            var dataRaw = [];
+            console.log(data);
+            console.log(data.length);
+            var message = '';
+            // var est_budget = 0;
+            var purchaseDetails = [];
+
+            var index = 1;
+            for (x = 1; x < data.length; x++) {
+                console.log(data[x].innerText);
+                var innerData = data[x].innerText;
+                innerData = innerData.split("\t");
+
+                if (innerData[2] == "") {
+                    message += `${innerData[1]} row: ${x}, `;
+                } else {
+                    dataRaw.push({
+                        serial: innerData[2],
+                    });
+
+                    // est_budget += (parseFloat(innerData[3]) * parseFloat(innerData[2]));
+                    index += 1;
+                }
+
+            }
+
+            if (message != "") {
+                warning(`No serial ${message}`);
+            } else {
+                // console.log(dataRaw);
+                dataRaw = JSON.stringify(dataRaw, null, 2);
+
+                $.ajax({
+                    type: "POST",
+                    url: "/cyberrequest/assignserial",
+                    data: {
+                        requestid: _requestid,
+                        modelname: _modelname,
+                        itemtype: _itemtype,
+                        itemcount: _itemcount,
+                        clientname: _clientname,
+                        serials: dataRaw
+                    },
+                    success: function (result) {
+                        modal.style.display = 'NONE';
+                        success('Saved!', 'Data Saved!');
+                        RequestDetailsTable();
+                        LoadTable();
+                    },
+                    error: function (result) {
+                        error('error: ' + result);
+                    }
+                });
+            }
+            modal2.style.display = "none";
+        })
+
+        $(document).on('click', "#approvedBtn", function () {
+            $.ajax({
+                type: "POST",
+                url: "/cyberrequest/approved",
+                data: {
+                    requestid: _requestid,
+                },
+                success: function (result) {
+                    success('Success', 'Request approved!')
+
+                },
+                error: function (result) {
+                    error('error: ' + result.data);
+                }
+            });
+
+            LoadTable();
+        })
+
+        $(document).on('click', "#upload", function () {
+            ClearTable('outgoing-request-table');
+
+            UploadProcess();
+        })
+        //tables
         function LoadTable() {
             showloader();
 
@@ -212,24 +418,28 @@
                             var itemtype = '';
                             var itemcount = '';
                             var status = item.status;
+                            var requestdate = item.requestdate;
+                            var requestby = item.requestby;
+                            var clientname = item.clientname;
                             var action = '';
+                            var reqid = item.requestid
+                            var details = '';
                             // console.log(item.details);
                             var dataJson = JSON.parse(item.details)
                             $.each(dataJson, (key, item) => {
-                                // console.log(`BRAND: ${item.modelname} ITEM TYPE: ${item.itemtype} ITEM COUNT: ${item.itemcount}`);
-                                // details += `BRAND: ${item.modelname} ITEM TYPE: ${item.itemtype} ITEM COUNT: ${item.itemcount}<br/>`;
-                                modelname = item.modelname;
-                                itemtype = item.itemtype;
-                                itemcount = item.itemcount;
+                                details += `BRAND: ${item.modelname} ITEM TYPE: ${item.itemtype} ITEM COUNT: ${item.itemcount}<br/>`;
                             })
 
                             if (status == 'REQ') { action = '<button class="assign-btn" id="assignBtn" name="assignBtn">ASSIGN SERIAL</button>'; }
+                            if (status == 'ALLOC') { action = '<button class="assign-btn" id="assignBtn" name="assignBtn">EDIT</button><button class="assign-btn" id="approvedBtn" name="approvedBtn">APPROVED</button>'; }
+                            if (status == 'APD') { action = '<button class="assign-btn" id="paidBtn" name="paidBtn">PAID</button><button class="assign-btn" id="cancelBtn" name="cancelBtn">CANCEL</button>'; }
 
                             finalData.push({
-                                requestid: item.requestid,
-                                modelname: modelname,
-                                itemtype: itemtype,
-                                itemcount: itemcount,
+                                requestid: reqid,
+                                requestby: requestby,
+                                requestdate: requestdate,
+                                clientname: clientname,
+                                details: details,
                                 action: action,
                             })
 
@@ -244,9 +454,10 @@
                 }],
                 'columns': [
                     { data: 'requestid' },
-                    { data: 'modelname' },
-                    { data: 'itemtype' },
-                    { data: 'itemcount' },
+                    { data: 'requestby' },
+                    { data: 'requestdate' },
+                    { data: 'clientname' },
+                    { data: 'details' },
                     { data: 'action' },
                 ],
                 initComplete: function () {
@@ -255,5 +466,198 @@
                 }
             });
         }
+
+        function RequestDetailsTable() {
+            var requestlistTabel = $('#assign-outgoing-request-table').DataTable({
+                'destroy': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollCollapse': true,
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/cyberrequest/requestdetails",
+                data: {
+                    requestid: _requestid,
+                },
+                success: function (result) {
+                    requestlistTabel.clear().draw();
+                    var data = result.data;
+
+                    console.log(data);
+                    $.each(data, (key, item) => {
+                        var modelname = '';
+                        var itemtype = '';
+                        var itemcount = '';
+                        var status = item.status;
+                        var clientname = '';
+                        var action = '';
+                        var reqid = item.requestid
+                        var dataJson = JSON.parse(item.details)
+
+                        $.each(dataJson, (key, item) => {
+                            modelname = item.modelname;
+                            itemtype = item.itemtype;
+                            itemcount = item.itemcount;
+                            clientname = item.clientname;
+
+                            if (status == 'REQ') { action = '<button class="assign-btn" id="assignbreakdownBtn" name="assignbreakdownBtn">ASSIGN SERIAL</button><button class="assign-btn" id="batchBtn" name="batchBtn">IMPORT EXCEL</button>'; }
+                            if (status == 'ALLOC') { action = '<button class="assign-btn" id="assignbreakdownBtn" name="assignbreakdownBtn">EDIT</button>'; }
+                            requestlistTabel.row.add([
+                                reqid,
+                                modelname,
+                                itemtype,
+                                itemcount,
+                                action,
+                            ]).draw(false);
+
+                        })
+
+                    })
+                },
+                error: function (result) {
+                    error('error: ' + result.data);
+                }
+            });
+        }
+
+        //excel data
+        function UploadProcess() {
+            //Reference the FileUpload element.
+            var fileUpload = document.getElementById("fileUpload");
+
+            //Validate whether File is valid Excel file.
+            var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xls|.xlsx|.csv|.ods)$/;
+            if (regex.test(fileUpload.value.toLowerCase())) {
+                if (typeof (FileReader) != "undefined") {
+                    var reader = new FileReader();
+
+                    //For Browsers other than IE.
+                    if (reader.readAsBinaryString) {
+                        reader.onload = function (e) {
+                            GetTableFromExcel(e.target.result);
+                        };
+                        reader.readAsBinaryString(fileUpload.files[0]);
+                    } else {
+                        //For IE Browser.
+                        reader.onload = function (e) {
+                            var data = "";
+                            var bytes = new Uint8Array(e.target.result);
+                            for (var i = 0; i < bytes.byteLength; i++) {
+                                data += String.fromCharCode(bytes[i]);
+                            }
+                            GetTableFromExcel(data);
+                        };
+                        reader.readAsArrayBuffer(fileUpload.files[0]);
+                    }
+                } else {
+                    alert("This browser does not support HTML5.");
+                }
+            } else {
+                alert("Please upload a valid Excel file.");
+            }
+        };
+
+        function GetTableFromExcel(data) {
+            //Read the Excel File data in binary
+            var workbook = XLSX.read(data, {
+                type: 'binary'
+            });
+
+            //get the name of First Sheet.
+            var Sheet = workbook.SheetNames[0];
+
+            //Read all rows from First Sheet into an JSON array.
+            var excelRows = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[Sheet]);
+            var columns = Object.keys(excelRows[0]);
+
+
+            //Create a HTML Table element.
+            var myTable = document.createElement("table");
+            myTable.setAttribute('id', 'outgoingbatchtable');
+            myTable.border = "1";
+
+            //Add the header row.
+            var row = myTable.insertRow(-1);
+
+            //Add the header cells.
+            var headerCell = document.createElement("TH");
+            for (var j = 0; j < columns.length; j++) {
+                headerCell = document.createElement("TH");
+                headerCell.innerHTML = columns[j];
+                row.appendChild(headerCell);
+            }
+
+            var dataExcelArr = [];
+            //Add the data rows from Excel file.
+            for (var i = 0; i < excelRows.length; i++) {
+                //Add the data row.
+                var data = [];
+                var row = myTable.insertRow(-1);
+                for (var j = 0; j < columns.length; j++) {
+                    var cell = row.insertCell(-1);
+                    cell.innerHTML = excelRows[i][columns[j]];
+                    data.push({
+                        item: excelRows[i][columns[j]]
+                    });
+                }
+                dataExcelArr.push({
+                    modelname: data[0].item,
+                    itemtype: data[1].item,
+                    serial: data[2].item,
+                });
+
+            }
+            // console.log(dataExcelArr)
+
+            // excelDataSave(dataExcelArr);
+
+            var message = '';
+            var count = 0;
+            $.each(dataExcelArr, (key, item) => {
+
+                if (item.itemtype != _itemtype) {
+                    message += `${item.itemtype} ${item.serial}, `;
+                    count += 1;
+                }
+
+            })
+
+            if (message != '') {
+                warning('Mismatch', `Incorrect Count: ${count} | Incorrect itemtype : [${message}]`);
+            } else {
+                if (dataExcelArr.length != _itemcount) {
+                    warning('Mismatch', `Item count not match, itemcount request ${_itemcount} excel data count: ${dataExcelArr.length}`)
+                } else {
+                    var ExcelTable = document.getElementById("ExcelTable");
+                    ExcelTable.innerHTML = "";
+                    ExcelTable.appendChild(myTable);
+                }
+            }
+        };
+
+        function excelDataSave(data) {
+            var dataraw = JSON.stringify(data, null, 2);
+            showloader();
+            $.ajax({
+                type: "POST",
+                url: "/cabling/saveexceldata",
+                data: {
+                    data: dataraw
+                },
+                success: function (result) {
+                    // success('Saved!', 'Data saved!')
+                    // $('#item-tbl').DataTable().ajax.reload();
+                    RegisterItemTable();
+                    dataArr = [];
+                },
+                error: function (result) {
+                    error(result.data);
+                }
+            });
+        }
+
     })
 </script>

@@ -118,3 +118,24 @@ exports.TransactionCyberpowerOutgoingEquipments = (data) => {
 
     return dataResult;
 }
+
+exports.TransactionCyberpower = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            transactionid: key.tc_transactionid,
+            transactiondate: key.tc_transactiondate,
+            requestid: key.tc_requestid,
+            ponumber: key.tc_ponumber,
+            drnumber: key.tc_drnumber,
+            sinumber: key.tc_sinumber,
+            crnumber: key.tc_crnumber,
+            remarks: key.tc_remarks,
+            status: key.tc_status,
+        })
+    });
+
+    return dataResult;
+}
