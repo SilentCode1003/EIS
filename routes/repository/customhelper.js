@@ -138,6 +138,14 @@ exports.GetCurrentTime = () => {
 exports.GetCurrentTimeSeconds = () => {
     return moment().format('HH:mm:ss');
 }
+
+exports.GetCurrentMonthFirstDay = () => {
+    return moment().startOf('month').format('YYYY-MM-DD');
+}
+
+exports.GetCurrentMonthLastDay = () => {
+    return moment().endOf('month').format('YYYY-MM-DD');
+}
 //#endregion
 
 //#region  SUMMARY REPORTS

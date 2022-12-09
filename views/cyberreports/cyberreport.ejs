@@ -14,11 +14,15 @@
     <div class="row">
         <div class="col-sm-6 col-lg-5">
             <div class="entry-area">
-                <input type="text" class="entry-input" id="clientname" name="clientname" placeholder="DATE FROM">
+                <input class="entry-input" type="text" data-field="date" placeholder="DATE FROM" readonly id="datefrom"
+                    name="datefrom">
+                <div id="dtbox"></div>
             </div>
 
             <div class="entry-area">
-                <input type="text" class="entry-input" id="itemcount" name="itemcount" placeholder="DATE TO">
+                <input class="entry-input" type="text" data-field="date" placeholder="DATE TO" readonly id="dateto"
+                    name="dateto">
+                <div id="dtbox"></div>
             </div>
 
             <div class="entry-area">
@@ -126,7 +130,7 @@
 
             <br>
             <div class="modal-print-background">
-               
+
             </div>
 
         </div>

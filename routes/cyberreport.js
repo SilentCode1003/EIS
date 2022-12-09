@@ -4,6 +4,7 @@ var router = express.Router();
 const { isAuthAdmin } = require('./controller/authBasic');
 const helper = require('./repository/customhelper');
 const mysql = require('./repository/cyberpowerdb');
+const dictionary = require('./repository/dictionary')
 
 /* GET home page. */
 router.get('/', isAuthAdmin, function (req, res, next) {
@@ -28,7 +29,7 @@ router.post('/gettransaction', (req, res) => {
 
     console.log(requestid);
     data.push([
-      requestid
+      requestid,
     ])
 
     mysql.StoredProcedure(sql, data, (err, result) => {
@@ -41,6 +42,27 @@ router.post('/gettransaction', (req, res) => {
       })
     })
 
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+})
+
+router.post('/searchrequest', (req, res) => {
+  try {
+    let first = req.body.firstdate;
+    let last = req.body.lastdate;
+    let sql = `select * from cyberpower_outgoing_details where cod_requestdate between '${first}' AND '${last}' AND cod_status='${dictionary.PD()}'`;
+
+    console.log(`${first} ${last} ${sql}`);
+    mysql.Select(sql, 'CyberpowerOutgoingDetails', (err, result) => {
+      if (err) throw err;
+      res.json({
+        msg: 'success',
+        data: result
+      })
+    })
   } catch (error) {
     res.json({
       msg: error

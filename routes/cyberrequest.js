@@ -41,7 +41,13 @@ router.get('/equipmentrequestload', (req, res) => {
 
 router.get('/requestreport', (req, res) => {
   try {
-    let sql = `select * from cyberpower_outgoing_details where cod_status='${dictionary.PD()}'`;
+    let first = helper.GetCurrentMonthFirstDay();
+    let last = helper.GetCurrentMonthLastDay();
+    let sql = `select * from cyberpower_outgoing_details
+                where cod_requestdate 
+                between '${first}' AND '${last}'  
+                AND cod_status='${dictionary.PD()}';`;
+
     mysql.Select(sql, 'CyberpowerOutgoingDetails', (err, result) => {
       if (err) throw err;
       res.json({

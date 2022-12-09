@@ -2,6 +2,10 @@
     $(document).ready(function () {
         let _requestid = '';
 
+        $("#dtbox").DateTimePicker({
+            dateFormat: "yyyy-MM-dd"
+        });
+
         var modal = document.getElementById("printModal");
         var span = document.getElementById("printmodalspan");
 
@@ -82,7 +86,7 @@
             modal.style.display = "block";
         })
 
-        $(document).on('click', "#printReportBtn", function (){
+        $(document).on('click', "#printReportBtn", function () {
             console.log('clicked!');
             var printContents = document.getElementById('PrintArea').innerHTML;
             var originalContents = document.body.innerHTML;
@@ -108,6 +112,93 @@
             EquipmentRequestTable();
         });
 
+        $(document).on('click', "#searchBtn", function () {
+            let datefrom = $('#datefrom').val();
+            let dateto = $('#dateto').val();
+
+            showloader();
+            dataTable = $('#equipment-request-tbl').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'POST',
+                'ajax': {
+                    'url': '/cyberreport/searchrequest',
+                    'data':{
+                        firstdate: datefrom,
+                        lastdate: dateto,
+                    },
+                    'dataSrc': (json) => {
+                        var finalData = [];
+                        var data = json.data;
+                        var details = '';
+                        var createddate = '';
+                        var status = '';
+                        var requestby = '';
+                        var remarks = '';
+                        var clientname = '';
+                        var requestid = '';
+                        var action = '';
+
+                        console.log(data);
+                        $.each(data, (key, item) => {
+                            requestby = item.requestby;
+                            requestdate = item.requestdate;
+                            status = item.status;
+                            remarks = item.remarks;
+                            clientname = item.clientname;
+                            requestid = item.requestid;
+
+                            // console.log(item.details);
+                            var dataJson = JSON.parse(item.details)
+                            $.each(dataJson, (key, item) => {
+                                console.log(`BRAND: ${item.modelname} ITEM TYPE: ${item.itemtype} ITEM COUNT: ${item.itemcount}`);
+                                details += `BRAND: ${item.modelname} ITEM TYPE: ${item.itemtype} ITEM COUNT: ${item.itemcount}<br/>`;
+                            })
+
+                            if (status == 'PD') { action = `<button class="autorize-btn" id="printBtn" name="printBtn">PRINT</button>`; }
+
+                            finalData.push({
+                                requestid: requestid,
+                                requestby: requestby,
+                                requestdate: requestdate,
+                                clientname: clientname,
+                                details: details,
+                                remarks: remarks,
+                                action: action,
+                            })
+
+                            details = '';
+                        })
+
+                        return finalData;
+                    },
+                },
+                'columnDefs': [{
+                    targets: 1,
+                    className: 'td-indent',
+                }],
+                'columns': [
+
+                    { data: 'requestid' },
+                    { data: 'requestby' },
+                    { data: 'requestdate' },
+                    { data: 'clientname' },
+                    { data: 'details' },
+                    { data: 'remarks' },
+                    { data: 'action' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+        })
         function EquipmentRequestTable() {
             showloader();
             dataTable = $('#equipment-request-tbl').DataTable({
