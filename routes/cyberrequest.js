@@ -39,6 +39,23 @@ router.get('/equipmentrequestload', (req, res) => {
   }
 })
 
+router.get('/requestreport', (req, res) => {
+  try {
+    let sql = `select * from cyberpower_outgoing_details where cod_status='${dictionary.PD()}'`;
+    mysql.Select(sql, 'CyberpowerOutgoingDetails', (err, result) => {
+      if (err) throw err;
+      res.json({
+        msg: 'success',
+        data: result
+      })
+    })
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+})
+
 router.post('/requestdetails', (req, res) => {
   try {
     let requestid = req.body.requestid;

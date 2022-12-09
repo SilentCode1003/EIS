@@ -1,0 +1,139 @@
+<div class="tab">
+    <div class="entry-area">
+        <button class="autorize-btn tablinks" id="requesttab" name="requesttab"><i
+                class="fas fa-fw fa-box-open"></i>REQUEST</button>
+        <button class="autorize-btn tablinks" id="transactiontab" name="transactiontab"><i
+                class="fas fa-fw fa-box"></i>TRANSACTIONS</button>
+        <button class="autorize-btn tablinks" id="reporttab" name="reporttab"><i
+                class="fas fa-fw fa-box"></i>REPORTS</button>
+    </div>
+</div>
+<br>
+
+<div class="tabcontent" id="request">
+    <div class="row">
+        <div class="col-sm-6 col-lg-5">
+            <div class="entry-area">
+                <input type="text" class="entry-input" id="clientname" name="clientname" placeholder="DATE FROM">
+            </div>
+
+            <div class="entry-area">
+                <input type="text" class="entry-input" id="itemcount" name="itemcount" placeholder="DATE TO">
+            </div>
+
+            <div class="entry-area">
+                <button class="" id="searchBtn" name="searchBtn">SEARCH</button>
+            </div>
+
+        </div>
+    </div>
+    <hr>
+    <div>
+        <table id="equipment-request-tbl">
+            <thead>
+                <th>REQUEST ID</th>
+                <th>REQUEST BY</th>
+                <th>REQUEST DATE</th>
+                <th>CLIENT</th>
+                <th>DETAILS</th>
+                <th>REMARKS</th>
+                <th>ACTION</th>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+
+
+
+<!-- The Modal -->
+<div id="printModal" class="modal card shadow mb-4">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <div class="modal-button-container">
+            <span id="printmodalspan" class="close">&times;</span>
+        </div>
+        <!-- AREA TO PRINT ONLY -->
+        <div id="PrintArea">
+            <div class="modal-header center-content modal-print-background">
+                <div class="row">
+                    <div class="col-xl-3 col-lg-2">
+                        <img class="logo" src="/images/img/logo.jpg" alt="...">
+                    </div>
+                </div>
+            </div>
+
+            <div class="center-text modal-print-background">
+                <div class="modal-print-background modal-company-header">
+                    <p><strong><span class="report-header">5L SOLUTIONS SUPPLY &amp; ALLIED SERVICES
+                                CORP.</span></strong></p>
+                </div>
+                <div class="modal-print-background">
+                    <p><span class="report-subheader">Phase 3B Block 18 Lot 15, Golf Drive Street Pacita
+                            Complex 1,
+                            City of Bi&ntilde;an, Laguna</span></p>
+                </div>
+                <div class="modal-print-background">
+                    <p><span class="report-subheader">Tel.Nos: 273-44-69/952-15-60</span></p>
+                </div>
+            </div>
+
+            <div class="modal-body modal-print-background">
+                <div>
+                    <h2 class='report-header' style="text-align: center">DELIVERY REPORT</h2>
+                    <br>
+                    <br>
+
+                    <div class="row modal-signature-info">
+                        <div class="col-sm-6">
+                            <p><strong>TRANSACTION ID : <span id="transactionid"></span> </strong></p>
+                        </div>
+                    </div>
+
+                    <div class="row modal-signature-info">
+                        <div class="col-sm-6">
+                            <p><strong>TRANSACTION DATE : <span id="transactiondate"></strong></p>
+                        </div>
+                    </div>
+
+                    <div class="row modal-signature-info">
+                        <div class="col-sm-6">
+                            <p><strong>CLIENTNAME : <span id="client"></strong></p>
+                        </div>
+                    </div>
+
+                    <div class="row modal-signature-info">
+                        <div class="col-sm-6">
+                            <p><strong>RECEIPT NO : <span id="receipt"></strong></p>
+                        </div>
+                    </div>
+                    <br>
+                    <div>
+                        <table id="request-equipments-tbl">
+                            <thead>
+                                <th>MODEL NAME</th>
+                                <th>ITEM TYPE</th>
+                                <th>COUNT</th>
+                                <th>SERIAL</th>
+                            </thead>
+                            <tbody></tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <br>
+            <div class="modal-print-background">
+               
+            </div>
+
+        </div>
+
+        <div id="modal-button-container" class="center-content">
+            <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
+            <button class="approve-btn" id="printReportBtn" name="printReportBtn">PRINT</button>
+        </div>
+    </div>
+</div>
