@@ -396,6 +396,108 @@ router.post('/transaction', (req, res) => {
   }
 })
 
+router.post('/restockequipment', (req, res) => {
+  try {
+    let data = req.body.data;
+    let requestby = req.session.fullname;
+    let requestdate = helper.GetCurrentDatetime();
+    let cyberpower_icomming_details = [];
+    let transaction_icomming_equipment = [];
+    let cyberpower_purchase_details = [];
+    let datajson = data;
+    let remarks = dictionary.GetValue(dictionary.PND());
+    let status = dictionary.PND();
+
+    cyberpower_icomming_details.push([
+      requestby,
+      requestdate,
+      datajson,
+      remarks,
+      status,
+    ]);
+
+    data = JSON.parse(data);
+    Insert_CyberpowerIncommingDetails(cyberpower_icomming_details, (err, result) => {
+      if (err) console.log(err);
+      console.log(result);
+    })
+
+    let sql = `SELECT * FROM cyberpower_icomming_details WHERE cid_requestby='${requestby}' AND cid_requestdate='${requestdate}'`;
+    mysql.Select(sql, 'CyberpowerIcommingDetails', (err, result) => {
+
+      // console.log(result);
+
+      result.forEach((key, item) => {
+        let requestid = key.requestid;
+
+        data.forEach((key, item) => {
+          transaction_icomming_equipment.push([
+            requestdate,
+            key.modelname,
+            key.itemtype,
+            key.itemcount,
+            requestid,
+            remarks,
+            status,
+          ]);
+        })
+
+        cyberpower_purchase_details.push([
+          requestdate,
+          requestby,
+          datajson,
+          '',
+          requestid,
+          remarks,
+          status,
+        ])
+
+      })
+
+      console.log(transaction_icomming_equipment);
+      Insert_TransactionIcommingEquipment(transaction_icomming_equipment, (err, result => {
+        if (err) console.log(err);
+        console.log(result);
+      }))
+
+      console.log(cyberpower_purchase_details);
+      Insert_CyberpowerPurchaseDetails(cyberpower_purchase_details, (err, result => {
+        if (err) console.log(err);
+        console.log(result);
+      }))
+
+      res.json({
+        msg: 'success',
+      })
+    })
+
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+})
+
+router.get('/restockrequestload', (req, res) => {
+  try {
+    let sql = `SELECT * FROM cyberpower_icomming_details`;
+    mysql.Select(sql, 'CyberpowerIcommingDetails', (err, result) => {
+      if (err) console.log(err);
+
+      res.json({
+        msg: 'success',
+        data: result
+      })
+    })
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+})
+
+
+//FUNCTIONS
 function Insert_TransactionCyberpower(data, callback) {
   mysql.InsertTable('transaction_cyberpower', data, (err, result) => {
     if (err) callback(err, null);
@@ -403,6 +505,26 @@ function Insert_TransactionCyberpower(data, callback) {
   })
 }
 
+function Insert_CyberpowerIncommingDetails(data, callback) {
+  mysql.InsertTable('cyberpower_icomming_details', data, (err, result) => {
+    if (err) callback(err, null);
+    callback(null, result);
+  })
+}
+
+function Insert_TransactionIcommingEquipment(data, callback) {
+  mysql.InsertTable('transaction_incomming_equipment', data, (err, result) => {
+    if (err) callback(err, null);
+    callback(null, result);
+  })
+}
+
+function Insert_CyberpowerPurchaseDetails(data, callback) {
+  mysql.InsertTable('cyberpower_purchase_details', data, (err, result) => {
+    if (err) callback(err, null);
+    callback(null, result);
+  })
+}
 
 function Update_CyberpowerEquipment(requestid, callback) {
   console.log(`Update Request ID: ${requestid}`);

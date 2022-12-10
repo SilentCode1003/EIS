@@ -140,3 +140,61 @@ exports.TransactionCyberpower = (data) => {
 
     return dataResult;
 }
+
+exports.CyberpowerIcommingDetails = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            requestid: key.cid_requestid,
+            requestby: key.cid_requestby,
+            requestdate: key.cid_requestdate,
+            requestdetails: key.cid_requestdetails,
+            remarks: key.cid_remarks,
+            status: key.cid_status,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.TransactionIncommingEquipment = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            transactionid: key.tie_transactionid,
+            transactiondate: key.tie_transactiondate,
+            modelname: key.tie_modelname,
+            itemtype: key.tie_itemtype,
+            quantity: key.tie_quantity,
+            requestid: key.tie_requestid,
+            remarks: key.tie_remarks,
+            status: key.tie_status,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.CyberpowerPurchaseDetails = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            requestid: key.cpd_requestid,
+            requestdate: key.cpd_requestdate,
+            requestby: key.cpd_requestby,
+            details: key.cpd_details,
+            totalbudget: key.cpd_totalbudget,
+            restockid: key.cpd_restockid,
+            remarks: key.cpd_remarks,
+            status: key.cpd_status,
+        })
+    });
+
+    return dataResult;
+}

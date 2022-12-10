@@ -69,3 +69,48 @@ router.post('/searchrequest', (req, res) => {
     })
   }
 })
+
+router.get('/transaction', (req, res) => {
+  try {
+    let first = helper.GetCurrentMonthFirstDay();
+    let last = helper.GetCurrentMonthLastDay();
+    let sql = `select * from transaction_cyberpower_outgoing_equipment where tcoe_transactiondate between '${first}' AND '${last}' AND tcoe_status='${dictionary.PD()}'`;
+
+    console.log(`${first} ${last} ${sql}`);
+    mysql.Select(sql, 'TransactionCyberpowerOutgoingEquipments', (err, result) => {
+      if (err) throw err;
+      res.json({
+        msg: 'success',
+        data: result
+      })
+    })
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+})
+
+router.post('/searchtransaction', (req, res) => {
+  try {
+    let first = req.body.firstdate;
+    let last = req.body.lastdate;
+    let sql = `select * from transaction_cyberpower_outgoing_equipment where tcoe_transactiondate between '${first}' AND '${last}' AND tcoe_status='${dictionary.PD()}'`;
+
+    console.log(`${first} ${last} ${sql}`);
+    
+
+    mysql.Select(sql, 'TransactionCyberpowerOutgoingEquipments', (err, result) => {
+      if (err) throw err;
+      res.json({
+        msg: 'success',
+        data: result
+      })
+    })
+
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+})

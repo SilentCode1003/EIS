@@ -8,6 +8,9 @@
                 class="fas fa-fw fa-box"></i>REPORTS</button>
     </div>
 </div>
+
+<div id="dtbox"></div>
+
 <br>
 
 <div class="tabcontent" id="request">
@@ -16,13 +19,11 @@
             <div class="entry-area">
                 <input class="entry-input" type="text" data-field="date" placeholder="DATE FROM" readonly id="datefrom"
                     name="datefrom">
-                <div id="dtbox"></div>
             </div>
 
             <div class="entry-area">
                 <input class="entry-input" type="text" data-field="date" placeholder="DATE TO" readonly id="dateto"
                     name="dateto">
-                <div id="dtbox"></div>
             </div>
 
             <div class="entry-area">
@@ -42,6 +43,43 @@
                 <th>DETAILS</th>
                 <th>REMARKS</th>
                 <th>ACTION</th>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<div class="tabcontent" id="transaction">
+    <div class="row">
+        <div class="col-sm-6 col-lg-5">
+            <div class="entry-area">
+                <input class="entry-input" type="text" data-field="date" placeholder="DATE FROM" readonly id="datefromtrans"
+                    name="datefromtrans">
+            </div>
+
+            <div class="entry-area">
+                <input class="entry-input" type="text" data-field="date" placeholder="DATE TO" readonly id="datetotrans"
+                    name="datetotrans">
+                
+            </div>
+
+            <div class="entry-area">
+                <button class="" id="searchTransBtn" name="searchTransBtn">SEARCH</button>
+            </div>
+
+        </div>
+    </div>
+    <hr>
+    <div>
+        <table id="transaction-tbl">
+            <thead>
+                <th>ID</th>
+                <th>DATE</th>
+                <th>CLIENTNAME</th>
+                <th>QUANTITY</th>
+                <th>MODEL</th>
+                <th>TYPE</th>
+                <th>SERIAL</th>
             </thead>
             <tbody></tbody>
         </table>

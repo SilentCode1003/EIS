@@ -112,6 +112,38 @@
             EquipmentRequestTable();
         });
 
+        $(document).on('click', "#transactiontab", function () {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById('transaction').style.display = "block";
+            // evt.currentTarget.className += " active";
+
+            TransactionTable();
+        });
+
+        $(document).on('click', "#reporttab", function () {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById('report').style.display = "block";
+            // evt.currentTarget.className += " active";
+
+
+        });
+
         $(document).on('click', "#searchBtn", function () {
             let datefrom = $('#datefrom').val();
             let dateto = $('#dateto').val();
@@ -129,7 +161,7 @@
                 'serverMethod': 'POST',
                 'ajax': {
                     'url': '/cyberreport/searchrequest',
-                    'data':{
+                    'data': {
                         firstdate: datefrom,
                         lastdate: dateto,
                     },
@@ -199,6 +231,79 @@
                 }
             });
         })
+
+        $(document).on('click', "#searchTransBtn", function () {
+            let datefrom = $('#datefromtrans').val();
+            let dateto = $('#datetotrans').val();
+
+            console.log(`${datefrom} ${dateto}`)
+
+            showloader();
+            dataTable = $('#transaction-tbl').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'POST',
+                'ajax': {
+                    'url': '/cyberreport/searchtransaction',
+                    'data': {
+                        firstdate: datefrom,
+                        lastdate: dateto,
+                    },
+                    'dataSrc': (json) => {
+                        var data = json.data
+                        var serilal_list = '';
+                        var dataArr = [];
+
+                        $.each(data, (key, item) => {
+                            var serials = item.unitserial;
+
+                            serials = JSON.parse(serials);
+                            $.each(serials, (key, value) => {
+                                serilal_list += `${value.serial}, `;
+                            })
+
+                            dataArr.push({
+                                transactionid: item.transactionid,
+                                transactiondate: item.transactiondate,
+                                clientname: item.clientname,
+                                quantity: item.quantity,
+                                modelname: item.modelname,
+                                itemtype: item.itemtype,
+                                unitserial: serilal_list,
+                            })
+
+                        })
+
+                        return dataArr;
+                    },
+                },
+                'columnDefs': [{
+                    targets: 1,
+                    className: 'td-indent',
+                }],
+                'columns': [
+
+                    { data: 'transactionid' },
+                    { data: 'transactiondate' },
+                    { data: 'clientname' },
+                    { data: 'quantity' },
+                    { data: 'modelname' },
+                    { data: 'itemtype' },
+                    { data: 'unitserial' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+        })
+
         function EquipmentRequestTable() {
             showloader();
             dataTable = $('#equipment-request-tbl').DataTable({
@@ -272,6 +377,69 @@
                     { data: 'details' },
                     { data: 'remarks' },
                     { data: 'action' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+        }
+
+        function TransactionTable() {
+            showloader();
+            dataTable = $('#transaction-tbl').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'GET',
+                'ajax': {
+                    'url': '/cyberreport/transaction',
+                    'dataSrc': (json) => {
+                        var data = json.data
+                        var serilal_list = '';
+                        var dataArr = [];
+
+                        $.each(data, (key, item) => {
+                            var serials = item.unitserial;
+
+                            serials = JSON.parse(serials);
+                            $.each(serials, (key, value) => {
+                                serilal_list += `${value.serial}, `;
+                            })
+
+                            dataArr.push({
+                                transactionid: item.transactionid,
+                                transactiondate: item.transactiondate,
+                                clientname: item.clientname,
+                                quantity: item.quantity,
+                                modelname: item.modelname,
+                                itemtype: item.itemtype,
+                                unitserial: serilal_list,
+                            })
+
+                        })
+
+                        return dataArr;
+                    },
+                },
+                'columnDefs': [{
+                    targets: 1,
+                    className: 'td-indent',
+                }],
+                'columns': [
+
+                    { data: 'transactionid' },
+                    { data: 'transactiondate' },
+                    { data: 'clientname' },
+                    { data: 'quantity' },
+                    { data: 'modelname' },
+                    { data: 'itemtype' },
+                    { data: 'unitserial' },
                 ],
                 initComplete: function () {
                     console.log('init complete');

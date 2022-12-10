@@ -73,6 +73,18 @@ exports.Select = (sql, table, callback) => {
             if (table == 'TransactionCyberpower') {
                 callback(null, model.TransactionCyberpower(results));
             }
+
+            if (table == 'CyberpowerIcommingDetails') {
+                callback(null, model.CyberpowerIcommingDetails(results));
+            }
+
+            if (table == 'TransactionIncommingEquipment') {
+                callback(null, model.TransactionIncommingEquipment(results));
+            }
+
+            if (table == 'CyberpowerPurchaseDetails') {
+                callback(null, model.CyberpowerPurchaseDetails(results));
+            }
         });
 
     } catch (error) {
@@ -192,6 +204,58 @@ exports.InsertTable = (tablename, data, callback) => {
             ce_receiveddate,
             ce_remarks,
             ce_status) VALUES ?`;
+
+        this.Insert(sql, data, (err, result) => {
+            if (err) {
+                callback(err, null);
+            }
+            callback(null, result)
+        })
+    }
+
+    if (tablename == 'cyberpower_icomming_details') {
+        let sql = `INSERT INTO cyberpower_icomming_details(
+            cid_requestby,
+            cid_requestdate,
+            cid_requestdetails,
+            cid_remarks,
+            cid_status) VALUES ?`;
+
+        this.Insert(sql, data, (err, result) => {
+            if (err) {
+                callback(err, null);
+            }
+            callback(null, result)
+        })
+    }
+
+    if (tablename == 'transaction_incomming_equipment') {
+        let sql = `INSERT INTO transaction_incomming_equipment(
+            tie_transactiondate,
+            tie_modelname,
+            tie_itemtype,
+            tie_quantity,
+            tie_requestid,
+            tie_remarks,
+            tie_status) VALUES ?`;
+
+        this.Insert(sql, data, (err, result) => {
+            if (err) {
+                callback(err, null);
+            }
+            callback(null, result)
+        })
+    }
+
+    if (tablename == 'cyberpower_purchase_details') {
+        let sql = `INSERT INTO cyberpower_purchase_details(
+            cpd_requestdate,
+            cpd_requestby,
+            cpd_details,
+            cpd_totalbudget,
+            cpd_restockid,
+            cpd_remarks,
+            cpd_status) VALUES ?`;
 
         this.Insert(sql, data, (err, result) => {
             if (err) {
