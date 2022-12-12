@@ -198,3 +198,44 @@ exports.CyberpowerPurchaseDetails = (data) => {
 
     return dataResult;
 }
+
+exports.RequestBudegetDetails = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            requestid: key.rbd_requestid,
+            requestdate: key.rbd_requestdate,
+            requestby: key.rbd_requestby,
+            details: key.rbd_details,
+            totalbudget: key.rbd_totalbudget,
+            restockid: key.rbd_restockid,
+            remarks: key.rbd_remarks,
+            status: key.rbd_status,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.TransactionCyberpowerRequestBudget = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            transactionid: key.trb_transactionid,
+            requestby: key.trb_requestby,
+            requestdate: key.trb_requestdate,
+            budget: key.trb_budget,
+            approvedby: key.trb_approvedby,
+            approveddate: key.trb_approveddate,
+            requestid: key.trb_requestid,
+            remarks: key.trb_remarks,
+            status: key.trb_status,
+        })
+    });
+
+    return dataResult;
+}

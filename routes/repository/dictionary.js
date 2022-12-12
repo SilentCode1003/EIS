@@ -11,6 +11,9 @@ exports.GetValue = (abr) => {
     if (abr == 'PND') return 'PENDING';
     if (abr == 'APD') return 'APPROVED';
     if (abr == 'ALLOC') return 'ALLOCATE SERIALS';
+    if (abr == 'ALLOCP') return 'ALLOCATE PRICE';
+    if (abr == 'REQB') return 'REQUEST BUDGET';
+    if (abr == 'WAIT') return 'WAITING';
 }
 
 //#region STATUS CODE
@@ -56,6 +59,18 @@ exports.APD = () => {
 
 exports.ALLOC = () => {
     return 'ALLOC';
+}
+
+exports.REQB = () => {
+    return 'REQB';
+}
+
+exports.WAIT = () => {
+    return 'WAIT';
+}
+
+exports.ALLOCP = () => {
+    return 'ALLOCP';
 }
 
 //#endregion

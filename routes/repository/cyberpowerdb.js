@@ -85,6 +85,14 @@ exports.Select = (sql, table, callback) => {
             if (table == 'CyberpowerPurchaseDetails') {
                 callback(null, model.CyberpowerPurchaseDetails(results));
             }
+
+            if (table == 'RequestBudegetDetails') {
+                callback(null, model.RequestBudegetDetails(results));
+            }
+
+            if (table == 'TransactionCyberpowerRequestBudget') {
+                callback(null, model.TransactionCyberpowerRequestBudget(results));
+            }
         });
 
     } catch (error) {
@@ -256,6 +264,90 @@ exports.InsertTable = (tablename, data, callback) => {
             cpd_restockid,
             cpd_remarks,
             cpd_status) VALUES ?`;
+
+        this.Insert(sql, data, (err, result) => {
+            if (err) {
+                callback(err, null);
+            }
+            callback(null, result)
+        })
+    }
+
+    if (tablename == 'cyber_purchase_item') {
+        let sql = `INSERT INTO cyber_purchase_item (
+            cpi_modelname,
+            cpi_itemtype,
+            cpi_quantity,
+            cpi_cost,
+            cpi_requestid,
+            cpi_officer,
+            cpi_orderdate,
+            cpi_remarks,
+            cpi_status
+            ) VALUES ?`;
+
+        this.Insert(sql, data, (err, result) => {
+            if (err) {
+                callback(err, null);
+            }
+            callback(null, result)
+        })
+    }
+
+    if (tablename == 'transaction_cyberpower_purchase_item') {
+        let sql = `INSERT INTO transaction_cyberpower_purchase_item (
+            tcpi_modelname,
+            tcpi_itemtype,
+            tcpi_quantity,
+            tcpi_cost,
+            tcpi_subtotal,
+            tcpi_requestby,
+            tcpi_requestdate,
+            tcpi_purchasingofficer,
+            tcpi_purchasedate,
+            tcpi_ponumber,
+            tcpi_podate,
+            tcpi_requestid,
+            tcpi_remarks,
+            tcpi_status
+            ) VALUES ?`;
+
+        this.Insert(sql, data, (err, result) => {
+            if (err) {
+                callback(err, null);
+            }
+            callback(null, result)
+        })
+    }
+
+    if (tablename == 'request_budget_details') {
+        let sql = `INSERT INTO request_budget_details (
+            rbd_requestdate,
+            rbd_requestby,
+            rbd_details,
+            rbd_totalbudget,
+            rbd_restockid,
+            rbd_remarks,
+            rbd_status) VALUES ?`;
+
+        this.Insert(sql, data, (err, result) => {
+            if (err) {
+                callback(err, null);
+            }
+            callback(null, result)
+        })
+    }
+
+    if (tablename == 'transaction_request_budget') {
+        let sql = `INSERT INTO transaction_request_budget (
+            trb_requestby,
+            trb_requestdate,
+            trb_budget,
+            trb_approvedby,
+            trb_approveddate,
+            trb_requestid,
+            trb_remarks,
+            trb_status) VALUES ?`;
 
         this.Insert(sql, data, (err, result) => {
             if (err) {

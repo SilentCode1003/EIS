@@ -146,6 +146,10 @@ exports.GetCurrentMonthFirstDay = () => {
 exports.GetCurrentMonthLastDay = () => {
     return moment().endOf('month').format('YYYY-MM-DD');
 }
+
+exports.ConvertToDate = (datetime) => {
+    return moment(`${datetime}`).format('YYYY-MM-DD');
+}
 //#endregion
 
 //#region  SUMMARY REPORTS

@@ -156,8 +156,8 @@
             console.log(data);
 
             requestid = data[0];
-            requestdate = data[1];
-            requestby = data[2];
+            requestby = data[1];
+            requestdate = data[2];
         })
 
         $(document).on('click', "#confirmBtn", function () {
@@ -200,7 +200,7 @@
 
         $(document).on('click', "#stockinModalBtn", function () {
             // newStocksArr = JSON.stringify(newStocksArr, null, 2);
-
+            
             $.ajax({
                 type: "POST",
                 url: "/cabling/addnewstocks",
@@ -475,6 +475,7 @@
                     { data: 'brandname' },
                     { data: 'itemtype' },
                     { data: 'itemcount' },
+                    { data: 'updateitemcount' },
                     { data: 'updateby' },
                     { data: 'updatedate' },
                 ],

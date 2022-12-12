@@ -3,9 +3,12 @@ var router = express.Router();
 
 const helper = require('./repository/customhelper');
 const mysql = require('./repository/dbconnect')
-var CablingPath = `${__dirname}/data/cabling/`;
+const CablingPath = `${__dirname}/data/cabling/`;
+const RequestStockCablingDonePath = `${__dirname}/data/request/stocks/done/`;
+const RequestStocCablingPath = `${__dirname}/data/request/stocks/cabling/`;
+
+
 const { isAuthAdmin } = require('./controller/authBasic');
-const { json } = require('express');
 
 /* GET home page. */
 router.get('/', isAuthAdmin, function (req, res, next) {
@@ -256,9 +259,15 @@ router.post('/addnewstocks', (req, res) => {
     let requestid = req.body.requestid;
     let requestby = req.body.requestby;
     let requestdate = req.body.requestdate;
+    let datestring = helper.ConvertToDate(requestdate);
     let data = req.body.data;
     let transaction_cabling_stocks_equipments = [];
     let update_cabling_equipment = [];
+    let requeststockdone = `${RequestStockCablingDonePath}${datestring}_${requestby}.json`;
+    let requeststockcabling = `${RequestStocCablingPath}${datestring}_${requestby}.json`;
+    
+
+    console.log(`${datestring} ${requeststockdone} ${requeststockcabling}`);
 
     data.forEach((key, item) => {
       transaction_cabling_stocks_equipments.push([
@@ -422,6 +431,8 @@ router.post('/addnewstocks', (req, res) => {
       if (err) throw err;
       console.log(result);
     })
+
+    helper.MoveFile(requeststockcabling, requeststockdone);
 
     res.json({
       msg: 'success',

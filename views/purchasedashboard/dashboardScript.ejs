@@ -10,7 +10,7 @@
         LoadTableData();
 
         function LoadTableData() {
-            //REQUEST STOCKS
+            //#region REQUEST STOCKS - CABLING
             stocksrequest = $('#stocks-request-tbl').DataTable({
                 'destroy': true,
                 'processing': true,
@@ -96,9 +96,10 @@
                     hideload();
                 }
             });
+            //#endregion
 
-            //REQUEST BUDGET
-            budgetrequesttable = $('#budget-request-tbl').DataTable({
+            //#region CYBERPOWER
+            cyberpowerstocksrequest = $('#cyber-stocks-request-tbl').DataTable({
                 'destroy': true,
                 'processing': true,
                 'serverSide': true,
@@ -109,7 +110,55 @@
                 'scrollCollapse': true,
                 'serverMethod': 'GET',
                 'ajax': {
-                    'url': '/accountingdashboard/loadbudgetrequest',
+                    'url': '/purchasedashboard/loadcyberpowerrequest',
+                    'dataSrc': (json) => {
+                        var finalData = [];
+                        var data = json.data;
+
+                        console.log(data);
+                        $.each(data, (key, item) => {
+                            var action = '';
+                            var details = '';
+                            var detailsjson = JSON.parse(item.details);
+                            var status = item.status;
+                            var budget = parseFloat(item.totalbudget);
+
+                            $.each(detailsjson, (key, item) => {
+                                console.log(`${item.modelname} ${item.itemtype} ${item.itemcount}`);
+                                details += `${item.modelname}${item.itemtype}@${item.itemcount}<br>`;
+                            })
+
+                            if (status == 'PND') {
+                                action = '<button class="assign-btn" id="assigncyberBtn" name="assigncyberBtn">ASSIGN COST</button>'
+                            }
+                            if (status == 'ALLOCP') {
+                                action = '<button class="approve-btn" id="printcyberBtn" name="printcyberBtn">PRINT</button><br><button class="approve-btn" id="editcyberBtn" name="editcyberBtn">EDIT</button><br><button class="edit-btn" id="requestcyberBudgetBtn" name="requestcyberBudgetBtn">REQUEST BUDGET</button>'
+                            }
+                            if (status == 'REQB') {
+                                action = '<button class="approve-btn" id="cancelcyberRequestBtn" name="cancelcyberRequestBtn">CANCEL</button>'
+                            }
+                            if (status == 'APD') {
+                                action = '<button class="approve-btn" id="printcyberBtn" name="printcyberBtn">PRINT</button>'
+                            }
+
+                            budget = `₱ ${(budget).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+
+                            finalData.push({
+                                requestid: item.requestid,
+                                requestby: item.requestby,
+                                requestdate: item.requestdate,
+                                details: details,
+                                totalbudget: budget,
+                                remarks: item.remarks,
+                                status: item.status,
+                                action: action
+                            })
+
+                            details = '';
+                        })
+
+                        return finalData;
+                    },
                 },
                 'columnDefs': [{
                     targets: 1,
@@ -117,23 +166,28 @@
                 }],
                 'columns': [
                     { data: 'requestid' },
-                    { data: 'requestdate' },
                     { data: 'requestby' },
+                    { data: 'requestdate' },
                     { data: 'details' },
-                    { data: 'budget' },
-                    { data: 'approvedby' },
-                    { data: 'approveddate' },
+                    { data: 'totalbudget' },
                     { data: 'remarks' },
                     { data: 'status' },
+                    {
+                        data: 'action'
+                        // data: null, title: 'Action', wrap: false, "render": function () {
+
+                        // }
+                    }
                 ],
                 initComplete: function () {
                     console.log('init complete');
                     hideload();
                 }
             });
+            //#endregion
         }
 
-        //MODAL
+        //#region MODAL CABLING
         var stocksmodal = document.getElementById("stocksrequestModal");
         var equipmentrequestmodal = document.getElementById("equipmentrequestModal");
 
@@ -158,6 +212,7 @@
 
         $('#stocks-request-tbl tbody').on('click', 'tr', function (e) {
             // var data = stocksrequest.row(this).data();
+            var data = [];
             $(this).closest('tr').find('td').each(function () {
                 data.push([$(this).text()]);
 
@@ -171,6 +226,8 @@
             detailrequest = data[3];
             budgetrequest = data[4];
             remarks = data[5]
+
+            data = [];
 
             // budgetrequest = budgetrequest.replace(/₱ /g,'');
             // budgetrequest = budgetrequest.replace(/,/g,'');
@@ -404,5 +461,196 @@
                 });
             }
         });
+        //#endregion
+
+        //#region CYBERPOWER
+        let cyber_requestid = '';
+        let cyber_requestdate = '';
+        let cyber_requestby = '';
+        let cyber_detailrequest = '';
+        let cyber_budgetrequest = '';
+        let cyber_remarks = '';
+        var modal = document.getElementById("cyberstockrequestModal");
+        var span = document.getElementById("cyberstockspan");
+
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function () {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        $('#cyber-stocks-request-tbl').on('click', 'tr', function (e) {
+            // var data = stocksrequest.row(this).data();
+            var data = [];
+            $(this).closest('tr').find('td').each(function () {
+                data.push([$(this).text()]);
+
+            });
+
+            console.log(data);
+
+            cyber_requestid = data[0];
+            cyber_requestdate = data[1];
+            cyber_requestby = data[2];
+            cyber_detailrequest = data[3];
+            cyber_budgetrequest = data[4];
+            cyber_remarks = data[5]
+
+            data = [];
+
+            // budgetrequest = budgetrequest.replace(/₱ /g,'');
+            // budgetrequest = budgetrequest.replace(/,/g,'');
+            // detailrequest = detailrequest.replace(/<br>/g,'')
+            // console.log(data);
+        })
+
+        $('#modal-cyber-stocks-request-tbl tbody').on('click', 'tr', function (e) {
+            e.preventDefault();
+
+            if ($(this).attr('edit_type') == 'button') {
+                return false;
+            }
+
+            //make div editable
+            $(this).closest('div').attr('contenteditable', 'true');
+            //add bg css
+            $(this).addClass('edit-cost').css('padding', '5px');
+
+            $(this).focus();
+        });
+
+        $(document).on('click', "#assigncyberBtn", function () {
+
+            var requestitemTabel = $('#modal-cyber-stocks-request-tbl').DataTable({
+                'destroy': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollCollapse': true,
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/purchasedashboard/getcyberdetails",
+                data: { requestid: cyber_requestid },
+                success: function (result) {
+                    requestitemTabel.clear().draw();
+                    var data = result.data;
+
+                    console.log(result.data);
+                    $.each(data, (key, item) => {
+                        var datajson = JSON.parse(item.details);
+                        // console.log(datajson);
+                        $.each(datajson, (key, item) => {
+                            requestitemTabel.row.add([item.modelname, item.itemtype, item.itemcount, ""]).draw(false);
+                        })
+                    })
+                },
+                error: function (result) {
+                    error('error: ' + result);
+                }
+            });
+
+            modal.style.display = "block";
+        })
+
+        $(document).on('click', "#printcyberBtn", function () {
+
+        })
+
+        $(document).on('click', "#editcyberBtn", function () {
+
+        })
+
+        $(document).on('click', "#requestcyberBudgetBtn", function () {
+            $.ajax({
+                type: "POST",
+                url: "/purchasedashboard/cyberrequestbudget",
+                data: {
+                    requestid: cyber_requestid,
+                    budget: cyber_budgetrequest,
+                    details: cyber_detailrequest,
+                },
+                success: function (result) {
+                    success('Success', 'Request Successfully!')
+                    LoadTableData();
+                },
+                error: function (result) {
+                    error('error: ' + result);
+                }
+            });
+        })
+
+        $(document).on('click', "#cancelcyberRequestBtn", function () {
+
+        })
+
+        $(document).on('click', "#saveCyberRequestStocksBtn", function () {
+            console.log('clicked!');
+            var data = $('#modal-cyber-stocks-request-tbl tr');
+            var dataRaw = [];
+            console.log(data);
+            console.log(data.length);
+            var message = '';
+            var est_budget = 0;
+            var purchaseDetails = [];
+
+            var index = 1;
+            for (x = 1; x < data.length; x++) {
+                console.log(data[x].innerText);
+                var innerData = data[x].innerText;
+                innerData = innerData.split("\t");
+
+                if (innerData[3] == "") {
+                    message += `${innerData[1]}, `;
+                } else {
+                    dataRaw.push({
+                        brandname: innerData[0],
+                        itemtype: innerData[1],
+                        itemcount: innerData[2],
+                        itemcost: innerData[3],
+                    });
+
+                    est_budget += (parseFloat(innerData[3]) * parseFloat(innerData[2]));
+                    index += 1;
+                }
+
+            }
+
+            if (message != "") {
+                warning(`ITEM/S: ${message} cost prt piece not assigned!`)
+            } else {
+                // console.log(dataRaw);
+                dataRaw = JSON.stringify(dataRaw, null, 2);
+
+                console.log(`${requestby} ${requestdate}`)
+
+                $.ajax({
+                    type: "POST",
+                    url: "/purchasedashboard/updatecyberstockrequest",
+                    data: {
+                        requestid: cyber_requestid,
+                        requestby: cyber_requestby,
+                        requestdate: cyber_requestdate,
+                        totalcost: est_budget,
+                        details: dataRaw
+                    },
+                    success: function (result) {
+                        success('Saved!', 'Data Saved!');
+                        LoadTableData();
+                    },
+                    error: function (result) {
+                        error('error: ' + result);
+                    }
+                });
+            }
+            modal.style.display = 'none';
+        })
+
+        //#endregion
     })
 </script>
