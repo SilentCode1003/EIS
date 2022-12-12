@@ -93,6 +93,10 @@ exports.Select = (sql, table, callback) => {
             if (table == 'TransactionRequestBudget') {
                 callback(null, model.TransactionRequestBudget(results));
             }
+
+            if (table == 'TransactionCyberpowerPurchaseItem') {
+                callback(null, model.TransactionCyberpowerPurchaseItem(results));
+            }
         });
 
     } catch (error) {

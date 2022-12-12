@@ -153,10 +153,8 @@ router.post('/cyberapproved', (req, res) => {
     let remarks = dictionary.GetValue(dictionary.APD());
     let status = dictionary.APD();
 
-    let request_budget_details = `update request_budget_details 
-      set rbd_remarks='${remarks}', 
-      rbd_status='${status}'
-      where rbd_restockid='${requestid}'`;
+    let request_budget_details = `update request_budget_details set rbd_remarks="${remarks}",
+    rbd_status="${status}" where rbd_restockid="${requestid}"`;
 
     let transaction_request_budget = `update transaction_request_budget 
       set trb_approvedby='${approvedby}', 
@@ -180,39 +178,39 @@ router.post('/cyberapproved', (req, res) => {
       tcpi_status='${status}'
       where tcpi_requestid='${requestid}'`;
 
-    mysql.Update(request_budget_details, (err, result) => {
-      if(err) console.error(err);
+    mysqlcyber.Update(request_budget_details, (err, result) => {
+      if (err) console.error(err);
 
-      console.log(err);
+      console.log(result);
     })
 
-    mysql.Update(transaction_request_budget, (err, result) => {
+    mysqlcyber.Update(transaction_request_budget, (err, result) => {
       if(err) console.error(err);
 
-      console.log(err);
+      console.log(result);
     })
 
-    mysql.Update(cyberpower_purchase_details, (err, result) => {
+    mysqlcyber.Update(cyberpower_purchase_details, (err, result) => {
       if(err) console.error(err);
 
-      console.log(err);
+      console.log(result);
     })
 
-    mysql.Update(cyber_purchase_item, (err, result) => {
+    mysqlcyber.Update(cyber_purchase_item, (err, result) => {
       if(err) console.error(err);
 
-      console.log(err);
+      console.log(result);
     })
 
-    mysql.Update(transaction_cyberpower_purchase_item, (err, result) => {
+    mysqlcyber.Update(transaction_cyberpower_purchase_item, (err, result) => {
       if(err) console.error(err);
 
-      console.log(err);
+      console.log(result);
     })
 
-  res.json({
-    msg:'success'
-  })
+    res.json({
+      msg: 'success'
+    })
 
   } catch (error) {
     res.json({

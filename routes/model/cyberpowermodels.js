@@ -239,3 +239,30 @@ exports.TransactionRequestBudget = (data) => {
 
     return dataResult;
 }
+
+exports.TransactionCyberpowerPurchaseItem = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            transactionid: key.tcpi_transactionid,
+            modelname: key.tcpi_modelname,
+            itemtype: key.tcpi_itemtype,
+            quantity: key.tcpi_quantity,
+            cost: key.tcpi_cost,
+            subtotal: key.tcpi_subtotal,
+            requestby: key.tcpi_requestby,
+            requestdate: key.tcpi_requestdate,
+            purchasingofficer: key.tcpi_purchasingofficer,
+            purchasedate: key.tcpi_purchasedate,
+            ponumber: key.tcpi_ponumber,
+            podate: key.tcpi_podate,
+            requestid: key.tcpi_requestid,
+            remarks: key.tcpi_remarks,
+            status: key.tcpi_status,
+        })
+    });
+
+    return dataResult;
+}

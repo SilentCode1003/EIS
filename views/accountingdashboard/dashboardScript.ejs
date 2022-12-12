@@ -178,6 +178,10 @@
                     document.getElementById('totalcost').innerText = totalcost;
                     document.getElementById('officer').innerText = approvedby;
                     document.getElementById('date').innerText = approveddate;
+                    document.getElementById('requestdatesig').innerText = requestdate;
+                    document.getElementById('approveddatesig').innerText = approveddate;
+                    document.getElementById('requestbysig').innerText = requestby;
+                    document.getElementById('officersig').innerText = approvedby;
                 },
                 error: function (result) {
                     error('error: ' + result);
@@ -270,16 +274,16 @@
             });
         }
 
-            let cyber_requestid = data[0];
-            let cyber_requestdate = data[1];
-            let cyber_requestby = data[2];
-            let cyber_detailrequest = data[3];
-            let cyber_budgetrequest = data[4];
-            let cyber_approvedby = data[5];
-            let cyber_approveddate = data[6];
-            let cyber_remarks = data[8]
-            let cyber_data = [];
-        
+        let cyber_requestid = data[0];
+        let cyber_requestdate = data[1];
+        let cyber_requestby = data[2];
+        let cyber_detailrequest = data[3];
+        let cyber_budgetrequest = data[4];
+        let cyber_approvedby = data[5];
+        let cyber_approveddate = data[6];
+        let cyber_remarks = data[7];
+        let cyber_data = [];
+
         $('#cyber-budget-request-tbl tbody').on('click', 'td', function () {
             $(this).closest('tr').find('td').each(function () {
                 cyber_data.push([$(this).text()]);
@@ -318,6 +322,63 @@
             });
         })
 
+        $(document).on('click', "#cyberprintBtn", function () {
+
+            var requestitemTabel = $('#stocks-equipments-tbl').DataTable({
+                'destroy': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollCollapse': true,
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/purchasedashboard/getcybertransactionpurchseitems",
+                data: { requestid: cyber_requestid },
+                success: function (result) {
+                    requestitemTabel.clear().draw();
+                    var data = result.data;
+                    var totalcost = 0;
+                    var officer = '';
+                    var date = '';
+
+                    // console.log(result.data);
+                    $.each(data, (key, item) => {
+                        var cost = parseFloat(item.cost);
+                        var subtotal = parseFloat(item.subtotal);
+                        cost = `₱ ${(cost).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+                        subtotal = `₱ ${(subtotal).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+
+                        requestitemTabel.row.add([item.modelname, item.itemtype, item.quantity, cost, subtotal]).draw(false);
+
+                        totalcost += parseFloat(item.subtotal);
+                        officer = item.purchasingofficer;
+                        date = item.purchasedate;
+                    })
+
+                    totalcost = `₱ ${(totalcost).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+
+                    document.getElementById('requestid').innerText = cyber_requestid;
+                    document.getElementById('requestby').innerText = cyber_requestby;
+                    document.getElementById('requestdate').innerText = cyber_requestdate;
+                    document.getElementById('remarks').innerText = cyber_remarks;
+                    document.getElementById('totalcost').innerText = cyber_budgetrequest;
+                    document.getElementById('officer').innerText = cyber_approvedby;
+                    document.getElementById('date').innerText = cyber_approveddate;
+                    document.getElementById('requestdatesig').innerText = cyber_requestdate;
+                    document.getElementById('approveddatesig').innerText = cyber_approveddate;
+                    document.getElementById('requestbysig').innerText = cyber_requestby;
+                    document.getElementById('officersig').innerText = cyber_approvedby;
+                },
+                error: function (result) {
+                    error('error: ' + result);
+                }
+            });
+
+            accountingModal.style.display = "block";
+        })
+        
         //#endregion
     })
 </script>

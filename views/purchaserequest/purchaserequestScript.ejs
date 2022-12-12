@@ -2,12 +2,46 @@
     $(document).ready(function () {
         let dataArr = [];
         let requestid = '';
+
+
+        $(document).on('click', "#cablingBtn", function () {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById('cablingtab').style.display = "block";
+            // evt.currentTarget.className += " active";
+
+            CablingTable();
+        });
+
+        $(document).on('click', "#cyberpowerBtn", function () {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById('cyberpowertab').style.display = "block";
+            // evt.currentTarget.className += " active";
+
+            CyberpowerTable();
+        });
+
+        //LoadTable
+        CablingTable()
         //Load list items
         LoadList();
 
-        //LoadTable
-        LoadTable()
-
+        //#region CABLING
         //MODAL
         var stocksmodal = document.getElementById("restockmodal");
         var stocksmodalspan = document.getElementById("restockmodalspan");
@@ -21,6 +55,7 @@
                 stocksmodal.style.display = "none";
             }
         }
+
         $("#podate-dtbox").DateTimePicker({
             dateFormat: "yyyy-MM-dd"
         });
@@ -187,8 +222,9 @@
 
         function LoadList() {
             $.ajax({
-                type: "GET",
-                url: "/items/brandname",
+                type: "POST",
+                url: "/items/brandnamedepartment",
+                data: { department: 'CABLING' },
                 success: function (result) {
                     console.log(result.data);
                     var data = result.data;
@@ -204,9 +240,29 @@
                     alert('error: ' + result.data);
                 }
             });
+
+            $.ajax({
+                type: "POST",
+                url: "/items/brandnamedepartment",
+                data: { department: 'CYBERPOWER' },
+                success: function (result) {
+                    console.log(result.data);
+                    var data = result.data;
+
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.brandname, item.brandname);
+                        $(options).html(item.brandname);
+                        $('#cyberbrandname').append(options);
+                        console.log(item.brandname);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
         }
 
-        function LoadTable() {
+        function CablingTable() {
             showloader();
             purchaseOrderDetailsTbl = $('#po-orderlist-tbl').DataTable({
                 'destroy': true,
@@ -272,5 +328,252 @@
                 }
             });
         }
+
+        //#endregion 
+
+
+        //#region CYBERPOWER
+
+        var modal = document.getElementById("cyberrestockmodal");
+        var span = document.getElementById("cyberrestockmodalspan");
+
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function () {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        $(document).on('change', "#cyberbrandname", function () {
+            var brandname = $('#cyberbrandname').val();
+            $("#cyberitemtype").empty();
+
+            $.ajax({
+                type: "POST",
+                url: "/items/itemtype",
+                data: { brandname: brandname },
+                success: function (result) {
+                    var data = result.data;
+                    console.log(result.data);
+
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.itemname, item.itemname);
+                        $(options).html(item.itemname);
+                        $('#cyberitemtype').append(options);
+                        console.log(item.itemname);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+        });
+
+        $(document).on('click', "#cyberaddBtn", function () {
+            var podate = $('#cyberpodate').val();
+            var ponumber = $('#cyberponumber').val();
+            var brandname = $('#cyberbrandname').val();
+            var itemtype = $('#cyberitemtype').val();
+            var quantity = $('#cyberquantity').val();
+            var cost = $('#cybercost').val();
+            var subtotal = parseFloat(quantity) * parseFloat(cost);
+
+            var costCurrency = `₱ ${(parseFloat(cost)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+            var subtotalCurrency = `₱ ${(parseFloat(subtotal)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+
+            var message = '';
+
+            if (podate == "") { message += "PO DATE " }
+            if (ponumber == "") { message += "PO NUMBER " }
+            if (brandname == "-") { message += "BRAND NAME " }
+            if (itemtype == "-") { message += "ITEM TYPE " }
+            if (quantity == "") { message += "QUANTITY " }
+            if (cost == "") { message += "COST " }
+
+            if (message != '') {
+                warning("Warning!", "Must fill-up " + message + " field!")
+            } else {
+
+                if (dataArr.length == 0) {
+
+                    dataArr.push({
+                        ponumber: ponumber,
+                        brandname: brandname,
+                        itemtype: itemtype,
+                        quantity: quantity,
+                        cost: cost,
+                        subtotal: subtotal,
+                    });
+
+                    restock_table_list = document.getElementById("cyber-po-list-tbl");
+                    var row = restock_table_list.insertRow(1);
+                    var PO_DATE = row.insertCell(0);
+                    var PO_NUMBER = row.insertCell(1);
+                    var BRAND_NAME = row.insertCell(2);
+                    var ITEM_TYPE = row.insertCell(3);
+                    var QUANTITY = row.insertCell(4);
+                    var COST = row.insertCell(5);
+                    var SUBTOTAL = row.insertCell(6);
+
+                    PO_DATE.innerHTML = podate;
+                    PO_NUMBER.innerHTML = ponumber;
+                    BRAND_NAME.innerHTML = brandname;
+                    ITEM_TYPE.innerHTML = itemtype;
+                    QUANTITY.innerHTML = quantity;
+                    COST.innerHTML = costCurrency;
+                    SUBTOTAL.innerHTML = subtotalCurrency;
+
+                } else {
+                    if (!dataArr.map(item => {
+                        if (item.itemtype == itemtype) {
+                            return `${item.itemtype}`
+                        }
+
+                    }).includes(`${itemtype}`)) {
+                        dataArr.push({
+                            ponumber: ponumber,
+                            brandname: brandname,
+                            itemtype: itemtype,
+                            quantity: quantity,
+                            cost: cost,
+                            subtotal: subtotal,
+                        });
+
+                        restock_table_list = document.getElementById("po-list-tbl");
+                        var row = restock_table_list.insertRow(1);
+                        var PO_DATE = row.insertCell(0);
+                        var PO_NUMBER = row.insertCell(1);
+                        var BRAND_NAME = row.insertCell(2);
+                        var ITEM_TYPE = row.insertCell(3);
+                        var QUANTITY = row.insertCell(4);
+                        var COST = row.insertCell(5);
+                        var SUBTOTAL = row.insertCell(6);
+
+                        PO_DATE.innerHTML = podate;
+                        PO_NUMBER.innerHTML = ponumber;
+                        BRAND_NAME.innerHTML = brandname;
+                        ITEM_TYPE.innerHTML = itemtype;
+                        QUANTITY.innerHTML = quantity;
+                        COST.innerHTML = costCurrency;
+                        SUBTOTAL.innerHTML = subtotalCurrency;
+                    } else {
+                        warning(`Already request ${itemtype} with item count of ${quantity}...`)
+                    }
+                }
+
+            }
+
+        })
+
+        $(document).on('click', "#cyberrestockBtn", function () {
+            requestid = $('#cyberrequestid').val();
+            modal.style.display = "block";
+        })
+
+        $(document).on('click', "#cybersaveBtn", function () {
+            var requestid = $('#cyberrequestid').val();
+            var podate = $('#cyberpodate').val();
+            var ponumber = $('#cyberponumber').val();
+
+            if (dataArr.length == 0) { warning('What are you doing! You have no data input but you want to restock, are you crazy?!') }
+            else {
+
+                dataArr = JSON.stringify(dataArr, null, 2);
+                $.ajax({
+                    type: "POST",
+                    url: "/purchaserequest/restock",
+                    data: {
+                        requestid: requestid,
+                        podate: podate,
+                        data: dataArr,
+                    },
+                    success: function (result) {
+                        success('Done!', 'Done Request!');
+                        ClearListTable('cyber-po-list-tbl');
+                        CyberpowerTable();
+                    },
+                    error: function (result) {
+                        alert('error: ' + result.data);
+                    }
+                });
+
+                dataArr = [];
+            }
+
+            modal.style.display = "none";
+
+        })
+
+        function CyberpowerTable() {
+            showloader();
+            cyberpurchaseOrderDetailsTbl = $('#cyber-po-orderlist-tbl').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'GET',
+                'ajax': {
+                    'url': '/purchaserequest/load',
+                    'dataSrc': (json) => {
+                        var finalData = [];
+                        var data = json.data;
+
+                        console.log(data);
+                        $.each(data, (key, item) => {
+                            var action = '';
+                            var details = '';
+                            var detailsjson = JSON.parse(item.details);
+                            var totalcost = 0;
+
+                            $.each(detailsjson, (key, item) => {
+
+                                totalcost += parseFloat(item.subtotal);
+                                details += `(${item.ponumber})${item.brandname}${item.itemtype}@${item.quantity}<br>`;
+                            })
+
+                            totalcost = `₱ ${(totalcost).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+
+                            finalData.push({
+                                podate: item.podate,
+                                details: details,
+                                totalcost: totalcost,
+                                officer: item.officer,
+                                entrydate: item.entrydate,
+                                status: item.status,
+                            })
+
+                            details = '';
+                        })
+
+                        return finalData;
+                    },
+                },
+                'columnDefs': [{
+                    targets: 1,
+                    className: 'td-indent',
+                }],
+                'columns': [
+                    { data: 'podate' },
+                    { data: 'details' },
+                    { data: 'totalcost' },
+                    { data: 'officer' },
+                    { data: 'entrydate' },
+                    { data: 'status' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+        }
+        //#endregion
+
     })
 </script>

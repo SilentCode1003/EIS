@@ -23,8 +23,9 @@ router.get('/', isAuthAdmin, function (req, res, next) {
 
 module.exports = router;
 
-//#region CABLING
 
+
+//#region CABLING 
 router.get('/load', (req, res) => {
   try {
 
@@ -334,6 +335,7 @@ router.post('/requestbudget', (req, res) => {
 
 //#endregion
 
+//#region CYBERPOWER
 router.get('/loadcyberpowerrequest', (req, res) => {
   try {
     let sql = `SELECT * FROM cyberpower_purchase_details WHERE not cpd_status='${dictionary.APD()}'`;
@@ -548,8 +550,27 @@ router.post('/cyberrequestbudget', (req, res) => {
   }
 })
 
+router.post('/getcybertransactionpurchseitems', (req, res) => {
+  try {
+    let requestid = req.body.requestid;
+    let sql = `SELECT * FROM transaction_cyberpower_purchase_item WHERE tcpi_requestid='${requestid}'`;
+    cybersql.Select(sql, 'TransactionCyberpowerPurchaseItem', (err, result) => {
+      if (err) throw err;
 
-//FUNCTION
+      res.json({
+        msg: 'success',
+        data: result
+      })
+    })
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+})
+//#endregion
+
+//#region FUNCTION
 function Insert_CyberPurchaseItems(data, callback) {
   cybersql.InsertTable('cyber_purchase_item', data, (err, result) => {
     if (err) callback(err, null);
@@ -600,4 +621,4 @@ function Update_TransactionCablingStocksDetails(id, officer, callback) {
     callback(null, result);
   })
 }
-
+//#endregion
