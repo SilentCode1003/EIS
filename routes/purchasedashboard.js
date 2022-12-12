@@ -481,24 +481,20 @@ router.post('/cyberrequestbudget', (req, res) => {
     })
 
     let sql = `SELECT * FROM request_budget_details WHERE rbd_restockid='${requestid}'`;
-    cybersql.Select(sql, 'RequestBudegetDetails', (err, result) => {
+    cybersql.Select(sql, 'RequestBudgetDetails', (err, result) => {
       if (err) console.error(err);
-
-      var referenceid = '';
       result.forEach((key, item) => {
-        restockid = key.restockid;
+        transaction_request_budget.push([
+          requestby,
+          requestdate,
+          budget,
+          '',
+          '',
+          key.restockid,
+          remarks,
+          status,
+        ])
       })
-
-      transaction_request_budget.push([
-        requestby,
-        requestdate,
-        budget,
-        '',
-        '',
-        referenceid,
-        remarks,
-        status,
-      ])
 
       console.log(transaction_request_budget);
       Insert_CyberTransactionRequestBudget(transaction_request_budget, (err, result) => {

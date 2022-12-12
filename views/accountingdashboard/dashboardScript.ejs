@@ -10,8 +10,9 @@
         let approveddate = '';
         let data = [];
 
-
+        //#region CABLING
         //MODAL
+        LoadCablingTableData();
         var accountingModal = document.getElementById("accountingModal");
         var accountingrequestspan = document.getElementById("accountingrequest");
 
@@ -25,9 +26,7 @@
             }
         }
 
-        LoadTableData();
-
-        function LoadTableData() {
+        function LoadCablingTableData() {
             //REQUEST BUDGET
             budgetrequesttable = $('#budget-request-tbl').DataTable({
                 'destroy': true,
@@ -196,5 +195,129 @@
             document.body.innerHTML = originalContents;
             location.reload();
         })
+        //#endregion
+
+        //#region CYBERPOWER
+        LoadCyberRequestBudgetTable();
+
+        function LoadCyberRequestBudgetTable() {
+            cyberbudgetrequesttable = $('#cyber-budget-request-tbl').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'GET',
+                'ajax': {
+                    'url': '/accountingdashboard/loadcyberbudgetrequest',
+                    'dataSrc': (json) => {
+                        var finalData = [];
+                        var data = json.data;
+
+                        console.log(data);
+                        $.each(data, (key, item) => {
+                            var action = '';
+                            var status = item.stats;
+
+                            if (status == 'REQB') {
+                                action = '<button class="assign-btn" id="cyberapprovedBtn" name="cyberapprovedBtn">APPROVE</button>'
+                            }
+                            if (status == 'APD') {
+                                action = '<button class="approve-btn" id="cyberprintBtn" name="cyberprintBtn">PRINT</button>'
+                            }
+
+                            finalData.push({
+                                requestid: item.requestid,
+                                requestdate: item.requestdate,
+                                requestby: item.requestby,
+                                details: item.details,
+                                budget: item.budget,
+                                approvedby: item.approvedby,
+                                approveddate: item.approveddate,
+                                remarks: item.remarks,
+                                status: item.stats,
+                                action: action,
+                            })
+
+                        })
+
+                        return finalData;
+                    },
+                },
+                'columnDefs': [{
+                    targets: 1,
+                    className: 'td-indent',
+                }],
+                'columns': [
+                    { data: 'requestid' },
+                    { data: 'requestdate' },
+                    { data: 'requestby' },
+                    { data: 'details' },
+                    { data: 'budget' },
+                    { data: 'approvedby' },
+                    { data: 'approveddate' },
+                    { data: 'remarks' },
+                    { data: 'status' },
+                    { data: 'action' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+        }
+
+            let cyber_requestid = data[0];
+            let cyber_requestdate = data[1];
+            let cyber_requestby = data[2];
+            let cyber_detailrequest = data[3];
+            let cyber_budgetrequest = data[4];
+            let cyber_approvedby = data[5];
+            let cyber_approveddate = data[6];
+            let cyber_remarks = data[8]
+            let cyber_data = [];
+        
+        $('#cyber-budget-request-tbl tbody').on('click', 'td', function () {
+            $(this).closest('tr').find('td').each(function () {
+                cyber_data.push([$(this).text()]);
+
+            });
+
+            console.log(cyber_data);
+
+            cyber_requestid = cyber_data[0];
+            cyber_requestdate = cyber_data[1];
+            cyber_requestby = cyber_data[2];
+            cyber_detailrequest = cyber_data[3];
+            cyber_budgetrequest = cyber_data[4];
+            cyber_approvedby = cyber_data[5];
+            cyber_approveddate = cyber_data[6];
+            cyber_remarks = cyber_data[8]
+
+            cyber_data = [];
+        })
+
+        $(document).on('click', "#cyberapprovedBtn", function () {
+            console.log('clicked!');
+            $.ajax({
+                type: "POST",
+                url: "/accountingdashboard/cyberapproved",
+                data: {
+                    requestid: cyber_requestid,
+                },
+                success: function (result) {
+                    success('Success', 'Request Approved!')
+                    LoadCyberRequestBudgetTable();
+                },
+                error: function (result) {
+                    error('error: ' + result);
+                }
+            });
+        })
+
+        //#endregion
     })
 </script>

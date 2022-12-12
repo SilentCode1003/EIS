@@ -4,6 +4,8 @@ var router = express.Router();
 const { isAuthAdmin } = require('./controller/authBasic');
 const helper = require('./repository/customhelper');
 const mysql = require('./repository/dbconnect');
+const mysqlcyber = require('./repository/cyberpowerdb');
+const dictionary = require('./repository/dictionary');
 
 /* GET home page. */
 router.get('/', isAuthAdmin, function (req, res, next) {
@@ -20,11 +22,13 @@ router.get('/', isAuthAdmin, function (req, res, next) {
 
 module.exports = router;
 
+//#region CABLING
 router.get('/loadbudgetrequest', (req, res) => {
   try {
 
     let sql = `select * from request_budget_details`;
     mysql.Select(sql, 'RequestBudgetDetails', (err, result) => {
+      if (err) console.error(err);
       res.json({
         msg: 'success',
         data: result
@@ -117,3 +121,103 @@ router.post('/approved', (req, res) => {
     })
   }
 })
+
+//#endregion
+
+//#region CYBERPOWER
+router.get('/loadcyberbudgetrequest', (req, res) => {
+  try {
+
+    let sql = `call CyberpowerBudgetRequest()`;
+    mysqlcyber.StoredProcedureResult(sql, (err, result) => {
+      if (err) console.error(err);
+      res.json({
+        msg: 'success',
+        data: result
+      })
+    })
+
+
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+})
+
+router.post('/cyberapproved', (req, res) => {
+  try {
+    let requestid = req.body.requestid;
+    let approvedby = req.session.fullname;
+    let approveddate = helper.GetCurrentDatetime();
+    let remarks = dictionary.GetValue(dictionary.APD());
+    let status = dictionary.APD();
+
+    let request_budget_details = `update request_budget_details 
+      set rbd_remarks='${remarks}', 
+      rbd_status='${status}'
+      where rbd_restockid='${requestid}'`;
+
+    let transaction_request_budget = `update transaction_request_budget 
+      set trb_approvedby='${approvedby}', 
+      trb_approveddate='${approveddate}', 
+      trb_remarks='${remarks}', 
+      trb_status='${status}'
+      where trb_requestid='${requestid}'`;
+
+    let cyberpower_purchase_details = ` update cyberpower_purchase_details 
+      set cpd_remarks='${remarks}', 
+      cpd_status='${status}'
+      where cpd_restockid='${requestid}'`;
+
+    let cyber_purchase_item = ` update cyber_purchase_item 
+      set cpi_remarks='${remarks}', 
+      cpi_status='${status}'
+      where cpi_requestid='${requestid}'`;
+
+    let transaction_cyberpower_purchase_item = ` update transaction_cyberpower_purchase_item 
+      set tcpi_remarks='${remarks}', 
+      tcpi_status='${status}'
+      where tcpi_requestid='${requestid}'`;
+
+    mysql.Update(request_budget_details, (err, result) => {
+      if(err) console.error(err);
+
+      console.log(err);
+    })
+
+    mysql.Update(transaction_request_budget, (err, result) => {
+      if(err) console.error(err);
+
+      console.log(err);
+    })
+
+    mysql.Update(cyberpower_purchase_details, (err, result) => {
+      if(err) console.error(err);
+
+      console.log(err);
+    })
+
+    mysql.Update(cyber_purchase_item, (err, result) => {
+      if(err) console.error(err);
+
+      console.log(err);
+    })
+
+    mysql.Update(transaction_cyberpower_purchase_item, (err, result) => {
+      if(err) console.error(err);
+
+      console.log(err);
+    })
+
+  res.json({
+    msg:'success'
+  })
+
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+})
+//#endregion

@@ -199,7 +199,7 @@ exports.CyberpowerPurchaseDetails = (data) => {
     return dataResult;
 }
 
-exports.RequestBudegetDetails = (data) => {
+exports.RequestBudgetDetails = (data) => {
     let dataResult = [];
 
     data.forEach((key, item) => {
@@ -219,7 +219,7 @@ exports.RequestBudegetDetails = (data) => {
     return dataResult;
 }
 
-exports.TransactionCyberpowerRequestBudget = (data) => {
+exports.TransactionRequestBudget = (data) => {
     let dataResult = [];
 
     data.forEach((key, item) => {

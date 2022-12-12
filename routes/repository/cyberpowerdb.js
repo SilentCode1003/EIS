@@ -86,12 +86,12 @@ exports.Select = (sql, table, callback) => {
                 callback(null, model.CyberpowerPurchaseDetails(results));
             }
 
-            if (table == 'RequestBudegetDetails') {
-                callback(null, model.RequestBudegetDetails(results));
+            if (table == 'RequestBudgetDetails') {
+                callback(null, model.RequestBudgetDetails(results));
             }
 
-            if (table == 'TransactionCyberpowerRequestBudget') {
-                callback(null, model.TransactionCyberpowerRequestBudget(results));
+            if (table == 'TransactionRequestBudget') {
+                callback(null, model.TransactionRequestBudget(results));
             }
         });
 
