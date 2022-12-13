@@ -1,52 +1,165 @@
-<div class="row">
-    <div class="col-xl-6 col-sm-5">
-        <div class="entry-area">
-            <select class="entry-input" id=modelname>
-                <option value="-" id="listmodel">MODEL NAME</option>
-            </select>
+<div class="tab">
+    <div class="entry-area">
+        <button class="autorize-btn tablinks" id="equipmenttab" name="equipmenttab"><i
+                class="fas fa-fw fa-box-open"></i>EQUIPMENT</button>
+        <button class="autorize-btn tablinks" id="stockintab" name="stockintab"><i
+                class="fas fa-fw fa-box"></i>STOCK-IN</button>
+    </div>
+</div>
+
+
+<div id="dtbox"></div>
+<div class="tabcontent" id="equipments">
+    <div class="row">
+        <div class="col-xl-6 col-sm-5">
+            <div class="entry-area">
+                <select class="entry-input" id=modelname>
+                    <option value="-" id="listmodel">MODEL NAME</option>
+                </select>
+            </div>
+            <div class="entry-area">
+                <select class="entry-input" id=itemtype>
+                    <option value="-" id="listitemtype">ITEM NAME</option>
+                </select>
+            </div>
+            <div class="entry-area">
+                <input type="text" class="entry-input" id="serial" name="serial" placeholder="SERIAL">
+            </div>
+            <div class="entry-area">
+                <input type="text" class="entry-input" id="ponumber" name="ponumber" placeholder="P.O NUMBER">
+            </div>
+            <div class="entry-area">
+                <input class="entry-input" type="text" data-field="date" placeholder="P.O DATE" readonly id="podate"
+                    name="podate">
+            </div>
+            <div class="entry-area">
+                <button class="" id="saveBtn" name="saveBtn">REGISTER</button>
+            </div>
         </div>
-        <div class="entry-area">
-            <select class="entry-input" id=itemtype>
-                <option value="-" id="listitemtype">ITEM NAME</option>
-            </select>
-        </div>
-        <div class="entry-area">
-            <input type="text" class="entry-input" id="serial" name="serial" placeholder="SERIAL">
-        </div>
-        <div class="entry-area">
-            <input type="text" class="entry-input" id="ponumber" name="ponumber" placeholder="P.O NUMBER">
-        </div>
-        <div class="entry-area">
-            <input class="entry-input" type="text" data-field="date" placeholder="P.O DATE" readonly id="podate"
-                name="podate">
-            <div id="dtbox"></div>
-        </div>
-        <div class="entry-area">
-            <button class="" id="saveBtn" name="saveBtn">REGISTER</button>
+
+        <div class="col-xl-6 col-sm-5">
+            <div class="entry-area">
+                <input type="file" id="fileUpload" />
+                <input type="button" id="upload" value="Upload" />
+                <br />
+
+                <div id="ExcelTable"></div>
+            </div>
         </div>
     </div>
+    <hr>
+    <div>
+        <table id="cyberpower-tbl">
+            <thead>
+                <th>ITEM MODEL</th>
+                <th>ITEM TYPE</th>
+                <th>ITEM SERAL</th>
+                <th>PO NUMBER</th>
+                <th>PO DATE</th>
+                <th>STATUS</th>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
 
-    <div class="col-xl-6 col-sm-5">
-        <div class="entry-area">
-            <input type="file" id="fileUpload" />
-            <input type="button" id="upload" value="Upload" />
-            <br />
+<div class="tabcontent" id="stockin">
+    <div>
+        <table id="stockin-tbl">
+            <thead>
+                <th>PO DETAIL ID</th>
+                <th>PO DATE</th>
+                <th>DETAILS</th>
+                <th>RESTOCK ID</th>
+                <th>REMARKS</th>
+                <th>ACTION</th>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
 
-            <div id="ExcelTable"></div>
+<!-- The Modal -->
+<div id="stockinModal" class="modal card shadow mb-4">
+    <!-- Modal content -->
+    <div class="modal-content modal-print-background">
+        <div class="modal-button-container modal-print-background">
+            <span id="stockinspan" class="close">&times;</span>
+        </div>
+
+        <div class="modal-body modal-print-background">
+            <div>
+                <h2 class='report-header' style="text-align: center"> PURCHASE ORDER DETAILS</h2>
+                <br>
+                <br>
+                <div>
+                    <table id="po-item-list">
+                        <thead>
+                            <th>PO DATE</th>
+                            <th>PO NUMBER</th>
+                            <th>MODEL</th>
+                            <th>TYPE</th>
+                            <th>QUATITY</th>
+                            <th>ACTION</th>
+                        </thead>
+                        <tbody></tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="modal-button-container" class="center-content">
+            <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
+            <button class="approve-btn" id="confirmstockinModalBtn" name="confirmstockinModalBtn">CONFIRM STOCKS</button>
         </div>
     </div>
 </div>
-<hr>
-<div>
-    <table id="cyberpower-tbl">
-        <thead>
-            <th>ITEM MODEL</th>
-            <th>ITEM TYPE</th>
-            <th>ITEM SERAL</th>
-            <th>PO NUMBER</th>
-            <th>PO DATE</th>
-            <th>STATUS</th>
-        </thead>
-        <tbody></tbody>
-    </table>
+
+
+<!-- The Modal -->
+<div id="uploadModal" class="modal card shadow mb-4">
+    <!-- Modal content -->
+    <div class="modal-content modal-print-background">
+        <div class="modal-button-container modal-print-background">
+            <span id="uploadspan" class="close">&times;</span>
+        </div>
+
+        <div class="modal-body modal-print-background">
+            <div>
+                <h2 class='report-header' style="text-align: center"> UPLOAD EXCEL</h2>
+                <br>
+                <br>
+                <div class="entry-area center-content">
+                    <input type="file" id="RestockExcelFileUpload" />
+                    <input class="autorize-btn" type="button" id="stockinexcelupload" value="UPLOAD SERIALS" />
+                </div>
+                <div>
+                    <p><strong>REQUEST COUNT: </strong><span id="requestcount"></span></p>
+                </div>
+                <div>
+                    <p><strong>UPLOAD COUNT: </strong><span id="uploadcount"></span></p>
+                </div>
+                <br>
+                <br>
+                <div>
+                    <table id="incomming-request-table">
+                        <thead>
+                            <th>MODEL</th>
+                            <th>TYPE</th>
+                            <th>SERIAL</th>
+                            <th>PO NUMBER</th>
+                            <th>PO DATE</th>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="modal-button-container" class="center-content">
+            <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
+            <button class="approve-btn" id="stockinModalBtn" name="stockinModalBtn">DONE</button>
+        </div>
+    </div>
 </div>

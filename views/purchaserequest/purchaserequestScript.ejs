@@ -375,7 +375,7 @@
         $(document).on('click', "#cyberaddBtn", function () {
             var podate = $('#cyberpodate').val();
             var ponumber = $('#cyberponumber').val();
-            var brandname = $('#cyberbrandname').val();
+            var modelname = $('#cyberbrandname').val();
             var itemtype = $('#cyberitemtype').val();
             var quantity = $('#cyberquantity').val();
             var cost = $('#cybercost').val();
@@ -388,7 +388,7 @@
 
             if (podate == "") { message += "PO DATE " }
             if (ponumber == "") { message += "PO NUMBER " }
-            if (brandname == "-") { message += "BRAND NAME " }
+            if (modelname == "-") { message += "BRAND NAME " }
             if (itemtype == "-") { message += "ITEM TYPE " }
             if (quantity == "") { message += "QUANTITY " }
             if (cost == "") { message += "COST " }
@@ -401,7 +401,7 @@
 
                     dataArr.push({
                         ponumber: ponumber,
-                        brandname: brandname,
+                        modelname: modelname,
                         itemtype: itemtype,
                         quantity: quantity,
                         cost: cost,
@@ -420,7 +420,7 @@
 
                     PO_DATE.innerHTML = podate;
                     PO_NUMBER.innerHTML = ponumber;
-                    BRAND_NAME.innerHTML = brandname;
+                    BRAND_NAME.innerHTML = modelname;
                     ITEM_TYPE.innerHTML = itemtype;
                     QUANTITY.innerHTML = quantity;
                     COST.innerHTML = costCurrency;
@@ -435,14 +435,14 @@
                     }).includes(`${itemtype}`)) {
                         dataArr.push({
                             ponumber: ponumber,
-                            brandname: brandname,
+                            modelname: modelname,
                             itemtype: itemtype,
                             quantity: quantity,
                             cost: cost,
                             subtotal: subtotal,
                         });
 
-                        restock_table_list = document.getElementById("po-list-tbl");
+                        restock_table_list = document.getElementById("cyber-po-list-tbl");
                         var row = restock_table_list.insertRow(1);
                         var PO_DATE = row.insertCell(0);
                         var PO_NUMBER = row.insertCell(1);
@@ -454,7 +454,7 @@
 
                         PO_DATE.innerHTML = podate;
                         PO_NUMBER.innerHTML = ponumber;
-                        BRAND_NAME.innerHTML = brandname;
+                        BRAND_NAME.innerHTML = modelname;
                         ITEM_TYPE.innerHTML = itemtype;
                         QUANTITY.innerHTML = quantity;
                         COST.innerHTML = costCurrency;
@@ -484,7 +484,7 @@
                 dataArr = JSON.stringify(dataArr, null, 2);
                 $.ajax({
                     type: "POST",
-                    url: "/purchaserequest/restock",
+                    url: "/purchaserequest/cyberpowerrestock",
                     data: {
                         requestid: requestid,
                         podate: podate,
@@ -520,7 +520,7 @@
                 'scrollCollapse': true,
                 'serverMethod': 'GET',
                 'ajax': {
-                    'url': '/purchaserequest/load',
+                    'url': '/purchaserequest/loadcyberpower',
                     'dataSrc': (json) => {
                         var finalData = [];
                         var data = json.data;
@@ -535,18 +535,19 @@
                             $.each(detailsjson, (key, item) => {
 
                                 totalcost += parseFloat(item.subtotal);
-                                details += `(${item.ponumber})${item.brandname}${item.itemtype}@${item.quantity}<br>`;
+                                details += `(${item.ponumber})${item.modelname}${item.itemtype}@${item.quantity}<br>`;
                             })
 
                             totalcost = `₱ ${(totalcost).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
 
                             finalData.push({
                                 podate: item.podate,
+                                officer: item.officer,
                                 details: details,
                                 totalcost: totalcost,
-                                officer: item.officer,
+                                restockid: item.restockid,
                                 entrydate: item.entrydate,
-                                status: item.status,
+                                remarks: item.remarks,
                             })
 
                             details = '';
@@ -561,11 +562,12 @@
                 }],
                 'columns': [
                     { data: 'podate' },
+                    { data: 'officer' },
                     { data: 'details' },
                     { data: 'totalcost' },
-                    { data: 'officer' },
+                    { data: 'restockid' },
                     { data: 'entrydate' },
-                    { data: 'status' },
+                    { data: 'remarks' },
                 ],
                 initComplete: function () {
                     console.log('init complete');

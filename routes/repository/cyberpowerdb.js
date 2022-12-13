@@ -368,4 +368,45 @@ exports.InsertTable = (tablename, data, callback) => {
             callback(null, result)
         })
     }
+
+    if (tablename == 'purchase_order_details') {
+        console.log(`Execute: ${tablename}`)
+        let sql = `INSERT INTO purchase_order_details (
+            pod_podate,
+            pod_officer,
+            pod_details,
+            pod_entrydate,
+            pod_restockid,
+            pod_remarks,
+            pod_status) VALUES ?`;
+
+        this.Insert(sql, data, (err, result) => {
+            if (err) {
+                callback(err, null);
+            }
+            callback(null, result)
+        })
+    }
+
+    if (tablename == 'purchase_order_item') {
+        console.log(`Execute: ${tablename}`)
+        let sql = `INSERT INTO purchase_order_item (
+            poi_podate,
+            poi_ponumber,
+            poi_modelname,
+            poi_itemtype,
+            poi_quantity,
+            poi_cost,
+            poi_subtotal,
+            poi_restockid,
+            poi_remarks,
+            poi_status) VALUES ?`;
+
+        this.Insert(sql, data, (err, result) => {
+            if (err) {
+                callback(err, null);
+            }
+            callback(null, result)
+        })
+    }
 }

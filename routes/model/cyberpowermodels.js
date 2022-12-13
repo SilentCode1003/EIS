@@ -274,8 +274,8 @@ exports.PurchaseOrderDetails = (data) => {
 
         dataResult.push({
             detailid: key.pod_detailid,
-            podate: key.pod_podate,
             officer: key.pod_officer,
+            podate: key.pod_podate,
             details: key.pod_details,
             entrydate: key.pod_entrydate,
             restockid: key.pod_restockid,

@@ -20,9 +20,6 @@
         var modal4 = document.getElementById("paidModal");
         var span4 = document.getElementById("paidspan");
 
-        var modal5 = document.getElementById("printModal");
-        var span5 = document.getElementById("modalspan");
-
 
         span.onclick = function () {
             modal.style.display = "none";
@@ -42,9 +39,7 @@
             modal4.style.display = "none";
         }
 
-        span5.onclick = function () {
-            modal5.style.display = "none";
-        }
+
 
         window.onclick = function (event) {
             if (event.target == modal) {
@@ -64,10 +59,6 @@
 
             if (event.target == modal4) {
                 modal4.style.display = "none";
-            }
-
-            if (event.target == modal5) {
-                modal5.style.display = "none";
             }
         }
 

@@ -1,245 +1,722 @@
 <script>
     $(document).ready(function () {
+
         $("#dtbox").DateTimePicker({
             dateFormat: "yyyy-MM-dd"
         });
-    })
 
-
-    LoadTable();
-
-    $.ajax({
-        type: "POST",
-        url: "/items/brandnamedepartment",
-        data: { department: 'CYBERPOWER' },
-        success: function (result) {
-            console.log(result.data);
-            var data = result.data;
-
-            $.each(data, function (key, item) {
-                var options = new Option(item.brandname, item.brandname);
-                $(options).html(item.brandname);
-                $('#modelname').append(options);
-                console.log(item.brandname);
-            });
-        },
-        error: function (result) {
-            alert('error: ' + result.data);
-        }
-    });
-
-    $(document).on('click', "#saveBtn", function () {
-        let modelname = $('#modelname').val();
-        let itemtype = $('#itemtype').val();
-        let serial = $('#serial').val();
-        let ponumber = $('#ponumber').val();
-        let podate = $('#podate').val();
-        let dataArr = [];
-
-        dataArr.push({
-            modelname: modelname,
-            itemtype: itemtype,
-            serial: serial,
-            ponumber: ponumber,
-            podate: podate,
-        })
-
-        dataArr = JSON.stringify(dataArr, null, 2);
-
-        $.ajax({
-            type: "POST",
-            url: "/cyberstocks/save",
-            data: {
-                data: dataArr
-            },
-            success: function (result) {
-                success('Saved!', 'Data saved!')
-                LoadTable();
-                dataArr = [];
-            },
-            error: function (result) {
-                error(result.data);
+        $(document).on('click', "#equipmenttab", function () {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
             }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById('equipments').style.display = "block";
+            // evt.currentTarget.className += " active";
+
+            EqipmentTable();
         });
 
-    })
+        $(document).on('click', "#stockintab", function () {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById('stockin').style.display = "block";
+            // evt.currentTarget.className += " active";
 
-    $(document).on('change', "#modelname", function () {
-        var brandname = $('#modelname').val();
-        $("#itemtype").empty();
+            StockinTable();
+        });
 
+        //#region EQUIPMENT
         $.ajax({
             type: "POST",
-            url: "/items/itemtype",
-            data: { brandname: brandname },
+            url: "/items/brandnamedepartment",
+            data: { department: 'CYBERPOWER' },
             success: function (result) {
-                var data = result.data;
                 console.log(result.data);
+                var data = result.data;
 
                 $.each(data, function (key, item) {
-                    var options = new Option(item.itemname, item.itemname);
-                    $(options).html(item.itemname);
-                    $('#itemtype').append(options);
-                    console.log(item.itemname);
+                    var options = new Option(item.brandname, item.brandname);
+                    $(options).html(item.brandname);
+                    $('#modelname').append(options);
+                    console.log(item.brandname);
                 });
             },
             error: function (result) {
                 alert('error: ' + result.data);
             }
         });
-    });
 
-    $(document).on('click', "#upload", async function () {
-        // var data = getExcel_data('C:\Users\5L Solutions\Documents\DATA\test.xlsx', 'sheet 1');
-        // console.log(data);
-        await UploadProcess();
-    })
+        $(document).on('click', "#saveBtn", function () {
+            let modelname = $('#modelname').val();
+            let itemtype = $('#itemtype').val();
+            let serial = $('#serial').val();
+            let ponumber = $('#ponumber').val();
+            let podate = $('#podate').val();
+            let dataArr = [];
 
-    async function UploadProcess() {
-        //Reference the FileUpload element.
-        var fileUpload = document.getElementById("fileUpload");
+            dataArr.push({
+                modelname: modelname,
+                itemtype: itemtype,
+                serial: serial,
+                ponumber: ponumber,
+                podate: podate,
+            })
 
-        //Validate whether File is valid Excel file.
-        var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xls|.xlsx|.csv|.ods)$/;
-        if (regex.test(fileUpload.value.toLowerCase())) {
-            if (typeof (FileReader) != "undefined") {
-                var reader = new FileReader();
+            dataArr = JSON.stringify(dataArr, null, 2);
 
-                //For Browsers other than IE.
-                if (reader.readAsBinaryString) {
-                    reader.onload = function (e) {
-                        GetTableFromExcel(e.target.result);
-                    };
-                    reader.readAsBinaryString(fileUpload.files[0]);
-                } else {
-                    //For IE Browser.
-                    reader.onload = function (e) {
-                        var data = "";
-                        var bytes = new Uint8Array(e.target.result);
-                        for (var i = 0; i < bytes.byteLength; i++) {
-                            data += String.fromCharCode(bytes[i]);
-                        }
-                        GetTableFromExcel(data);
-                    };
-                    reader.readAsArrayBuffer(fileUpload.files[0]);
+            $.ajax({
+                type: "POST",
+                url: "/cyberstocks/save",
+                data: {
+                    data: dataArr
+                },
+                success: function (result) {
+                    success('Saved!', 'Data saved!')
+                    EqipmentTable();
+                    dataArr = [];
+                },
+                error: function (result) {
+                    error(result.data);
                 }
-            } else {
-                alert("This browser does not support HTML5.");
-            }
-        } else {
-            alert("Please upload a valid Excel file.");
-        }
-    };
-
-    async function GetTableFromExcel(data) {
-        //Read the Excel File data in binary
-        var workbook = XLSX.read(data, {
-            type: 'binary'
-        });
-
-        //get the name of First Sheet.
-        var Sheet = workbook.SheetNames[0];
-
-        //Read all rows from First Sheet into an JSON array.
-        var excelRows = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[Sheet]);
-        var columns = Object.keys(excelRows[0]);
-
-
-        //Create a HTML Table element.
-        var myTable = document.createElement("table");
-        myTable.border = "1";
-
-        //Add the header row.
-        var row = myTable.insertRow(-1);
-
-        //Add the header cells.
-        var headerCell = document.createElement("TH");
-        for (var j = 0; j < columns.length; j++) {
-            headerCell = document.createElement("TH");
-            headerCell.innerHTML = columns[j];
-            row.appendChild(headerCell);
-        }
-
-        var dataExcelArr = [];
-        //Add the data rows from Excel file.
-        for (var i = 0; i < excelRows.length; i++) {
-            //Add the data row.
-            var data = [];
-            var row = myTable.insertRow(-1);
-            for (var j = 0; j < columns.length; j++) {
-                var cell = row.insertCell(-1);
-                cell.innerHTML = excelRows[i][columns[j]];
-                await data.push({
-                    item: excelRows[i][columns[j]]
-                });
-            }
-            dataExcelArr.push({
-                modelname: data[0].item,
-                itemtype: data[1].item,
-                serial: data[2].item,
-                ponumber: data[3].item,
-                podate: data[4].item,
             });
 
+        })
+
+        $(document).on('change', "#modelname", function () {
+            var brandname = $('#modelname').val();
+            $("#itemtype").empty();
+
+            $.ajax({
+                type: "POST",
+                url: "/items/itemtype",
+                data: { brandname: brandname },
+                success: function (result) {
+                    var data = result.data;
+                    console.log(result.data);
+
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.itemname, item.itemname);
+                        $(options).html(item.itemname);
+                        $('#itemtype').append(options);
+                        console.log(item.itemname);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+        });
+
+        $(document).on('click', "#upload", async function () {
+            // var data = getExcel_data('C:\Users\5L Solutions\Documents\DATA\test.xlsx', 'sheet 1');
+            // console.log(data);
+            await UploadProcess();
+        })
+
+        async function UploadProcess() {
+            //Reference the FileUpload element.
+            var fileUpload = document.getElementById("fileUpload");
+
+            //Validate whether File is valid Excel file.
+            var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xls|.xlsx|.csv|.ods)$/;
+            if (regex.test(fileUpload.value.toLowerCase())) {
+                if (typeof (FileReader) != "undefined") {
+                    var reader = new FileReader();
+
+                    //For Browsers other than IE.
+                    if (reader.readAsBinaryString) {
+                        reader.onload = function (e) {
+                            GetTableFromExcel(e.target.result);
+                        };
+                        reader.readAsBinaryString(fileUpload.files[0]);
+                    } else {
+                        //For IE Browser.
+                        reader.onload = function (e) {
+                            var data = "";
+                            var bytes = new Uint8Array(e.target.result);
+                            for (var i = 0; i < bytes.byteLength; i++) {
+                                data += String.fromCharCode(bytes[i]);
+                            }
+                            GetTableFromExcel(data);
+                        };
+                        reader.readAsArrayBuffer(fileUpload.files[0]);
+                    }
+                } else {
+                    alert("This browser does not support HTML5.");
+                }
+            } else {
+                alert("Please upload a valid Excel file.");
+            }
+        };
+
+        async function GetTableFromExcel(data) {
+            //Read the Excel File data in binary
+            var workbook = XLSX.read(data, {
+                type: 'binary'
+            });
+
+            //get the name of First Sheet.
+            var Sheet = workbook.SheetNames[0];
+
+            //Read all rows from First Sheet into an JSON array.
+            var excelRows = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[Sheet]);
+            var columns = Object.keys(excelRows[0]);
+
+
+            //Create a HTML Table element.
+            var myTable = document.createElement("table");
+            myTable.border = "1";
+
+            //Add the header row.
+            var row = myTable.insertRow(-1);
+
+            //Add the header cells.
+            var headerCell = document.createElement("TH");
+            for (var j = 0; j < columns.length; j++) {
+                headerCell = document.createElement("TH");
+                headerCell.innerHTML = columns[j];
+                row.appendChild(headerCell);
+            }
+
+            var dataExcelArr = [];
+            //Add the data rows from Excel file.
+            for (var i = 0; i < excelRows.length; i++) {
+                //Add the data row.
+                var data = [];
+                var row = myTable.insertRow(-1);
+                for (var j = 0; j < columns.length; j++) {
+                    var cell = row.insertCell(-1);
+                    cell.innerHTML = excelRows[i][columns[j]];
+                    await data.push({
+                        item: excelRows[i][columns[j]]
+                    });
+                }
+                dataExcelArr.push({
+                    modelname: data[0].item,
+                    itemtype: data[1].item,
+                    serial: data[2].item,
+                    ponumber: data[3].item,
+                    podate: data[4].item,
+                });
+
+            }
+            // console.log(dataExcelArr)
+
+            await excelDataSave(dataExcelArr);
+
+            // var ExcelTable = document.getElementById("ExcelTable");
+            // ExcelTable.innerHTML = "";
+            // ExcelTable.appendChild(myTable);
+        };
+
+        async function excelDataSave(data) {
+            var dataraw = JSON.stringify(data, null, 2);
+
+            showloader();
+
+            await $.ajax({
+                type: "POST",
+                url: "/cyberstocks/exceldatasave",
+                data: {
+                    data: dataraw
+                },
+                success: function (result) {
+                    success('Saved!', 'Data saved!')
+                    EqipmentTable();
+
+                },
+                error: function (result) {
+                    error(result.data);
+                }
+            });
+
+            dataArr = [];
+            serialArr = [];
+            hideload();
         }
-        // console.log(dataExcelArr)
 
-        await excelDataSave(dataExcelArr);
+        function EqipmentTable() {
+            dataTable = $('#cyberpower-tbl').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'GET',
+                'ajax': {
+                    'url': '/cyberstocks/load',
+                },
+                'columns': [
+                    { data: 'itemmodel' },
+                    { data: 'itemtype' },
+                    { data: 'itemserial' },
+                    { data: 'ponumber' },
+                    { data: 'podate' },
+                    { data: 'status' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+        }
+        //#endregion
 
-        // var ExcelTable = document.getElementById("ExcelTable");
-        // ExcelTable.innerHTML = "";
-        // ExcelTable.appendChild(myTable);
-    };
+        //#region STOCKIN
+        let requestid = '';
+        let serial_count = 0;
+        let requestcount = 0;
+        let uploadcount = 0;
+        let modelname = '';
+        let itemtype = '';
+        let totalcount = 0;
+        let _modelaname = '';
+        let _itemtype = '';
+        let serialArr = [];
+        let podetailsArr = [];
+        let _podetailsArr = [];
 
-    async function excelDataSave(data) {
-        var dataraw = JSON.stringify(data, null, 2);
+        var stocksmodal = document.getElementById("stockinModal");
+        var stocksmodalspan = document.getElementById("stockinspan");
 
-        showloader();
+        var modal2 = document.getElementById("uploadModal");
+        var span2 = document.getElementById("uploadspan");
 
-        await $.ajax({
-            type: "POST",
-            url: "/cyberstocks/exceldatasave",
-            data: {
-                data: dataraw
-            },
-            success: function (result) {
-                success('Saved!', 'Data saved!')
-                LoadTable();
-                dataArr = [];
-            },
-            error: function (result) {
-                error(result.data);
+        stocksmodalspan.onclick = function () {
+            totalcount = 0;
+            stocksmodal.style.display = "none";
+        }
+
+        span2.onclick = function () {
+            modal2.style.display = "none";
+        }
+
+        window.onclick = function () {
+            if (event.target == stocksmodal) {
+                totalcount = 0;
+                stocksmodal.style.display = "none";
             }
-        });
-        hideload();
-    }
 
-    function LoadTable() {
-        dataTable = $('#cyberpower-tbl').DataTable({
-            'destroy': true,
-            'processing': true,
-            'serverSide': true,
-            'paging': false,
-            'searching': false,
-            'info': false,
-            'scrollY': 400,
-            'scrollCollapse': true,
-            'serverMethod': 'GET',
-            'ajax': {
-                'url': '/cyberstocks/load',
-            },
-            'columns': [
-                { data: 'itemmodel' },
-                { data: 'itemtype' },
-                { data: 'itemserial' },
-                { data: 'ponumber' },
-                { data: 'podate' },
-                { data: 'status' },
-            ],
-            initComplete: function () {
-                console.log('init complete');
+            if (event.target == modal2) {
+                modal2.style.display = "none";
+            }
+        }
+
+        $('#stockin-tbl tbody').on('click', 'tr', function (e) {
+            var data = [];
+            $(this).closest('tr').find('td').each(function () {
+                data.push([$(this).text()]);
+
+            });
+
+            console.log(data);
+
+            requestid = data[0];
+
+            data = [];
+        })
+
+        $('#po-item-list tbody').on('click', 'tr', function (e) {
+            var data = [];
+            $(this).closest('tr').find('td').each(function () {
+                data.push([$(this).text()]);
+
+            });
+
+            console.log(data);
+            modelname = data[2];
+            itemtype = data[3];
+            requestcount = data[4];
+
+            data = [];
+        })
+
+        $(document).on('click', "#confirmBtn", function () {
+            poItemTable = $('#po-item-list').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'POST',
+                'ajax': {
+                    'url': '/cyberstocks/poitems',
+                    'data': { requestid: requestid },
+                    'dataSrc': (json) => {
+                        var finalData = [];
+                        var data = json.data;
+                        var action = '';
+
+
+                        console.log(data);
+                        $.each(data, (key, item) => {
+                            var podate = item.podate;
+
+                            if (item.status == 'RES') {
+                                action = '<button class="autorize-btn" id="cyberuploadBtn" name="cyberuploadBtn">UPLOAD SERIALS</button>';
+                            }
+
+                            var dataJson = JSON.parse(item.details);
+                            console.log(dataJson);
+                            $.each(dataJson, (key, item) => {
+                                console.log(`PO NUMBER: ${item.ponumber} MODELNAME: ${item.modelname} ITEM TYPE: ${item.itemtype} ITEM COUNT: ${item.quantity}`);
+                                // details += `PO NUMBER: ${item.ponumber} MODELNAME: ${item.modelname} ITEM TYPE: ${item.itemtype} ITEM COUNT: ${item.quantity}<br/>`;
+
+                                totalcount += parseFloat(item.quantity);
+                                finalData.push({
+                                    podate: podate,
+                                    ponumber: item.ponumber,
+                                    modelname: item.modelname,
+                                    itemtype: item.itemtype,
+                                    quantity: item.quantity,
+                                    action: action,
+                                })
+
+                                podetailsArr.push({
+                                    modelname: item.modelname,
+                                    itemtype: item.itemtype,
+                                    quantity: item.quantity,
+                                })
+                            })
+
+                        })
+
+                        return finalData;
+                    },
+                },
+                'columnDefs': [{
+                    targets: 1,
+                    className: 'td-indent',
+                }],
+                'columns': [
+                    { data: 'podate' },
+                    { data: 'ponumber' },
+                    { data: 'modelname' },
+                    { data: 'itemtype' },
+                    { data: 'quantity' },
+                    { data: 'action' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+
+            stocksmodal.style.display = "block";
+        })
+
+        $(document).on('click', "#cyberuploadBtn", async function () {
+            ClearTable('incomming-request-table');
+            var data = _podetailsArr;
+            console.log(data);
+            if (data.length == 0) { return modal2.style.display = "block"; }
+            else {
+                if (!data.map(item => {
+                    if (item.itemtype == itemtype) {
+                        return `${item.itemtype}`;
+                    }
+                }).includes(`${itemtype}`)) {
+                    uploadcount = 0;
+                    return modal2.style.display = "block";
+                } else {
+                    warning(`Already uploaded serials for ${modelname}-${itemtype} ${requestcount}...`)
+                }
+            }
+        })
+
+        $(document).on('click', "#stockinexcelupload", async function () {
+            console.log(uploadcount);
+            if (uploadcount != 0) { return warning('Warning', `Already uploaded serials for ${modelname} - ${itemtype}`); }
+            showloader();
+            await RestockUploadProcess()
+        })
+
+        $(document).on('click', "#stockinModalBtn", function () {
+            modal2.style.display = "none";
+        })
+
+        $(document).on('click', "#confirmstockinModalBtn", function () {
+
+            console.log(`${totalcount} ${serialArr.length}`);
+            if (totalcount != serialArr.length) { return warning('Warning', '') }
+
+            RestockExcelDataSave(serialArr);
+        })
+
+        function StockinTable() {
+            showloader();
+            dataTableStocks = $('#stockin-tbl').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'GET',
+                'ajax': {
+                    'url': '/cyberstocks/newstocks',
+                    'dataSrc': (json) => {
+                        var finalData = [];
+                        var data = json.data;
+                        var details = '';
+                        var action = '';
+
+
+                        console.log(data);
+                        $.each(data, (key, item) => {
+
+                            var dataJson = JSON.parse(item.details);
+                            console.log(dataJson);
+                            $.each(dataJson, (key, item) => {
+                                console.log(`PO NUMBER: ${item.ponumber} MODELNAME: ${item.modelname} ITEM TYPE: ${item.itemtype} ITEM COUNT: ${item.quantity}`);
+                                details += `PO NUMBER: ${item.ponumber} MODELNAME: ${item.modelname} ITEM TYPE: ${item.itemtype} ITEM COUNT: ${item.quantity}<br/>`;
+                            })
+
+                            if (item.status == 'PND') {
+                                action = 'NO ACTIONS';
+                            }
+                            if (item.status == 'RES') {
+                                action = '<button class="edit-btn" id="confirmBtn" name="confirmBtn">CONFIRM</button>';
+                            }
+                            if (item.status == 'APD') {
+                                action = '<button class="edit-btn" id="PrinttBtn-cabling" name="PrinttBtn-cabling">PRINT</button>';
+                            }
+
+
+                            finalData.push({
+                                detailid: item.detailid,
+                                podate: item.podate,
+                                details: details,
+                                restockid: item.restockid,
+                                remarks: item.remarks,
+                                action: action,
+                            })
+
+                            details = '';
+                        })
+
+                        return finalData;
+                    },
+                },
+                'columnDefs': [{
+                    targets: 1,
+                    className: 'td-indent',
+                }],
+                'columns': [
+                    { data: 'detailid' },
+                    { data: 'podate' },
+                    { data: 'details' },
+                    { data: 'restockid' },
+                    { data: 'remarks' },
+                    { data: 'action' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+        }
+
+        async function RestockUploadProcess() {
+            //Reference the FileUpload element.
+            var fileUpload = document.getElementById("RestockExcelFileUpload");
+
+            //Validate whether File is valid Excel file.
+            var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xls|.xlsx|.csv|.ods)$/;
+            if (regex.test(fileUpload.value.toLowerCase())) {
+                if (typeof (FileReader) != "undefined") {
+                    var reader = new FileReader();
+
+                    //For Browsers other than IE.
+                    if (reader.readAsBinaryString) {
+                        reader.onload = function (e) {
+                            RestockGetTableFromExcel(e.target.result);
+                        };
+                        reader.readAsBinaryString(fileUpload.files[0]);
+                    } else {
+                        //For IE Browser.
+                        reader.onload = function (e) {
+                            var data = "";
+                            var bytes = new Uint8Array(e.target.result);
+                            for (var i = 0; i < bytes.byteLength; i++) {
+                                data += String.fromCharCode(bytes[i]);
+                            }
+                            RestockGetTableFromExcel(data);
+                        };
+                        reader.readAsArrayBuffer(fileUpload.files[0]);
+                    }
+                } else {
+                    error("This browser does not support HTML5.");
+                }
+            } else {
+                error("Please upload a valid Excel file.");
+            }
+        };
+
+        async function RestockGetTableFromExcel(data) {
+            //Read the Excel File data in binary
+            var workbook = XLSX.read(data, {
+                type: 'binary'
+            });
+
+            //get the name of First Sheet.
+            var Sheet = workbook.SheetNames[0];
+
+            //Read all rows from First Sheet into an JSON array.
+            var excelRows = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[Sheet]);
+            var columns = Object.keys(excelRows[0]);
+
+
+            //Create a HTML Table element.
+            var myTable = document.createElement("table");
+            myTable.border = "1";
+
+            //Add the header row.
+            var row = myTable.insertRow(-1);
+
+            //Add the header cells.
+            var headerCell = document.createElement("TH");
+            for (var j = 0; j < columns.length; j++) {
+                headerCell = document.createElement("TH");
+                headerCell.innerHTML = columns[j];
+                row.appendChild(headerCell);
+            }
+
+
+            var data = _podetailsArr;
+            console.log(data);
+            $.each(data, (key, item) => {
+                console.log(`${_podetailsArr} - ${modelname} ${itemtype} ${requestcount}`);
+                if (item.modelname == modelname) {
+                    if (item.quantity != '0') { return warning('Warning', `Already uploaded serials for ${modelname} - ${itemtype}`) };
+                }
+            })
+
+            // var dataExcelArr = [];
+            //Add the data rows from Excel file.
+            uploadcount = 0;
+            for (var i = 0; i < excelRows.length; i++) {
+                //Add the data row.
+                var data = [];
+                var row = myTable.insertRow(-1);
+                for (var j = 0; j < columns.length; j++) {
+                    var cell = row.insertCell(-1);
+                    cell.innerHTML = excelRows[i][columns[j]];
+                    await data.push({
+                        item: excelRows[i][columns[j]]
+                    });
+                }
+                _modelaname = data[0].item;
+                _itemtype = data[1].item;
+
+                serialArr.push({
+                    modelname: data[0].item,
+                    itemtype: data[1].item,
+                    serial: data[2].item,
+                    ponumber: data[3].item,
+                    podate: data[4].item,
+                });
+
+                if (modelname != _modelaname && itemtype != _itemtype) {
+                    serialArr = [];
+                    return warning('Mismatch', `Please double check upload file, some model mixed on the file, Request Model: ${modelname} - ${itemtype} Upload Model: ${_modelaname} - ${_itemtype}`);
+                    break;
+                }
+                uploadcount += 1;
+            }
+
+            document.getElementById('requestcount').innerText = requestcount;
+            document.getElementById('uploadcount').innerText = uploadcount;
+
+            if (requestcount != uploadcount) {
+                warning('Mismatch', `Request Count: ${requestcount} Upload Count: ${uploadcount}`);
+                serialArr = [];
+            }
+            else {
+
+
+                // var requestitemTabel = $('#incomming-request-table').DataTable({
+                //     'destroy': true,
+                //     'paging': false,
+                //     'searching': false,
+                //     'info': false,
+                //     'scrollY': 400,
+                //     'scrollCollapse': true,
+                //     'columnDefs': [{
+                //         targets: 1,
+                //         className: 'td-indent',
+                //     }]
+                // });
+
+
+                // $.each(serialArr, (key, item) => {
+                //     requestitemTabel.row.add([
+                //         item.modelname,
+                //         item.itemtype,
+                //         item.serial,
+                //         item.ponumber,
+                //         item.podate,
+                //     ]).draw(false);
+                // });
+
+                _podetailsArr.push({
+                    modelname: _modelaname,
+                    itemtype: _itemtype,
+                    quantity: uploadcount,
+                })
                 hideload();
+                success('Success','Upload Success!');
+                modal2.style.display = "none";
             }
-        });
-    }
+        };
+
+        async function RestockExcelDataSave(data) {
+            var dataraw = JSON.stringify(data, null, 2);
+
+            showloader();
+
+            await $.ajax({
+                type: "POST",
+                url: "/cyberstocks/restockexceldatasave",
+                data: {
+                    requestid: requestid,
+                    data: dataraw
+                },
+                success: function (result) {
+                    success('Saved!', 'Data saved!')
+                    StockinTable();
+
+                },
+                error: function (result) {
+                    error(result.data);
+                }
+            });
+
+            dataArr = [];
+            serialArr = [];
+            hideload();
+            stocksmodal.style.display = "none";
+        }
+        //#endregion
+    })
 </script>

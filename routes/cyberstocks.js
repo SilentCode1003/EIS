@@ -139,6 +139,109 @@ router.post('/getserials', (req, res) => {
   }
 })
 
+router.get('/newstocks', (req, res) => {
+  try {
+    let sql = `select * from purchase_order_details`;
+    mysql.Select(sql, 'PurchaseOrderDetails', (err, result) => {
+      if (err) console.error(err);
+
+      res.json({
+        msg: 'success',
+        data: result
+      })
+    })
+
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+})
+
+router.post('/poitems', (req, res) => {
+  try {
+    let requestid = req.body.requestid;
+    let sql = `select * from purchase_order_details where pod_detailid='${requestid}'`;
+    mysql.Select(sql, 'PurchaseOrderDetails', (err, result) => {
+      if (err) console.error(err);
+
+      res.json({
+        msg: 'success',
+        data: result
+      })
+    })
+
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+})
+
+router.post('/restockexceldatasave', (req, res) => {
+  try {
+    let data = req.body.data;
+    let requestid = req.body.requestid;
+    let cyberpower_equipments = [];
+    let remarks = dictionary.GetValue(dictionary.APD());
+    let status = dictionary.APD();
+
+    data = JSON.parse(data);
+
+    data.forEach((key, item) => {
+      cyberpower_equipments.push([
+        key.modelname,
+        key.itemtype,
+        key.serial,
+        key.ponumber,
+        key.podate,
+        req.session.fullname,
+        helper.GetCurrentDatetime(),
+        `${dictionary.GetValue(dictionary.WH())}`,
+        `${dictionary.WH()}`,
+      ])
+    });
+
+    // console.log(cyberpower_equipments);
+    Insert_CyberpowerEquipment(cyberpower_equipments, (err, result) => {
+      if (err) console.log(err);
+      console.log(result);
+    })
+
+    let purchase_order_details = `update purchase_order_details
+    set pod_remarks='${remarks}',
+    pod_status='${requestid}'
+    where pod_restockid='${requestid}'`;
+
+    mysql.Update(purchase_order_details, (err, result) => { 
+      if(err) console.error(err);
+
+      console.log(result);
+    })
+
+    let purchase_order_item = `update purchase_order_item
+    set poi_remarks='${remarks}',
+    poi_status='${requestid}'
+    where poi_restockid='${requestid}'`;
+
+    mysql.Update(purchase_order_item, (err, result) => { 
+      if(err) console.error(err);
+
+      console.log(result);
+    })
+
+
+    res.json({
+      msg: 'success'
+    })
+
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+})
+
 
 //Functions
 function Insert_CyberpowerEquipment(data, callback) {

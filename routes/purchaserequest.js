@@ -4,6 +4,8 @@ var router = express.Router();
 const { isAuthAdmin } = require('./controller/authBasic');
 const helper = require('./repository/customhelper');
 const mysql = require('./repository/dbconnect');
+const mysqlcyber = require('./repository/cyberpowerdb');
+const dictionary = require('./repository/dictionary');
 
 /* GET home page. */
 router.get('/', isAuthAdmin, function (req, res, next) {
@@ -20,6 +22,7 @@ router.get('/', isAuthAdmin, function (req, res, next) {
 
 module.exports = router;
 
+//#region CABLING
 router.post('/restock', (req, res) => {
   try {
     let data = req.body.data;
@@ -144,7 +147,7 @@ router.post('/restock', (req, res) => {
 
 router.get('/load', (req, res) => {
   try {
-    let sql = 'SELECT * FROM purchase_order_details';
+    let sql = `SELECT * FROM purchase_order_details where not pod_status='APPROVED'`;
     mysql.Select(sql, 'PurchaseOrderDetails', (err, result) => {
       if (err) throw err;
 
@@ -180,3 +183,89 @@ router.post('/poitems', (req, res) => {
     })
   }
 })
+//#endregion
+
+//#region CYBERPOWER
+router.get('/loadcyberpower', (req, res) => {
+  try {
+    let sql = `select * from purchase_order_details where not pod_status='APD'`;
+    mysqlcyber.Select(sql, 'PurchaseOrderDetails', (err, result) => {
+      if (err) console.error(err);
+
+      res.json({
+        msg: 'success',
+        data: result
+      })
+    })
+
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+})
+
+router.post('/cyberpowerrestock', async (req, res) => {
+  try {
+    let requestid = req.body.requestid;
+    let podate = req.body.podate;
+    let data = req.body.data;
+    let officer = req.session.fullname;
+    let entrydate = helper.GetCurrentDatetime();
+    let remarks = dictionary.GetValue(dictionary.RES());
+    let status = dictionary.RES();
+    let purchase_order_details = [];
+    let purchase_order_item = [];
+
+    purchase_order_details.push([
+      podate,
+      officer,
+      data,
+      entrydate,
+      requestid,
+      remarks,
+      status,
+    ]);
+
+    console.log(purchase_order_details);
+    mysqlcyber.InsertTable('purchase_order_details', purchase_order_details, (err, result) => {
+      if (err) console.error(err);
+
+      console.log(result);
+    })
+
+    data = JSON.parse(data);
+    data.forEach((key, item) => {
+      purchase_order_item.push([
+        podate,
+        key.ponumber,
+        key.modelname,
+        key.itemtype,
+        key.quantity,
+        key.cost,
+        key.subtotal,
+        requestid,
+        remarks,
+        status,
+      ])
+    })
+
+    console.log(purchase_order_item);
+    mysqlcyber.InsertTable('purchase_order_item', purchase_order_item, (err, result) => {
+      if (err) console.error(err);
+
+      console.log(result);
+    })
+
+    res.json({
+      msg: 'success'
+    })
+
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+})
+
+//#endregion
