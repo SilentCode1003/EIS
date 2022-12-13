@@ -266,3 +266,45 @@ exports.TransactionCyberpowerPurchaseItem = (data) => {
 
     return dataResult;
 }
+
+exports.PurchaseOrderDetails = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            detailid: key.pod_detailid,
+            podate: key.pod_podate,
+            officer: key.pod_officer,
+            details: key.pod_details,
+            entrydate: key.pod_entrydate,
+            restockid: key.pod_restockid,
+            remarks: key.pod_remarks,
+            status: key.pod_status,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.PurchaseOrderItem = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            orderid: key.poi_orderid,
+            podate: key.poi_podate,
+            ponumber: key.poi_ponumber,
+            modelname: key.poi_modelname,
+            itemtype: key.poi_itemtype,
+            cost: key.poi_cost,
+            subtotal: key.poi_subtotal,
+            restockid: key.poi_restockid,
+            remarks: key.poi_remarks,
+            status: key.poi_status,
+        })
+    });
+
+    return dataResult;
+}
