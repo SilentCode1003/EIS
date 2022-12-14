@@ -219,6 +219,7 @@ router.post('/getdetails', (req, res) => {
 
 router.post('/assignserial', (req, res) => {
   try {
+
     let requestid = req.body.requestid;
     let modelname = req.body.modelname;
     let itemtype = req.body.itemtype;
@@ -250,17 +251,17 @@ router.post('/assignserial', (req, res) => {
 
         if (checker == '') {
           let sql2 = `UPDATE cyberpower_outgoing_details 
-            SET cod_remarks='${dictionary.GetValue('ALLOC')}',
-            cod_status='ALLOC'
-            WHERE cod_requestid='${requestid}'`;
+              SET cod_remarks='${dictionary.GetValue('ALLOC')}',
+              cod_status='ALLOC'
+              WHERE cod_requestid='${requestid}'`;
 
           mysql.Update(sql2, (err, result) => {
             if (err) throw err;
           })
         }
       })
-    })
 
+    })
 
 
     res.json({
@@ -364,11 +365,17 @@ router.post('/transaction', (req, res) => {
             console.log(result);
           })
 
-          Update_CyberpowerEquipment(requestid, (err, result) => {
+          Update_CyberpowerEquipment(requestid, async (err, result) => {
             if (err) console.log(err);
             console.log(result);
           })
+
         })
+
+        res.json({
+          msg: 'success'
+        })
+
       } else {
         let sql_transaction_cyberpower = `UPDATE transaction_cyberpower 
         SET tc_ponumber='${ponumber}',
@@ -382,11 +389,11 @@ router.post('/transaction', (req, res) => {
 
           console.log(result)
         })
-      }
-    })
 
-    res.json({
-      msg: 'success'
+        res.json({
+          msg: 'success'
+        })
+      }
     })
 
   } catch (error) {
@@ -454,13 +461,13 @@ router.post('/restockequipment', (req, res) => {
 
       })
 
-      console.log(transaction_icomming_equipment);
+      // console.log(transaction_icomming_equipment);
       Insert_TransactionIcommingEquipment(transaction_icomming_equipment, (err, result => {
         if (err) console.log(err);
         console.log(result);
       }))
 
-      console.log(cyberpower_purchase_details);
+      // console.log(cyberpower_purchase_details);
       Insert_CyberpowerPurchaseDetails(cyberpower_purchase_details, (err, result => {
         if (err) console.log(err);
         console.log(result);
@@ -532,27 +539,32 @@ function Update_CyberpowerEquipment(requestid, callback) {
   mysql.Select(sql_select_transaction_cyberpower_outgoing_equipment, 'TransactionCyberpowerOutgoingEquipments', (err, result) => {
     if (err) callback(err, null);
     var data = result;
+    var serialArr = [];
+
 
     data.forEach((key, item) => {
       var unitserial = key.unitserial;
 
       unitserial = JSON.parse(unitserial);
-      console.log(unitserial);
-      unitserial.forEach((key, item) => {
-        let sql_update_cyberpower_equipments = `UPDATE cyberpower_equipments
-        SET ce_remarks='${dictionary.GetValue(dictionary.SLD())}',
-        ce_status='${dictionary.SLD()}'
-        WHERE ce_itemserial='${key.serial}'`;
+      // console.log(unitserial);
+      unitserial.forEach((value, index, array) => {
+        serialArr.push([
+          `'${value.serial}'`,
+        ])
+      });
 
-        mysql.Update(sql_update_cyberpower_equipments, (err, result) => {
-          if (err) console.log(err);
-          console.log(result)
-        })
-      })
+    });
 
+    // console.log(serialArr);
+    let sql_update_cyberpower_equipments = `UPDATE cyberpower_equipments
+    SET ce_remarks='${dictionary.GetValue(dictionary.SLD())}',
+    ce_status='${dictionary.SLD()}'
+    WHERE ce_itemserial in (${serialArr})`;
+
+    mysql.Update(sql_update_cyberpower_equipments, (err, result) => {
+      if (err) console.log(err);
+      callback(null, result);
     })
 
-    callback(null, result);
-  })
-
+  });
 }

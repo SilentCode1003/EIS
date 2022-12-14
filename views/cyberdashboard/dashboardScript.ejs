@@ -5,6 +5,7 @@
         let _itemtype = '';
         let _itemcount = '';
         let _clientname = '';
+        let serialArr = [];
 
 
         LoadTable();
@@ -176,7 +177,7 @@
             modal5.style.display = "block";
         })
 
-        $(document).on('click', "#savetransactionBtn", function () {
+        $(document).on('click', "#savetransactionBtn", async function () {
             let ponumber = $('#ponumber').val();
             let drnumber = $('#drnumber').val();
             let sinumber = $('#sinumber').val();
@@ -197,8 +198,8 @@
                         crnumber: crnumber,
                     },
                     success(result) {
+                        LoadTable()
                         success('Saved', 'Data saved!')
-                        LoadTable();
                     },
                     error(result) {
                         error(result);
@@ -273,63 +274,32 @@
         })
 
         $(document).on('click', "#saveoutgoinbatchgBtn", function () {
-            console.log('clicked!');
-            var data = $('#outgoingbatchtable tr');
-            var dataRaw = [];
-            console.log(data);
-            console.log(data.length);
-            var message = '';
-            // var est_budget = 0;
-            var purchaseDetails = [];
+            // console.log(dataRaw);
+            dataRaw = JSON.stringify(serialArr, null, 2);
 
-            var index = 1;
-            for (x = 1; x < data.length; x++) {
-                console.log(data[x].innerText);
-                var innerData = data[x].innerText;
-                innerData = innerData.split("\t");
-
-                if (innerData[2] == "") {
-                    message += `${innerData[1]} row: ${x}, `;
-                } else {
-                    dataRaw.push({
-                        serial: innerData[2],
-                    });
-
-                    // est_budget += (parseFloat(innerData[3]) * parseFloat(innerData[2]));
-                    index += 1;
+            $.ajax({
+                type: "POST",
+                url: "/cyberrequest/assignserial",
+                data: {
+                    requestid: _requestid,
+                    modelname: _modelname,
+                    itemtype: _itemtype,
+                    itemcount: _itemcount,
+                    clientname: _clientname,
+                    serials: dataRaw
+                },
+                success: function (result) {
+                    RequestDetailsTable();
+                    LoadTable();
+                    modal2.style.display = "none";
+                    success('Saved!', 'Data Saved!');
+                },
+                error: function (result) {
+                    error('error: ' + result);
                 }
+            });
 
-            }
 
-            if (message != "") {
-                warning(`No serial ${message}`);
-            } else {
-                // console.log(dataRaw);
-                dataRaw = JSON.stringify(dataRaw, null, 2);
-
-                $.ajax({
-                    type: "POST",
-                    url: "/cyberrequest/assignserial",
-                    data: {
-                        requestid: _requestid,
-                        modelname: _modelname,
-                        itemtype: _itemtype,
-                        itemcount: _itemcount,
-                        clientname: _clientname,
-                        serials: dataRaw
-                    },
-                    success: function (result) {
-                        modal.style.display = 'NONE';
-                        success('Saved!', 'Data Saved!');
-                        RequestDetailsTable();
-                        LoadTable();
-                    },
-                    error: function (result) {
-                        error('error: ' + result);
-                    }
-                });
-            }
-            modal2.style.display = "none";
         })
 
         $(document).on('click', "#approvedBtn", function () {
@@ -357,7 +327,7 @@
             UploadProcess();
         })
         //tables
-        function LoadTable() {
+        async function LoadTable() {
             showloader();
 
             //IT EQUIPMENT REQUEST
@@ -458,7 +428,7 @@
             });
         }
 
-        function RequestDetailsTable() {
+        async function RequestDetailsTable() {
             var requestlistTabel = $('#assign-outgoing-request-table').DataTable({
                 'destroy': true,
                 'paging': false,
@@ -600,6 +570,10 @@
                     serial: data[2].item,
                 });
 
+                serialArr.push({
+                    serial: data[2].item,
+                })
+
             }
             // console.log(dataExcelArr)
 
@@ -622,33 +596,35 @@
                 if (dataExcelArr.length != _itemcount) {
                     warning('Mismatch', `Item count not match, itemcount request ${_itemcount} excel data count: ${dataExcelArr.length}`)
                 } else {
-                    var ExcelTable = document.getElementById("ExcelTable");
-                    ExcelTable.innerHTML = "";
-                    ExcelTable.appendChild(myTable);
+                    // excelDataSave(dataExcelArr);
+                    success('Success', 'Upload Success!');
+                    // var ExcelTable = document.getElementById("ExcelTable");
+                    // ExcelTable.innerHTML = "";
+                    // ExcelTable.appendChild(myTable);
                 }
             }
         };
 
-        function excelDataSave(data) {
-            var dataraw = JSON.stringify(data, null, 2);
-            showloader();
-            $.ajax({
-                type: "POST",
-                url: "/cabling/saveexceldata",
-                data: {
-                    data: dataraw
-                },
-                success: function (result) {
-                    // success('Saved!', 'Data saved!')
-                    // $('#item-tbl').DataTable().ajax.reload();
-                    RegisterItemTable();
-                    dataArr = [];
-                },
-                error: function (result) {
-                    error(result.data);
-                }
-            });
-        }
+        // function excelDataSave(data) {
+        //     var dataraw = JSON.stringify(data, null, 2);
+        //     showloader();
+        //     $.ajax({
+        //         type: "POST",
+        //         url: "/cabling/saveexceldata",
+        //         data: {
+        //             data: dataraw
+        //         },
+        //         success: function (result) {
+        //             // success('Saved!', 'Data saved!')
+        //             // $('#item-tbl').DataTable().ajax.reload();
+        //             RegisterItemTable();
+        //             dataArr = [];
+        //         },
+        //         error: function (result) {
+        //             error(result.data);
+        //         }
+        //     });
+        // }
 
     })
 </script>
