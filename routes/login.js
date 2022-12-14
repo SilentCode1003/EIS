@@ -5,6 +5,10 @@ var router = express.Router();
 var helper = require('./repository/customhelper')
 var UserPath = `${__dirname}/data/masters/users/`;
 const crypt = require('./repository/crytography');
+const generate = require('./generatefolders');
+
+//Generate Folders
+generate.CreateDataFolders();
 
 /* GET home page. */
 router.get('/', function (req, res) {
