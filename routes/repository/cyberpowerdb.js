@@ -409,4 +409,44 @@ exports.InsertTable = (tablename, data, callback) => {
             callback(null, result)
         })
     }
+
+    if (tablename == 'transaction_cyberpower_outgoing_equipment') {
+        console.log(`Execute: ${tablename}`)
+        let sql = `INSERT INTO transaction_cyberpower_outgoing_equipment(
+            tcoe_transactiondate,
+            tcoe_clientname,
+            tcoe_quantity,
+            tcoe_modelname,
+            tcoe_itemtype,
+            tcoe_unitserial,
+            tcoe_requestid,
+            tcoe_remarks,
+            tcoe_status
+          ) VALUES ?`;
+
+        this.Insert(sql, data, (err, result) => {
+            if (err) {
+                callback(err, null);
+            }
+            callback(null, result)
+        })
+    }
+
+    if (tablename == 'cyberpower_outgoing_details') {
+        console.log(`Execute: ${tablename}`)
+        let sql = `INSERT INTO cyberpower_outgoing_details(
+            cod_requestby,
+            cod_requestdate,
+            cod_client,
+            cod_details,
+            cod_remarks,
+            cod_status) VALUES ?`;
+
+        this.Insert(sql, data, (err, result) => {
+            if (err) {
+                callback(err, null);
+            }
+            callback(null, result)
+        })
+    }
 }

@@ -299,6 +299,7 @@
 
         stocksmodalspan.onclick = function () {
             totalcount = 0;
+            serialArr = [];
             stocksmodal.style.display = "none";
         }
 
@@ -456,7 +457,7 @@
         $(document).on('click', "#confirmstockinModalBtn", function () {
 
             console.log(`${totalcount} ${serialArr.length}`);
-            if (totalcount != serialArr.length) { return warning('Warning', '') }
+            if (totalcount != serialArr.length) { return warning('Oh no!', 'Incomplete, some of purchase order detail no serial uploads.') }
 
             RestockExcelDataSave(serialArr);
         })

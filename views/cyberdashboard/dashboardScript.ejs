@@ -29,6 +29,7 @@
 
         span2.onclick = function () {
             modal2.style.display = "none";
+            modal3.style.display = "block";
             ClearTable('outgoingbatchtable');
         }
 
@@ -39,8 +40,6 @@
         span4.onclick = function () {
             modal4.style.display = "none";
         }
-
-
 
         window.onclick = function (event) {
             if (event.target == modal) {
@@ -183,6 +182,8 @@
             let sinumber = $('#sinumber').val();
             let crnumber = $('#crnumber').val();
 
+            showloader();
+
             if (ponumber == '' && drnumber == '' && sinumber == '' && crnumber == '') {
                 warning('Warning', 'No receipt reference!');
             }
@@ -198,7 +199,6 @@
                         crnumber: crnumber,
                     },
                     success(result) {
-                        LoadTable()
                         success('Saved', 'Data saved!')
                     },
                     error(result) {
@@ -207,10 +207,16 @@
                 });
             }
             modal4.style.display = "none";
+
+            setTimeout(() => {
+                LoadTable();
+            }, 3000);
+            hideload();
         })
 
         $(document).on('click', "#batchBtn", function () {
             ClearTable('outgoingbatchtable');
+            modal3.style.display = "none";
             modal2.style.display = "block";
         })
 
@@ -261,45 +267,60 @@
                         serials: dataRaw
                     },
                     success: function (result) {
-                        modal.style.display = 'NONE';
                         success('Saved!', 'Data Saved!');
-                        LoadTable();
+
                     },
                     error: function (result) {
                         error('error: ' + result);
                     }
                 });
             }
-            modal.style.display = "none";
+            showloader();
+            setTimeout(() => {
+                LoadTable();
+                modal.style.display = "none";
+            }, 3000)
+            hideload();
+
+            serialArr = [];
         })
 
         $(document).on('click', "#saveoutgoinbatchgBtn", function () {
             // console.log(dataRaw);
-            dataRaw = JSON.stringify(serialArr, null, 2);
+            var dataRaw = JSON.stringify(serialArr, null, 2);
 
-            $.ajax({
-                type: "POST",
-                url: "/cyberrequest/assignserial",
-                data: {
-                    requestid: _requestid,
-                    modelname: _modelname,
-                    itemtype: _itemtype,
-                    itemcount: _itemcount,
-                    clientname: _clientname,
-                    serials: dataRaw
-                },
-                success: function (result) {
+            if (serialArr.length != 0) {
+                $.ajax({
+                    type: "POST",
+                    url: "/cyberrequest/assignserial",
+                    data: {
+                        requestid: _requestid,
+                        modelname: _modelname,
+                        itemtype: _itemtype,
+                        itemcount: _itemcount,
+                        clientname: _clientname,
+                        serials: dataRaw
+                    },
+                    success: function (result) {
+
+                        success('Saved!', 'Data Saved!');
+                    },
+                    error: function (result) {
+                        error('error: ' + result);
+                    }
+                });
+
+                setTimeout(() => {
                     RequestDetailsTable();
                     LoadTable();
                     modal2.style.display = "none";
-                    success('Saved!', 'Data Saved!');
-                },
-                error: function (result) {
-                    error('error: ' + result);
-                }
-            });
-
-
+                    modal3.style.display = "block";
+                }, 2000);
+                dataRaw = [];
+                serialArr = [];
+            } else {
+                warning('Oh no!', 'What are you doing, saving without uploading!')
+            }
         })
 
         $(document).on('click', "#approvedBtn", function () {
@@ -311,7 +332,6 @@
                 },
                 success: function (result) {
                     success('Success', 'Request approved!')
-
                 },
                 error: function (result) {
                     error('error: ' + result.data);
@@ -514,10 +534,10 @@
                         reader.readAsArrayBuffer(fileUpload.files[0]);
                     }
                 } else {
-                    alert("This browser does not support HTML5.");
+                    warning('Woops.',"This browser does not support HTML5.");
                 }
             } else {
-                alert("Please upload a valid Excel file.");
+                warning('Oh no!',"Please upload a valid Excel file.");
             }
         };
 
@@ -592,9 +612,11 @@
 
             if (message != '') {
                 warning('Mismatch', `Incorrect Count: ${count} | Incorrect itemtype : [${message}]`);
+                serialArr = [];
             } else {
-                if (dataExcelArr.length != _itemcount) {
-                    warning('Mismatch', `Item count not match, itemcount request ${_itemcount} excel data count: ${dataExcelArr.length}`)
+                if (serialArr.length != _itemcount) {
+                    warning('Mismatch', `Item count not match, itemcount request ${_itemcount} excel data count: ${serialArr.length}. Please upload again serial upload reset to 0.`)
+                    serialArr = [];
                 } else {
                     // excelDataSave(dataExcelArr);
                     success('Success', 'Upload Success!');
