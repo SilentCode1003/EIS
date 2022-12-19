@@ -70,7 +70,7 @@ router.post('/save', (req, res) => {
       helper.GetCurrentDatetime()
     ]);
 
-    Insert_CablingItemMaster = (data, callback) => {
+    function Insert_CablingItemMaster(data, callback) {
       let sql = `INSERT INTO cabling_item_master (
         cim_brandname,
         cim_itemtype,
@@ -85,7 +85,7 @@ router.post('/save', (req, res) => {
       callback(null, mysql.InsertMultiple(sql, data))
     }
 
-    Update_CablingItemMaster = (min, max, brand, type, updateby, datetime, callback) => {
+    function Update_CablingItemMaster(min, max, brand, type, updateby, datetime, callback) {
       let sql = `UPDATE cabling_item_master 
       SET cim_minstocks='${min}', 
       cim_maxstocks='${max}',
@@ -100,7 +100,7 @@ router.post('/save', (req, res) => {
       }))
     }
 
-    Save_CablingItemMasterJson = (filename, data, callback) => {
+    function Save_CablingItemMasterJson(filename, data, callback) {
       let datajson = JSON.stringify(data, null, 2);
 
       helper.CreateJSON(filename, datajson);
@@ -110,6 +110,7 @@ router.post('/save', (req, res) => {
 
     let sql = `SELECT * FROM cabling_item_master WHERE cim_brandname='${brandname}' AND cim_itemtype='${itemtype}'`;
     mysql.SelectResult(sql, 'CablingItemMaster', (err, result) => {
+      if (err) console.log(err);
 
       if (result.length == 0) {
         Insert_CablingItemMaster(dataSql, (err, result) => {

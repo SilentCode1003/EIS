@@ -142,65 +142,84 @@
             if (message != "") { warning("Warning!", "Must fill-up " + message + " field!") }
             else {
 
-                if (dataArr.length == 0) {
-                    dataArr.push({
-                        personel: personel,
+                $.ajax({
+                    type: 'POST',
+                    url: '/cablingrequest/checkcount',
+                    data: {
                         brandname: brandname,
                         itemtype: itemtype,
-                        // itemcost: itemcost,
-                        itemcount: itemcount,
-                        createddate: createddate,
-                        status: 'PENDING'
-                    });
+                        itemcount, itemcount,
+                    },
+                    success: function (result) {
+                        if (result.msg == 'success') {
+                            if (dataArr.length == 0) {
+                                dataArr.push({
+                                    personel: personel,
+                                    brandname: brandname,
+                                    itemtype: itemtype,
+                                    // itemcost: itemcost,
+                                    itemcount: itemcount,
+                                    createddate: createddate,
+                                    status: 'PENDING'
+                                });
 
-                    material_list_tbl = document.getElementById("request-list-tbl");
-                    var row = material_list_tbl.insertRow(1);
-                    var FE_NAME = row.insertCell(0);
-                    var BRAND_NAME = row.insertCell(1);
-                    var ITEM_NAME = row.insertCell(2);
-                    var ITEM_COUNT = row.insertCell(3);
-                    // var ITEM_COST = row.insertCell(4);
+                                material_list_tbl = document.getElementById("request-list-tbl");
+                                var row = material_list_tbl.insertRow(1);
+                                var FE_NAME = row.insertCell(0);
+                                var BRAND_NAME = row.insertCell(1);
+                                var ITEM_NAME = row.insertCell(2);
+                                var ITEM_COUNT = row.insertCell(3);
+                                // var ITEM_COST = row.insertCell(4);
 
-                    FE_NAME.innerHTML = personel;
-                    BRAND_NAME.innerHTML = brandname;
-                    ITEM_NAME.innerHTML = itemtype;
-                    ITEM_COUNT.innerHTML = itemcount;
-                    // ITEM_COST.innerHTML = itemcost;
+                                FE_NAME.innerHTML = personel;
+                                BRAND_NAME.innerHTML = brandname;
+                                ITEM_NAME.innerHTML = itemtype;
+                                ITEM_COUNT.innerHTML = itemcount;
+                                // ITEM_COST.innerHTML = itemcost;
 
-                } else {
-                    if (!dataArr.map(item => {
-                        if (item.itemtype == itemtype) {
-                            return `${item.itemtype}`
+                            } else {
+                                if (!dataArr.map(item => {
+                                    if (item.itemtype == itemtype) {
+                                        return `${item.itemtype}`
+                                    }
+
+                                }).includes(`${itemtype}`)) {
+                                    dataArr.push({
+                                        personel: personel,
+                                        brandname: brandname,
+                                        itemtype: itemtype,
+                                        // itemcost: itemcost,
+                                        itemcount: itemcount,
+                                        createddate: createddate,
+                                        status: 'PENDING'
+                                    });
+
+                                    material_list_tbl = document.getElementById("request-list-tbl");
+                                    var row = material_list_tbl.insertRow(1);
+                                    var FE_NAME = row.insertCell(0);
+                                    var BRAND_NAME = row.insertCell(1);
+                                    var ITEM_NAME = row.insertCell(2);
+                                    var ITEM_COUNT = row.insertCell(3);
+                                    // var ITEM_COST = row.insertCell(4);
+
+                                    FE_NAME.innerHTML = personel;
+                                    BRAND_NAME.innerHTML = brandname;
+                                    ITEM_NAME.innerHTML = itemtype;
+                                    ITEM_COUNT.innerHTML = itemcount;
+                                    // ITEM_COST.innerHTML = itemcost;
+                                } else {
+                                    warning(`Already request ${itemtype} with item count of ${itemcount}...`)
+                                }
+                            }
                         }
-
-                    }).includes(`${itemtype}`)) {
-                        dataArr.push({
-                            personel: personel,
-                            brandname: brandname,
-                            itemtype: itemtype,
-                            // itemcost: itemcost,
-                            itemcount: itemcount,
-                            createddate: createddate,
-                            status: 'PENDING'
-                        });
-
-                        material_list_tbl = document.getElementById("request-list-tbl");
-                        var row = material_list_tbl.insertRow(1);
-                        var FE_NAME = row.insertCell(0);
-                        var BRAND_NAME = row.insertCell(1);
-                        var ITEM_NAME = row.insertCell(2);
-                        var ITEM_COUNT = row.insertCell(3);
-                        // var ITEM_COST = row.insertCell(4);
-
-                        FE_NAME.innerHTML = personel;
-                        BRAND_NAME.innerHTML = brandname;
-                        ITEM_NAME.innerHTML = itemtype;
-                        ITEM_COUNT.innerHTML = itemcount;
-                        // ITEM_COST.innerHTML = itemcost;
-                    } else {
-                        warning(`Already request ${itemtype} with item count of ${itemcount}...`)
+                        if (result.msg == 'insufficient') {
+                            warning('Insufficient Supply', `${result.details}`);
+                        }
+                    },
+                    error: function (error) {
+                        error(error)
                     }
-                }
+                })
             }
         })
 
@@ -400,7 +419,7 @@
 
         function savedata(data, remarks, type) {
 
-            console.log(data);
+            console.log(`${data} ${remarks} ${type}`);
             if (type == 'MATERIALS') {
                 $.ajax({
                     type: "POST",
@@ -419,10 +438,10 @@
                         else {
                             warning('Use you own account to make request. System detected that this user was already request equipment today!')
                         }
-                        modal.style.display = "none";
                         LoadMaterialRequestTbl();
                         dataArr = [];
                         ClearListTable('request-list-tbl');
+                        modal.style.display = "none";
                     },
                     error: function (result) {
                         error(result.data);
@@ -449,10 +468,10 @@
                         else {
                             warning('Use you own account to make request. System detected that this user was already request equipment today!')
                         }
-                        modalstocks.style.display = "none";
                         LoadStocksRequestTbl();
                         dataArr = [];
                         ClearListTable('request-stocks-list-tbl');
+                        modalstocks.style.display = "none";
                     },
                     error: function (result) {
                         error(result.data);

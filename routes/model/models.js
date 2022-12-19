@@ -155,18 +155,20 @@ exports.PulloutITEquipment = (data) => {
 exports.CablingEquipment = (data) => {
     let dataResult = [];
 
+
     data.forEach((key, item) => {
 
         dataResult.push({
-            brandname: key.ie_brandname,
-            itemtype: key.ie_itemtype,
-            itemcount: key.ie_itemcount,
-            updateitemcount: key.ie_updateitemcount,
-            updateby: key.ie_updateby,
-            updatedate: key.ie_updatedate,
+            brandname: key.ce_brandname,
+            itemtype: key.ce_itemtype,
+            itemcount: key.ce_itemcount,
+            updateitemcount: key.ce_updateitemcount,
+            updateby: key.ce_updateby,
+            updatedate: key.ce_updatedate,
         })
     });
 
+    console.log(dataResult);
     return dataResult;
 }
 

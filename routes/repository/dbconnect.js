@@ -202,13 +202,18 @@ exports.SelectResult = async (sql, table, callback) => {
 
 exports.Update = async (sql, callback) => {
     try {
+        var message = '';
         connection.query(sql, (error, results, fields) => {
             if (error) {
                 callback(error, null)
             }
-            console.log('Rows affected:', results.affectedRows);
+            // console.log('Rows affected:', results.affectedRows);
+            message += `Number of rows affected: ${results.affectedRows} `;
+            message += `ID of last inserted row: ${results.insertId} `;
+            message += `Warning status:: ${results.warningStatus} `;
+            message += `Rows: ${results.rows} `;
 
-            callback(null, results.affectedRows);
+            callback(null, message);
         });
     } catch (error) {
         console.log(error);

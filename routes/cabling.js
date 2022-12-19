@@ -40,12 +40,12 @@ router.post('/save', (req, res) => {
 
     Insert_CablingEquipment = (data, callback) => {
       let sql = `INSERT INTO cabling_equipment(
-        ie_brandname,
-        ie_itemtype,
-        ie_itemcount,
-        ie_updateitemcount,
-        ie_updateby,
-        ie_updatedate
+        ce_brandname,
+        ce_itemtype,
+        ce_itemcount,
+        ce_updateitemcount,
+        ce_updateby,
+        ce_updatedate
       ) VALUES ? `;
 
       callback(null, mysql.InsertMultiple(sql, data));
@@ -134,12 +134,12 @@ router.post('/saveexceldata', async (req, res) => {
 
     Insert_CablingEquipment = (data, callback) => {
       let sql = `INSERT INTO cabling_equipment(
-        ie_brandname,
-        ie_itemtype,
-        ie_itemcount,
-        ie_updateitemcount,
-        ie_updateby,
-        ie_updatedate
+        ce_brandname,
+        ce_itemtype,
+        ce_itemcount,
+        ce_updateitemcount,
+        ce_updateby,
+        ce_updatedate
       ) VALUES ? `;
 
       callback(null, mysql.InsertMultiple(sql, data));
@@ -265,7 +265,7 @@ router.post('/addnewstocks', (req, res) => {
     let update_cabling_equipment = [];
     let requeststockdone = `${RequestStockCablingDonePath}${datestring}_${requestby}.json`;
     let requeststockcabling = `${RequestStocCablingPath}${datestring}_${requestby}.json`;
-    
+
 
     console.log(`${datestring} ${requeststockdone} ${requeststockcabling}`);
 
@@ -320,9 +320,9 @@ router.post('/addnewstocks', (req, res) => {
 
       data.forEach((key, item) => {
         console.log(`Paramenters: ${key.brandname} ${key.itemtype} ${key.quantity}`)
-        let result = `SELECT ie_itemcount FROM cabling_equipment 
-        WHERE ie_brandname='${key.brandname}' 
-        AND ie_itemtype='${key.itemtype}'`;
+        let result = `SELECT ce_itemcount FROM cabling_equipment 
+        WHERE ce_brandname='${key.brandname}' 
+        AND ce_itemtype='${key.itemtype}'`;
 
         mysql.SelectSingleResult(result, data => {
           let dataJson = [];
@@ -332,12 +332,12 @@ router.post('/addnewstocks', (req, res) => {
 
           console.log(`Current Quantity: ${data}`)
           let sql = `UPDATE cabling_equipment 
-          SET ie_itemcount='${new_quantity}',
-          ie_updateitemcount='${additional_quantity}',
-          ie_updateby='${req.session.fullname}',
-          ie_updatedate='${helper.GetCurrentDatetime()}' 
-          WHERE ie_brandname='${key.brandname}' 
-          AND ie_itemtype='${key.itemtype}'`;
+          SET ce_itemcount='${new_quantity}',
+          ce_updateitemcount='${additional_quantity}',
+          ce_updateby='${req.session.fullname}',
+          ce_updatedate='${helper.GetCurrentDatetime()}' 
+          WHERE ce_brandname='${key.brandname}' 
+          AND ce_itemtype='${key.itemtype}'`;
 
           dataJson.push({
             brandname: key.brandname,

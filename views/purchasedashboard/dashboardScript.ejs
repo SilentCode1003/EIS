@@ -166,8 +166,8 @@
                 }],
                 'columns': [
                     { data: 'requestid' },
-                    { data: 'requestby' },
                     { data: 'requestdate' },
+                    { data: 'requestby' },
                     { data: 'details' },
                     { data: 'totalbudget' },
                     { data: 'remarks' },
@@ -382,6 +382,11 @@
                     document.getElementById('totalcost').innerText = totalcost;
                     document.getElementById('officer').innerText = officer;
                     document.getElementById('date').innerText = date;
+
+                    document.getElementById('officersig').innerText = officer;
+                    document.getElementById('datesig').innerText = date;
+                    document.getElementById('requestbysig').innerText = requestby;
+                    document.getElementById('requestdatesig').innerText = requestdate;
                 },
                 error: function (result) {
                     error('error: ' + result);
@@ -559,11 +564,93 @@
         })
 
         $(document).on('click', "#printcyberBtn", function () {
+            var requestitemTabel = $('#stocks-equipments-tbl').DataTable({
+                'destroy': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollCollapse': true,
+            });
 
+            $.ajax({
+                type: "POST",
+                url: "/purchasedashboard/getcybertransactionpurchseitems",
+                data: { requestid: cyber_requestid },
+                success: function (result) {
+                    requestitemTabel.clear().draw();
+                    var data = result.data;
+                    var totalcost = 0;
+                    var officer = '';
+                    var date = '';
+
+                    // console.log(result.data);
+                    $.each(data, (key, item) => {
+                        var cost = parseFloat(item.cost);
+                        var subtotal = parseFloat(item.subtotal);
+                        cost = `₱ ${(cost).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+                        subtotal = `₱ ${(subtotal).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+
+                        requestitemTabel.row.add([item.modelname, item.itemtype, item.quantity, cost, subtotal]).draw(false);
+
+                        totalcost += parseFloat(item.subtotal);
+                        officer = item.purchasingofficer;
+                        date = item.purchasedate;
+                    })
+
+                    totalcost = `₱ ${(totalcost).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+
+                    document.getElementById('requestid').innerText = cyber_requestid;
+                    document.getElementById('requestby').innerText = cyber_requestby;
+                    document.getElementById('requestdate').innerText = cyber_requestdate;
+                    document.getElementById('remarks').innerText = cyber_remarks;
+                    document.getElementById('totalcost').innerText = totalcost;
+                    document.getElementById('officer').innerText = officer;
+                    document.getElementById('date').innerText = date;
+
+                    document.getElementById('officersig').innerText = officer;
+                    document.getElementById('datesig').innerText = date;
+                    document.getElementById('requestbysig').innerText = cyber_requestby;
+                    document.getElementById('requestdatesig').innerText = cyber_requestdate;
+                },
+                error: function (result) {
+                    error('error: ' + result);
+                }
+            });
+            stocksmodal.style.display = "block";
         })
 
         $(document).on('click', "#editcyberBtn", function () {
+            var requestitemTabel = $('#modal-cyber-stocks-request-tbl').DataTable({
+                'destroy': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollCollapse': true,
+            });
 
+            $.ajax({
+                type: "POST",
+                url: "/purchasedashboard/getcyberdetails",
+                data: { requestid: cyber_requestid },
+                success: function (result) {
+                    requestitemTabel.clear().draw();
+                    var data = result.data;
+
+                    console.log(result.data);
+                    $.each(data, (key, item) => {
+                        var datajson = JSON.parse(item.details);
+                        console.log(datajson);
+                        $.each(datajson, (key, item) => {
+                            requestitemTabel.row.add([item.modelname, item.itemtype, item.itemcount, item.itemcost]).draw(false);
+                        })
+                    })
+                },
+                error: function (result) {
+                    error('error: ' + result);
+                }
+            });
+
+            modal.style.display = "block";
         })
 
         $(document).on('click', "#requestcyberBudgetBtn", function () {
@@ -609,7 +696,7 @@
                     message += `${innerData[1]}, `;
                 } else {
                     dataRaw.push({
-                        brandname: innerData[0],
+                        modelname: innerData[0],
                         itemtype: innerData[1],
                         itemcount: innerData[2],
                         itemcost: innerData[3],
@@ -627,7 +714,7 @@
                 // console.log(dataRaw);
                 dataRaw = JSON.stringify(dataRaw, null, 2);
 
-                console.log(`${requestby} ${requestdate}`)
+                console.log(`DATA: ${dataRaw}`)
 
                 $.ajax({
                     type: "POST",
@@ -637,7 +724,7 @@
                         requestby: cyber_requestby,
                         requestdate: cyber_requestdate,
                         totalcost: est_budget,
-                        details: dataRaw
+                        data: dataRaw
                     },
                     success: function (result) {
                         success('Saved!', 'Data Saved!');

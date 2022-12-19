@@ -125,8 +125,8 @@
                     requestid: requestid,
                 },
                 success: function (result) {
+                    LoadCablingTableData();
                     success('Success', 'Request Approved!')
-                    LoadTableData();
                 },
                 error: function (result) {
                     error('error: ' + result);
@@ -378,7 +378,7 @@
 
             accountingModal.style.display = "block";
         })
-        
+
         //#endregion
     })
 </script>

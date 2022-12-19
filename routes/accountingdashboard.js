@@ -79,42 +79,45 @@ router.post('/approved', (req, res) => {
     mysql.Update(purhcasedetails_sql, (err, result) => {
       if (err) throw err;
 
-      console.log(purhcasedetails_sql);
+      console.log(result);
     })
 
     mysql.Update(purchaseitems_sql, (err, result) => {
       if (err) throw err;
 
-      console.log(purchaseitems_sql);
+      console.log(result);
     })
 
     mysql.Update(transactionpurchaseitem_sql, (err, result) => {
       if (err) throw err;
 
-      console.log(transactionpurchaseitem_sql);
+      console.log(result);
     })
 
     mysql.Update(budgetdetails_sql, (err, result) => {
       if (err) throw err;
 
-      console.log(budgetdetails_sql);
+      console.log(result);
     })
 
     mysql.Update(transactionrequestbudget_sql, (err, result) => {
       if (err) throw err;
 
-      console.log(transactionrequestbudget_sql);
+      console.log(result);
     })
 
     mysql.Update(transactioncablingstocksdetails_sql, (err, result) => {
       if (err) throw err;
 
-      console.log(transactioncablingstocksdetails_sql);
+      console.log(result);
     })
 
-    res.json({
-      msg: 'success'
-    })
+    setTimeout(() => {
+      res.json({
+        msg: 'success'
+      })
+    }, 3000);
+
   } catch (error) {
     res.json({
       msg: error
@@ -185,25 +188,25 @@ router.post('/cyberapproved', (req, res) => {
     })
 
     mysqlcyber.Update(transaction_request_budget, (err, result) => {
-      if(err) console.error(err);
+      if (err) console.error(err);
 
       console.log(result);
     })
 
     mysqlcyber.Update(cyberpower_purchase_details, (err, result) => {
-      if(err) console.error(err);
+      if (err) console.error(err);
 
       console.log(result);
     })
 
     mysqlcyber.Update(cyber_purchase_item, (err, result) => {
-      if(err) console.error(err);
+      if (err) console.error(err);
 
       console.log(result);
     })
 
     mysqlcyber.Update(transaction_cyberpower_purchase_item, (err, result) => {
-      if(err) console.error(err);
+      if (err) console.error(err);
 
       console.log(result);
     })

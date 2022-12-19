@@ -12,7 +12,8 @@ router.get('/', isAuthAdmin, function (req, res, next) {
     password: req.session.passowrd,
     fullname: req.session.fullname,
     accounttype: req.session.accounttype,
-    date: helper.GetCurrentDate()
+    date: helper.GetCurrentDate(),
+    datetime: helper.GetCurrentDatetime(),
   });
 
 });

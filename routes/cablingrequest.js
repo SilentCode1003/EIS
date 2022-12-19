@@ -267,7 +267,7 @@ router.post('/requestmaterial', async (req, res) => {
   }
 });
 
-router.post('/requeststocks', async (req, res) => {
+router.post('/requeststocks', (req, res) => {
   try {
     let details = req.body.details;
     let personel = req.body.personel;
@@ -288,13 +288,13 @@ router.post('/requeststocks', async (req, res) => {
 
     todo.push([datetime[0], personel, details, remarks, status]);
 
-    Save_Request = (data, callback) => {
+    function Save_Request(data, callback) {
       let dataJson = JSON.stringify(data, null, 2);
 
       callback(null, helper.CreateJSON(targetDir, dataJson));
     }
 
-    Insert_RequestCablingStocksDatails = (data, callback) => {
+    function Insert_RequestCablingStocksDatails(data, callback) {
       let sql = `INSERT INTO request_cabling_stocks_details(
           rcsd_requestdate,
           rcsd_requestby,
@@ -306,7 +306,7 @@ router.post('/requeststocks', async (req, res) => {
       callback(null, mysql.InsertMultiple(sql, data));
     }
 
-    Insert_RequestCablingStocksEquipments = (data, callback) => {
+    function Insert_RequestCablingStocksEquipments(data, callback) {
       let sql = `INSERT INTO request_cabling_stocks_equipments(
         rcse_requestdate,
         rcse_requestby,
@@ -320,7 +320,7 @@ router.post('/requeststocks', async (req, res) => {
       callback(null, mysql.InsertMultiple(sql, data));
     }
 
-    Insert_TransactionCablingStocksDetails = (data, callback) => {
+    function Insert_TransactionCablingStocksDetails(data, callback) {
       let sql = `INSERT INTO transaction_cabling_stocks_details(
         tcsd_requestby,
         tcsd_requestdate,
@@ -334,7 +334,7 @@ router.post('/requeststocks', async (req, res) => {
 
     }
 
-    Insert_PurchaseDetails = (data, callback) => {
+    function Insert_PurchaseDetails(data, callback) {
       let sql = `call PurchaseDetails(?)`;
 
       mysql.StoredProcedure(sql, data, (err, result) => {
@@ -343,7 +343,7 @@ router.post('/requeststocks', async (req, res) => {
       })
     }
 
-    Check_RequestExist = (date, personel, callback) => {
+    function Check_RequestExist(date, personel, callback) {
       let cmd = `SELECT * FROM request_cabling_stocks_details WHERE rcsd_requestdate='${date}' AND rcsd_requestby='${personel}'`;
 
       mysql.Select(cmd, 'RequestCablingStocksDatails', (err, results) => {
@@ -353,7 +353,7 @@ router.post('/requeststocks', async (req, res) => {
       });
     }
 
-    await Check_RequestExist(datetime[0], personel, (err, result) => {
+    Check_RequestExist(datetime[0], personel, (err, result) => {
       if (err) throw err;
 
       if (result.length == 0) {
@@ -434,14 +434,12 @@ router.post('/requeststocks', async (req, res) => {
 
               console.log('Insert_PurchaseDetails')
             })
-
-
           });
 
-          Save_Request(dataRequest, (err, result) => {
-            if (err) throw err;
-            console.log('Save_Request');
-          })
+          // Save_Request(dataRequest, (err, result) => {
+          //   if (err) throw err;
+          //   console.log('Save_Request');
+          // })
 
         });
 
@@ -561,14 +559,14 @@ router.post('/approve', (req, res) => {
           deduction: itemcount,
         });
 
-        let result = `SELECT * FROM cabling_equipment WHERE ie_brandname='${key.brandname}' AND ie_itemtype='${key.itemtype}'`;
+        let result = `SELECT * FROM cabling_equipment WHERE ce_brandname='${key.brandname}' AND ce_itemtype='${key.itemtype}'`;
         mysql.SelectSingleResult(result, data => {
           let currentcount = parseFloat(data);
           let requestcount = parseFloat(key.itemcount);
           let difference = currentcount - requestcount;
           console.log(`${currentcount} ${requestcount} ${difference} ${key.brandname} ${key.itemtype}`);
 
-          let update_ce = `UPDATE cabling_equipment SET ie_itemcount='${difference}' WHERE ie_brandname='${key.brandname}' AND ie_itemtype='${key.itemtype}'`;
+          let update_ce = `UPDATE cabling_equipment SET ce_itemcount='${difference}' WHERE ce_brandname='${key.brandname}' AND ce_itemtype='${key.itemtype}'`;
           Update_CablingEquipment(update_ce, (err, result) => {
             if (err) throw err;
             console.log(result);
@@ -610,3 +608,42 @@ router.post('/approve', (req, res) => {
     })
   }
 });
+
+router.post('/checkcount', (req, res) => {
+  try {
+    let brandname = req.body.brandname;
+    let itemtype = req.body.itemtype;
+    let requestcount = req.body.itemcount;
+
+    let sql = `select * from cabling_equipment 
+    where ce_brandname='${brandname}'
+    and ce_itemtype='${itemtype}'`;
+
+    mysql.Select(sql, 'CablingEquipment', (err, result) => {
+      if (err) return res.status(500).json({
+        error: err
+      })
+
+      let currentcount = result[0].itemcount;
+
+      currentcount = parseFloat(currentcount);
+      requestcount = parseFloat(requestcount);
+
+      if (requestcount > currentcount) {
+        return res.json({
+          msg: 'insufficient',
+          details: `Current Count: ${currentcount} Request Count: ${requestcount}`
+        })
+      }
+
+      res.json({
+        msg: 'success'
+      })
+    })
+
+  } catch (error) {
+    res.status(500).json({
+      error: error.message
+    })
+  }
+})

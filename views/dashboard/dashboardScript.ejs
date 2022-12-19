@@ -29,7 +29,7 @@
         function EquipmentRequestLoadTables() {
             showloader();
 
-            //IT EQUIPMENT REQUEST
+            //#region IT EQUIPMENT REQUEST
             dataTable = $('#equipment-item-tbl').DataTable({
                 'destroy': true,
                 'processing': true,
@@ -104,8 +104,9 @@
                     hideload();
                 }
             });
+            //#endregion
 
-            //EQUIPMENT TRANSFER REQUEST
+            //#region EQUIPMENT TRANSFER REQUEST
             dataTable2 = $('#transfer-equipment-item-tbl').DataTable({
                 'destroy': true,
                 'processing': true,
@@ -169,8 +170,9 @@
                     hideload();
                 }
             });
+            //#endregion
 
-            //CABLING EQUIPMENT REQUEST
+            //#region CABLING EQUIPMENT REQUEST
             dataTable3 = $('#cabling-equipment-item-tbl').DataTable({
                 'destroy': true,
                 'processing': true,
@@ -241,8 +243,9 @@
                     hideload();
                 }
             });
+            //#endregion
 
-            //IT EQUIPMENT STOCK TABLE
+            //#region IT EQUIPMENT STOCK TABLE
             dataTableITEquipment = $('#IT-Equipment_Tbl').DataTable({
                 'destroy': true,
                 'processing': true,
@@ -265,8 +268,9 @@
                     hideload();
                 }
             });
+            //#endregion
 
-            //EQUIPMENT CABLING STOCK TABLE
+            //#region EQUIPMENT CABLING STOCK TABLE
             dataTableITEquipment = $('#Cabling-Equipment_Tbl').DataTable({
                 'destroy': true,
                 'processing': true,
@@ -289,9 +293,10 @@
                     hideload();
                 }
             });
+            //#endregion
 
-            //NEED TO RESTOCK
-             needrestocktbl = $('#restockstble').DataTable({
+            //#region NEED TO RESTOCK
+            needrestocktbl = $('#restockstble').DataTable({
                 'destroy': true,
                 'processing': true,
                 'serverSide': true,
@@ -315,6 +320,7 @@
                     hideload();
                 }
             });
+            //#endregion
         }
 
         var modal = document.getElementById("requestModal");
@@ -683,6 +689,28 @@
             });
         })
 
+        let cabling_requestid = '';
+        let cabling_requestdate = '';
+        let cabling_details = '';
+        let cabling_remarks = '';
+        let cabling_status = '';
+        $('#cabling-equipment-item-tbl tbody').on('click', 'tr', function (e) {
+            var data = [];
+            $(this).closest('tr').find('td').each(function () {
+                data.push([$(this).text()]);
+            });
+
+            console.log(data);
+
+            cabling_requestid = data[0];
+            cabling_requestdate = data[1];
+            cabling_requestby = data[2];
+            cabling_details = data[3];
+            cabling_remarks = data[4];
+            cabling_status = data[5];
+
+        })
+
         $(document).on('click', "#PrinttBtn-cabling", function () {
 
             var t = $('#modalCablingItems').DataTable({
@@ -708,6 +736,11 @@
 
                         t.row.add([item.brandname, item.itemtype, item.itemcount]).draw(false);
                     })
+
+                    document.getElementById('requestby').innerText = cabling_requestby;
+                    document.getElementById('approvedby').innerText = '<%= fullname%>';
+                    document.getElementById('requestdatesig').innerText = cabling_requestdate;
+                    document.getElementById('approveddatesig').innerText = '<%= datetime%>';
                 },
                 error: function (result) {
                     alert('error: ' + result.data);

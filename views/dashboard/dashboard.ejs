@@ -236,7 +236,7 @@
             <span class="close">&times;</span>
         </div>
         <div class="modal-body">
-            <div >
+            <div>
                 <div class="row">
                     <div class="col-xl-4 col-lg-3">
                         <h4> REQUEST ITEM'S</h4>
@@ -427,7 +427,7 @@
                 </div>
             </div>
             <div class="modal-body modal-print-background">
-                <h2 class='report-header ' style="text-align: center"> CABLING EQUIPMENT REQUEST FORM </h2>
+                <h2 class='report-header ' style="text-align: center"> EQUIPMENT REQUEST FORM </h2>
                 <br>
                 <br>
                 <div>
@@ -446,68 +446,43 @@
 
             <br>
             <br>
+            <br>
+            <br>
             <div class="row modal-signature-info center-content">
-                <div class="col-sm-4">
-                    <p><strong>____________________</strong></p>
+                <div class="col-sm-4 center-text">
+                    <p><strong><span id="requestby"></span></strong></p>
                 </div>
-                <div class="col-sm-4">
-                    <p><strong>____________________</strong></p>
-                </div>
-                <div class="col-sm-4">
-                    <p><strong>____________________</strong></p>
+                <div class="col-sm-4 center-text">
+                    <p><strong><span id="approvedby"></span></strong></p>
                 </div>
             </div>
 
             <div class="row modal-signature-info center-content">
-                <div class="col-sm-4">
+                <div class="col-sm-4 center-text">
                     <p><strong>PREPARED BY</strong></p>
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-4 center-text">
                     <p><strong>APPROVED BY</strong></p>
-                </div>
-                <div class="col-sm-4">
-                    <p><strong>CHECKED BY</strong></p>
                 </div>
             </div>
 
             <div class="row modal-signature-info center-content">
-                <div class="col-sm-4">
+                <div class="col-sm-4 center-text">
                     <p><strong>
-                            <%= date%>
+                            <span id="requestdatesig"></span>
                         </strong></p>
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-4 center-text">
                     <p><strong>
-                            <%= date%>
+                            <span id="approveddatesig"></span>
                         </strong></p>
-                </div>
-                <div class="col-sm-4">
-                    <p><strong>
-                            <%= date%>
-                        </strong></p>
-                </div>
-            </div>
-
-            <br>
-            <br>
-            <div class="modal-print-background">
-                <div class="center-text modal-print-background modal-company-header">
-                    <p><strong><span class="report-footer">5L SOLUTIONS SUPPLY &amp; ALLIED SERVICES
-                                CORP.</span></strong></p>
-                </div>
-                <div class="center-text modal-print-background">
-                    <p><span class="report-footer-subheader">Phase 3B Block 18 Lot 15, Golf Drive Street Pacita
-                            Complex 1, City of Bi&ntilde;an, Laguna</span></p>
-                </div>
-                <div class="center-text modal-print-background">
-                    <p><span class="report-footer-subheader">Tel.Nos: 273-44-69/952-15-60</span></p>
                 </div>
             </div>
         </div>
 
         <div class="center-content modal-print-background">
             <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
-            <button id="cabling-printBtn" name="cabling-printBtn">PRINT</button>
+            <button class="approve-btn" id="cabling-printBtn" name="cabling-printBtn">PRINT</button>
         </div>
     </div>
     <!-- </div>

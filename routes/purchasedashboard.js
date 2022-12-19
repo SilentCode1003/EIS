@@ -379,17 +379,20 @@ router.post('/updatecyberstockrequest', (req, res) => {
     let requestby = req.body.requestby;
     let requestdate = req.body.requestdate;
     let totalcost = req.body.totalcost;
-    let details = req.body.details;
+    let details = req.body.data;
+    let remarks = dictionary.GetValue(dictionary.ALLOCP());
+    let status = dictionary.ALLOCP();
     let purchase_items = [];
     let transaction_purchase_items = [];
 
-    console.log(`${requestid} ${requestby} ${requestdate}`);
+    console.log(`${requestid} ${requestby} ${requestdate} ${totalcost}  ${details}`);
 
     details = JSON.parse(details);
+    console.log();
 
     details.forEach((key, item) => {
       purchase_items.push([
-        key.brandname,
+        key.modelname,
         key.itemtype,
         key.itemcount,
         key.itemcost,
@@ -403,7 +406,7 @@ router.post('/updatecyberstockrequest', (req, res) => {
       var subtotal = parseFloat(key.itemcount) * parseFloat(key.itemcost);
 
       transaction_purchase_items.push([
-        key.brandname,
+        key.modelname,
         key.itemtype,
         key.itemcount,
         key.itemcost,
@@ -420,27 +423,44 @@ router.post('/updatecyberstockrequest', (req, res) => {
       ]);
     });
 
-    Insert_CyberPurchaseItems(purchase_items, (err, result) => {
-      if (err) console.log(err);
-      console.log(result);
-    })
-
-    Insert_CyberTransactionPurchaseItems(transaction_purchase_items, (err, result) => {
-      if (err) console.log(err);
-      console.log(result);
-    })
-
-    let sql = `UPDATE cyberpower_purchase_details 
-      SET cpd_totalbudget='${totalcost}',
-      cpd_remarks='${dictionary.GetValue(dictionary.ALLOCP())}',
-      cpd_status='${dictionary.ALLOCP()}'
-      WHERE cpd_restockid='${requestid}'`;
-
-    cybersql.Update(sql, (err, result) => {
+    Check_CyberPurchaseItems(requestid, (err, result) => {
       if (err) console.log(err);
 
-      console.log(result);
+      if (result == 'insert') {
+        Insert_CyberPurchaseItems(purchase_items, (err, result) => {
+          if (err) console.log(err);
+          console.log(result);
+        })
+
+        Insert_CyberTransactionPurchaseItems(transaction_purchase_items, (err, result) => {
+          if (err) console.log(err);
+          console.log(result);
+        })
+
+        Update_CyberpowerPurchaseDetails(totalcost, details, remarks, status, requestid, (err, result) => {
+          if (err) console.log(err);
+          console.log(result);
+        });
+      }
+
+      if (result == 'update') {
+        Update_CyberPurchaseItems(transaction_purchase_items, requestid, (err, result) => {
+          if (err) console.log(err);
+          console.log(result);
+        })
+
+        Update_CyberTransactionPurchaseItems(purchase_items, requestid, (err, result) => {
+          if (err) console.log(err);
+          console.log(result);
+        })
+
+        Update_CyberpowerPurchaseDetails(totalcost, details, remarks, status, requestid, (err, result) => {
+          if (err) console.log(err);
+          console.log(result);
+        });
+      }
     })
+
 
     res.json({
       msg: 'success'
@@ -571,6 +591,81 @@ router.post('/getcybertransactionpurchseitems', (req, res) => {
 //#endregion
 
 //#region FUNCTION
+function Update_CyberpowerPurchaseDetails(totalcost, details, remarks, status, requestid, callback) {
+  details = JSON.stringify(details, null, 2);
+  let sql = `UPDATE cyberpower_purchase_details 
+  SET cpd_totalbudget='${totalcost}',
+  cpd_details='${details}',
+  cpd_remarks='${remarks}',
+  cpd_status='${status}'
+  WHERE cpd_restockid='${requestid}'`;
+
+  cybersql.Update(sql, (err, result) => {
+    if (err) callback(err, null);
+
+    callback(null, result);
+  })
+}
+
+function Update_CyberPurchaseItems(data, requestid, callback) {
+  let sql = `UPDATE cyber_purchase_item
+  SET cpi_modelname=?,
+  cpi_itemtype=?,
+  cpi_quantity=?,
+  cpi_cost=?,
+  cpi_requestid=?,
+  cpi_officer=?,
+  cpi_orderdate=?,
+  cpi_remarks=?,
+  cpi_status=?
+  WHERE cpi_requestid='${requestid}'`;
+
+  cybersql.UpdateMultiple(sql, data, (err, result => {
+    if (err) callback(err, null);
+    callback(null, result);
+  }))
+}
+
+function Update_CyberTransactionPurchaseItems(data, requestid, callback) {
+  let sql = `UPDATE transaction_cyberpower_purchase_item 
+  SET tcpi_modelname=?,
+  tcpi_itemtype=?,
+  tcpi_quantity=?,
+  tcpi_cost=?,
+  tcpi_subtotal=?,
+  tcpi_requestby=?,
+  tcpi_requestdate=?,
+  tcpi_purchasingofficer=?,
+  tcpi_purchasedate=?,
+  tcpi_ponumber=?,
+  tcpi_podate=?,
+  tcpi_requestid=?,
+  tcpi_remarks=?,
+  tcpi_status=?
+  WHERE tcpi_requestid='${requestid}'`;
+
+  cybersql.UpdateMultiple(sql, data, (err, result => {
+    if (err) callback(err, null);
+    callback(null, result);
+  }))
+}
+
+function Check_CyberPurchaseItems(id, callback) {
+  let sql = `SELECT * FROM cyberpower_purchase_details WHERE cpd_restockid='${id}'`;
+  cybersql.Select(sql, 'CyberpowerPurchaseDetails', (err, result) => {
+    if (err) console.log(err);
+
+    console.log(result);
+    if (result.length != 0) {
+      callback(null, 'insert') // insert
+    }
+    else (
+      callback(null, 'update') //update
+    )
+  })
+
+}
+
 function Insert_CyberPurchaseItems(data, callback) {
   cybersql.InsertTable('cyber_purchase_item', data, (err, result) => {
     if (err) callback(err, null);
