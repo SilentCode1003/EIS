@@ -112,7 +112,7 @@ router.get('/load', (req, res) => {
 
 });
 
-router.post('/saveexceldata', async (req, res) => {
+router.post('/saveexceldata', (req, res) => {
   try {
     var data = req.body.data;
     var dataraw = JSON.parse(data);
@@ -121,7 +121,7 @@ router.post('/saveexceldata', async (req, res) => {
 
     //console.log(`${dataraw}`);
     var dataArr = [];
-    await dataraw.forEach(async (key, item) => {
+    dataraw.forEach(async (key, item) => {
 
       var folder = `${EquipmentPath}${key.brandname}`;
       var fileDir = `${folder}/${key.itemtype}_${key.brandname}_${key.serial}.json`;
@@ -201,11 +201,11 @@ router.post('/saveexceldata', async (req, res) => {
       dataArr = [];
     });
 
-    await Execute_ExcelRegisterItEquipment(excelData, (err) => {
+    Execute_ExcelRegisterItEquipment(excelData, (err) => {
       if (err) throw err;
     })
 
-    await Execute_ExecelTransactionItEquipment(excelTransaction, (err) => {
+    Execute_ExecelTransactionItEquipment(excelTransaction, (err) => {
       if (err) throw err;
     })
 
@@ -353,7 +353,7 @@ Execute_RegisterItEquipment = (data, callback) => {
   callback(null, mysql.Insert(stmt));
 }
 
-Execute_ExecelTransactionItEquipment = (data, callback) => {
+function Execute_ExecelTransactionItEquipment(data, callback){
   let stmt = '';
 
   stmt = `INSERT INTO transaction_it_equipment(
@@ -379,7 +379,7 @@ Execute_ExecelTransactionItEquipment = (data, callback) => {
 
 }
 
-Execute_ExcelRegisterItEquipment = (data, callback) => {
+function Execute_ExcelRegisterItEquipment(data, callback){
   let stmt = '';
 
   stmt = `INSERT INTO register_it_equipment(

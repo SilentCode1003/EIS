@@ -37,7 +37,7 @@
 <script>
     let accounttype = '<%= accounttype%>';
 
-    if (accounttype == 'IT' || accounttype == 'CABLING' || accounttype == 'CYBERPOWER' || accounttype == 'ACCOUNTING' || accounttype == 'PURCHASING' || accounttype == 'CUSTODIAN') {
+    if (accounttype == 'IT' || accounttype == 'CABLING' || accounttype == 'CYBERPOWER' || accounttype == 'ACCOUNTING' || accounttype == 'PURCHASING' || accounttype == 'CUSTODIAN' || accounttype == 'IT CUSTODIAN') {
         $("#masters").toggle(0, function () {
         });
     }
@@ -82,6 +82,35 @@
 
     }
 
+    if (accounttype == 'IT CUSTODIAN') {
+        $("#cyberpower").toggle(0, function () {
+        });
+
+        $("#cabling").toggle(0, function () {
+        });
+
+        $("#accounting").toggle(0, function () {
+        });
+
+        $("#purchasing").toggle(0, function () {
+        });
+
+        $("#cabling-dashboard").toggle(0, function () {
+        });
+
+         $("#cablingrequest").toggle(0, function () {
+        });
+
+        $("#cabling-equipment-request").toggle(0, function () {
+        });
+
+        $("#cabling-equipment-below-min").toggle(0, function () {
+        });
+
+        $("#cablingequipmentrequesttable").toggle(0, function () {
+        });
+    }
+
     if (accounttype == 'IT') {
         $("#cyberpower").toggle(0, function () {
         });
@@ -98,7 +127,25 @@
         $("#cabling-dashboard").toggle(0, function () {
         });
 
+         $("#cablingrequest").toggle(0, function () {
+        });
+
         $("#cabling-equipment-request").toggle(0, function () {
+        });
+
+        $("#cabling-equipment-below-min").toggle(0, function () {
+        });
+
+        $("#cablingequipmentrequesttable").toggle(0, function () {
+        });
+
+        $("#it-custodian").toggle(0, function () {
+        });
+
+        $("#equipments-it").toggle(0, function () {
+        });
+
+        $("#equipments-it-transfer").toggle(0, function () {
         });
     }
 
@@ -329,7 +376,7 @@
         // stock_list_tbl.innerText = '';
     }
 
-    function ClearTable(tablename) { 
+    function ClearTable(tablename) {
         $(`#${tablename}`).find("tr:gt(0)").remove();
     }
 </script>
