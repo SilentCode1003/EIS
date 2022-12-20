@@ -9,6 +9,7 @@ const RequestEquipmentPathApprove = `${__dirname}/data/request/equipment/approve
 const RequestEquipmentPathReturn = `${__dirname}/data/request/equipment/return/`
 const RequestEquipmentPathAssigned = `${__dirname}/data/request/equipment/assigned/`
 const mysql = require('./repository/dbconnect')
+const dictionary = require('./repository/dictionary');
 
 const { isAuthAdmin, isAuth } = require('./controller/authBasic');
 /* GET home page. */
@@ -159,6 +160,7 @@ router.post('/assign', async (req, res) => {
         var pendingFile = `${RequestEquipmentPathPending}${personel}_${date}.json`;
         var dataFile = helper.ReadJSONFile(pendingFile);
         var dataJson = JSON.parse(data);
+        let status = dictionary.GetValue(dictionary.FAPR());
 
         message = '';
 
@@ -201,7 +203,7 @@ router.post('/assign', async (req, res) => {
                 personel: element.personel,
                 data: element.data,
                 createddate: element.createddate,
-                status: "FOR APPROVAL",
+                status: status,
             });
 
             var dataArrJson = JSON.stringify(dataArr, null, 2);
@@ -276,6 +278,7 @@ router.post('/approve', (req, res) => {
         var dataFile = helper.ReadJSONFile(pendingFile);
         var dataArr = [];
 
+
         // console.log(dataAssign);
         function Update() {
             return new Promise((resolve) => {
@@ -298,7 +301,7 @@ router.post('/approve', (req, res) => {
 
         Update();
 
-        helper.MoveFile(pendingFile, approveFile)
+        // helper.MoveFile(pendingFile, approveFile)
 
         Update_RegisterITEquipment = (data, callback) => {
             console.log(data);
@@ -311,24 +314,27 @@ router.post('/approve', (req, res) => {
                 dataJson.forEach((key, item) => {
                     let sql = `UPDATE register_it_equipment SET rie_status='SPARE' WHERE rie_serial='${key.serial}'`;
                     mysql.Update(sql, (err, result) => {
-                        if (err) throw err;
+                        if (err) console.log(err);
+
+                        console.log(result);
                     })
 
                     let sql2 = `UPDATE transaction_it_equipment SET tie_status='SPARE' WHERE tie_serial='${key.serial}'`;
                     mysql.Update(sql2, (err, result) => {
-                        if (err) throw err;
+                        if (err) console.log(err);
+
+                        console.log(result);
                     })
                 })
             })
+
+            callback(null, 'DONE');
         }
 
         Update_RegisterITEquipment(dataAssign, (err, result) => {
-            if (err) throw err;
-
+            if (err) console.log(err);
+            console.log(result);
         })
-
-        // fs.renameSync(pendingFile, approveFile);
-        // console.log(`Moved ${pendingFile} to ${approveFile}`);
 
         res.json({
             msg: 'success',
@@ -341,3 +347,26 @@ router.post('/approve', (req, res) => {
     }
 
 });
+
+router.post('/deploy', (req, res) => {
+    try {
+        let requestdate = let.body.requestdate;
+        let requestby = let.body.requestby;
+        let filename = `${requestby}_${requestdate}.json`;
+        let file = `${RequestEquipmentPathPending}${filename}`;
+        let data = helper.ReadJSONFile(file);
+
+        data.forEach((key, item) => {
+            var ticketData = key.data;
+            ticketData.forEach((key, item) => {
+
+            })
+        });
+
+
+    } catch (error) {
+        res.json({
+            msg: error
+        })
+    }
+})

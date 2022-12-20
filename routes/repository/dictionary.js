@@ -15,6 +15,7 @@ exports.GetValue = (abr) => {
     if (abr == 'REQB') return 'REQUEST BUDGET';
     if (abr == 'WAIT') return 'WAITING';
     if (abr == 'RES') return 'RESTOCK';
+    if (abr == 'FAPR') return 'FOR APPROVAL';
 }
 
 //#region STATUS CODE
@@ -76,6 +77,10 @@ exports.ALLOCP = () => {
 
 exports.RES = () => {
     return 'RES';
+}
+
+exports.FAPR = () => {
+    return 'FAPR';
 }
 
 //#endregion

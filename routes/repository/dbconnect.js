@@ -288,7 +288,7 @@ exports.SelectSingleResult = (sql, result) => {
                 if (error) console.log(error);
 
                 results.forEach((key, item) => {
-                    return result(key.ie_itemcount);
+                    return result(key.ce_itemcount);
                 });
 
             });

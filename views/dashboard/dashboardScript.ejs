@@ -5,6 +5,9 @@
         var date = '';
         var dataTable;
         var dataTable2;
+        let requestdate = '';
+        let requestby = '';
+
         EquipmentRequestLoadTables();
 
         $.ajax({
@@ -64,8 +67,13 @@
 
                             if (status == "PENDING") {
                                 action = '<button class="assign-btn" id="assignBtn" name="assignBtn">ASSIGN SERIAL</button>'
-                            } else {
+                            }
+                            if (status == 'FOR APPROVAL') {
                                 action = '<button class="approve-btn" id="approvedBtn" name="approvedBtn">APPROVED</button><br><button class="edit-btn" id="editBtn" name="editBtn">EDIT</button>'
+                            }
+
+                            if (status == 'APPROVED') {
+                                action = '<button class="approve-btn" id="deploybtn" name="deploybtn">DEPLOY</button><br><button class="edit-btn" id="returnBtn" name="returnBtn">RETURN</button><br><button class="edit-btn" id="printRequestBtn" name="printRequestBtn">PRINT</button>'
                             }
 
 
@@ -330,6 +338,9 @@
         var span2 = document.getElementById("transfermodalclose");
         var span3 = document.getElementById("cablingmodalclose");
 
+        var modalrequestprint = document.getElementById("requestPringModal");
+        var requestprintspan = document.getElementById("requestprintspan");
+
         span.onclick = function () {
             modal.style.display = "none";
         }
@@ -342,6 +353,10 @@
             modalcabling.style.display = "none";
         }
 
+        requestprintspan.onclick = function () {
+            modalrequestprint.style.display = "none";
+        }
+
 
         window.onclick = function (event) {
             if (event.target == modal) {
@@ -352,6 +367,9 @@
             }
             if (event.target == modalcabling) {
                 modalcabling.style.display = "none";
+            }
+            if (event.target == modalrequestprint) {
+                modalrequestprint.style.display = "none";
             }
         }
 
@@ -367,13 +385,28 @@
             let date = data.date;
             const dateArr = date.split(" ");
             filename = `${dateArr[0]}_${data.personel}.json`;
+
+
         })
 
-        $('#equipment-item-tbl tbody').on('click', 'td', function () {
+        $('#equipment-item-tbl tbody').on('click', 'tr', function () {
+
             var data = dataTable.row(this).data();
             filename = `${data.personel}_${data.createddate}.json`;
             personel = data.personel;
             date = data.createddate;
+
+            var dataRow = [];
+            $(this).closest('tr').find('td').each(function () {
+                dataRow.push([$(this).text()]);
+
+            });
+
+            requestdate = dataRow[0];
+            requestby = dataRow[1];
+
+            console.log(dataRow);
+
         })
 
         $('#requesttbl tbody').on('click', 'tr', function (e) {
@@ -394,6 +427,95 @@
         $('#requestModal').on('hidden.bs.modal', function (e) {
             window.location.reload();
         });
+
+
+        $(document).on('click', "#printRequestBtn", function () {
+            var requestlistTabel = $('#print-requestlist').DataTable({
+                'destroy': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollCollapse': true,
+            });
+
+            var requestitemTabel = $('#print-requesttbl').DataTable({
+                'destroy': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollCollapse': true,
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/requestequipment/getdetails",
+                data: { filename: filename },
+                success: function (result) {
+                    requestlistTabel.clear().draw();
+                    var data = result.data;
+
+                    console.log(result.data);
+                    $.each(data, function (key, item) {
+                        $.each(item.data, (key, item) => {
+
+                            requestlistTabel.row.add([item.ticket, item.itemtype, item.quantity]).draw(false);
+                        })
+                    })
+                },
+                error: function (result) {
+                    error('error: ' + result.data);
+                }
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/requestequipment/getassign",
+                data: {
+                    personel: personel,
+                    date: date,
+                },
+                success: function (result) {
+                    requestitemTabel.clear().draw();
+                    var data = result.data;
+
+                    $.each(data, (key, item) => {
+
+                        requestitemTabel.row.add([item.ticket, item.store, item.brandname, item.itemtype, item.serial]).draw(false);
+                    })
+                },
+                error: function (result) {
+                    error('error: ' + result.data);
+                }
+            });
+
+            document.getElementById('officersig').innerText = '<%= fullname%>';
+            document.getElementById('datesig').innerText = '<%= date%>';
+            document.getElementById('requestbysig').innerText = personel;
+            document.getElementById('requestdatesig').innerText = date;
+            document.getElementById('checkersig').innerText = 'ROEL ALIM';
+            document.getElementById('checkdatesig').innerText = date;
+
+            modalrequestprint.style.display = 'block';
+        })
+
+        $(document).on('click', "#deploybtn", function () {
+
+        })
+
+        $(document).on('click', "#returnBtn", function () {
+
+        })
+
+        $(document).on('click', "#printEquipmentRequestBtn", function () {
+            console.log('clicked!');
+            var printContents = document.getElementById('PrintArea').innerHTML;
+            var originalContents = document.body.innerHTML;
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+            location.reload();
+        })
+
 
         $(document).on('click', "#saveBtn", async function () {
             console.log('clicked!');
@@ -691,6 +813,7 @@
 
         let cabling_requestid = '';
         let cabling_requestdate = '';
+        let cabling_requestby = '';
         let cabling_details = '';
         let cabling_remarks = '';
         let cabling_status = '';
@@ -739,7 +862,7 @@
 
                     document.getElementById('requestby').innerText = cabling_requestby;
                     document.getElementById('approvedby').innerText = '<%= fullname%>';
-                    document.getElementById('requestdatesig').innerText = cabling_requestdate;
+                    document.getElementById('requestcablingdatesig').innerText = cabling_requestdate;
                     document.getElementById('approveddatesig').innerText = '<%= datetime%>';
                 },
                 error: function (result) {

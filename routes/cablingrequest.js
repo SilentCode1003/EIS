@@ -559,14 +559,14 @@ router.post('/approve', (req, res) => {
           deduction: itemcount,
         });
 
-        let result = `SELECT * FROM cabling_equipment WHERE ce_brandname='${key.brandname}' AND ce_itemtype='${key.itemtype}'`;
+        let result = `SELECT * FROM cabling_equipment WHERE ce_brandname='${brand}' AND ce_itemtype='${key.itemtype}'`;
         mysql.SelectSingleResult(result, data => {
           let currentcount = parseFloat(data);
           let requestcount = parseFloat(key.itemcount);
           let difference = currentcount - requestcount;
-          console.log(`${currentcount} ${requestcount} ${difference} ${key.brandname} ${key.itemtype}`);
+          console.log(`${currentcount} ${requestcount} ${difference} ${brand} ${itemtype}`);
 
-          let update_ce = `UPDATE cabling_equipment SET ce_itemcount='${difference}' WHERE ce_brandname='${key.brandname}' AND ce_itemtype='${key.itemtype}'`;
+          let update_ce = `UPDATE cabling_equipment SET ce_itemcount='${difference}' WHERE ce_brandname='${brand}' AND ce_itemtype='${itemtype}'`;
           Update_CablingEquipment(update_ce, (err, result) => {
             if (err) throw err;
             console.log(result);

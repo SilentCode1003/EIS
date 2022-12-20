@@ -78,12 +78,12 @@ $.ajax({
             ticks: {
               maxTicksLimit: 100
             },
-            maxBarThickness: 6,
+            maxBarThickness: 4,
           }],
           yAxes: [{
             ticks: {
               min: 0,
-              max: 1000,
+              max: 100,
               maxTicksLimit: 5,
               padding: 10,
               // Include a dollar sign in the ticks

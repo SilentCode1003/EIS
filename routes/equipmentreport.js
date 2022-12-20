@@ -176,7 +176,7 @@ router.post('/find', (req, res) => {
   }
 })
 
-router.post('/deploy', async (req, res) => {    
+router.post('/deploy', (req, res) => {
   try {
     var date = req.body.deploydate;
     var data = req.body.data;
@@ -213,7 +213,7 @@ router.post('/deploy', async (req, res) => {
       ])
     });
 
-    Insert_DeployITEquipment = (data, callback) => {
+    function Insert_DeployITEquipment(data, callback) {
       let sql = `INSERT INTO deploy_it_equipment(
         die_serial,
         die_itembrand,
@@ -227,7 +227,7 @@ router.post('/deploy', async (req, res) => {
       callback(null, mysql.InsertMultiple(sql, data));
     }
 
-    Update_TransactionITEquipment = (serial, ticket, trf, deployto, deployby, deploydate, callback) => {
+    function Update_TransactionITEquipment(serial, ticket, trf, deployto, deployby, deploydate, callback) {
       let sql = `UPDATE transaction_it_equipment 
       SET tie_ticket='${ticket}', 
       tie_trf='${trf}', 
@@ -250,22 +250,45 @@ router.post('/deploy', async (req, res) => {
 
     }
 
-    helper.CreateFolder(targetFolder);
-    helper.CreateJSON(filename, dataJson);
+    function Check_DeployITEquipment(ticket, serial, date, callback) {
+      let sql = `SELECT * FROM deploy_it_equipment 
+      WHERE die_ticket='${ticket}'
+      AND die_serial='${serial}'
+      AND die_deploydate='${date}'`;
 
-    await Insert_DeployITEquipment(sqldata, (err, result) => {
-      if (err) throw err;
-      console.log('Insert_DeployITEquipment');
-    });
+      mysql.Select(sql, 'DeployITEquipment', (err, result) => {
+        if (err) callback(err, null);
+        callback(null, result);
+      })
+    }
 
-    await Update_TransactionITEquipment(serial, deployticket, deploytrf, deployto, deployby, deploydate, (err, result) => {
-      if (err) throw err;
+    Check_DeployITEquipment(deployticket, serial, deploydate, (err, result) => {
+      if (err) console.log(err)
 
-      console.log(Update_TransactionITEquipment);
-    })
+      if (result.length != 0) {
+        return res.json({
+          msg: 'duplicate'
+        })
+      }
+      else {
+        helper.CreateFolder(targetFolder);
+        helper.CreateJSON(filename, dataJson);
 
-    res.json({
-      msg: 'success'
+        Insert_DeployITEquipment(sqldata, (err, result) => {
+          if (err) throw err;
+          console.log(result);
+        });
+
+        Update_TransactionITEquipment(serial, deployticket, deploytrf, deployto, deployby, deploydate, (err, result) => {
+          if (err) throw err;
+
+          console.log(result);
+        })
+
+        res.json({
+          msg: 'success'
+        })
+      }
     })
 
   } catch (error) {
@@ -275,7 +298,7 @@ router.post('/deploy', async (req, res) => {
   }
 })
 
-router.post('/pullout', async (req, res) => {
+router.post('/pullout', (req, res) => {
   try {
     var date = req.body.pulloutdate;
     var data = req.body.data;
@@ -316,7 +339,7 @@ router.post('/pullout', async (req, res) => {
       ])
     });
 
-    Insert_PulloutITEquipment = (data, callback) => {
+    function Insert_PulloutITEquipment(data, callback) {
       let sql = `INSERT INTO pullout_it_equipment(
         pie_serial,
         pie_brandname,
@@ -330,7 +353,7 @@ router.post('/pullout', async (req, res) => {
       callback(null, mysql.InsertMultiple(sql, data));
     }
 
-    Update_TransactionITEquipment = (ticket, pulloutbrand, pulloutitemtype, pulloutserial, pulloutfrom, pulloutdate, callback) => {
+    function Update_TransactionITEquipment(ticket, pulloutbrand, pulloutitemtype, pulloutserial, pulloutfrom, pulloutdate, callback) {
       let sql = `UPDATE transaction_it_equipment  SET
       tie_pulloutbrand='${pulloutbrand}',
       tie_pulloutitemtype='${pulloutitemtype}',
@@ -345,21 +368,45 @@ router.post('/pullout', async (req, res) => {
       });
     }
 
-    helper.CreateFolder(targetFolder);
-    helper.CreateJSON(filename, dataJson);
+    function Check_PulloutITEquipment(ticket, serial, date, callback) {
+      let sql = `SELECT * FROM pullout_it_equipment
+      WHERE pie_ticket='${ticket}'
+      AND pie_pulloutdate='${date}'
+      AND pie_serial='${serial}'`;
 
-    await Insert_PulloutITEquipment(sqldata, (err, result) => {
-      if (err) throw err;
-      console.log('Insert_PulloutITEquipment');
-    });
+      mysql.Select(sql, 'PulloutITEquipment', (err, result) => {
+        if (err) callback(err, null);
+        callback(null, result);
+      })
+    }
 
-    await Update_TransactionITEquipment(pulloutticket, pulloutbrand, pulloutitemtype, serial, pulloutfrom, pulloutdate, (err, result) => {
-      if (err) throw err;
-      console.log('Update_TransactionITEquipment');
-    })
+    Check_PulloutITEquipment(pulloutticket, serial, pulloutdate, (err, result) => {
+      if (err) console.log(err);
 
-    res.json({
-      msg: 'success'
+      if (result.length != 0) {
+        return res.json({
+          msg: 'duplicate'
+        })
+      }
+      else {
+
+        helper.CreateFolder(targetFolder);
+        helper.CreateJSON(filename, dataJson);
+
+        Insert_PulloutITEquipment(sqldata, (err, result) => {
+          if (err) console.log(err);
+          console.log(result);
+        });
+
+        Update_TransactionITEquipment(pulloutticket, pulloutbrand, pulloutitemtype, serial, pulloutfrom, pulloutdate, (err, result) => {
+          if (err) console.log(err);
+          console.log(result);
+        })
+
+        res.json({
+          msg: 'success'
+        })
+      }
     })
 
   } catch (error) {

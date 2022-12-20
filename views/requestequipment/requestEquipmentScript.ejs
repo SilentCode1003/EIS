@@ -26,7 +26,7 @@
             var message = "";
 
             if (personel == "-") { message += "FE NAME " }
-            if (store == "") { message += "STORE " }
+            if (store == "-") { message += "STORE " }
             if (ticket == "") { message += "TICKET " }
             if (brandname == "-") { message += "BRAND NAME " }
             if (itemtype == "-") { message += "ITEM TYPE " }
@@ -68,7 +68,7 @@
                     REMRKS.innerHTML = remarks;
                 } else {
                     if (!dataArr.map(item => {
-                        if (item.ticket == ticket && item.itemtype == itemtype ) {
+                        if (item.ticket == ticket && item.itemtype == itemtype) {
                             return `${item.ticket}${item.itemtype}`
                         }
 
@@ -269,6 +269,27 @@
                     alert('error: ' + result.data);
                 }
             });
+
+            $.ajax({
+                type: "POST",
+                url: "/clientstores/clientstore",
+                data: { clientname: '7ELEVEN' },
+                success: function (result) {
+                    console.log(result.data);
+                    var data = result.data;
+
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.storename, item.storename);
+                        $(options).html(item.storename);
+                        $('#store').append(options);
+                        console.log(item.storename);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+
         }
     })
 </script>

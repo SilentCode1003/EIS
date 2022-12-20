@@ -54,7 +54,7 @@
 
 
 <div id="itdashboard" class="row">
-    <div class="col-xl-6 col-lg-5">
+    <div class="col-xl-9 col-lg-5">
         <div class="card shadow mb-4">
             <!-- Card Header - Dropdown -->
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between chart-title">
@@ -83,8 +83,8 @@
         </div>
     </div>
 
-    <div class="col-xl-6 col-lg-5">
-        <h1>IT EQUIPMENT STOCKS</h1>
+    <div class="col-lg-3 col-sm-3">
+        <h1 class="center-text">IT EQUIPMENT STOCKS</h1>
         <div class="card shadow mb-4">
             <table id="IT-Equipment_Tbl">
                 <thead>
@@ -148,7 +148,7 @@
         <table id="restockstble">
             <thead>
                 <th>BRAND NAME</th>
-                <th>BRAND NAME</th>
+                <th>ITEM NAME</th>
                 <th>CURRENT STOCKS</th>
                 <th>MINIMUM STOCKS</th>
             </thead>
@@ -162,7 +162,7 @@
 <div id="equipments-it">
     <div class="div-table">
         <div>
-            <h1 class="h1-dashboard">
+            <h1>
                 IT EQUIPMENT REQUEST
             </h1>
         </div>
@@ -178,11 +178,12 @@
         </table>
     </div>
 </div>
+<br>
 
 <div id="equipments-it-transfer">
     <div class="div-table">
         <div>
-            <h1 class="h1-dashboard">
+            <h1>
                 EQUIPMENT TRANSFER REQUEST
             </h1>
         </div>
@@ -201,7 +202,7 @@
         </table>
     </div>
 </div>
-
+<br>
 
 <div id="cablingequipmentrequesttable">
     <div class="div-table">
@@ -270,6 +271,124 @@
         <div id="modal-button-container" class="center-content">
             <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
             <button class="btn-glow-modal" id="saveBtn" name="saveBtn">SAVE</button>
+        </div>
+    </div>
+</div>
+
+<!-- The Modal -->
+<div id="requestPringModal" class="modal card shadow mb-4">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <div class="modal-button-container">
+            <span id="requestprintspan" class="close">&times;</span>
+        </div>
+        <div id="PrintArea" name="PrintArea">
+            <div class="modal-header center-content modal-print-background">
+                <div class="row">
+                    <div class="col-xl-3 col-lg-2">
+                        <img class="logo" src="/images/img/logo.jpg" alt="...">
+                    </div>
+                </div>
+            </div>
+            <div class="center-text modal-print-background">
+                <div class="modal-print-background modal-company-header">
+                    <p><strong><span class="report-header">5L SOLUTIONS SUPPLY &amp; ALLIED SERVICES
+                                CORP.</span></strong></p>
+                </div>
+                <div class="modal-print-background">
+                    <p><span class="report-subheader">Phase 3B Block 18 Lot 15, Golf Drive Street Pacita
+                            Complex 1,
+                            City of Bi&ntilde;an, Laguna</span></p>
+                </div>
+                <div class="modal-print-background">
+                    <p><span class="report-subheader">Tel.Nos: 273-44-69/952-15-60</span></p>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <h1 class="center-text"> REQUEST ITEM'S</h1>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <table id="print-requestlist">
+                                <thead>
+                                    <th>TICKET</th>
+                                    <th>ITEM</th>
+                                    <th>QTY</th>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <hr>
+                    <div>
+                        <table id="print-requesttbl">
+                            <thead>
+                                <th>TICKET</th>
+                                <th>STORE</th>
+                                <th>BRAND</th>
+                                <th>TYPE</th>
+                                <th>SERIAL</th>
+                            </thead>
+                            <tbody></tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <br>
+            <br>
+            <br>
+            <!-- SIGNATURE AREA -->
+            <div class="row modal-signature-info center-content">
+                <div class="col-sm-3 center-content">
+                    <p><strong><span id="requestbysig"></span></strong></p>
+                </div>
+                <div class="col-sm-3 center-content">
+                    <p><strong><span id="officersig"></span></strong></p>
+                </div>
+                <div class="col-sm-3 center-content">
+                    <p><strong><span id="checkersig"></span></strong></p>
+                </div>
+            </div>
+            <!-- LABLE AREA -->
+            <div class="row modal-signature-info center-content">
+                <div class="col-sm-3 center-content">
+                    <p><strong>REQUEST BY</strong></p>
+                </div>
+                <div class="col-sm-3 center-content">
+                    <p><strong>IT CUSTODIAN</strong></p>
+                </div>
+                <div class="col-sm-3 center-content">
+                    <p><strong>CHECKER</strong></p>
+                </div>
+            </div>
+            <!-- DATES -->
+            <div class="row modal-signature-info center-content">
+                <div class="col-sm-3 center-content">
+                    <p><strong>
+                            <span id="requestdatesig"></span>
+                        </strong></p>
+                </div>
+                <div class="col-sm-3 center-content">
+                    <p><strong>
+                            <span id="datesig"></span>
+                        </strong></p>
+                </div>
+
+                <div class="col-sm-3 center-content">
+                    <p><strong>
+                            <span id="checkdatesig"></span>
+                        </strong></p>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="modal-button-container" class="center-content">
+            <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
+            <button class="approve-btn" id="printEquipmentRequestBtn" name="printEquipmentRequestBtn">PRINT</button>
         </div>
     </div>
 </div>
@@ -469,7 +588,7 @@
             <div class="row modal-signature-info center-content">
                 <div class="col-sm-4 center-text">
                     <p><strong>
-                            <span id="requestdatesig"></span>
+                            <span id="requestcablingdatesig"></span>
                         </strong></p>
                 </div>
                 <div class="col-sm-4 center-text">

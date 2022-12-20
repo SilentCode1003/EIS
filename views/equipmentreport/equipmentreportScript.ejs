@@ -174,34 +174,57 @@
             var deploydate = $('#deploydate').val();
             var deployby = $('#deployby').val();
 
-            let data = [];
-            data.push({
-                deployticket: deployticket,
-                deploytrf: deploytrf,
-                deployserial: deployserial,
-                deployitembrand: deployitembrand,
-                deployitemtype: deployitemtype,
-                deployto: deployto,
-                deploydate: deploydate,
-                deployby: deployby
-            });
+            var message = '';
 
-            $.ajax({
-                type: "POST",
-                url: "/equipmentreport/deploy",
-                data: {
+            if (deployticket == '') { message += 'TICKET ' }
+            if (deploytrf == '') { message += 'TRF ' }
+            if (deployserial == '') { message += 'SERIAL ' }
+            if (deployitembrand == '-') { message += 'DEPLOY ITEM BRAND ' }
+            if (deployitemtype == '-') { message += 'DEPLOY ITEM TYPE ' }
+            if (deployto == '-') { message += 'DEPLOY TO ' }
+            if (deploydate == '') { message += 'DEPLOT DATE ' }
+            if (deployby == '-') { message += 'DEPLOY BY ' }
+
+            if (message != '') { warning('Incomplete', `Required to fill up ${message}`) }
+            else {
+                let data = [];
+                data.push({
+                    deployticket: deployticket,
+                    deploytrf: deploytrf,
+                    deployserial: deployserial,
+                    deployitembrand: deployitembrand,
+                    deployitemtype: deployitemtype,
+                    deployto: deployto,
                     deploydate: deploydate,
-                    deployby: deployby,
-                    data: data
-                },
-                success: function (result) {
-                    success('Saved!', 'Data saved!')
-                    DeployITEquipmentTable();
-                },
-                error: function (result) {
-                    alert('error: ' + result.data);
-                }
-            });
+                    deployby: deployby
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: "/equipmentreport/deploy",
+                    data: {
+                        deploydate: deploydate,
+                        deployby: deployby,
+                        data: data
+                    },
+                    success: function (result) {
+                        if (result.msg == 'success') {
+                            success('Saved!', 'Data saved!')
+                        }
+
+                        if (result.msg == 'duplicate') {
+                            warning('Duplicate', `Serial ${deployserial} has already submit with ticket ${deployticket} dated ${deploydate}`);
+                        }
+
+                        DeployITEquipmentTable();
+                    },
+                    error: function (result) {
+                        alert('error: ' + result.data);
+                    }
+                });
+
+            }
+
         });
 
         $(document).on('change', "#iswildcardsearch", function () {
@@ -222,35 +245,60 @@
             var pulloutdate = $('#pulloutdate').val();
             var pulloutby = $('#pulloutby').val();
 
-            let data = [];
-            data.push({
-                pulloutticket: pulloutticket,
-                pullouttrf: pullouttrf,
-                pulloutserial: pulloutserial,
-                pulloutitembrand: pulloutitembrand,
-                pulloutitemtype: pulloutitemtype,
-                pulloutfrom: pulloutfrom,
-                pulloutdate: pulloutdate,
-                pulloutby: pulloutby
-            });
+            var message = '';
 
-            $.ajax({
-                type: "POST",
-                url: "/equipmentreport/pullout",
-                data: {
+            if (pulloutticket == '') { message += 'TICKET ' }
+            if (pullouttrf == '') { message += 'TRF ' }
+            if (pulloutserial == '') { message += 'SERIAL ' }
+            if (pulloutitembrand == '-') { message += 'PULLOUT ITEM BRAND ' }
+            if (pulloutitemtype == '-') { message += 'PULLOUT ITEM TYPE ' }
+            if (pulloutfrom == '-') { message += 'PULLOUT TO ' }
+            if (pulloutdate == '') { message += 'PULLOUT DATE ' }
+            if (pulloutby == '-') { message += 'PULLOUT BY ' }
+
+            if (message != '') { warning('Incomplete', `Required to fill up ${message}`) }
+            else {
+                let data = [];
+                data.push({
+                    pulloutticket: pulloutticket,
+                    pullouttrf: pullouttrf,
+                    pulloutserial: pulloutserial,
+                    pulloutitembrand: pulloutitembrand,
+                    pulloutitemtype: pulloutitemtype,
+                    pulloutfrom: pulloutfrom,
                     pulloutdate: pulloutdate,
-                    pulloutby: pulloutby,
-                    data: data
-                },
-                success: function (result) {
-                    success('Saved!', 'Data saved!')
-                    PulloutITEquipment();
-                },
-                error: function (result) {
-                    alert('error: ' + result.data);
-                }
-            });
+                    pulloutby: pulloutby
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: "/equipmentreport/pullout",
+                    data: {
+                        pulloutdate: pulloutdate,
+                        pulloutby: pulloutby,
+                        data: data
+                    },
+                    success: function (result) {
+                        if (result.msg == 'success') {
+                            success('Saved!', 'Data saved!')
+                        }
+                        if (result.msg == 'duplicate') {
+                            warning('Duplicate', `Serial ${pulloutserial} has already submit with ticket ${pulloutticket} dated ${pulloutdate}`)
+                        }
+
+                        PulloutITEquipment();
+                    },
+                    error: function (result) {
+                        alert('error: ' + result.data);
+                    }
+
+                });
+
+            }
+
+
         });
+
         function TransactionITEquipmentTable() {
             showloader();
             dataTable = $('#search-tbl').DataTable({
