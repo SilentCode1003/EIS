@@ -13,7 +13,8 @@ router.get('/', isAuthAdmin, function (req, res, next) {
     user: req.session.username,
     password: req.session.passowrd,
     fullname: req.session.fullname,
-    accounttype: req.session.accounttype
+    accounttype: req.session.accounttype,
+    date: helper.GetCurrentDatetime()
   });
 });
 
@@ -114,3 +115,58 @@ router.post('/personelposition', (req, res) => {
   }
 
 });
+
+
+router.post('/excelsave', (req, res) => {
+  try {
+    let data = req.body.data;
+
+    console.log(data);
+    function CreateFile(datajson) {
+      return new Promise((resolve, reject) => {
+        datajson = JSON.parse(datajson);
+        var dataDetails = [];
+
+        datajson.forEach((key, item) => {
+          dataDetails.push({
+            fullname: key.fullname,
+            location: key.location,
+            positions: key.positions,
+            createdby: key.createdby,
+            createddate: key.createddate
+          })
+
+          try {
+            var fileDir = `${PersonelPath}${key.fullname}.json`;
+
+            dataDetails = JSON.stringify(dataDetails, null, 2);
+            helper.CreateJSON(fileDir, data);
+          } catch (error) {
+            reject(error);
+          }
+
+        });
+
+        resolve('DONE');
+      })
+    }
+
+    CreateFile(data).then(result => {
+      console.log(result);
+
+      res.json({
+        msg: 'success'
+      })
+
+    }).catch(err => {
+      res.json({
+        msg: err
+      })
+    })
+
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+})

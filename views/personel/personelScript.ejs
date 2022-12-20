@@ -86,5 +86,120 @@
             }
 
         });
+
+        $(document).on('click', "#uploadBtn", function () {
+            showloader();
+            UploadProcess();
+        })
+
+        function UploadProcess() {
+            //Reference the FileUpload element.
+            var fileUpload = document.getElementById("fileUpload");
+
+            //Validate whether File is valid Excel file.
+            var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xls|.xlsx|.csv|.ods)$/;
+            if (regex.test(fileUpload.value.toLowerCase())) {
+                if (typeof (FileReader) != "undefined") {
+                    var reader = new FileReader();
+
+                    //For Browsers other than IE.
+                    if (reader.readAsBinaryString) {
+                        reader.onload = function (e) {
+                            GetTableFromExcel(e.target.result);
+                        };
+                        reader.readAsBinaryString(fileUpload.files[0]);
+                    } else {
+                        //For IE Browser.
+                        reader.onload = function (e) {
+                            var data = "";
+                            var bytes = new Uint8Array(e.target.result);
+                            for (var i = 0; i < bytes.byteLength; i++) {
+                                data += String.fromCharCode(bytes[i]);
+                            }
+                            GetTableFromExcel(data);
+                        };
+                        reader.readAsArrayBuffer(fileUpload.files[0]);
+                    }
+                } else {
+                    warning('Upload', "This browser does not support HTML5.");
+                }
+            } else {
+                warning('Upload', "Please upload a valid Excel file.");
+            }
+        };
+
+        function GetTableFromExcel(data) {
+            //Read the Excel File data in binary
+            var workbook = XLSX.read(data, {
+                type: 'binary'
+            });
+
+            //get the name of First Sheet.
+            var Sheet = workbook.SheetNames[0];
+
+            //Read all rows from First Sheet into an JSON array.
+            var excelRows = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[Sheet]);
+            var columns = Object.keys(excelRows[0]);
+
+
+            //Create a HTML Table element.
+            var myTable = document.createElement("table");
+            myTable.border = "1";
+
+            //Add the header row.
+            var row = myTable.insertRow(-1);
+
+            //Add the header cells.
+            // var headerCell = document.createElement("TH");
+            // for (var j = 0; j < columns.length; j++) {
+            //     headerCell = document.createElement("TH");
+            //     headerCell.innerHTML = columns[j];
+            //     row.appendChild(headerCell);
+            // }
+
+            var dataExcelArr = [];
+            //Add the data rows from Excel file.
+            for (var i = 0; i < excelRows.length; i++) {
+                //Add the data row.
+                var data = [];
+                var row = myTable.insertRow(-1);
+                for (var j = 0; j < columns.length; j++) {
+                    var cell = row.insertCell(-1);
+                    cell.innerHTML = excelRows[i][columns[j]];
+                    data.push({
+                        item: excelRows[i][columns[j]]
+                    });
+                }
+                dataExcelArr.push({
+                    fullname: data[0].item,
+                    location: data[1].item,
+                    positions: data[2].item,
+                    createdby: '<%= fullname%>',
+                    createddate: '<%= date%>'
+                });
+
+            }
+            excelDataSave(dataExcelArr);
+
+        };
+
+        function excelDataSave(data) {
+            var dataraw = JSON.stringify(data, null, 2);
+            $.ajax({
+                type: "POST",
+                url: "/personel/excelsave",
+                data: {
+                    data: dataraw
+                },
+                success: function (result) {
+                    success('Saved!', 'Data saved!')
+                    $('#item-tbl').DataTable().ajax.reload();       
+                    hideload();
+                },
+                error: function (result) {
+                    error(result.data);
+                }
+            });
+        }
     })
 </script>

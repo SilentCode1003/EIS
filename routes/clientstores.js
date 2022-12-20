@@ -130,3 +130,65 @@ router.post('/clientstore', (req, res) => {
   }
 
 });
+
+router.post('/excelsave', (req, res) => {
+  try {
+    let data = req.body.data;
+
+    function CreateFile(datajson) {
+      // console.log(datajson);
+      return new Promise((resolve, reject) => {
+        datajson = JSON.parse(datajson);
+        datajson.forEach((key, item) => {
+          var dataClientDetails = [];
+          let ClientFoler = `${ClientStorePath}${key.clientname}`;
+          let filename = `${ClientFoler}/${key.storename}_${key.storenumber}.json`;
+
+          dataClientDetails.push({
+            clientname: key.clientname,
+            storenumber: key.storenumber,
+            storename: key.storename,
+            zone: key.zone,
+            storetype: key.storetype,
+            contactnumber: key.contactnumber,
+            storeemail: key.storeemail,
+            address: key.address,
+            googlemapaddress: key.googlemapaddress,
+            createdby: key.createdby,
+            createddate: key.createddate
+          })
+
+          dataClientDetails = JSON.stringify(dataClientDetails, null, 2);
+
+          try {
+            helper.CreateFolder(ClientFoler);
+            helper.CreateJSON(filename, dataClientDetails);
+          } catch (error) {
+            reject(error)
+          }
+
+        })
+
+        resolve('DONE');
+
+      });
+
+    }
+
+    CreateFile(data).then(result => {
+      console.log(result)
+      res.json({
+        msg: 'success'
+      })
+    }).catch(err => {
+      res.json({
+        msg: err
+      })
+    })
+
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+})
