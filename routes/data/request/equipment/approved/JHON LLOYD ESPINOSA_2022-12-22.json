@@ -1,0 +1,26 @@
+[
+  {
+    "controlno": 1001,
+    "personel": "JHON LLOYD ESPINOSA",
+    "data": [
+      {
+        "store": "153 Paco 2",
+        "ticket": "INC-4587542",
+        "brandname": "POSIFLEX",
+        "itemtype": "Cliqq Machine FLYTECH LCD",
+        "quantity": "1",
+        "remarks": "CLIQQ MONITOR REPLACEMENT"
+      },
+      {
+        "store": "167 Jupiter 1",
+        "ticket": "INC-4587521",
+        "brandname": "POSIFLEX",
+        "itemtype": "Cliqq Machine FLYTECH LCD",
+        "quantity": "1",
+        "remarks": "CLIQQ MONITOR REPLACEMENT"
+      }
+    ],
+    "createddate": "2022-12-22",
+    "status": "ALLOC"
+  }
+]

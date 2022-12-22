@@ -55,33 +55,33 @@
 
                         // console.log(data);
                         $.each(data, (key, item) => {
-                            console.log(`${item.personel} ${item.createddate} ${item.status}`);
-                            personel = item.personel;
-                            createddate = item.createddate;
+                            console.log(`${item.requestby} ${item.requestdate} ${item.status}`);
+                            personel = item.requestby;
+                            createddate = item.requestdate;
                             status = item.status;
 
-                            $.each(item.data, (key, item) => {
+                            var datajson = JSON.parse(item.details)
+                            $.each(datajson, (key, item) => {
                                 console.log(`${item.store} ${item.ticket} ${item.brandname} ${item.itemtype} ${item.quantity} ${item.remarks}`);
                                 details += `TICKET:${item.ticket}   STORE: ${item.store}    BRANDNAME:${item.brandname} ITEMTPE:${item.itemtype}    QUANTITY:${item.quantity}   REMARKS:${item.remarks}<br/>`;
                             })
 
-                            if (status == "PENDING") {
+                            if (status == "PND") {
                                 action = '<button class="assign-btn" id="assignBtn" name="assignBtn">ASSIGN SERIAL</button>'
                             }
-                            if (status == 'FOR APPROVAL') {
+                            if (status == 'FAPR') {
                                 action = '<button class="approve-btn" id="approvedBtn" name="approvedBtn">APPROVED</button><br><button class="edit-btn" id="editBtn" name="editBtn">EDIT</button>'
                             }
 
-                            if (status == 'APPROVED') {
-                                action = '<button class="approve-btn" id="deploybtn" name="deploybtn">DEPLOY</button><br><button class="edit-btn" id="returnBtn" name="returnBtn">RETURN</button><br><button class="edit-btn" id="printRequestBtn" name="printRequestBtn">PRINT</button>'
+                            if (status == 'ALLOC') {
+                                action = '<button class="approve-btn" id="deploybtn" name="deploybtn">DEPLOY</button><br><button class="edit-btn" id="printRequestBtn" name="printRequestBtn">PRINT</button>'
                             }
-
 
                             finalData.push({
                                 personel: personel,
                                 details: details,
                                 createddate: createddate,
-                                status: status,
+                                status: item.remarks,
                                 action: action
                             })
 
@@ -100,12 +100,7 @@
                     { data: 'personel' },
                     { data: 'details' },
                     { data: 'status' },
-                    {
-                        data: 'action'
-                        // data: null, title: 'Action', wrap: false, "render": function () {
-
-                        // }
-                    }
+                    { data: 'action' }
                 ],
                 initComplete: function () {
                     console.log('init complete');
@@ -341,6 +336,9 @@
         var modalrequestprint = document.getElementById("requestPringModal");
         var requestprintspan = document.getElementById("requestprintspan");
 
+        var deploymodal = document.getElementById("deployModal");
+        var deployspan = document.getElementById("deployspan");
+
         span.onclick = function () {
             modal.style.display = "none";
         }
@@ -351,6 +349,10 @@
 
         span3.onclick = function () {
             modalcabling.style.display = "none";
+        }
+
+        deployspan.onclick = function () {
+            deploymodal.style.display = "none";
         }
 
         requestprintspan.onclick = function () {
@@ -370,6 +372,9 @@
             }
             if (event.target == modalrequestprint) {
                 modalrequestprint.style.display = "none";
+            }
+            if (event.target == deploymodal) {
+                deploymodal.style.display = "none";
             }
         }
 
@@ -424,20 +429,26 @@
             $(this).focus();
         });
 
+        $('#deployitemlist tbody').on('click', 'tr', function (e) {
+            e.preventDefault();
+
+            if ($(this).attr('edit_type') == 'button') {
+                return false;
+            }
+
+            //make div editable
+            $(this).closest('div').attr('contenteditable', 'true');
+            //add bg css
+            $(this).addClass('edit-cost').css('padding', '5px');
+
+            $(this).focus();
+        });
+
         $('#requestModal').on('hidden.bs.modal', function (e) {
             window.location.reload();
         });
 
-
         $(document).on('click', "#printRequestBtn", function () {
-            var requestlistTabel = $('#print-requestlist').DataTable({
-                'destroy': true,
-                'paging': false,
-                'searching': false,
-                'info': false,
-                'scrollCollapse': true,
-            });
-
             var requestitemTabel = $('#print-requesttbl').DataTable({
                 'destroy': true,
                 'paging': false,
@@ -449,17 +460,16 @@
             $.ajax({
                 type: "POST",
                 url: "/requestequipment/getdetails",
-                data: { filename: filename },
+                data: {
+                    requestby: requestby,
+                    requestdate: requestdate,
+                },
                 success: function (result) {
-                    requestlistTabel.clear().draw();
                     var data = result.data;
 
-                    console.log(result.data);
                     $.each(data, function (key, item) {
-                        $.each(item.data, (key, item) => {
-
-                            requestlistTabel.row.add([item.ticket, item.itemtype, item.quantity]).draw(false);
-                        })
+                        document.getElementById('requestid').innerText = item.requestid;
+                        document.getElementById('requestdate').innerText = item.requestdate;
                     })
                 },
                 error: function (result) {
@@ -471,15 +481,15 @@
                 type: "POST",
                 url: "/requestequipment/getassign",
                 data: {
-                    personel: personel,
-                    date: date,
+                    requestby: requestby,
+                    requestdate: requestdate,
                 },
                 success: function (result) {
                     requestitemTabel.clear().draw();
                     var data = result.data;
 
+                    console.log(data);
                     $.each(data, (key, item) => {
-
                         requestitemTabel.row.add([item.ticket, item.store, item.brandname, item.itemtype, item.serial]).draw(false);
                     })
                 },
@@ -488,18 +498,117 @@
                 }
             });
 
+
             document.getElementById('officersig').innerText = '<%= fullname%>';
             document.getElementById('datesig').innerText = '<%= date%>';
             document.getElementById('requestbysig').innerText = personel;
             document.getElementById('requestdatesig').innerText = date;
-            document.getElementById('checkersig').innerText = 'ROEL ALIM';
+            document.getElementById('checkersig').innerText = '<%= checker%>';
             document.getElementById('checkdatesig').innerText = date;
 
             modalrequestprint.style.display = 'block';
         })
 
         $(document).on('click', "#deploybtn", function () {
+            var requestlistTabel = $('#deployitemlist').DataTable({
+                'destroy': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollCollapse': true,
+            });
 
+            //request list
+            $.ajax({
+                type: "POST",
+                url: "/requestequipment/getassign",
+                data: {
+                    requestby: requestby,
+                    requestdate: requestdate
+                },
+                success: function (result) {
+                    requestlistTabel.clear().draw();
+                    var data = result.data;
+
+                    console.log(result.data);
+
+                    $.each(data, function (key, item) {
+                        requestlistTabel.row.add([item.ticket, item.store, item.brandname, item.itemtype, item.serial, '', '', '', '', '']).draw(false);
+                    })
+                },
+                error: function (result) {
+                    error('error: ' + result.data);
+                }
+            });
+
+            deploymodal.style.display = "block";
+        })
+
+        $(document).on('click', "#deployitemBtn", function () {
+            console.log('clicked!');
+            var data = $('#deployitemlist tr');
+            var dataRaw = [];
+            console.log(data);
+            console.log(data.length);
+            var message = '';
+
+            var status = '';
+            for (x = 1; x < data.length; x++) {
+                console.log(data[x].innerText);
+                var innerData = data[x].innerText;
+                innerData = innerData.split("\t");
+
+                if (innerData[5] == "") {
+
+                    status = 'RETURNED';
+                } else {
+                    status = 'DEPLOYED';
+                }
+
+                dataRaw.push({
+                    ticket: innerData[0],
+                    store: innerData[1],
+                    brandname: innerData[2],
+                    itemtype: innerData[3],
+                    serial: innerData[4],
+                    trf: innerData[5],
+                    pulloutbrand: innerData[6],
+                    pulloutitemtype: innerData[7],
+                    pulloutserial: innerData[8],
+                    apo: innerData[9],
+                    status: status,
+                });
+
+            }
+
+            dataRaw = JSON.stringify(dataRaw, null, 2);
+            console.log(dataRaw);
+
+            $.ajax({
+                type: "POST",
+                url: "/requestequipment/deployitem",
+                data: {
+                    requestby: requestby,
+                    requestdate: requestdate,
+                    data: dataRaw
+                },
+                success: function (result) {
+                    success('Saved', 'Data Saved!');
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+
+            // if (message != "") {
+            //     warning(`TICKET/S: ${message} no serial assigned!`)
+            // } else {
+
+            // }
+
+
+            EquipmentRequestLoadTables();
+            deploymodal.style.display = "none";
         })
 
         $(document).on('click', "#returnBtn", function () {
@@ -515,7 +624,6 @@
             document.body.innerHTML = originalContents;
             location.reload();
         })
-
 
         $(document).on('click', "#saveBtn", async function () {
             console.log('clicked!');
@@ -585,9 +693,8 @@
                 type: "POST",
                 url: "/requestequipment/approve",
                 data: {
-                    personel: personel,
-                    date: date,
-                    status: 'APPROVED'
+                    requestby: requestby,
+                    requestdate: requestdate,
                 },
                 success: function (result) {
                     success('Approved!', 'Request approved!')
@@ -600,7 +707,6 @@
         });
 
         $(document).on('click', "#assignBtn", async function () {
-            modal.style.display = "block";
             var requestlistTabel = $('#requestlist').DataTable({
                 'destroy': true,
                 'paging': false,
@@ -616,52 +722,35 @@
                 'info': false,
                 'scrollCollapse': true,
             });
-
             var index = [];
             //request list
             $.ajax({
                 type: "POST",
                 url: "/requestequipment/getdetails",
-                data: { filename: filename },
+                data: {
+                    requestby: requestby,
+                    requestdate: requestdate
+                },
                 success: function (result) {
                     requestlistTabel.clear().draw();
-                    var data = result.data;
-
-                    console.log(result.data);
-                    $.each(data, function (key, item) {
-                        $.each(item.data, (key, item) => {
-                            index.push({
-                                itemtype: item.itemtype,
-                                quantity: item.quantity
-                            });
-                            requestlistTabel.row.add([item.ticket, item.itemtype, item.quantity]).draw(false);
-                        })
-                    })
-                },
-                error: function (result) {
-                    error('error: ' + result.data);
-                }
-            });
-
-            //request items
-            $.ajax({
-                type: "POST",
-                url: "/requestequipment/getdetails",
-                data: { filename: filename },
-                success: function (result) {
                     requestitemTabel.clear().draw();
                     var data = result.data;
 
                     console.log(result.data);
-                    $.each(data, (key, item) => {
-                        var x = 0;
-                        $.each(item.data, (key, item) => {
-                            var qty = index[x].quantity;
-                            for (i = 0; i < qty; i++) {
-                                requestitemTabel.row.add([item.ticket, item.store, item.brandname, item.itemtype, ""]).draw(false);
-                            }
 
-                            x += 1;
+                    $.each(data, function (key, item) {
+                        var datajson = item.details;
+
+                        console.log(datajson);
+                        datajson = JSON.parse(datajson);
+                        $.each(datajson, function (key, value) {
+                            requestlistTabel.row.add([value.ticket, value.itemtype, value.quantity]).draw(false);
+
+                            var quantity = parseFloat(value.quantity);
+
+                            for (x = 0; x < quantity; x++) {
+                                requestitemTabel.row.add([value.ticket, value.store, value.brandname, value.itemtype, '']).draw(false);
+                            }
                         })
                     })
                 },
@@ -669,6 +758,8 @@
                     error('error: ' + result.data);
                 }
             });
+
+            modal.style.display = "block";
 
         });
 
@@ -695,16 +786,23 @@
             $.ajax({
                 type: "POST",
                 url: "/requestequipment/getdetails",
-                data: { filename: filename },
+                data: {
+                    requestby: requestby,
+                    requestdate: requestdate
+                },
                 success: function (result) {
                     requestlistTabel.clear().draw();
                     var data = result.data;
 
                     console.log(result.data);
-                    $.each(data, function (key, item) {
-                        $.each(item.data, (key, item) => {
 
-                            requestlistTabel.row.add([item.ticket, item.itemtype, item.quantity]).draw(false);
+                    $.each(data, function (key, item) {
+                        var datajson = item.details;
+
+                        console.log(datajson);
+                        datajson = JSON.parse(datajson);
+                        $.each(datajson, function (key, value) {
+                            requestlistTabel.row.add([value.ticket, value.itemtype, value.quantity]).draw(false);
                         })
                     })
                 },
@@ -717,8 +815,8 @@
                 type: "POST",
                 url: "/requestequipment/getassign",
                 data: {
-                    personel: personel,
-                    date: date,
+                    requestby: requestby,
+                    requestdate: requestdate,
                 },
                 success: function (result) {
                     requestitemTabel.clear().draw();

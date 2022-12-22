@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+require('dotenv').config();
 
 const { isAuthAdmin } = require('./controller/authBasic');
 const helper = require('./repository/customhelper');
@@ -14,6 +15,7 @@ router.get('/', isAuthAdmin, function (req, res, next) {
     accounttype: req.session.accounttype,
     date: helper.GetCurrentDate(),
     datetime: helper.GetCurrentDatetime(),
+    checker: process.env._CHECKER,
   });
 
 });

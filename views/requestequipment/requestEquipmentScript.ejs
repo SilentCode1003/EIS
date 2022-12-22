@@ -188,12 +188,13 @@
 
                         // console.log(data);
                         $.each(data, (key, item) => {
-                            console.log(`${item.personel} ${item.createddate} ${item.status}`);
-                            personel = item.personel;
-                            createddate = item.createddate;
+                            console.log(`${item.requestby} ${item.requestdate} ${item.status}`);
+                            personel = item.requestby;
+                            createddate = item.requestdate;
                             status = item.status;
 
-                            $.each(item.data, (key, item) => {
+                            var datajson = JSON.parse(item.details);
+                            $.each(datajson, (key, item) => {
                                 console.log(`${item.store} ${item.ticket} ${item.brandname} ${item.itemtype} ${item.quantity} ${item.remarks}`);
                                 details += `TICKET:${item.ticket}   STORE: ${item.store}    BRANDNAME:${item.brandname} ITEMTPE:${item.itemtype}    QUANTITY:${item.quantity}   REMARKS:${item.remarks}<br/>`;
                             })
@@ -202,7 +203,7 @@
                                 personel: personel,
                                 details: details,
                                 createddate: createddate,
-                                status: status,
+                                status: item.remarks,
                             })
 
                             details = '';

@@ -16,6 +16,9 @@ exports.GetValue = (abr) => {
     if (abr == 'WAIT') return 'WAITING';
     if (abr == 'RES') return 'RESTOCK';
     if (abr == 'FAPR') return 'FOR APPROVAL';
+    if (abr == 'SPR') return 'SPARE';
+    if (abr == 'DLY') return 'DEPLOYED';
+    if (abr == 'RET') return 'RETURNED';
 }
 
 //#region STATUS CODE
@@ -81,6 +84,18 @@ exports.RES = () => {
 
 exports.FAPR = () => {
     return 'FAPR';
+}
+
+exports.SPR = () => {
+    return 'SPR';
+}
+
+exports.DLY = () => {
+    return 'DLY';
+}
+
+exports.RET = () => {
+    return 'RET';
 }
 
 //#endregion

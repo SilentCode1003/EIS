@@ -10,6 +10,7 @@ const RequestEquipmentPathReturn = `${__dirname}/data/request/equipment/return/`
 const RequestEquipmentPathAssigned = `${__dirname}/data/request/equipment/assigned/`
 const mysql = require('./repository/dbconnect')
 const dictionary = require('./repository/dictionary');
+const API = require('./controller/APIController');
 
 const { isAuthAdmin, isAuth } = require('./controller/authBasic');
 /* GET home page. */
@@ -34,8 +35,50 @@ router.post('/save', (req, res) => {
         var data = req.body.data;
         var status = '';
         var dataArr = [];
+        let remarks = dictionary.GetValue(dictionary.PND());
+        let stats = dictionary.PND();
+        let request_spare_details = [];
+        let request_spare_item = [];
 
-        console.log(`Recieved: ${data}`);
+        function Insert_RequestSpareDetails(data, callback) {
+            let sql = `INSERT INTO request_sapre_details(
+            rsd_requestby,
+            rsd_requestdate,
+            rsd_details,
+            rsd_approvedby,
+            rsd_approveddate,
+            rsd_remarks,
+            rsd_status) VALUES ?`;
+
+            mysql.InsertTable(sql, data, (err, result) => {
+                if (err) callback(err, null);
+                callback(null, result);
+            })
+        }
+
+        function CreateFile_RequestSpareDetails(sql, personel, createddate, details, status, callback) {
+            var fileDir = `${RequestEquipmentPathPending}/${personel}_${createddate}.json`;
+            let data = [];
+            mysql.Select(sql, 'RequestSpareDetails', (err, result) => {
+                if (err) callback(err, null);
+                var controlno = result[0].requestid;
+
+                console.log(controlno);
+                data.push({
+                    controlno: controlno,
+                    personel: personel,
+                    data: details,
+                    createddate: createddate,
+                    status: status,
+                });
+
+                var finalData = JSON.stringify(data, null, 2);
+
+                console.log(`Final: ${finalData}`);
+                helper.CreateJSON(fileDir, finalData)
+                callback(null, 'DONE');
+            })
+        }
 
         var dataRaw = JSON.parse(data);
         var details = [];
@@ -56,23 +99,32 @@ router.post('/save', (req, res) => {
         });
 
         var data = JSON.stringify(details, null, 2);
-        console.log(`Details: ${data}`);
-        var fileDir = `${RequestEquipmentPathPending}/${personel}_${createddate}.json`;
-        console.log(`Details: ${personel} ${status} ${createddate}`);
-        dataArr.push({
-            personel: personel,
-            data: details,
-            createddate: createddate,
-            status: 'PENDING',
-        });
 
-        var finalData = JSON.stringify(dataArr, null, 2);
+        request_spare_details.push([
+            personel,
+            createddate,
+            data,
+            '',
+            '',
+            remarks,
+            stats,
+        ])
 
-        console.log(`Final: ${finalData}`);
-        helper.CreateJSON(fileDir, finalData)
+        Insert_RequestSpareDetails(request_spare_details, (err, result) => {
+            if (err) console.error(err);
+            console.log(result);
+        })
 
-        res.json({
-            msg: 'success'
+        let sql = `SELECT * FROM request_sapre_details
+        WHERE rsd_requestby='${personel}'
+        AND rsd_requestdate='${createddate}'`;
+        CreateFile_RequestSpareDetails(sql, personel, createddate, details, remarks, (err, result) => {
+            if (err) console.error(err);
+
+            console.log(result);
+            res.json({
+                msg: 'success'
+            })
         })
 
     } catch (error) {
@@ -85,34 +137,45 @@ router.post('/save', (req, res) => {
 
 router.get('/load', (req, res) => {
     try {
+        let status = dictionary.DLY();
+        let sql = `SELECT * FROM request_sapre_details WHERE NOT rsd_status='${status}'`;
 
-        var dataArr = [];
-        var files = helper.GetFiles(RequestEquipmentPathPending);
-        console.log(`FILES: ${files}`);
+        mysql.Select(sql, 'RequestSpareDetails', (err, result) => {
+            if (err) console.error(err);
 
-        files.forEach(file => {
-            var filename = `${RequestEquipmentPathPending}${file}`;
-            var data = helper.ReadJSONFile(filename);
-            console.log(`JSON Data: ${data}`);
-
-            data.forEach((key, item) => {
-                var dataRaw = key.data;
-                console.log(`Data Raw: ${dataRaw}`);
-                var details = helper.RequestDetails(dataRaw);
-
-                dataArr.push({
-                    personel: key.personel,
-                    data: details,
-                    createddate: key.createddate,
-                    status: key.status,
-                });
-            });
+            res.json({
+                msg: 'success',
+                data: result
+            })
         })
 
-        res.json({
-            msg: 'succes',
-            data: dataArr
-        });
+        // var dataArr = [];
+        // var files = helper.GetFiles(RequestEquipmentPathPending);
+        // console.log(`FILES: ${files}`);
+
+        // files.forEach(file => {
+        //     var filename = `${RequestEquipmentPathPending}${file}`;
+        //     var data = helper.ReadJSONFile(filename);
+        //     console.log(`JSON Data: ${data}`);
+
+        //     data.forEach((key, item) => {
+        //         var dataRaw = key.data;
+        //         console.log(`Data Raw: ${dataRaw}`);
+        //         var details = helper.RequestDetails(dataRaw);
+
+        //         dataArr.push({
+        //             personel: key.personel,
+        //             data: details,
+        //             createddate: key.createddate,
+        //             status: key.status,
+        //         });
+        //     });
+        // })
+
+        // res.json({
+        //     msg: 'succes',
+        //     data: dataArr
+        // });
 
     } catch (error) {
         res.json({
@@ -124,25 +187,24 @@ router.get('/load', (req, res) => {
 
 router.post('/getdetails', (req, res) => {
     try {
-        var file = req.body.filename;
-        var fileDir = `${RequestEquipmentPathPending}${file}`;
-        var data = helper.ReadJSONFile(fileDir);
-        var dataArr = [];
+        let requestby = req.body.requestby;
+        let requestdate = req.body.requestdate;
 
-        console.log(data);
+        console.log(`${requestby} ${requestdate}`)
 
-        data.forEach((key, item) => {
-            dataArr.push({
-                data: key.data
+        let sql = `SELECT * FROM request_sapre_details
+        WHERE rsd_requestby='${requestby}'
+        AND rsd_requestdate='${requestdate}'`;
+
+        mysql.Select(sql, 'RequestSpareDetails', (err, result) => {
+            if (err) console.error(err);
+
+            console.log(result);
+            res.json({
+                msg: 'success',
+                data: result
             })
-        });
-
-        console.log(dataArr);
-
-        res.json({
-            msg: 'success',
-            data: dataArr
-        });
+        })
 
     } catch (error) {
         res.json({
@@ -160,7 +222,10 @@ router.post('/assign', async (req, res) => {
         var pendingFile = `${RequestEquipmentPathPending}${personel}_${date}.json`;
         var dataFile = helper.ReadJSONFile(pendingFile);
         var dataJson = JSON.parse(data);
-        let status = dictionary.GetValue(dictionary.FAPR());
+        let remarks = dictionary.GetValue(dictionary.FAPR());
+        let status = dictionary.FAPR();
+        let request_spare_items = [];
+        var controlno = '';
 
         message = '';
 
@@ -175,6 +240,41 @@ router.post('/assign', async (req, res) => {
                 dataFile.forEach(UpdatePendingRequestEquipment);
             })
         }
+
+        function Insert_RequestSpareItems(data, callback) {
+            let sql = `INSERT INTO request_spare_items(
+                rsi_requestby,
+                rsi_requestdate,
+                rsi_ticket,
+                rsi_store,
+                rsi_brandname,
+                rsi_itemtype,
+                rsi_serial,
+                rsi_approvedby,
+                rsi_approveddate,
+                rsi_detailid,
+                rsi_remarks,
+                rsi_status
+            ) VALUES ?`;
+
+            mysql.InsertTable(sql, data, (err, result) => {
+                if (err) callback(err, null);
+                callback(null, result);
+            })
+        }
+
+        function Update_RequestSpareDetails(requestid, remarks, status, callback) {
+            let sql = `UPDATE request_sapre_details 
+            SET rsd_remarks='${remarks}',
+            rsd_status='${status}'
+            WHERE rsd_requestid='${requestid}'`;
+
+            mysql.Update(sql, (err, result) => {
+                if (err) callback(err, null);
+                callback(null, result);
+            })
+        }
+
         async function WriteAssignRequestEquipment(element) {
             var filename = `${personel}_${date}_${element.ticket}_${element.index}.json`;
             var targetDir = `${RequestEquipmentPathAssigned}${filename}`;
@@ -191,6 +291,23 @@ router.post('/assign', async (req, res) => {
                 status: element.status,
             });
 
+
+            request_spare_items.push([
+                personel,
+                date,
+                element.ticket,
+                element.store,
+                element.brandname,
+                element.itemtype,
+                element.serial,
+                '',
+                '',
+                controlno,
+                remarks,
+                status,
+            ]);
+
+
             console.log(dataRaw);
 
             var dataFinal = JSON.stringify(dataRaw, null, 2);
@@ -199,19 +316,33 @@ router.post('/assign', async (req, res) => {
 
         async function UpdatePendingRequestEquipment(element) {
             console.log(`Update: ${element}`)
+            controlno = element.controlno;
             dataArr.push({
+                controlno: element.controlno,
                 personel: element.personel,
                 data: element.data,
                 createddate: element.createddate,
-                status: status,
+                status: remarks,
             });
 
             var dataArrJson = JSON.stringify(dataArr, null, 2);
             helper.CreateJSON(pendingFile, dataArrJson)
         }
 
-        Execute();
         Update();
+        Execute();
+
+        console.log(request_spare_items);
+        Insert_RequestSpareItems(request_spare_items, (err, result) => {
+            if (err) console.error(err);
+
+            console.log(result);
+        })
+
+        Update_RequestSpareDetails(controlno, remarks, status, (err, result) => {
+            if (err) console.error(err);
+            console.log(result);
+        })
 
         res.json({
             msg: 'success'
@@ -227,36 +358,24 @@ router.post('/assign', async (req, res) => {
 
 router.post('/getassign', (req, res) => {
     try {
-        var personel = req.body.personel;
-        var date = req.body.date;
-        var index = `${personel}_${date}`;
-        var files = helper.GetFiles(RequestEquipmentPathAssigned);
-        var dataArr = [];
+        var requestby = req.body.requestby;
+        var requestdate = req.body.requestdate;
 
-        files.forEach(file => {
+        console.log(`${requestby} ${requestdate}`)
 
-            if (file.includes(index)) {
-                var filename = `${RequestEquipmentPathAssigned}${file}`;
-                var data = helper.ReadJSONFile(filename);
+        let sql = `SELECT * FROM request_spare_items
+        WHERE rsi_requestby='${requestby}'
+        AND rsi_requestdate='${requestdate}'`;
 
-                data.forEach((key, item) => {
-                    dataArr.push({
-                        ticket: key.ticket,
-                        store: key.store,
-                        brandname: key.brandname,
-                        itemtype: key.itemtype,
-                        serial: key.serial,
-                    });
-                });
-            }
+        mysql.Select(sql, 'RequestSpareItems', (err, result) => {
+            if (err) console.error(err);
 
-        });
-
-        res.json({
-            msg: 'success',
-            data: dataArr
+            console.log(result);
+            res.json({
+                msg: 'success',
+                data: result
+            })
         })
-
 
     } catch (error) {
         res.json({
@@ -268,15 +387,19 @@ router.post('/getassign', (req, res) => {
 
 router.post('/approve', (req, res) => {
     try {
-        var personel = req.body.personel;
-        var date = req.body.date;
-        var status = req.body.status;
-        var pendingFile = `${RequestEquipmentPathPending}${personel}_${date}.json`;
-        var approveFile = `${RequestEquipmentPathApprove}${personel}_${date}.json`;
+        var requestby = req.body.requestby;
+        var requestdate = req.body.requestdate;
+        let remarks = dictionary.GetValue(dictionary.ALLOC());
+        let status = dictionary.ALLOC();
+        let approvedby = req.session.fullname;
+        let approveddate = helper.GetCurrentDatetime();
+        var pendingFile = `${RequestEquipmentPathPending}${requestby}_${requestdate}.json`;
+        var approveFile = `${RequestEquipmentPathApprove}${requestby}_${requestdate}.json`;
         var assignFile = `${RequestEquipmentPathAssigned}`
-        var dataAssign = helper.GetFileListContains(assignFile, `${personel}_${date}`)
+        var dataAssign = helper.GetFileListContains(assignFile, `${requestby}_${requestdate}`)
         var dataFile = helper.ReadJSONFile(pendingFile);
         var dataArr = [];
+        var controlno = '';
 
 
         // console.log(dataAssign);
@@ -287,8 +410,11 @@ router.post('/approve', (req, res) => {
         }
 
         async function UpdatePendingRequestEquipment(element) {
-            console.log(`Update: ${element}`)
+            console.log(`Update: ${element.controlno}`)
+
+            controlno = element.controlno;
             dataArr.push({
+                controlno: element.controlno,
                 personel: element.personel,
                 data: element.data,
                 createddate: element.createddate,
@@ -301,10 +427,11 @@ router.post('/approve', (req, res) => {
 
         Update();
 
-        // helper.MoveFile(pendingFile, approveFile)
+
 
         Update_RegisterITEquipment = (data, callback) => {
             console.log(data);
+            let remark_status = dictionary.GetValue(dictionary.SPR());
             data.forEach((key, item) => {
                 var target = `${RequestEquipmentPathAssigned}${key.file}`;
                 console.log(target);
@@ -312,14 +439,14 @@ router.post('/approve', (req, res) => {
 
                 console.log(dataJson);
                 dataJson.forEach((key, item) => {
-                    let sql = `UPDATE register_it_equipment SET rie_status='SPARE' WHERE rie_serial='${key.serial}'`;
+                    let sql = `UPDATE register_it_equipment SET rie_status='${remark_status}' WHERE rie_serial='${key.serial}'`;
                     mysql.Update(sql, (err, result) => {
                         if (err) console.log(err);
 
                         console.log(result);
                     })
 
-                    let sql2 = `UPDATE transaction_it_equipment SET tie_status='SPARE' WHERE tie_serial='${key.serial}'`;
+                    let sql2 = `UPDATE transaction_it_equipment SET tie_status='${remark_status}' WHERE tie_serial='${key.serial}'`;
                     mysql.Update(sql2, (err, result) => {
                         if (err) console.log(err);
 
@@ -331,10 +458,52 @@ router.post('/approve', (req, res) => {
             callback(null, 'DONE');
         }
 
+        function Update_RequestSpareDetails(requestid, remarks, status, approvedby, approveddate, callback) {
+            let sql = `UPDATE request_sapre_details
+            SET  rsd_approvedby='${approvedby}',
+            rsd_approveddate='${approveddate}', 
+            rsd_remarks='${remarks}',
+            rsd_status='${status}'
+            WHERE rsd_requestid='${requestid}'`;
+
+            mysql.Update(sql, (err, result) => {
+                if (err) callback(err, null);
+
+                callback(null, result);
+            })
+        }
+
+        function Update_RequestSpareItems(requestid, remarks, status, approvedby, approveddate, callback) {
+            let sql = `UPDATE request_spare_items
+            SET rsi_approvedby='${approvedby}',
+            rsi_approveddate='${approveddate}', 
+            rsi_remarks='${remarks}',
+            rsi_status='${status}'
+            WHERE rsi_detailid='${requestid}'`;
+
+            mysql.Update(sql, (err, result) => {
+                if (err) callback(err, null);
+
+                callback(null, result);
+            })
+        }
+
         Update_RegisterITEquipment(dataAssign, (err, result) => {
             if (err) console.log(err);
             console.log(result);
         })
+
+        Update_RequestSpareDetails(controlno, remarks, status, approvedby, approveddate, (err, result) => {
+            if (err) console.error(err);
+            console.log(result);
+        })
+
+        Update_RequestSpareItems(controlno, remarks, status, approvedby, approveddate, (err, result) => {
+            if (err) console.error(err);
+            console.log(result);
+        })
+
+        helper.MoveFile(pendingFile, approveFile)
 
         res.json({
             msg: 'success',
@@ -348,21 +517,255 @@ router.post('/approve', (req, res) => {
 
 });
 
-router.post('/deploy', (req, res) => {
+router.post('/deployitem', (req, res) => {
     try {
-        let requestdate = let.body.requestdate;
-        let requestby = let.body.requestby;
-        let filename = `${requestby}_${requestdate}.json`;
-        let file = `${RequestEquipmentPathPending}${filename}`;
-        let data = helper.ReadJSONFile(file);
+        let requestby = req.body.requestby;
+        let requestdate = req.body.requestdate;
+        let data = req.body.data;
+        let deploy_items = [];
+        let return_items = [];
+        let pullout_items = [];
+        let update_it_equipment = [];
+        let update_rsd = [];
+        let update_rie = [];
+        let remakrs = dictionary.GetValue(dictionary.DLY());
+        let status = dictionary.DLY();
 
+        data = JSON.parse(data);
         data.forEach((key, item) => {
-            var ticketData = key.data;
-            ticketData.forEach((key, item) => {
+            var tag = key.status;
+            if (tag == 'DEPLOYED') {
 
-            })
+                deploy_items.push([
+                    key.serial,
+                    key.brandname,
+                    key.itemtype,
+                    key.store,
+                    requestby,
+                    requestdate,
+                    key.ticket,
+                    key.trf,
+                ])
+
+                if (key.pulloutserial != '') {
+                    pullout_items.push([
+                        key.pulloutserial,
+                        key.pulloutbrand,
+                        key.pulloutitemtype,
+                        key.store,
+                        requestby,
+                        requestdate,
+                        key.ticket,
+                        key.apo,
+                    ])
+
+                    update_it_equipment.push([
+                        key.ticket,
+                        key.trf,
+                        key.store,
+                        requestby,
+                        requestdate,
+                        key.pulloutbrand,
+                        key.pulloutitemtype,
+                        key.pulloutserial,
+                        key.store,
+                        requestdate,
+                        remakrs,
+                        key.serial,
+                    ]);
+                } else {
+                    update_it_equipment.push([
+                        key.ticket,
+                        key.trf,
+                        key.store,
+                        requestby,
+                        requestdate,
+                        'NO PULLOUT',
+                        'NO PULLOUT',
+                        'NO PULLOUT',
+                        'NO PULLOUT',
+                        'NO PULLOUT',
+                        remakrs,
+                        key.serial,
+                    ]);
+                }
+
+                update_rsd.push([
+                    remakrs,
+                    status,
+                    requestby,
+                    requestdate,
+                ]);
+
+                update_rie.push([
+                    status,
+                    key.serial,
+                ]);
+            }
+            if (tag == 'RETURNED') {
+                return_items.push([
+                    key.serial
+                ]);
+            }
         });
 
+        function Insert_DeployITEquipment(data, callback) {
+            let sql = `INSERT INTO deploy_it_equipment(
+                die_serial,
+                die_itembrand,
+                die_itemtype,
+                die_deployto,
+                die_deployby,
+                die_deploydate,
+                die_ticket,
+                die_trf) VALUES ?`;
+
+            mysql.InsertTable(sql, data, (err, result) => {
+                if (err) callback(err, null)
+                callback(null, result);
+            })
+        }
+
+        function Insert_PulloutITEquipment(data, callback) {
+            let sql = `INSERT INTO pullout_it_equipment(
+                        pie_serial,
+                        pie_brandname,
+                        pie_itemtype,
+                        pie_pulloutfrom,
+                        pie_pulloutby,
+                        pie_pulloutdate,
+                        pie_ticket,
+                        pie_trf) VALUES ?`;
+
+            mysql.InsertTable(sql, data, (err, result) => {
+                if (err) callback(err, null)
+                callback(null, result);
+            })
+        }
+
+        function Update_RegisterITEquipment(data, callback) {
+            let sql = `UPDATE register_it_equipment SET
+            rie_status=?
+            WHERE rie_serial=?`
+
+            mysql.UpdateWithPayload(sql, data[0], (err, result) => {
+                if (err) callback(err, null);
+                callback(null, result);
+            })
+        }
+
+        function Update_TransactionITEquipment(data, callback) {
+            let sql = `UPDATE transaction_it_equipment 
+            SET tie_ticket=?,
+            tie_trf=?,
+            tie_deployto=?,
+            tie_deployby=?,
+            tie_deploydate=?,
+            tie_pulloutbrand=?,
+            tie_pulloutitemtype=?,
+            tie_pulloutserial=?,
+            tie_pulloutfrom=?,
+            tie_pulloutdate=?,
+            tie_status=?
+            WHERE tie_serial=?`;
+
+            for (x = 0; x < data.length; x++) {
+                mysql.UpdateWithPayload(sql, data[x], (err, result) => {
+                    if (err) callback(err, null);
+                })
+            }
+
+            callback(null, 'DONE');
+
+        }
+
+        function Update_RequestSpareDetails(data, callback) {
+            let sql = `UPDATE request_sapre_details SET
+            rsd_remarks=?,
+            rsd_status=?
+            WHERE rsd_requestby=?
+            AND rsd_requestdate=?`
+
+            mysql.UpdateWithPayload(sql, data[0], (err, result) => {
+                if (err) callback(err, null);
+                callback(null, result);
+            })
+        }
+
+        function Update_RequestSpareItems(data, callback) {
+            let sql = `UPDATE request_spare_items SET
+            rsi_remarks=?,
+            rsi_status=?
+            WHERE rsi_requestby=?
+            AND rsi_requestdate=?`
+
+            mysql.UpdateWithPayload(sql, data[0], (err, result) => {
+                if (err) callback(err, null);
+                callback(null, result);
+            })
+        }
+
+        function Execute(deploy_items, pullout_items, update_it_equipment, update_rsd, update_rie) {
+
+            return new Promise((resolve, reject) => {
+                if (deploy_items.length != 0) {
+                    console.log(deploy_items)
+                    Insert_DeployITEquipment(deploy_items, (err, result) => {
+                        if (err) reject(err);
+                        console.log(result)
+                    });
+                }
+
+                if (pullout_items.length != 0) {
+                    console.log(pullout_items)
+                    Insert_PulloutITEquipment(pullout_items, (err, result) => {
+                        if (err) reject(err);
+                        console.log(result)
+                    });
+                }
+
+                if (update_it_equipment.length != 0) {
+                    Update_TransactionITEquipment(update_it_equipment, (err, result) => {
+                        if (err) reject(err);
+                        console.log(result);
+                    });
+                }
+
+                if (update_rsd.length != 0) {
+                    Update_RequestSpareDetails(update_rsd, (err, result) => {
+                        if (err) reject(err);
+                        console.log(result);
+                    })
+
+                    Update_RequestSpareItems(update_rsd, (err, result) => {
+                        if (err) reject(err);
+                        console.log(result);
+                    })
+                }
+
+                if (update_rie.length != 0) {
+                    Update_RegisterITEquipment(update_rie, (err, result) => {
+                        if (err) console.error(err);
+                        console.log(result);
+                    })
+                }
+
+                resolve('DONE');
+            });
+
+        }
+
+        Execute(deploy_items, pullout_items, update_it_equipment, update_rsd, update_rie).then(result => {
+            console.log(result);
+            res.json({
+                msg: 'success'
+            })
+
+        }).catch(error => {
+            res.json({
+                msg: error
+            })
+        })
 
     } catch (error) {
         res.json({

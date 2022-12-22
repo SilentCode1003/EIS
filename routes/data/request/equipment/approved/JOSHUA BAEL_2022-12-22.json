@@ -1,0 +1,26 @@
+[
+  {
+    "controlno": 1002,
+    "personel": "JOSHUA BAEL",
+    "data": [
+      {
+        "store": "33 Dapitan",
+        "ticket": "INC-8526251",
+        "brandname": "SANDISK",
+        "itemtype": "SANDISK SSD 2.5 SATA 500GB",
+        "quantity": "1",
+        "remarks": "ADDITIONAL HDD"
+      },
+      {
+        "store": "101 Blumentritt 2",
+        "ticket": "INC-8526652",
+        "brandname": "POSIFLEX",
+        "itemtype": "Cliqq Machine FLYTECH LCD",
+        "quantity": "1",
+        "remarks": "CLIQQ MONITOR REPLACEMENT"
+      }
+    ],
+    "createddate": "2022-12-22",
+    "status": "ALLOC"
+  }
+]

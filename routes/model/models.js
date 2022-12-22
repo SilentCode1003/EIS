@@ -683,3 +683,48 @@ exports.RegisterITEquipment = (data) => {
 
     return dataResult;
 }
+
+exports.RequestSpareDetails = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            requestid: key.rsd_requestid,
+            requestby: key.rsd_requestby,
+            requestdate: key.rsd_requestdate,
+            details: key.rsd_details,
+            approvedby: key.rsd_approvedby,
+            approveddate: key.rsd_approveddate,
+            remarks: key.rsd_remarks,
+            status: key.rsd_status,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.RequestSpareItems = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            requestid: key.rsi_requestid,
+            requestby: key.rsi_requestby,
+            requestdate: key.rsi_requestdate,
+            ticket: key.rsi_ticket,
+            store: key.rsi_store,
+            brandname: key.rsi_brandname,
+            itemtype: key.rsi_itemtype,
+            serial: key.rsi_serial,
+            approvedby: key.rsi_approvedby,
+            approveddate: key.rsi_approveddate,
+            detailid: key.rsi_detailid,
+            remarks: key.rsi_remarks,
+            status: key.rsi_status,
+        })
+    });
+
+    return dataResult;
+}

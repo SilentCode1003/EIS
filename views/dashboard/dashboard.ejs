@@ -207,7 +207,7 @@
 <div id="cablingequipmentrequesttable">
     <div class="div-table">
         <div>
-            <h1 class="h1-dashboard">
+            <h1>
                 CABLING EQUIPMENT REQUEST
             </h1>
         </div>
@@ -296,31 +296,32 @@
                                 CORP.</span></strong></p>
                 </div>
                 <div class="modal-print-background">
-                    <p><span class="report-subheader">Phase 3B Block 18 Lot 15, Golf Drive Street Pacita
-                            Complex 1,
-                            City of Bi&ntilde;an, Laguna</span></p>
+                    <p><span class="report-subheader">Lot 12 Block19 3B Pacita 1, Brgy. San Francisco, Bi&ntilde;an
+                            Laguna</span></p>
                 </div>
                 <div class="modal-print-background">
-                    <p><span class="report-subheader">Tel.Nos: 273-44-69/952-15-60</span></p>
+                    <p><span class="report-subheader">Contact No. : (8)952-15-60 , (8)273-44-69</span></p>
                 </div>
             </div>
             <div class="modal-body">
                 <div>
-                    <h1 class="center-text"> REQUEST ITEM'S</h1>
+                    <h1 class="center-text"> REQUESTING FORM</h1>
                     <br>
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <table id="print-requestlist">
-                                <thead>
-                                    <th>TICKET</th>
-                                    <th>ITEM</th>
-                                    <th>QTY</th>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
+                    <div class="row modal-signature-info">
+                        <div class="col-sm-6">
+                            <p><strong>CONTROL NO: </strong><span id="requestid"></span></p>
                         </div>
                     </div>
-                    <hr>
+                    <div class="row modal-signature-info">
+                        <div class="col-sm-6">
+                            <p><strong>DATE: </strong><span id="requestdate"></span></p>
+                        </div>
+                    </div>
+                    <div class="row modal-signature-info">
+                        <div class="col-sm-6">
+                            <p><strong>DEPARTMENT: </strong><span id="department">IT</span></p>
+                        </div>
+                    </div>
                     <div>
                         <table id="print-requesttbl">
                             <thead>
@@ -608,4 +609,41 @@
 
     </div> -->
 
+</div>
+
+
+<!-- The Modal -->
+<div id="deployModal" class="modal card shadow mb-4">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <div class="modal-button-container">
+            <span id="deployspan" class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div>
+                <h1 class="center-text">DEPLOY ITEMS</h1>
+                <table id="deployitemlist">
+                    <thead>
+                        <th>TICKET</th>
+                        <th>STORE</th>
+                        <th>BRAND</th>
+                        <th>TYPE</th>
+                        <th>SERIAL</th>
+                        <th>ATF/TRF</th>
+                        <th>PULLOUT BRAND</th>
+                        <th>PULLOUT TYPE</th>
+                        <th>PULLOUT SERIAL</th>
+                        <th>ATF/APO</th>
+                    </thead>
+                    <tbody></tbody>
+
+                </table>
+            </div>
+        </div>
+
+        <div id="modal-button-container" class="center-content">
+            <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
+            <button class="btn-glow-modal" id="deployitemBtn" name="deployitemBtn">DEPLOY</button>
+        </div>
+    </div>
 </div>

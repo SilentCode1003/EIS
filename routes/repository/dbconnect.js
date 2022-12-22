@@ -45,7 +45,7 @@ const connection = mysql.createConnection({
 });
 
 exports.Insert = async (stmt) => {
-    try {
+        try {
 
         // console.log(`statement: ${stmt} data: ${todos}`);
         connection.connect((err) => { return err; })
@@ -62,6 +62,24 @@ exports.Insert = async (stmt) => {
 
     } catch (error) {
         console.log(error);
+    }
+}
+
+exports.InsertTable = (stmt, todos, callback) => {
+    try {
+        connection.connect((err) => { return err; })
+        // console.log(`statement: ${stmt} data: ${todos}`);
+
+        connection.query(stmt, [todos], (err, results, fields) => {
+            if (err) {
+                callback(err, null);
+            }
+            callback(null, `Row inserted: ${results.affectedRows}`);
+            // console.log(`Row inserted: ${results.affectedRows}`);
+        });
+
+    } catch (error) {
+        callback(error, null);
     }
 }
 
@@ -163,6 +181,14 @@ exports.Select = (sql, table, callback) => {
             if (table == 'RegisterITEquipment') {
                 callback(null, model.RegisterITEquipment(results));
             }
+
+            if (table == 'RequestSpareDetails') {
+                callback(null, model.RequestSpareDetails(results));
+            }
+
+            if (table == 'RequestSpareItems') {
+                callback(null, model.RequestSpareItems(results));
+            }
         });
 
     } catch (error) {
@@ -226,9 +252,9 @@ exports.UpdateWithPayload = async (sql, data, callback) => {
             if (error) {
                 callback(error, null)
             }
-            console.log('Rows affected:', results.affectedRows);
+            // console.log('Rows affected:', results.affectedRows);
 
-            callback(null, results.affectedRows);
+            callback(null, `Rows affected: ${results.affectedRows}`);
         });
     } catch (error) {
         console.log(error);

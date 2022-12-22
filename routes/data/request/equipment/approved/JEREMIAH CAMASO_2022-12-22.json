@@ -1,17 +1,18 @@
 [
   {
-    "personel": "JEREMIAH CUESTAD CAMASO",
+    "controlno": 1000,
+    "personel": "JEREMIAH CAMASO",
     "data": [
       {
-        "store": "1943 SM Rosales",
-        "ticket": "INC-4585452",
+        "store": "168 TM Kalaw",
+        "ticket": "INC-4587548",
         "brandname": "POSIFLEX",
         "itemtype": "Cliqq Machine FLYTECH LCD",
         "quantity": "1",
         "remarks": "CLIQQ MONITOR REPLACEMENT"
       }
     ],
-    "createddate": "2022-12-20",
-    "status": "APPROVED"
+    "createddate": "2022-12-22",
+    "status": "ALLOC"
   }
 ]

@@ -1,0 +1,18 @@
+[
+  {
+    "controlno": 1000,
+    "personel": "JEREMIAH CAMASO",
+    "data": [
+      {
+        "store": "166 Columbia",
+        "ticket": "INC-4521521",
+        "brandname": "DATALOGIC",
+        "itemtype": "Datalogic Barcode Scanner QW2100 – spare",
+        "quantity": "2",
+        "remarks": "POS SCANNER REPLACEMENT"
+      }
+    ],
+    "createddate": "2022-12-21",
+    "status": "ALLOC"
+  }
+]
