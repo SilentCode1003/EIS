@@ -445,7 +445,7 @@
         });
 
         $('#requestModal').on('hidden.bs.modal', function (e) {
-            window.location.reload();
+            EquipmentRequestLoadTables();
         });
 
         $(document).on('click', "#printRequestBtn", function () {
@@ -678,7 +678,7 @@
                 },
                 success: function (result) {
                     success('Saved!', 'Data saved!')
-                    window.location.reload();
+                    EquipmentRequestLoadTables();
                 },
                 error: function (result) {
                     error(result.data);
@@ -688,7 +688,7 @@
 
         $(document).on('click', "#approvedBtn", async function () {
             console.log('hit');
-
+            showloader();
             $.ajax({
                 type: "POST",
                 url: "/requestequipment/approve",
@@ -698,7 +698,8 @@
                 },
                 success: function (result) {
                     success('Approved!', 'Request approved!')
-                    window.location.reload();
+                    EquipmentRequestLoadTables();
+                    hideload();
                 },
                 error: function (result) {
                     error(result.data);
@@ -884,7 +885,7 @@
                 },
                 success: function (result) {
                     success('Approved!', 'Transfer approved!')
-                    window.location.reload();
+                    EquipmentRequestLoadTables();
                 },
                 error: function (result) {
                     alert('error: ' + result.data);
@@ -901,7 +902,7 @@
                 },
                 success: function (result) {
                     success('Approved!', 'Request approved!')
-                    window.location.reload();
+                    EquipmentRequestLoadTables();
                 },
                 error: function (result) {
                     alert('error: ' + result.data);

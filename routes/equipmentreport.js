@@ -25,7 +25,7 @@ module.exports = router;
 
 router.get('/load', (req, res) => {
   try {
-    let sql = `select * from transaction_it_equipment`;
+    let sql = `select * from transaction_it_equipment where tie_deploydate >='${helper.GetCurrentDate()}'`;
     mysql.Select(sql, 'TransactionItEquipment', (err, result) => {
       if (err) throw err
       console.log(result);
@@ -85,6 +85,7 @@ router.post('/find', (req, res) => {
     let ticket = req.body.searchticket;
     let trf = req.body.searchtrf;
     let serial = req.body.searchserial;
+    let itemtype = req.body.searchitemtype;
     let isWildcardSearch = req.body.iswildcardsearch;
     let condition = '';
     let sql = 'SELECT * FROM transaction_it_equipment WHERE ';
@@ -93,7 +94,14 @@ router.post('/find', (req, res) => {
     console.log(`Wildcard Search: ${isWildcardSearch}`)
 
     if (isWildcardSearch == 'true') {//wild card search set to true, once true disregard other inputs
-      let cmd = `SELECT * FROM transaction_it_equipment WHERE tie_serial LIKE'${serial}%'`
+      let cmd = '';
+      if (serial != '') {
+        cmd = `SELECT * FROM transaction_it_equipment WHERE tie_serial LIKE'${serial}%'`;
+      }
+      
+      if(itemtype != ''){
+        cmd = `SELECT * FROM transaction_it_equipment WHERE tie_itemtype LIKE'${itemtype}%'`;
+      }
 
       console.log(cmd);
       mysql.Select(cmd, 'TransactionItEquipment', (err, result) => {
@@ -117,6 +125,10 @@ router.post('/find', (req, res) => {
         condition += `tie_trf='${trf}' && `;
         count_index += 1
       }
+      if (itemtype != '') {
+        condition += `tie_itemtype='${itemtype}'`;
+        count_index += 1
+      }
       if (serial != '') {
         condition += `tie_serial='${serial}'`;
         count_index += 1
@@ -136,6 +148,11 @@ router.post('/find', (req, res) => {
         }
 
         if (count_index == 3) {
+          condition = condition.replace('&&', 'AND ');
+          condition = condition.replace('&', 'AND ');
+        }
+
+        if (count_index == 4) {
           condition = condition.replace('&&', 'AND ');
           condition = condition.replace('&', 'AND ');
         }

@@ -189,6 +189,10 @@ exports.Select = (sql, table, callback) => {
             if (table == 'RequestSpareItems') {
                 callback(null, model.RequestSpareItems(results));
             }
+
+            if (table == 'ReturnRequestITEquipments') {
+                callback(null, model.ReturnRequestITEquipments(results));
+            }
         });
 
     } catch (error) {

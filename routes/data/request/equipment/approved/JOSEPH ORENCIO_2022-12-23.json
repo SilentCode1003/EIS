@@ -1,0 +1,34 @@
+[
+  {
+    "controlno": 1000,
+    "personel": "JOSEPH ORENCIO",
+    "data": [
+      {
+        "store": "101 Blumentritt 2",
+        "ticket": "INC-4216229",
+        "brandname": "ZEBRA",
+        "itemtype": "Zebra Barcode Scanner DS2208-SR - spare",
+        "quantity": "1",
+        "remarks": "POS 2  SCANNRE ISOLATION"
+      },
+      {
+        "store": "166 Columbia",
+        "ticket": "INC-4202537",
+        "brandname": "ZEBRA",
+        "itemtype": "Zebra Barcode Scanner DS2208-SR - spare",
+        "quantity": "1",
+        "remarks": "POS SCANNER ISOLATION"
+      },
+      {
+        "store": "156 Guada 2",
+        "ticket": "INC-4187977",
+        "brandname": "POSIFLEX",
+        "itemtype": "POSIFLEX PRINTER PP-9000 - spare",
+        "quantity": "1",
+        "remarks": "POS PRINTER ISOLATION"
+      }
+    ],
+    "createddate": "2022-12-23",
+    "status": "ALLOC"
+  }
+]

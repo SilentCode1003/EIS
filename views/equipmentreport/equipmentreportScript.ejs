@@ -118,6 +118,7 @@
             var searchticket = $('#searchticket').val();
             var searchtrf = $('#searchtrf').val();
             var searchserial = $('#searchserial').val();
+            var searchitemtype = $('#searchitemtype').val();
 
             showloader();
             dataTable = $('#search-tbl').DataTable({
@@ -136,6 +137,7 @@
                         searchticket: searchticket,
                         searchtrf: searchtrf,
                         searchserial: searchserial,
+                        searchitemtype: searchitemtype,
                         iswildcardsearch: iswildcardsearch
                     }
                 },

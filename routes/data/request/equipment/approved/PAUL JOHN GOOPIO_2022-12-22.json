@@ -1,0 +1,26 @@
+[
+  {
+    "controlno": 1003,
+    "personel": "PAUL JOHN GOOPIO",
+    "data": [
+      {
+        "store": "156 Guada 2",
+        "ticket": "INC-6521254",
+        "brandname": "CYBERPOWER",
+        "itemtype": "Cyberpower UPS",
+        "quantity": "1",
+        "remarks": "POS UPS REPLACEMENT"
+      },
+      {
+        "store": "158 N. Domingo",
+        "ticket": "INC-6521254",
+        "brandname": "EPSON",
+        "itemtype": "EPSON POS PRINTER",
+        "quantity": "2",
+        "remarks": "POS 1 AND 2 POS PRINTER REPLACEMENT"
+      }
+    ],
+    "createddate": "2022-12-22",
+    "status": "ALLOC"
+  }
+]

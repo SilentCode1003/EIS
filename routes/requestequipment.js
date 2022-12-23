@@ -13,6 +13,7 @@ const dictionary = require('./repository/dictionary');
 const API = require('./controller/APIController');
 
 const { isAuthAdmin, isAuth } = require('./controller/authBasic');
+const { normalizeUnits } = require('moment');
 /* GET home page. */
 router.get('/', isAuthAdmin, function (req, res, next) {
     res.render('requestequipment', {
@@ -137,8 +138,9 @@ router.post('/save', (req, res) => {
 
 router.get('/load', (req, res) => {
     try {
-        let status = dictionary.DLY();
-        let sql = `SELECT * FROM request_sapre_details WHERE NOT rsd_status='${status}'`;
+        let deploy_status = dictionary.DLY();
+        let return_status = dictionary.RET();
+        let sql = `SELECT * FROM request_sapre_details WHERE NOT rsd_status='${deploy_status}' AND NOT rsd_status='${return_status}'`;
 
         mysql.Select(sql, 'RequestSpareDetails', (err, result) => {
             if (err) console.error(err);
@@ -598,7 +600,7 @@ router.post('/deployitem', (req, res) => {
                 ]);
 
                 update_rie.push([
-                    status,
+                    remakrs,
                     key.serial,
                 ]);
             }
@@ -648,10 +650,13 @@ router.post('/deployitem', (req, res) => {
             rie_status=?
             WHERE rie_serial=?`
 
-            mysql.UpdateWithPayload(sql, data[0], (err, result) => {
-                if (err) callback(err, null);
-                callback(null, result);
-            })
+            for (x = 0; x < data.length; x++) {
+                mysql.UpdateWithPayload(sql, data[x], (err, result) => {
+                    if (err) callback(err, null);
+                   console.log(result);
+                })
+            }
+            callback(null, 'DONE');
         }
 
         function Update_TransactionITEquipment(data, callback) {
@@ -686,10 +691,13 @@ router.post('/deployitem', (req, res) => {
             WHERE rsd_requestby=?
             AND rsd_requestdate=?`
 
-            mysql.UpdateWithPayload(sql, data[0], (err, result) => {
-                if (err) callback(err, null);
-                callback(null, result);
-            })
+            for (x = 0; x < data.length; x++) {
+                mysql.UpdateWithPayload(sql, data[x], (err, result) => {
+                    if (err) callback(err, null);
+                   console.log(result);
+                })
+            }
+            callback(null, 'DONE');
         }
 
         function Update_RequestSpareItems(data, callback) {
@@ -699,13 +707,25 @@ router.post('/deployitem', (req, res) => {
             WHERE rsi_requestby=?
             AND rsi_requestdate=?`
 
-            mysql.UpdateWithPayload(sql, data[0], (err, result) => {
+            for (x = 0; x < data.length; x++) {
+                mysql.UpdateWithPayload(sql, data[x], (err, result) => {
+                    if (err) callback(err, null);
+                   console.log(result);
+                })
+            }
+            callback(null, 'DONE');
+        }
+
+        function UpdateInsert_RequestDetailReturnItem(serial, date, requestby, requestdate, callback) {
+            let sql = `call ReturnRequestItems('${serial}','${date}','${requestby}','${requestdate}')`;
+
+            mysql.StoredProcedureResult(sql, (err, result) => {
                 if (err) callback(err, null);
                 callback(null, result);
             })
         }
 
-        function Execute(deploy_items, pullout_items, update_it_equipment, update_rsd, update_rie) {
+        function Execute(deploy_items, pullout_items, update_it_equipment, update_rsd, update_rie, return_items) {
 
             return new Promise((resolve, reject) => {
                 if (deploy_items.length != 0) {
@@ -750,12 +770,22 @@ router.post('/deployitem', (req, res) => {
                     })
                 }
 
+                if (return_items.length != 0) {
+                    let currentdate = helper.GetCurrentDate();
+                    for (x = 0; x < return_items.length; x++) {
+                        UpdateInsert_RequestDetailReturnItem(return_items[x], currentdate, requestby, requestdate, (err, result) => {
+                            if (err) reject(err);
+                            console.log(result);
+                        })
+                    }
+                }
+
                 resolve('DONE');
             });
 
         }
 
-        Execute(deploy_items, pullout_items, update_it_equipment, update_rsd, update_rie).then(result => {
+        Execute(deploy_items, pullout_items, update_it_equipment, update_rsd, update_rie, return_items).then(result => {
             console.log(result);
             res.json({
                 msg: 'success'

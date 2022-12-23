@@ -1,0 +1,18 @@
+[
+  {
+    "controlno": 1005,
+    "personel": "FRANCIS VIDAL VIRAY",
+    "data": [
+      {
+        "store": "144 Rev. Aglipay",
+        "ticket": "INC-4585262",
+        "brandname": "NEC G9",
+        "itemtype": "NEC G9 CASH DRAWER",
+        "quantity": "2",
+        "remarks": "POS CASHDRAWER REPLACEMENT"
+      }
+    ],
+    "createddate": "2022-12-22",
+    "status": "ALLOC"
+  }
+]

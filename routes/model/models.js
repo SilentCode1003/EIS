@@ -728,3 +728,21 @@ exports.RequestSpareItems = (data) => {
 
     return dataResult;
 }
+
+exports.ReturnRequestITEquipments = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            returnid: key.rrie_returnid,
+            returnby: key.rrie_returnby,
+            returndate: key.rrie_returndate,
+            brandname: key.rrie_brandname,
+            itemtype: key.rrie_itemtype,
+            controlno: key.rrie_controlno,
+        })
+    });
+
+    return dataResult;
+}

@@ -10,6 +10,7 @@ const TransferEquipmentRequest = `${__dirname}/data/request/transfer/pending/`;
 const CablingEquipmentRequest = `${__dirname}/data/request/cabling/pending/`;
 const MasterItemPath = `${__dirname}/data/masters/items/`;
 const mysql = require('./repository/dbconnect');
+const dictionary = require('./repository/dictionary');
 
 
 /* GET home page. */
@@ -94,9 +95,9 @@ router.get('/load', (req, res) => {
     //   data: dataArr
     // });
 
-    let sql = `SELECT * FROM register_it_equipment WHERE rie_status='ACTIVE'`;
+    let sql = `SELECT * FROM register_it_equipment WHERE not rie_status='${dictionary.GetValue(dictionary.DLY())}'`;
     mysql.Select(sql, 'RegisterITEquipment', (err, result) => {
-      if(err) throw err;
+      if (err) throw err;
 
       res.json({
         msg: 'success',
@@ -353,7 +354,7 @@ Execute_RegisterItEquipment = (data, callback) => {
   callback(null, mysql.Insert(stmt));
 }
 
-function Execute_ExecelTransactionItEquipment(data, callback){
+function Execute_ExecelTransactionItEquipment(data, callback) {
   let stmt = '';
 
   stmt = `INSERT INTO transaction_it_equipment(
@@ -379,7 +380,7 @@ function Execute_ExecelTransactionItEquipment(data, callback){
 
 }
 
-function Execute_ExcelRegisterItEquipment(data, callback){
+function Execute_ExcelRegisterItEquipment(data, callback) {
   let stmt = '';
 
   stmt = `INSERT INTO register_it_equipment(
