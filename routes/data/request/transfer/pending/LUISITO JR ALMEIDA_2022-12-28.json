@@ -1,0 +1,84 @@
+[
+  {
+    "personel": "LUISITO JR ALMEIDA",
+    "date": "2022-12-28 11:25",
+    "locationfrom": "MAIN OFFICE",
+    "locationto": "PAMPANGA",
+    "remarks": "SITE SPARE ALLOCATION",
+    "status": "PND",
+    "details": [
+      {
+        "personel": "LUISITO JR ALMEIDA",
+        "brand": "POSIFLEX",
+        "itemtype": "Cliqq Machine FLYTECH LCD",
+        "serial": "Q617680286",
+        "createddate": "2022-12-28",
+        "status": "PENDING"
+      },
+      {
+        "personel": "LUISITO JR ALMEIDA",
+        "brand": "POSIFLEX",
+        "itemtype": "CLIQQ POSIFLEX LCD WIDE",
+        "serial": "PSM80896",
+        "createddate": "2022-12-28",
+        "status": "PENDING"
+      },
+      {
+        "personel": "LUISITO JR ALMEIDA",
+        "brand": "POSIFLEX",
+        "itemtype": "CLIQQ POSIFLEX LCD WIDE",
+        "serial": "PSM80900",
+        "createddate": "2022-12-28",
+        "status": "PENDING"
+      },
+      {
+        "personel": "LUISITO JR ALMEIDA",
+        "brand": "POSIFLEX",
+        "itemtype": "CLIQQ POSIFLEX LCD WIDE",
+        "serial": "PSM80917",
+        "createddate": "2022-12-28",
+        "status": "PENDING"
+      },
+      {
+        "personel": "LUISITO JR ALMEIDA",
+        "brand": "POSIFLEX",
+        "itemtype": "CLIQQ POSIFLEX LCD WIDE",
+        "serial": "PSM80930",
+        "createddate": "2022-12-28",
+        "status": "PENDING"
+      },
+      {
+        "personel": "LUISITO JR ALMEIDA",
+        "brand": "EPSON",
+        "itemtype": "EPSON POS PRINTER",
+        "serial": "X59E000631",
+        "createddate": "2022-12-28",
+        "status": "PENDING"
+      },
+      {
+        "personel": "LUISITO JR ALMEIDA",
+        "brand": "EPSON",
+        "itemtype": "EPSON POS PRINTER",
+        "serial": "X59E001507",
+        "createddate": "2022-12-28",
+        "status": "PENDING"
+      },
+      {
+        "personel": "LUISITO JR ALMEIDA",
+        "brand": "EPSON",
+        "itemtype": "EPSON POS PRINTER",
+        "serial": "X59E001598",
+        "createddate": "2022-12-28",
+        "status": "PENDING"
+      },
+      {
+        "personel": "LUISITO JR ALMEIDA",
+        "brand": "EPSON",
+        "itemtype": "EPSON POS PRINTER",
+        "serial": "X59E001694",
+        "createddate": "2022-12-28",
+        "status": "PENDING"
+      }
+    ]
+  }
+]

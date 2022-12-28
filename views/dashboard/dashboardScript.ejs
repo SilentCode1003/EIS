@@ -128,25 +128,21 @@
                         var details = '';
 
                         $.each(data, (key, item) => {
-                            let date = item.date;
-                            let personel = item.personel;
-                            let locationfrom = item.locationfrom;
-                            let locationto = item.locationto;
-                            let remarks = item.remarks;
-                            let status = item.status;
+                            let datajson = JSON.parse(item.details);
 
-                            $.each(item.details, (key, item) => {
-                                details += `BRANDNAME: ${item.brand} ITEM TYPE: ${item.itemtype} ITEM SERIAL: ${item.serial}<br>`;
+                            $.each(datajson, (key, item) => {
+                                details += `BRAND: ${item.brand} TYPE: ${item.itemtype} SERIAL: ${item.serial}<br>`;
                             })
 
                             finalData.push({
-                                date: date,
-                                personel: personel,
+                                detailid: item.detailid,
+                                date: item.prepareddate,
+                                personel: item.preparedby,
                                 details: details,
-                                locationfrom: locationfrom,
-                                locationto: locationto,
-                                remarks: remarks,
-                                status: status,
+                                locationfrom: item.locationfrom,
+                                locationto: item.locationto,
+                                remarks: item.remarks,
+                                status: item.status,
                                 action: action = `<button class="approve-btn" id="approveTransferBtn" name="approveTransferBtn">APPROVED</button><button class="edit-btn" id="transferPrinttBtn" name="transferPrinttBtn">PRINT</button>`
                             });
                         })
@@ -159,6 +155,7 @@
                     className: 'td-indent',
                 }],
                 'columns': [
+                    { data: 'detailid' },
                     { data: 'date' },
                     { data: 'personel' },
                     { data: 'details' },
@@ -378,11 +375,21 @@
             }
         }
 
-        $('#transfer-equipment-item-tbl').on('click', 'td', function () {
-            var data = dataTable2.row(this).data();
-            let date = data.date;
-            const dateArr = date.split(" ");
-            filename = `${data.personel}_${dateArr[0]}.json`;
+        let transfer_ID = '';
+        let transfer_DATE = '';
+        let transfer_PERSONEL = '';
+        let transfer_SITE = '';
+        $('#transfer-equipment-item-tbl tbody').on('click', 'tr', function () {
+            var data = [];
+            $(this).closest('tr').find('td').each(function () {
+                data.push([$(this).text()]);
+            })
+
+            transfer_ID = data[0];
+            transfer_DATE = data[1];
+            transfer_PERSONEL = data[2];
+            transfer_SITE = data[5];
+
         })
 
         $('#cabling-equipment-item-tbl').on('click', 'td', function () {
@@ -850,12 +857,15 @@
                 type: "POST",
                 url: "/transfer/gettransferdetails",
                 data: {
-                    filename: filename
+                    id: transfer_ID
                 },
                 success: function (result) {
+                    var data = result.data;
+                    console.log(result.data);
                     t.clear().draw();
-                    $.each(result.data, function (key, item) {
-                        t.row.add([item.brand, item.itemtype, item.serial]).draw(false);
+
+                    $.each(data, function (key, item) {
+                        t.row.add([item.itembrand, item.itemtype, item.serial]).draw(false);
                     })
                 },
                 error: function (result) {
@@ -868,7 +878,7 @@
 
         $(document).on('click', "#printBtn", function () {
             console.log('clicked!');
-            var printContents = document.getElementById('PrintArea').innerHTML;
+            var printContents = document.getElementById('transfer-PrintArea').innerHTML;
             var originalContents = document.body.innerHTML;
             document.body.innerHTML = printContents;
             window.print();
@@ -879,9 +889,12 @@
         $(document).on('click', "#approveTransferBtn", function () {
             $.ajax({
                 type: "POST",
-                url: "/transfer/transferitems",
+                url: "/transfer/transferitems ",
                 data: {
-                    filename: filename
+                    id: transfer_ID,
+                    date: transfer_DATE,
+                    preparedby: transfer_PERSONEL,
+                    site: transfer_SITE,
                 },
                 success: function (result) {
                     success('Approved!', 'Transfer approved!')

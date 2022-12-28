@@ -98,7 +98,7 @@
         $("#cabling-dashboard").toggle(0, function () {
         });
 
-         $("#cablingrequest").toggle(0, function () {
+        $("#cablingrequest").toggle(0, function () {
         });
 
         $("#cabling-equipment-request").toggle(0, function () {
@@ -127,7 +127,7 @@
         $("#cabling-dashboard").toggle(0, function () {
         });
 
-         $("#cablingrequest").toggle(0, function () {
+        $("#cablingrequest").toggle(0, function () {
         });
 
         $("#cabling-equipment-request").toggle(0, function () {
@@ -379,4 +379,17 @@
     function ClearTable(tablename) {
         $(`#${tablename}`).find("tr:gt(0)").remove();
     }
+
+    document.getElementById("theme-switcher").addEventListener("click", function () {
+        const lightTheme = document.getElementById("light-theme");
+        const darkTheme = document.getElementById("dark-theme");
+        if (lightTheme.disabled) {
+            lightTheme.disabled = false;
+            darkTheme.disabled = true;
+        } else {
+            lightTheme.disabled = true;
+            darkTheme.disabled = false;
+        }
+    });
+
 </script>

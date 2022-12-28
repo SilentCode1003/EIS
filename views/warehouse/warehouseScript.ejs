@@ -1,0 +1,53 @@
+<script>
+    $(document).ready(function () {
+        LoadTable();
+
+        function LoadTable() {
+            showloader();
+            warehousetable = $('#warehouse-table').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'GET',
+                'ajax': {
+                    'url': '/warehouse/load',
+                },
+                'columns': [
+                    { data: 'warehouseid' },
+                    { data: 'warehousename' },
+                    { data: 'createdby' },
+                    { data: 'createddate' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+        }
+
+        $(document).on('click', "#addBtn", function () {
+            let warehousename = $('#warehousename').val();
+
+            $.ajax({
+                type: "POST",
+                url: "/warehouse/save",
+                data: {
+                    warehousename: warehousename,
+                },
+                success: function (result) {
+                    success('Saved!', 'Data saved!');
+                    LoadTable();
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+        })
+
+    })
+</script>

@@ -189,6 +189,7 @@
         </div>
         <table id="transfer-equipment-item-tbl">
             <thead>
+                <th>ID</th>
                 <th>DATE</th>
                 <th>PERSONEL</th>
                 <th>DETAILS</th>
@@ -404,7 +405,7 @@
             <span id="transfermodalclose" name="transfermodalclose" class="close">&times;</span>
         </div>
         <!-- AREA TO PRINT ONLY -->
-        <div id="PrintArea" name="PrintArea">
+        <div id="transfer-PrintArea" name="transfer-PrintArea">
             <div class="modal-header center-content modal-print-background">
                 <div class="row">
                     <div class="col-xl-3 col-lg-2">
@@ -445,60 +446,44 @@
             <br>
             <br>
             <div class="row modal-signature-info center-content">
-                <div class="col-sm-4">
-                    <p><strong>____________________</strong></p>
+                <div class="col-sm-4 center-text">
+                    <p><strong><span id="preparedsig"></span></strong></p>
                 </div>
-                <div class="col-sm-4">
-                    <p><strong>____________________</strong></p>
+                <div class="col-sm-4 center-text">
+                    <p><strong><span id="approvedbysig"></span></strong></p>
                 </div>
-                <div class="col-sm-4">
-                    <p><strong>____________________</strong></p>
+                <div class="col-sm-4 center-text">
+                    <p><strong><span id="checkbysig"></span></strong></p>
                 </div>
             </div>
 
             <div class="row modal-signature-info center-content">
-                <div class="col-sm-4">
+                <div class="col-sm-4 center-text">
                     <p><strong>PREPARED BY</strong></p>
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-4 center-text">
                     <p><strong>APPROVED BY</strong></p>
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-4 center-text">
                     <p><strong>CHECKED BY</strong></p>
                 </div>
             </div>
 
             <div class="row modal-signature-info center-content">
-                <div class="col-sm-4">
+                <div class="col-sm-4 center-text">
                     <p><strong>
                             <%= date%>
                         </strong></p>
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-4 center-text">
                     <p><strong>
                             <%= date%>
                         </strong></p>
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-4 center-text">
                     <p><strong>
                             <%= date%>
                         </strong></p>
-                </div>
-            </div>
-
-            <br>
-            <br>
-            <div class="modal-print-background">
-                <div class="center-text modal-print-background modal-company-header">
-                    <p><strong><span class="report-footer">5L SOLUTIONS SUPPLY &amp; ALLIED SERVICES
-                                CORP.</span></strong></p>
-                </div>
-                <div class="center-text modal-print-background">
-                    <p><span class="report-footer-subheader">Phase 3B Block 18 Lot 15, Golf Drive Street Pacita
-                            Complex 1, City of Bi&ntilde;an, Laguna</span></p>
-                </div>
-                <div class="center-text modal-print-background">
-                    <p><span class="report-footer-subheader">Tel.Nos: 273-44-69/952-15-60</span></p>
                 </div>
             </div>
         </div>

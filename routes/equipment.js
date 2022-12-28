@@ -226,25 +226,34 @@ router.post('/getequipment', (req, res) => {
   try {
     var itemtype = req.body.itemtype;
     var brandname = req.body.brandname;
-    var targetDir = `${EquipmentPath}${brandname}/`;
-    var files = helper.GetFiles(targetDir);
-    var dataArr = [];
+    let status = dictionary.GetValue(dictionary.ACT());
+    let sql = `SELECT * FROM register_it_equipment
+    WHERE rie_itembrand='${brandname}'
+    AND rie_itemtype='${itemtype}'
+    AND rie_status='${status}'`;
 
-    files.forEach(file => {
-      var filename = file.split('.');
-      var data = filename[0].split('_');
+    mysql.Select(sql, 'RegisterITEquipment', (err, result) => {
+      if (err) console.error(err);
 
-      if (data[0] == itemtype) {
-        dataArr.push({
-          serial: data[2]
-        })
-      }
-    });
+      res.json({
+        msg: 'success',
+        data: result
+      });
+    })
+    // var targetDir = `${EquipmentPath}${brandname}/`;
+    // var files = helper.GetFiles(targetDir);
+    // var dataArr = [];
 
-    res.json({
-      msg: 'success',
-      data: dataArr
-    });
+    // files.forEach(file => {
+    //   var filename = file.split('.');
+    //   var data = filename[0].split('_');
+
+    //   if (data[0] == itemtype) {
+    //     dataArr.push({
+    //       serial: data[2]
+    //     })
+    //   }
+    // });
 
   } catch (error) {
     res.json({

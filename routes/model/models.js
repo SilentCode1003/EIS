@@ -746,3 +746,83 @@ exports.ReturnRequestITEquipments = (data) => {
 
     return dataResult;
 }
+
+exports.MasterWarehouse = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            warehouseid: key.mw_warehouseid,
+            warehousename: key.mw_warehousename,
+            createdby: key.mw_createdby,
+            createddate: key.mw_createddate,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.TransactionTransferITDetails = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            detailoid: key.ttid_detailoid,
+            preparedby: key.ttid_preparedby,
+            prepareddate: key.ttid_prepareddate,
+            details: key.ttid_details,
+            locationfrom: key.ttid_locationfrom,
+            locationto: key.ttid_locationto,
+            remarks: key.ttid_remarks,
+            status: key.ttid_status,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.TransactionTransferITDetails = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            detailid: key.ttid_detailid,
+            preparedby: key.ttid_preparedby,
+            prepareddate: key.ttid_prepareddate,
+            details: key.ttid_details,
+            locationfrom: key.ttid_locationfrom,
+            locationto: key.ttid_locationto,
+            remarks: key.ttid_remarks,
+            status: key.ttid_status,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.TransactionTransferITEquipment = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            transactionid: key.ttie_transactionid,
+            itembrand: key.ttie_itembrand,
+            itemtype: key.ttie_itemtype,
+            serial: key.ttie_serial,
+            locationfrom: key.ttie_locationfrom,
+            locationto: key.ttie_locationto,
+            preparedby: key.ttie_preparedby,
+            prepareddate: key.ttie_prepareddate,
+            approvedby: key.ttie_approvedby,
+            approveddate: key.ttie_approveddate,
+            remarks: key.ttie_remarks,
+            status: key.ttie_status,
+        }) 
+    });
+
+    return dataResult;
+}

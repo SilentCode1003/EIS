@@ -39,6 +39,7 @@ var purchasereportRouter = require('./routes/purchasereport');
 var accountingdashboardRouter = require('./routes/accountingdashboard');
 var accountingrequestRouter = require('./routes/accountingrequest');
 var accountingreportRouter = require('./routes/accountingreport');
+var warehouseRouter = require('./routes/warehouse');
 
 var app = express();
 
@@ -109,6 +110,7 @@ app.use('/purchasereport', purchasereportRouter);
 app.use('/accountingdashboard', accountingdashboardRouter);
 app.use('/accountingrequest', accountingrequestRouter);
 app.use('/accountingreport', accountingreportRouter);
+app.use('/warehouse', warehouseRouter);
 
 
 // catch 404 and forward to error handler

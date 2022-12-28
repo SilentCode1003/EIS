@@ -19,6 +19,7 @@ exports.GetValue = (abr) => {
     if (abr == 'SPR') return 'SPARE';
     if (abr == 'DLY') return 'DEPLOYED';
     if (abr == 'RET') return 'RETURNED';
+    if (abr == 'ACT') return 'ACTIVE';
 }
 
 //#region STATUS CODE
@@ -98,4 +99,7 @@ exports.RET = () => {
     return 'RET';
 }
 
+exports.ACT = () => {
+    return 'ACT';
+}
 //#endregion

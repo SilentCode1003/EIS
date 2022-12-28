@@ -29,20 +29,21 @@
                         let locationto = item.locationto;
                         let remarks = item.remarks;
                         let status = item.status;
+                        let datajson = JSON.parse(item.details);
 
-                        $.each(item.details, (key, item) => {
+                        $.each(datajson, (key, item) => {
                             details += `BRANDNAME: ${item.brand} ITEM TYPE: ${item.itemtype} ITEM SERIAL: ${item.serial}<br>`;
                             console.log(details);
                         })
 
                         finalData.push({
-                            date: date,
-                            personel: personel,
+                            date: item.prepareddate,
+                            personel: item.preparedby,
                             details: details,
-                            locationfrom: locationfrom,
-                            locationto: locationto,
-                            remarks: remarks,
-                            status: status,
+                            locationfrom: item.locationfrom,
+                            locationto: item.locationto,
+                            remarks: item.remarks,
+                            status: item.status,
                         });
                     })
 
@@ -224,13 +225,13 @@
                 },
                 success: function (result) {
                     var data = result.data;
-                    console.log(result.data);
+                    // console.log(result.data);
 
                     $.each(data, function (key, item) {
                         var options = new Option(item.serial, item.serial);
                         $(options).html(item.serial);
                         $('#serial').append(options);
-                        console.log(item.serial);
+                        // console.log(item.serial);
                     });
                 },
                 error: function (result) {
@@ -294,6 +295,27 @@
                 });
             }
 
+            //warehouse
+            if (office == 'WAREHOUSE') {
+                $.ajax({
+                    type: "GET",
+                    url: "/warehouse/load",
+                    success: function (result) {
+                        var data = result.data;
+                        console.log(result.data);
+
+                        $.each(data, function (key, item) {
+                            var options = new Option(item.warehousename, item.warehousename);
+                            $(options).html(item.warehousename);
+                            $('#locationfrom').append(options);
+                            console.log(item.warehousename);
+                        });
+                    },
+                    error: function (result) {
+                        alert('error: ' + result.data);
+                    }
+                });
+            }
         });
 
         $(document).on('click', "#clientnamefrom", function () {
@@ -368,6 +390,28 @@
                             $(options).html(item.clientname);
                             $('#clientnameto').append(options);
                             console.log(item.clientname);
+                        });
+                    },
+                    error: function (result) {
+                        alert('error: ' + result.data);
+                    }
+                });
+            }
+
+            //warehouse
+            if (office == 'WAREHOUSE') {
+                $.ajax({
+                    type: "GET",
+                    url: "/warehouse/load",
+                    success: function (result) {
+                        var data = result.data;
+                        console.log(result.data);
+
+                        $.each(data, function (key, item) {
+                            var options = new Option(item.warehousename, item.warehousename);
+                            $(options).html(item.warehousename);
+                            $('#locationto').append(options);
+                            console.log(item.warehousename);
                         });
                     },
                     error: function (result) {

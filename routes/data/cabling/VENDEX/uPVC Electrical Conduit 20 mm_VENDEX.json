@@ -2,7 +2,8 @@
   {
     "brandname": "VENDEX",
     "itemtype": "uPVC Electrical Conduit 20 mm",
-    "itemcount": 50,
+    "itemcount": 500,
+    "updateitemcount": "",
     "updateby": "",
     "updatedate": ""
   }

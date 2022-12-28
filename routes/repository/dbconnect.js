@@ -45,7 +45,7 @@ const connection = mysql.createConnection({
 });
 
 exports.Insert = async (stmt) => {
-        try {
+    try {
 
         // console.log(`statement: ${stmt} data: ${todos}`);
         connection.connect((err) => { return err; })
@@ -193,6 +193,18 @@ exports.Select = (sql, table, callback) => {
             if (table == 'ReturnRequestITEquipments') {
                 callback(null, model.ReturnRequestITEquipments(results));
             }
+
+            if (table == 'MasterWarehouse') {
+                callback(null, model.MasterWarehouse(results));
+            }
+
+            if (table == 'TransactionTransferITDetails') {
+                callback(null, model.TransactionTransferITDetails(results));
+            }
+
+            if (table == 'TransactionTransferITEquipment') {
+                callback(null, model.TransactionTransferITEquipment(results));
+            }
         });
 
     } catch (error) {
@@ -328,6 +340,21 @@ exports.SelectSingleResult = (sql, result) => {
         }
     } catch (error) {
         console.log(error);
+    }
+}
+
+exports.SelectResult = (sql, callback) => {
+    try {
+        connection.connect((err) => { return err; })
+        connection.query(sql, (error, results, fields) => {
+            // console.log(results);
+            if (error) callback(error, null);
+
+            callback(null, results);
+        });
+
+    } catch (error) {
+        callback(error, null);
     }
 }
 
