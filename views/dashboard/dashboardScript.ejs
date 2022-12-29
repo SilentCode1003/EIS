@@ -12,17 +12,34 @@
 
         $.ajax({
             type: "GET",
-            url: "/equipment/GetRequestSummary",
-            data: {
-                filename: filename
-            },
+            url: "/equipment/getitemrequest",
             success: function (result) {
-                console.log(result.data)
-                $.each(result.data, function (key, item) {
-                    document.getElementById('itequipmentrequest').textContent = item.itrequest;
-                    document.getElementById('equipmentrequesttransfer').textContent = item.transfer;
-                    document.getElementById('cablingequipmentrequest').textContent = item.cablingrequest;
-                })
+                console.log(result);
+                document.getElementById('itequipmentrequest').textContent = result.data;
+            },
+            error: function (result) {
+                alert('error: ' + result.data);
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/equipment/gettransferrequest",
+            success: function (result) {
+                console.log(result);
+                document.getElementById('equipmentrequesttransfer').textContent = result.data;
+            },
+            error: function (result) {
+                alert('error: ' + result.data);
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/cabling/materialcablingrequest",
+            success: function (result) {
+                console.log(result);
+                document.getElementById('cablingequipmentrequest').textContent = result.data;
             },
             error: function (result) {
                 alert('error: ' + result.data);

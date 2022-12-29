@@ -215,33 +215,6 @@ router.post('/gettransferdetails', (req, res) => {
       })
     })
 
-
-
-
-
-
-    // let filename = req.body.filename
-    // let targetFile = `${TransferPendingPath}${filename}`;
-    // let data = helper.ReadJSONFile(targetFile);
-    // let dataArr = [];
-
-    // data.forEach((key, item) => {
-    //   var dataJson = key.details;
-    //   dataJson.forEach((key, item) => {
-    //     dataArr.push({
-    //       brand: key.brand,
-    //       itemtype: key.itemtype,
-    //       serial: key.serial,
-    //       assettag: '',
-    //     });
-    //   });
-    // });
-
-    // res.json({
-    //   msg: 'success',
-    //   data: dataArr
-    // })
-
   } catch (error) {
     res.json({
       msg: error
@@ -251,10 +224,6 @@ router.post('/gettransferdetails', (req, res) => {
 
 router.post('/transferitems', (req, res) => {
   try {
-    // let filename = req.body.filename
-    // let targetFile = `${TransferPendingPath}${filename}`;
-    // let approvedFile = `${TransferApprovedPath}${filename}`;
-    // let data = helper.ReadJSONFile(targetFile);
     let id = req.body.id;
     let date = req.body.date;
     let preparedby = req.body.preparedby;
@@ -262,6 +231,8 @@ router.post('/transferitems', (req, res) => {
     let status_remarks = dictionary.GetValue(dictionary.APD());
     let remarks = dictionary.GetValue(dictionary.APD());
     let status = dictionary.APD();
+    let approvedby = req.session.fullname;
+    let approveddate = helper.GetCurrentDatetime();
 
     function Update_TransactionTransferITDetails(id, status, callback) {
       let sql = `UPDATE transaction_transfer_it_details 
@@ -275,10 +246,12 @@ router.post('/transferitems', (req, res) => {
       })
     }
 
-    function Update_TransactionTransferITEquipment(id, status, remarks, callback) {
+    function Update_TransactionTransferITEquipment(id, status, remarks, approvedby, approveddate, callback) {
       let sql = `UPDATE transaction_transfer_it_equipment 
       SET ttie_remarks='${remarks}',
-      ttie_status='${status}'
+      ttie_status='${status}',
+      ttie_approvedby='${approvedby}',
+      ttie_approveddate='${approveddate}'
       WHERE ttie_detailid='${id}'`;
 
       mysql.Update(sql, (err, result) => {
@@ -319,7 +292,7 @@ router.post('/transferitems', (req, res) => {
       console.log(result);
     })
 
-    Update_TransactionTransferITEquipment(id, status, remarks, (err, result) => {
+    Update_TransactionTransferITEquipment(id, status, remarks, approvedby, approveddate, (err, result) => {
       if (err) console.error(err);
       console.log(result);
     })
@@ -341,27 +314,6 @@ router.post('/transferitems', (req, res) => {
       });
 
     })
-
-
-    // data.forEach((key, item) => {
-    //   var dataJson = key.details;
-    //   dataJson.forEach((key, item) => {
-    //     let folderName = key.brand;
-    //     let equipemnt = `${EquipmentPath}${folderName}/${key.itemtype}_${key.brand}_${key.serial}.json`;
-    //     let transfer = `${TransferPath}${folderName}/${key.itemtype}_${key.brand}_${key.serial}.json`;
-    //     let targetDir = `${TransferPath}${folderName}`;
-
-    //     helper.CreateFolder(targetDir);
-    //     helper.MoveFile(equipemnt, transfer);
-    //   });
-    // });
-
-    // helper.MoveFile(targetFile, approvedFile);
-
-    // res.json({
-    //   msg: 'success',
-    //   data: dataArr
-    // })
 
     res.json({
       msg: 'success'

@@ -284,11 +284,97 @@ router.get('/GetEquipmentSummary', (req, res) => {
 router.get('/GetRequestSummary', (req, res) => {
   try {
 
-    let data = helper.GetRequestSummary(ItEquipmentRequest, TransferEquipmentRequest, CablingEquipmentRequest);
+    let ITRequest = 0;
+    let ITTransfer = 0;
+    let CablingRequest = 0;
+    // let data = helper.GetRequestSummary(ItEquipmentRequest, TransferEquipmentRequest, CablingEquipmentRequest);
 
-    console.log(data);
+    function GetCount(ITRequest, ITTransfer, CablingRequest) {
+      let data = [];
+      return new Promise((resolve, reject) => {
+        let sql_transfer = `select count(*) as transcount from transaction_transfer_it_details`;
+        mysql.SelectResult(sql_transfer, (err, result) => {
+          if (err) reject(err);
+
+          ITTransfer = result[0].transcount;
+          data.push({
+            transfer: ITTransfer,
+          })
+        })
+
+        let sql_spare = `select count(*) as requestcount from request_sapre_details`;
+        mysql.SelectResult(sql_spare, (err, result) => {
+          if (err) reject(err);
+
+          ITRequest = result[0].requestcount;
+          data.push({
+            itrequest: ITRequest,
+          })
+        })
+
+        let sql_cabling = `select count(*) as requestcount from request_cabling_details`;
+        mysql.SelectResult(sql_cabling, (err, result) => {
+          if (err) reject(err);
+
+          CablingRequest = result[0].requestcount;
+          data.push({
+            cablingrequest: CablingRequest,
+          })
+        })
+
+        console.log(data);
+        resolve(data);
+      })
+    }
+
+    GetCount(ITRequest, ITTransfer, CablingRequest).then(result => {
+
+      res.json({
+        data: result
+      })
+    }).catch(error => {
+      res.json({
+        msg: error
+      })
+    })
+
+  } catch (error) {
     res.json({
-      data: data
+      msg: error
+    })
+  }
+})
+
+router.get('/getitemrequest', (req, res) => {
+  try {
+    let sql_spare = `select count(*) as requestcount from request_sapre_details where not rsd_status='DLY'`;
+    mysql.SelectCustomizeResult(sql_spare, (err, result) => {
+      if (err) reject(err);
+
+      ITRequest = result[0].requestcount;
+
+      res.json({
+        data: ITRequest
+      })
+    })
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+})
+
+router.get('/gettransferrequest', (req, res) => {
+  try {
+    let sql_transfer = `select count(*) as transcount from transaction_transfer_it_details where not ttid_status='APPROVED'`;
+    mysql.SelectCustomizeResult(sql_transfer, (err, result) => {
+      if (err) reject(err);
+
+      ITTransfer = result[0].transcount;
+
+      res.json({
+        data: ITTransfer
+      })
     })
   } catch (error) {
     res.json({

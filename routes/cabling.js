@@ -461,3 +461,22 @@ router.post('/stockindetails', (req, res) => {
     })
   }
 })
+
+router.get('/materialcablingrequest', (req, res) => {
+  try {
+    let sql_cabling = `select count(*) as requestcount  from request_cabling_details where not rcd_status='APPROVED';`;
+    mysql.SelectCustomizeResult(sql_cabling, (err, result) => {
+      if (err) reject(err);
+      console.log(result);
+      CablingRequest = result[0].requestcount;
+
+      res.json({
+        data: CablingRequest
+      })
+    })
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+})

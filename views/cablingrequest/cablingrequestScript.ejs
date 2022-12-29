@@ -433,14 +433,14 @@
                     },
                     success: function (result) {
                         if (result.msg == 'success') {
+                            ClearListTable('request-list-tbl');
+                            LoadMaterialRequestTbl();
                             success('Saved!', 'Data saved!')
                         }
                         else {
                             warning('Use you own account to make request. System detected that this user was already request equipment today!')
                         }
-                        LoadMaterialRequestTbl();
                         dataArr = [];
-                        ClearListTable('request-list-tbl');
                         modal.style.display = "none";
                     },
                     error: function (result) {
@@ -462,15 +462,15 @@
                     },
                     success: function (result) {
                         if (result.msg == 'success') {
-
+                            LoadStocksRequestTbl();
+                            ClearListTable('request-stocks-list-tbl');
                             success('Saved!', 'Data saved!')
                         }
                         else {
                             warning('Use you own account to make request. System detected that this user was already request equipment today!')
                         }
-                        LoadStocksRequestTbl();
+
                         dataArr = [];
-                        ClearListTable('request-stocks-list-tbl');
                         modalstocks.style.display = "none";
                     },
                     error: function (result) {

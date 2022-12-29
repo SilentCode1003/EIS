@@ -226,12 +226,15 @@ exports.SelectResult = async (sql, table, callback) => {
             if (table == 'RequestCablingDetails') {
                 callback(null, model.RequestCablingDetails(results));
             }
+
             if (table == 'RequestCablingStocksDatails') {
                 callback(null, model.RequestCablingStocksDetails(results));
             }
+
             if (table == 'CablingItemMaster') {
                 callback(null, model.CablingItemMaster(results));
             }
+
             if (table == 'PurchaseDatails') {
                 callback(null, model.PurchaseDatails(results));
             }
@@ -343,18 +346,22 @@ exports.SelectSingleResult = (sql, result) => {
     }
 }
 
-exports.SelectResult = (sql, callback) => {
+exports.SelectCustomizeResult = (sql, callback) => {
     try {
         connection.connect((err) => { return err; })
         connection.query(sql, (error, results, fields) => {
+
             // console.log(results);
-            if (error) callback(error, null);
+
+            if (error) {
+                callback(error, null);
+            }
 
             callback(null, results);
         });
 
     } catch (error) {
-        callback(error, null);
+        console.log(error);
     }
 }
 
