@@ -1,0 +1,44 @@
+[
+  {
+    "personel": "DEEJAY RANCES",
+    "date": "2023-01-03 08:52",
+    "locationfrom": "MAIN OFFICE",
+    "locationto": "BICOL",
+    "remarks": "SITE SPARE REQUEST",
+    "status": "PND",
+    "details": [
+      {
+        "personel": "DEEJAY RANCES",
+        "brand": "EPSON",
+        "itemtype": "EPSON POS PRINTER",
+        "serial": "X59E000631",
+        "createddate": "2023-01-03",
+        "status": "PENDING"
+      },
+      {
+        "personel": "DEEJAY RANCES",
+        "brand": "EPSON",
+        "itemtype": "EPSON POS PRINTER",
+        "serial": "X59E001507",
+        "createddate": "2023-01-03",
+        "status": "PENDING"
+      },
+      {
+        "personel": "DEEJAY RANCES",
+        "brand": "EPSON",
+        "itemtype": "EPSON POS PRINTER",
+        "serial": "X59E001598",
+        "createddate": "2023-01-03",
+        "status": "PENDING"
+      },
+      {
+        "personel": "DEEJAY RANCES",
+        "brand": "EPSON",
+        "itemtype": "EPSON POS PRINTER",
+        "serial": "X59E001694",
+        "createddate": "2023-01-03",
+        "status": "PENDING"
+      }
+    ]
+  }
+]

@@ -231,8 +231,11 @@ router.post('/transferitems', (req, res) => {
     let status_remarks = dictionary.GetValue(dictionary.APD());
     let remarks = dictionary.GetValue(dictionary.APD());
     let status = dictionary.APD();
+
     let approvedby = req.session.fullname;
     let approveddate = helper.GetCurrentDatetime();
+
+    console.log(`${id} ${date} ${preparedby} ${site}`);
 
     function Update_TransactionTransferITDetails(id, status, callback) {
       let sql = `UPDATE transaction_transfer_it_details 
@@ -261,30 +264,32 @@ router.post('/transferitems', (req, res) => {
       })
     }
 
-    function Get_SerialList(id, callback) {
-      let sql = `SELECT ttie_serial as serial FROM transaction_transfer_it_equipment 
-      WHERE ttie_detailid='${id}'`;
+    function Get_SerialList(id) {
+      return new Promise((resolve, reject) => {
+        let sql = `SELECT ttie_serial as serial FROM transaction_transfer_it_equipment 
+                  WHERE ttie_detailid='${id}'`;
 
-      mysql.SelectResult(sql, (err, result) => {
-        if (err) callback(err, null);
-
-        callback(null, result);
+        mysql.SelectCustomizeResult(sql, (err, result) => {
+          if (err) reject(err);
+          resolve(result);
+        })
       })
-
     }
 
-    function Update_RegisterITEquipment(data, callback) {
-      let sql = `UPDATE register_it_equipment SET
-      rie_site=?
-      WHERE rie_serial=?`
+    function Update_RegisterITEquipment(data) {
+      return new Promise((resolve, reject) => {
+        let sql = `UPDATE register_it_equipment SET
+                    rie_site=?
+                    WHERE rie_serial=?`;
 
-      for (x = 0; x < data.length; x++) {
-        mysql.UpdateWithPayload(sql, data[x], (err, result) => {
-          if (err) callback(err, null);
-          console.log(result);
-        })
-      }
-      callback(null, 'DONE');
+        for (x = 0; x < data.length; x++) {
+          mysql.UpdateWithPayload(sql, data[x], (err, result) => {
+            if (err) reject(err);
+            console.log(result);
+          })
+        }
+        resolve('DONE');
+      })
     }
 
     Update_TransactionTransferITDetails(id, status_remarks, (err, result) => {
@@ -297,26 +302,34 @@ router.post('/transferitems', (req, res) => {
       console.log(result);
     })
 
-    Get_SerialList(id, (err, result) => {
-      if (err) console.error(err);
+    Get_SerialList(id).then(result => {
+      console.log(result);
       let serialList = [];
 
       result.forEach((key, item) => {
         serialList.push([
           site,
-          key.serial,
+          key.serial
         ])
       })
 
-      Update_RegisterITEquipment(serialList, (err, result) => {
-        if (err) console.error(err);
+      Update_RegisterITEquipment(serialList).then(result => {
         console.log(result);
-      });
 
-    })
+        res.json({
+          msg: 'success'
+        })
 
-    res.json({
-      msg: 'success'
+      }).catch(error => {
+        res.json({
+          msg: error
+        })
+      })
+
+    }).catch(error => {
+      res.json({
+        msg: error
+      })
     })
 
   } catch (error) {

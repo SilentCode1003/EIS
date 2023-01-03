@@ -1,0 +1,60 @@
+[
+  {
+    "personel": "JOHN ERNEST JAPITANA",
+    "date": "2023-01-03 09:53",
+    "locationfrom": "MAIN OFFICE",
+    "locationto": "ILOILO",
+    "remarks": "SITE SPARE REQUEST",
+    "status": "PND",
+    "details": [
+      {
+        "personel": "JOHN ERNEST JAPITANA",
+        "brand": "CYBERPOWER",
+        "itemtype": "Cyberpower UPS",
+        "serial": "320225BN30000215",
+        "createddate": "2023-01-03",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JOHN ERNEST JAPITANA",
+        "brand": "CYBERPOWER",
+        "itemtype": "Cyberpower UPS",
+        "serial": "320445AZ30000281",
+        "createddate": "2023-01-03",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JOHN ERNEST JAPITANA",
+        "brand": "CYBERPOWER",
+        "itemtype": "Cyberpower UPS",
+        "serial": "320445AZ30000359",
+        "createddate": "2023-01-03",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JOHN ERNEST JAPITANA",
+        "brand": "CYBERPOWER",
+        "itemtype": "Cyberpower UPS",
+        "serial": "320445AZ30000823",
+        "createddate": "2023-01-03",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JOHN ERNEST JAPITANA",
+        "brand": "CYBERPOWER",
+        "itemtype": "Cyberpower UPS",
+        "serial": "320445AZ30001064",
+        "createddate": "2023-01-03",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JOHN ERNEST JAPITANA",
+        "brand": "CYBERPOWER",
+        "itemtype": "Cyberpower UPS",
+        "serial": "320445AZ30001066",
+        "createddate": "2023-01-03",
+        "status": "PENDING"
+      }
+    ]
+  }
+]

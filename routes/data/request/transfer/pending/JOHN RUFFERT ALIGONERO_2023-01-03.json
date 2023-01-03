@@ -1,0 +1,44 @@
+[
+  {
+    "personel": "JOHN RUFFERT ALIGONERO",
+    "date": "2023-01-03 08:55",
+    "locationfrom": "MAIN OFFICE",
+    "locationto": "PAMPANGA",
+    "remarks": "SITE SPARE REQUEST",
+    "status": "PND",
+    "details": [
+      {
+        "personel": "JOHN RUFFERT ALIGONERO",
+        "brand": "EPSON",
+        "itemtype": "EPSON POS PRINTER",
+        "serial": "X59E002343",
+        "createddate": "2023-01-03",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JOHN RUFFERT ALIGONERO",
+        "brand": "EPSON",
+        "itemtype": "EPSON POS PRINTER",
+        "serial": "X8YV000214",
+        "createddate": "2023-01-03",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JOHN RUFFERT ALIGONERO",
+        "brand": "EPSON",
+        "itemtype": "EPSON POS PRINTER",
+        "serial": "X8YV000227",
+        "createddate": "2023-01-03",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JOHN RUFFERT ALIGONERO",
+        "brand": "EPSON",
+        "itemtype": "EPSON POS PRINTER",
+        "serial": "X8YV000245",
+        "createddate": "2023-01-03",
+        "status": "PENDING"
+      }
+    ]
+  }
+]

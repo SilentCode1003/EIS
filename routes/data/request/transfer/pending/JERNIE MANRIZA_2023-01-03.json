@@ -1,0 +1,44 @@
+[
+  {
+    "personel": "JERNIE MANRIZA",
+    "date": "2023-01-03 09:31",
+    "locationfrom": "MAIN OFFICE",
+    "locationto": "PANGASINAN",
+    "remarks": "SITE SPARE REQUEST",
+    "status": "PND",
+    "details": [
+      {
+        "personel": "JERNIE MANRIZA",
+        "brand": "SPEKTEK",
+        "itemtype": "SPEKTEK 128GB SSD",
+        "serial": "E201801300030126",
+        "createddate": "2023-01-03",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JERNIE MANRIZA",
+        "brand": "SPEKTEK",
+        "itemtype": "SPEKTEK 128GB SSD",
+        "serial": "E201801300030137",
+        "createddate": "2023-01-03",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JERNIE MANRIZA",
+        "brand": "SPEKTEK",
+        "itemtype": "SPEKTEK 128GB SSD",
+        "serial": "E201801300030143",
+        "createddate": "2023-01-03",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JERNIE MANRIZA",
+        "brand": "SPEKTEK",
+        "itemtype": "SPEKTEK 128GB SSD",
+        "serial": "E201901210050027",
+        "createddate": "2023-01-03",
+        "status": "PENDING"
+      }
+    ]
+  }
+]

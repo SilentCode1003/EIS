@@ -1,0 +1,44 @@
+[
+  {
+    "personel": "DIONELLE BRIOL",
+    "date": "2023-01-03 09:06",
+    "locationfrom": "MAIN OFFICE",
+    "locationto": "CABANATUAN",
+    "remarks": "SITE SPARE REQUEST",
+    "status": "PND",
+    "details": [
+      {
+        "personel": "DIONELLE BRIOL",
+        "brand": "NEC G5200",
+        "itemtype": "G5200 CASH DRAWER",
+        "serial": "190526069663",
+        "createddate": "2023-01-03",
+        "status": "PENDING"
+      },
+      {
+        "personel": "DIONELLE BRIOL",
+        "brand": "NEC G5200",
+        "itemtype": "G5200 CASH DRAWER",
+        "serial": "191223066927",
+        "createddate": "2023-01-03",
+        "status": "PENDING"
+      },
+      {
+        "personel": "DIONELLE BRIOL",
+        "brand": "NEC G5200",
+        "itemtype": "G5200 CASH DRAWER",
+        "serial": "210529013799",
+        "createddate": "2023-01-03",
+        "status": "PENDING"
+      },
+      {
+        "personel": "DIONELLE BRIOL",
+        "brand": "NEC G5200",
+        "itemtype": "G5200 CASH DRAWER",
+        "serial": "210529013930",
+        "createddate": "2023-01-03",
+        "status": "PENDING"
+      }
+    ]
+  }
+]

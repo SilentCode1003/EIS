@@ -1,0 +1,44 @@
+[
+  {
+    "personel": "JOSEPH ORENCIO",
+    "date": "2023-01-03 08:58",
+    "locationfrom": "MAIN OFFICE",
+    "locationto": "CEBU",
+    "remarks": "SITE SPARE REQUEST",
+    "status": "PND",
+    "details": [
+      {
+        "personel": "JOSEPH ORENCIO",
+        "brand": "CYBERPOWER",
+        "itemtype": "Cyberpower UPS",
+        "serial": "320445AZ30000281",
+        "createddate": "2023-01-03",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JOSEPH ORENCIO",
+        "brand": "CYBERPOWER",
+        "itemtype": "Cyberpower UPS",
+        "serial": "320445AZ30001031",
+        "createddate": "2023-01-03",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JOSEPH ORENCIO",
+        "brand": "CYBERPOWER",
+        "itemtype": "Cyberpower UPS",
+        "serial": "320445AZ30001064",
+        "createddate": "2023-01-03",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JOSEPH ORENCIO",
+        "brand": "CYBERPOWER",
+        "itemtype": "Cyberpower UPS",
+        "serial": "320445AZ30001066",
+        "createddate": "2023-01-03",
+        "status": "PENDING"
+      }
+    ]
+  }
+]
