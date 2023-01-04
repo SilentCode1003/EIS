@@ -11,6 +11,7 @@ const CablingPath = `${__dirname}/data/cabling/`;
 const RequestStocksPath = `${__dirname}/data/request/stocks/cabling/`;
 
 const mysql = require('./repository/dbconnect');
+const dictionary = require('./repository/dictionary');
 
 /* GET home page. */
 router.get('/', isAuthAdmin, function (req, res, next) {
@@ -63,30 +64,17 @@ router.get('/load', (req, res) => {
 
 router.get('/loadrequeststocks', (req, res) => {
   try {
-    let files = helper.GetFiles(RequestStocksPath);
-    let dataArr = [];
+    let status = dictionary.GetValue(dictionary.APD());
+    let sql = `select * from request_cabling_stocks_details where not rcsd_status='${status}'`;
 
-    files.forEach(file => {
-      let filename = `${RequestStocksPath}${file}`;
-      let data = helper.ReadJSONFile(filename);
+    mysql.Select(sql, 'RequestCablingStocksDetails', (err, result) => {
+      if (err) console.error(err);
 
-      data.forEach((key, item) => {
-        dataArr.push({
-          requestid: key.requestid,
-          date: key.date,
-          personel: key.personel,
-          details: key.details,
-          remarks: key.remarks,
-          status: key.status,
-        });
-      });
-    });
-
-    res.json({
-      msg: 'success',
-      data: dataArr
+      res.json({
+        msg: 'success',
+        data: result
+      })
     })
-
 
   } catch (error) {
     res.json({

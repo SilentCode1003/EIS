@@ -1,0 +1,18 @@
+[
+  {
+    "controlno": 1000,
+    "personel": "JEREMIAH CAMASO",
+    "data": [
+      {
+        "store": "60 Cainta Junction",
+        "ticket": "INC-4587548",
+        "brandname": "CYBERPOWER",
+        "itemtype": "Cyberpower UPS",
+        "quantity": "4",
+        "remarks": "UPS REPLACEMENT"
+      }
+    ],
+    "createddate": "2023-01-03",
+    "status": "ALLOC"
+  }
+]

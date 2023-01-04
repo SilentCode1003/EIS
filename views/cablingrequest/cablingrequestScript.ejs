@@ -645,13 +645,14 @@
 
                         console.log(data);
                         $.each(data, (key, item) => {
-                            requestor = item.personel;
-                            createddate = item.date;
+                            requestor = item.requestby;
+                            createddate = item.requestdate;
                             status = item.status;
                             remarks = item.remarks;
 
                             // console.log(item.details);
-                            $.each(item.details, (key, item) => {
+                            var jsondata = JSON.parse(item.details)
+                            $.each(jsondata, (key, item) => {
                                 console.log(`BRAND: ${item.brandname} ITEM TYPE: ${item.itemtype} ITEM COUNT: ${item.itemcount}`);
                                 details += `BRAND: ${item.brandname} ITEM TYPE: ${item.itemtype} ITEM COUNT: ${item.itemcount}<br/>`;
                             })

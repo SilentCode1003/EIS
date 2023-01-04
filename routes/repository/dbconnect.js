@@ -145,7 +145,7 @@ exports.Select = (sql, table, callback) => {
             if (table == 'ITEquipmentTracker') {
                 callback(null, model.ITEquipmentTracker(results));
             }
-            if (table == 'RequestCablingStocksDatails') {
+            if (table == 'RequestCablingStocksDetails') {
                 callback(null, model.RequestCablingStocksDetails(results));
             }
             if (table == 'CablingItemMaster') {
