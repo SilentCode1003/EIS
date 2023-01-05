@@ -56,61 +56,90 @@
 
             if (brandname == "-") { message += "BRAND NAME " }
             if (itemtype == "-") { message += "ITEM TYPE " }
-            if (clientname == "-") { message += "CLIENT NAME " }
-            if (itemcount == "-") { message += "ITEM COUNT " }
+            if (clientname == "") { message += "CLIENT NAME " }
+            if (itemcount == "") { message += "ITEM COUNT " }
 
-            if (message != "") { warning("Warning!", "Must fill-up " + message + " field!") }
-            else {
-                if (dataArr.length == 0) {
-                    dataArr.push({
-                        modelname: modelname,
-                        itemtype: itemtype,
-                        clientname: clientname,
-                        itemcount: itemcount,
-                        status: 'PENDING',
-                    })
+            $.ajax({
+                type: 'POST',
+                url: '/cyberrequest/checkcount',
+                data: {
+                    modelname: modelname,
+                    itemtype: itemtype,
+                },
+                success: function (result) {
+                    var result_count = result.data[0].itemcount;
+                    var input_count = parseFloat(itemcount);
+                    result_count = parseFloat(result_count);
 
-                    equipment_list_tbl = document.getElementById("equipment-list-tbl");
-                    var row = equipment_list_tbl.insertRow(1);
-                    var MODEL_NAME = row.insertCell(0);
-                    var ITEM_NAME = row.insertCell(1);
-                    var CLIENT = row.insertCell(2);
-                    var COUNT = row.insertCell(3);
+                    console.log(itemcount)
 
-                    MODEL_NAME.innerHTML = modelname;
-                    ITEM_NAME.innerHTML = itemtype;
-                    CLIENT.innerHTML = clientname;
-                    COUNT.innerHTML = itemcount;
-                } else {
+                    if (result_count != 0) {
+                        if (result_count < input_count) {
+                            warning('Inventory Check', `MODEL: ${modelname} TYPE: ${itemtype} has ${result_count} on inventory and your request is ${input_count}`)
+                        } else {
+                            if (message != "") { warning("Warning!", "Must fill-up " + message + " field!") }
+                            else {
+                                if (dataArr.length == 0) {
+                                    dataArr.push({
+                                        modelname: modelname,
+                                        itemtype: itemtype,
+                                        clientname: clientname,
+                                        itemcount: itemcount,
+                                        status: 'PENDING',
+                                    })
 
-                    if (!dataArr.map(item => {
-                        if (item.itemtype == itemtype) {
-                            return `${item.itemtype}`;
+                                    equipment_list_tbl = document.getElementById("equipment-list-tbl");
+                                    var row = equipment_list_tbl.insertRow(1);
+                                    var MODEL_NAME = row.insertCell(0);
+                                    var ITEM_NAME = row.insertCell(1);
+                                    var CLIENT = row.insertCell(2);
+                                    var COUNT = row.insertCell(3);
+
+                                    MODEL_NAME.innerHTML = modelname;
+                                    ITEM_NAME.innerHTML = itemtype;
+                                    CLIENT.innerHTML = clientname;
+                                    COUNT.innerHTML = itemcount;
+                                } else {
+
+                                    if (!dataArr.map(item => {
+                                        if (item.itemtype == itemtype) {
+                                            return `${item.itemtype}`;
+                                        }
+                                    }).includes(`${itemtype}`)) {
+                                        dataArr.push({
+                                            modelname: modelname,
+                                            itemtype: itemtype,
+                                            clientname: clientname,
+                                            itemcount: itemcount,
+                                        })
+
+                                        equipment_list_tbl = document.getElementById("equipment-list-tbl");
+                                        var row = equipment_list_tbl.insertRow(1);
+                                        var MODEL_NAME = row.insertCell(0);
+                                        var ITEM_NAME = row.insertCell(1);
+                                        var CLIENT = row.insertCell(2);
+                                        var COUNT = row.insertCell(3);
+
+                                        MODEL_NAME.innerHTML = modelname;
+                                        ITEM_NAME.innerHTML = itemtype;
+                                        CLIENT.innerHTML = clientname;
+                                        COUNT.innerHTML = itemcount;
+                                    } else {
+                                        warning(`Already request ${itemtype} with item count of ${itemcount}...`)
+                                    }
+                                }
+                            }
+
                         }
-                    }).includes(`${itemtype}`)) {
-                        dataArr.push({
-                            modelname: modelname,
-                            itemtype: itemtype,
-                            clientname: clientname,
-                            itemcount: itemcount,
-                        })
-
-                        equipment_list_tbl = document.getElementById("equipment-list-tbl");
-                        var row = equipment_list_tbl.insertRow(1);
-                        var MODEL_NAME = row.insertCell(0);
-                        var ITEM_NAME = row.insertCell(1);
-                        var CLIENT = row.insertCell(2);
-                        var COUNT = row.insertCell(3);
-
-                        MODEL_NAME.innerHTML = modelname;
-                        ITEM_NAME.innerHTML = itemtype;
-                        CLIENT.innerHTML = clientname;
-                        COUNT.innerHTML = itemcount;
                     } else {
-                        warning(`Already request ${itemtype} with item count of ${itemcount}...`)
+                        warning('Inventory Check', `MODEL: ${modelname} TYPE: ${itemtype} has ${result_count} count on inventory...`)
                     }
+                },
+                error: function (result) {
+                    error(result);
                 }
-            }
+            });
+
 
 
         })

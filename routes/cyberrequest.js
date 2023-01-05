@@ -428,6 +428,70 @@ router.post('/restockequipment', (req, res) => {
   }
 })
 
+router.post('/checkcount', (req, res) => {
+  try {
+    let modelname = req.body.modelname;
+    let itemtype = req.body.itemtype;
+
+    function Get_ItemCount(model, type) {
+      return new Promise((resolve, reject) => {
+        let sql = `select ce_itemmodel as itemmodel,
+            ce_itemtype as itemtype,
+            count(*) as itemcount
+            from cyberpower_equipments
+            where ce_itemmodel='${model}'
+            and ce_itemtype='${type}'`;
+
+        mysql.SelectResult(sql, (err, result) => {
+          if (err) reject(err);
+
+          var data = [];
+
+          if (result.length != 0) {
+            result.forEach((key, item) => {
+
+              data.push({
+                itemmodel: key.itemmodel,
+                itemtype: key.itemtype,
+                itemcount: key.itemcount,
+              })
+            })
+
+            return resolve(data);
+          }
+
+          data.push({
+            itemmodel: modelname,
+            itemtype: itemtype,
+            itemcount: 0,
+          })
+          return resolve(data)
+        })
+      })
+    }
+
+    Get_ItemCount(modelname, itemtype)
+      .then(result => {
+        console.log(result);
+
+        res.json({
+          msg: 'success',
+          data: result
+        })
+      })
+      .catch(error => {
+        res.json({
+          msg: error
+        })
+      })
+
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+})
+
 router.get('/restockrequestload', (req, res) => {
   try {
     let sql = `SELECT * FROM cyberpower_icomming_details`;

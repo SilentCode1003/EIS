@@ -192,6 +192,25 @@ exports.Insert = (stmt, todos, callback) => {
     }
 }
 
+exports.SelectResult = (sql, callback) => {
+    try {
+        connection.connect((err) => { return err; })
+        connection.query(sql, (error, results, fields) => {
+
+            console.log(results);
+
+            if (error) {
+                callback(error, null)
+            }
+
+            callback(null, results);
+
+        });
+
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 exports.InsertTable = (tablename, data, callback) => {
     if (tablename == 'transaction_cyberpower') {
