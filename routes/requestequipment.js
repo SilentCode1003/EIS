@@ -533,6 +533,8 @@ router.post('/deployitem', (req, res) => {
         let remakrs = dictionary.GetValue(dictionary.DLY());
         let status = dictionary.DLY();
 
+        console.log(`${requestby} ${requestdate}`);
+
         data = JSON.parse(data);
         data.forEach((key, item) => {
             var tag = key.status;
@@ -653,7 +655,7 @@ router.post('/deployitem', (req, res) => {
             for (x = 0; x < data.length; x++) {
                 mysql.UpdateWithPayload(sql, data[x], (err, result) => {
                     if (err) callback(err, null);
-                   console.log(result);
+                    console.log(result);
                 })
             }
             callback(null, 'DONE');
@@ -694,7 +696,7 @@ router.post('/deployitem', (req, res) => {
             for (x = 0; x < data.length; x++) {
                 mysql.UpdateWithPayload(sql, data[x], (err, result) => {
                     if (err) callback(err, null);
-                   console.log(result);
+                    console.log(result);
                 })
             }
             callback(null, 'DONE');
@@ -710,7 +712,7 @@ router.post('/deployitem', (req, res) => {
             for (x = 0; x < data.length; x++) {
                 mysql.UpdateWithPayload(sql, data[x], (err, result) => {
                     if (err) callback(err, null);
-                   console.log(result);
+                    console.log(result);
                 })
             }
             callback(null, 'DONE');
@@ -778,6 +780,21 @@ router.post('/deployitem', (req, res) => {
                             console.log(result);
                         })
                     }
+                }
+
+                if (deploy_items == 0 && pullout_items == 0 && update_it_equipment == 0 && update_rsd == 0 && update_rie == 0) {
+                    let update_return_data = [];
+                    update_return_data.push([
+                        dictionary.GetValue(dictionary.RET()),
+                        dictionary.RET(),
+                        requestby,
+                        requestdate,
+                    ])
+
+                    Update_RequestSpareDetails(update_return_data, (err, result) => {
+                        if (err) reject(err);
+                        console.log(result)
+                    })
                 }
 
                 resolve('DONE');
