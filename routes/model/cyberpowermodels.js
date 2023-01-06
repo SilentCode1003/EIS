@@ -308,3 +308,28 @@ exports.PurchaseOrderItem = (data) => {
 
     return dataResult;
 }
+
+exports.TransactionCyberpowerEquipment = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            itemmodel: key.tce_itemmodel,
+            itemtype: key.tce_itemtype,
+            itemserial: key.tce_itemserial,
+            receiveddate: key.tce_receiveddate,
+            receivedby: key.tce_receivedby,
+            podate: key.tce_podate,
+            ponumber: key.tce_ponumber,
+            soldedate: key.tce_soldedate,
+            soldeto: key.tce_soldeto,
+            receipt: key.tce_receipttype,
+            receiptno: key.tce_receiptno,
+            remarks: key.tce_remarks,
+            status: key.tce_status,
+        })
+    });
+
+    return dataResult;
+}

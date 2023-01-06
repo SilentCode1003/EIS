@@ -44,6 +44,7 @@ router.post('/save', (req, res) => {
   try {
     let data = req.body.data;
     let cyberpower_equipments = [];
+    let transaction_cyberpower_equipment = [];
 
     data = JSON.parse(data);
 
@@ -59,6 +60,22 @@ router.post('/save', (req, res) => {
         `${dictionary.GetValue(dictionary.WH())}`,
         `${dictionary.WH()}`,
       ])
+
+      transaction_cyberpower_equipment.push([
+        key.modelname,
+        key.itemtype,
+        key.serial,
+        helper.GetCurrentDatetime(),
+        req.session.fullname,
+        key.podate,
+        key.ponumber,
+        '',
+        '',
+        '',
+        '',
+        `${dictionary.GetValue(dictionary.WH())}`,
+        `${dictionary.WH()}`,
+      ])
     });
 
 
@@ -66,6 +83,11 @@ router.post('/save', (req, res) => {
     // console.log(cyberpower_equipments);
     Insert_CyberpowerEquipment(cyberpower_equipments, (err, result) => {
       if (err) console.log(err);
+      console.log(result);
+    })
+
+    Insert_TransactionCyberpowerEquipment(transaction_cyberpower_equipment, (err, result) => {
+      if (err) console.error(err);
       console.log(result);
     })
 
@@ -84,6 +106,7 @@ router.post('/exceldatasave', (req, res) => {
   try {
     let data = req.body.data;
     let cyberpower_equipments = [];
+    let transaction_cyberpower_equipment = [];
 
     data = JSON.parse(data);
 
@@ -99,11 +122,32 @@ router.post('/exceldatasave', (req, res) => {
         `${dictionary.GetValue(dictionary.WH())}`,
         `${dictionary.WH()}`,
       ])
+
+      transaction_cyberpower_equipment.push([
+        key.modelname,
+        key.itemtype,
+        key.serial,
+        helper.GetCurrentDatetime(),
+        req.session.fullname,
+        key.podate,
+        key.ponumber,
+        '',
+        '',
+        '',
+        '',
+        `${dictionary.GetValue(dictionary.WH())}`,
+        `${dictionary.WH()}`,
+      ])
     });
 
     // console.log(cyberpower_equipments);
     Insert_CyberpowerEquipment(cyberpower_equipments, (err, result) => {
       if (err) console.log(err);
+      console.log(result);
+    })
+
+    Insert_TransactionCyberpowerEquipment(transaction_cyberpower_equipment, (err, result) => {
+      if (err) console.error(err);
       console.log(result);
     })
 
@@ -213,8 +257,8 @@ router.post('/restockexceldatasave', (req, res) => {
     pod_status='${requestid}'
     where pod_restockid='${requestid}'`;
 
-    mysql.Update(purchase_order_details, (err, result) => { 
-      if(err) console.error(err);
+    mysql.Update(purchase_order_details, (err, result) => {
+      if (err) console.error(err);
 
       console.log(result);
     })
@@ -224,8 +268,8 @@ router.post('/restockexceldatasave', (req, res) => {
     poi_status='${requestid}'
     where poi_restockid='${requestid}'`;
 
-    mysql.Update(purchase_order_item, (err, result) => { 
-      if(err) console.error(err);
+    mysql.Update(purchase_order_item, (err, result) => {
+      if (err) console.error(err);
 
       console.log(result);
     })
@@ -242,6 +286,80 @@ router.post('/restockexceldatasave', (req, res) => {
   }
 })
 
+router.get('/transaction', (req, res) => {
+  try {
+    let currentdate = helper.GetCurrentDate();
+    let sql = `select * from transaction_cyberpower_equipment where tce_soldedate='${currentdate}'`;
+
+    mysql.Select(sql, 'TransactionCyberpowerEquipment', (err, result) => {
+      if (err) console.log(err);
+
+      res.json({
+        msg: 'success',
+        data: result
+      })
+    })
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+})
+
+router.post('/search', (req, res) => {
+  try {
+    let model = req.body.model;
+    let type = req.body.type;
+    let serial = req.body.serial;
+    let iswildcard = req.body.iswildcard;
+    let sql = '';
+
+    if (!iswildcard) {
+      if (model == '-' && type == '-' && serial != '') {
+        sql = `select * from transaction_cyberpower_equipment
+        where tce_itemserial='${serial}'`;
+      } else {
+        sql = `select * from transaction_cyberpower_equipment
+        where tce_itemmodel='${model}'
+        and tce_itemtype='${type}'
+        and tce_itemserial='${serial}'`;
+      }
+
+    } else {
+      if (model == '-' && type == '-' && serial != '') {
+        sql = `select * from transaction_cyberpower_equipment
+        where tce_itemserial like'${serial}%'`;
+      } else {
+        sql = `select * from transaction_cyberpower_equipment
+        where tce_itemmodel='${model}'
+        and tce_itemtype='${type}'
+        and tce_itemserial like'${serial}%'`;
+      }
+    }
+
+
+
+    console.log(sql);
+    mysql.Select(sql, 'TransactionCyberpowerEquipment', (err, result) => {
+      if (err) console.log(err);
+
+      res.json({
+        msg: 'success',
+        data: result
+      })
+    })
+
+
+
+
+
+
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+})
 
 //Functions
 function Insert_CyberpowerEquipment(data, callback) {
@@ -249,5 +367,13 @@ function Insert_CyberpowerEquipment(data, callback) {
     if (err) callback(err, null);
 
     callback(null, result);
+  })
+}
+
+function Insert_TransactionCyberpowerEquipment(data, callback) {
+  mysql.InsertTable('transaction_cyberpower_equipment', data, (err, result) => {
+    if (err) callback(err, null);
+
+    callback(null, result)
   })
 }

@@ -105,6 +105,10 @@ exports.Select = (sql, table, callback) => {
             if (table == 'PurchaseOrderItem') {
                 callback(null, model.PurchaseOrderItem(results));
             }
+
+            if (table == 'TransactionCyberpowerEquipment') {
+                callback(null, model.TransactionCyberpowerEquipment(results));
+            }
         });
 
     } catch (error) {
@@ -460,6 +464,31 @@ exports.InsertTable = (tablename, data, callback) => {
             cod_details,
             cod_remarks,
             cod_status) VALUES ?`;
+
+        this.Insert(sql, data, (err, result) => {
+            if (err) {
+                callback(err, null);
+            }
+            callback(null, result)
+        })
+    }
+
+    if (tablename == 'transaction_cyberpower_equipment') {
+        console.log(`Execute: ${tablename}`)
+        let sql = `INSERT INTO transaction_cyberpower_equipment(
+            tce_itemmodel,
+            tce_itemtype,
+            tce_itemserial,
+            tce_receiveddate,
+            tce_receivedby,
+            tce_podate,
+            tce_ponumber,
+            tce_soldedate,
+            tce_soldeto,
+            tce_receipttype,
+            tce_receiptno,
+            tce_remarks,
+            tce_status) VALUES ?`;
 
         this.Insert(sql, data, (err, result) => {
             if (err) {

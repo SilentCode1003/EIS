@@ -37,6 +37,22 @@
             StockinTable();
         });
 
+        $(document).on('click', "#searchtab", function () {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById('search').style.display = "block";
+            // evt.currentTarget.className += " active";
+
+            TransactionTable();
+        });
+
         //#region EQUIPMENT
         $.ajax({
             type: "POST",
@@ -686,7 +702,7 @@
                     quantity: uploadcount,
                 })
                 hideload();
-                success('Success','Upload Success!');
+                success('Success', 'Upload Success!');
                 modal2.style.display = "none";
             }
         };
@@ -719,5 +735,143 @@
             stocksmodal.style.display = "none";
         }
         //#endregion
+
+        //#region 
+        $.ajax({
+            type: "POST",
+            url: "/items/brandnamedepartment",
+            data: { department: 'CYBERPOWER' },
+            success: function (result) {
+                console.log(result.data);
+                var data = result.data;
+
+                $.each(data, function (key, item) {
+                    var options = new Option(item.brandname, item.brandname);
+                    $(options).html(item.brandname);
+                    $('#searchmodel').append(options);
+                    console.log(item.brandname);
+                });
+            },
+            error: function (result) {
+                alert('error: ' + result.data);
+            }
+        });
+
+        $(document).on('change', "#searchmodel", function () {
+            var brandname = $('#searchmodel').val();
+            $("#searchtype").empty();
+
+            $.ajax({
+                type: "POST",
+                url: "/items/itemtype",
+                data: { brandname: brandname },
+                success: function (result) {
+                    var data = result.data;
+                    console.log(result.data);
+
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.itemname, item.itemname);
+                        $(options).html(item.itemname);
+                        $('#searchtype').append(options);
+                        console.log(item.itemname);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+        });
+
+        $(document).on('click', "#searchBtn", function () {
+            var model = $('#searchmodel').val();
+            var type = $('#searchtype').val();
+            var serial = $('#searchserial').val();
+            var iswildcard = $('#iswildcardsearch').val();
+
+
+            showloader();
+            dataTable = $('#transaction-table').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'POST',
+                'ajax': {
+                    'url': '/cyberstocks/search',
+                    'data': {
+                        model: model,
+                        type: type,
+                        serial: serial,
+                        iswildcard: iswildcard,
+                    }
+                },
+                'columns': [
+                    { data: 'itemmodel' },
+                    { data: 'itemtype' },
+                    { data: 'itemserial' },
+                    { data: 'receiveddate' },
+                    { data: 'receivedby' },
+                    { data: 'podate' },
+                    { data: 'ponumber' },
+                    { data: 'soldedate' },
+                    { data: 'soldeto' },
+                    { data: 'receipt' },
+                    { data: 'receiptno' },
+                    { data: 'remarks' },
+                    { data: 'status' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+
+        });
+
+
+
+
+        function TransactionTable() {
+            dataTable = $('#transaction-table').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'GET',
+                'ajax': {
+                    'url': '/cyberstocks/transaction',
+                },
+                'columns': [
+                    { data: 'itemmodel' },
+                    { data: 'itemtype' },
+                    { data: 'itemserial' },
+                    { data: 'receiveddate' },
+                    { data: 'receivedby' },
+                    { data: 'podate' },
+                    { data: 'ponumber' },
+                    { data: 'soldedate' },
+                    { data: 'soldeto' },
+                    { data: 'receipt' },
+                    { data: 'receiptno' },
+                    { data: 'remarks' },
+                    { data: 'status' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+        }
+
+        //#endregion
+
     })
 </script>
