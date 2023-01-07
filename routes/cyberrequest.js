@@ -212,7 +212,9 @@ router.post('/assignserial', (req, res) => {
       SET tcoe_unitserial='${serial_list}',
       tcoe_remarks='${remarks}',
       tcoe_status='${status}'
-      WHERE tcoe_requestid='${requestid}'`;
+      WHERE tcoe_requestid='${requestid}'
+      and tcoe_modelname='${modelname}'
+      and tcoe_itemtype='${itemtype}'`;
 
     mysql.Update(sql, (err, result) => {
       if (err) throw err;
