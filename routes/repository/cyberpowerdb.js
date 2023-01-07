@@ -201,7 +201,7 @@ exports.SelectResult = (sql, callback) => {
         connection.connect((err) => { return err; })
         connection.query(sql, (error, results, fields) => {
 
-            console.log(results);
+            // console.log(results);
 
             if (error) {
                 callback(error, null)

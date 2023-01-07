@@ -134,10 +134,9 @@
                     var data = result.data;
                     var count = parseInt(_itemcount);
 
-                    console.log(data);
                     $.each(data, function (key, value) {
                         var dataJson = value.unitserial;
-
+                        
                         console.log(dataJson);
                         if (dataJson == '') {
                             for (x = 0; x < count; x++) {

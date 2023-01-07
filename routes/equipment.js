@@ -347,7 +347,7 @@ router.get('/GetRequestSummary', (req, res) => {
 
 router.get('/getitemrequest', (req, res) => {
   try {
-    let sql_spare = `select count(*) as requestcount from request_sapre_details where not rsd_status='DLY'`;
+    let sql_spare = `select count(*) as requestcount from request_sapre_details where not rsd_status='DLY' and not rsd_status='RET'`;
     mysql.SelectCustomizeResult(sql_spare, (err, result) => {
       if (err) reject(err);
 

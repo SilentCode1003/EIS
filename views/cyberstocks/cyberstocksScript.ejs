@@ -99,9 +99,21 @@
                     data: dataArr
                 },
                 success: function (result) {
-                    success('Saved!', 'Data saved!')
-                    EqipmentTable();
-                    dataArr = [];
+                    if (result.msg == 'error') {
+                        var data = result.data;
+                        var serial = '';
+
+                        $.each(data, (key, item) => {
+                            serial += `${item.itemserial}, `;
+                        })
+                        warning('Duplicate', `Duplicate equipment serial ${serial}`);
+                    }
+
+                    if (result.msg == 'success') {
+                        success('Saved!', 'Data saved!')
+                        EqipmentTable();
+                        dataArr = [];
+                    }
                 },
                 error: function (result) {
                     error(result.data);
@@ -249,8 +261,22 @@
                     data: dataraw
                 },
                 success: function (result) {
-                    success('Saved!', 'Data saved!')
-                    EqipmentTable();
+                    if (result.msg == 'error') {
+                        var data = result.data;
+                        var serial = '';
+
+                        $.each(data, (key, item) => {
+                            serial += `${item.itemserial}, `;
+                        })
+                        warning('Duplicate', `Duplicate equipment serial ${serial}`);
+                    }
+
+                    if (result.msg == 'success') {
+                        success('Saved!', 'Data saved!')
+                        EqipmentTable();
+                    }
+
+
 
                 },
                 error: function (result) {
