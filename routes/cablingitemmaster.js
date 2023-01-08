@@ -4,7 +4,6 @@ var router = express.Router();
 const helper = require('./repository/customhelper');
 const mysql = require('./repository/dbconnect')
 var CablingItemMasterPath = `${__dirname}/data/masters/cablingitems/`;
-const { isAuthAdmin } = require('./controller/authBasic');
 const { max } = require('moment');
 
 /* GET home page. */
@@ -188,3 +187,16 @@ router.get('/getmincount', (req, res) => {
     })
   }
 })
+
+function isAuthAdmin(req, res, next) {
+ 
+  if (req.session.isAuth && req.session.accounttype == "CUSTODIAN") {
+    next();
+  }
+  else if (req.session.isAuth && req.session.accounttype == "ADMINISTRATOR") {
+    next();
+  }
+  else {
+    res.redirect('/login');
+  }
+};

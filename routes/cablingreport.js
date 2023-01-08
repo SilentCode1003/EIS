@@ -4,7 +4,19 @@ var router = express.Router();
 const helper = require('./repository/customhelper');
 const mysql = require('./repository/dbconnect');
 var CablingDeployPath = `${__dirname}/data/deplot/cabling/`;
-const { isAuthAdmin } = require('./controller/authBasic');
+
+function isAuthAdmin(req, res, next) {
+ 
+  if (req.session.isAuth && req.session.accounttype == "CUSTODIAN") {
+    next();
+  }
+  else if (req.session.isAuth && req.session.accounttype == "ADMINISTRATOR") {
+    next();
+  }
+  else {
+    res.redirect('/login');
+  }
+};
 
 
 /* GET home page. */

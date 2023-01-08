@@ -1,7 +1,16 @@
 var express = require('express');
 var router = express.Router();
 
-const { isAuthAdmin } = require('./controller/authBasic');
+function isAuthAdmin(req, res, next) {
+
+  if (req.session.isAuth && req.session.accounttype == "ADMINISTRATOR") {
+    next();
+  }
+
+  else {
+    res.redirect('/login');
+  }
+};
 const helper = require('./repository/customhelper');
 const mysql = require('./repository/dbconnect');
 

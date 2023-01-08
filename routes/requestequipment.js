@@ -12,7 +12,23 @@ const mysql = require('./repository/dbconnect')
 const dictionary = require('./repository/dictionary');
 const API = require('./controller/APIController');
 
-const { isAuthAdmin, isAuth } = require('./controller/authBasic');
+function isAuthAdmin(req, res, next) {
+
+    if (req.session.isAuth && req.session.accounttype == "IT CUSTODIAN") {
+        next();
+    }
+
+    else if (req.session.isAuth && req.session.accounttype == "IT") {
+        next();
+    }
+    else if (req.session.isAuth && req.session.accounttype == "ADMINISTRATOR") {
+        next();
+      }
+    else {
+        res.redirect('/login');
+    }
+};
+
 const { normalizeUnits } = require('moment');
 /* GET home page. */
 router.get('/', isAuthAdmin, function (req, res, next) {

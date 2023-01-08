@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-const { isAuthAdmin } = require('./controller/authBasic');
+
 const helper = require('./repository/customhelper');
 const CablingPendingPath = `${__dirname}/data/request/cabling/pending/`;
 const CablingApprovedPath = `${__dirname}/data/request/cabling/approved/`;
@@ -12,6 +12,22 @@ const RequestStocksPath = `${__dirname}/data/request/stocks/cabling/`;
 
 const mysql = require('./repository/dbconnect');
 const dictionary = require('./repository/dictionary');
+
+function isAuthAdmin(req, res, next) {
+ 
+  if (req.session.isAuth && req.session.accounttype == "CABLING") {
+    next();
+  }
+  else if (req.session.isAuth && req.session.accounttype == "ADMINISTRATOR") {
+    next();
+  }
+  else if (req.session.isAuth && req.session.accounttype == "CUSTODIAN") {
+    next();
+  }
+  else {
+    res.redirect('/login');
+  }
+};
 
 /* GET home page. */
 router.get('/', isAuthAdmin, function (req, res, next) {

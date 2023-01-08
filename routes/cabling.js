@@ -7,9 +7,6 @@ const CablingPath = `${__dirname}/data/cabling/`;
 const RequestStockCablingDonePath = `${__dirname}/data/request/stocks/done/`;
 const RequestStocCablingPath = `${__dirname}/data/request/stocks/cabling/`;
 
-
-const { isAuthAdmin } = require('./controller/authBasic');
-
 /* GET home page. */
 router.get('/', isAuthAdmin, function (req, res, next) {
   res.render('cabling', {
@@ -480,3 +477,16 @@ router.get('/materialcablingrequest', (req, res) => {
     })
   }
 })
+
+function isAuthAdmin(req, res, next) {
+ 
+  if (req.session.isAuth && req.session.accounttype == "CUSTODIAN") {
+    next();
+  }
+  else if (req.session.isAuth && req.session.accounttype == "ADMINISTRATOR") {
+    next();
+  }
+  else {
+    res.redirect('/login');
+  }
+};

@@ -54,13 +54,15 @@
                     requestitemTabel.clear().draw();
                     var data = result.data;
                     var receipt = '';
-                    var serilal_list = '';
+                    var clientname = '';
+                    var itemlist = '';
 
                     console.log(data);
                     $.each(data, (key, item) => {
                         var serials = item.unitserial;
+                        receipt = '';
 
-                        console.log(item.clientname);
+                        itemlist += `${item.itemtype}(${item.quantity}) `;
 
                         if (item.ponumber != '') { receipt += `PO-${item.ponumber} ` }
                         if (item.drnumber != '') { receipt += `DR-${item.drnumber} ` }
@@ -69,16 +71,20 @@
 
                         serials = JSON.parse(serials);
                         $.each(serials, (key, value) => {
-                            serilal_list += `${value.serial}, `;
+                            if (value.serial != '') {
+                                requestitemTabel.row.add([item.modelname, item.itemtype, value.serial]).draw(false);
+                            }
+
                         })
 
-                        requestitemTabel.row.add([item.modelname, item.itemtype, item.quantity, serilal_list]).draw(false);
 
                         document.getElementById('transactionid').innerText = item.transactionid;
                         document.getElementById('transactiondate').innerText = item.transactiondate;
                         document.getElementById('client').innerText = item.clientname;
-                        document.getElementById('receipt').innerText = receipt;
                     })
+
+                    document.getElementById('receipt').innerText = receipt;
+                    document.getElementById('itemlist').innerText = itemlist;
 
                 },
                 error: function (result) {

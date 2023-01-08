@@ -134,9 +134,10 @@
                     var data = result.data;
                     var count = parseInt(_itemcount);
 
+                    console.log(data);
                     $.each(data, function (key, value) {
                         var dataJson = value.unitserial;
-                        
+
                         console.log(dataJson);
                         if (dataJson == '') {
                             for (x = 0; x < count; x++) {
@@ -468,32 +469,25 @@
 
                     console.log(data);
                     $.each(data, (key, item) => {
-                        var modelname = '';
-                        var itemtype = '';
-                        var itemcount = '';
+                        var modelname = item.modelname;
+                        var itemtype = item.itemtype;
+                        var itemcount = item.itemcount;
                         var status = item.status;
-                        var clientname = '';
+                        var clientname = item.clientname;
                         var action = '';
                         var reqid = item.requestid
-                        var dataJson = JSON.parse(item.details)
 
-                        $.each(dataJson, (key, item) => {
-                            modelname = item.modelname;
-                            itemtype = item.itemtype;
-                            itemcount = item.itemcount;
-                            clientname = item.clientname;
+                        if (status == 'REQ') { action = '<button class="assign-btn" id="assignbreakdownBtn" name="assignbreakdownBtn">ASSIGN SERIAL</button><button class="assign-btn" id="batchBtn" name="batchBtn">IMPORT EXCEL</button>'; }
+                        if (status == 'ALLOC') { action = '<button class="assign-btn" id="assignbreakdownBtn" name="assignbreakdownBtn">EDIT</button>'; }
+                        requestlistTabel.row.add([
+                            reqid,
+                            modelname,
+                            itemtype,
+                            itemcount,
+                            action,
+                        ]).draw(false);
 
-                            if (status == 'REQ') { action = '<button class="assign-btn" id="assignbreakdownBtn" name="assignbreakdownBtn">ASSIGN SERIAL</button><button class="assign-btn" id="batchBtn" name="batchBtn">IMPORT EXCEL</button>'; }
-                            if (status == 'ALLOC') { action = '<button class="assign-btn" id="assignbreakdownBtn" name="assignbreakdownBtn">EDIT</button>'; }
-                            requestlistTabel.row.add([
-                                reqid,
-                                modelname,
-                                itemtype,
-                                itemcount,
-                                action,
-                            ]).draw(false);
 
-                        })
 
                     })
                 },
@@ -533,10 +527,10 @@
                         reader.readAsArrayBuffer(fileUpload.files[0]);
                     }
                 } else {
-                    warning('Woops.',"This browser does not support HTML5.");
+                    warning('Woops.', "This browser does not support HTML5.");
                 }
             } else {
-                warning('Oh no!',"Please upload a valid Excel file.");
+                warning('Oh no!', "Please upload a valid Excel file.");
             }
         };
 

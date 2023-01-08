@@ -2,7 +2,20 @@ const { json } = require('express');
 var express = require('express');
 var router = express.Router();
 
-const { isAuthAdmin } = require('./controller/authBasic');
+function isAuthAdmin(req, res, next) {
+ 
+  if (req.session.isAuth && req.session.accounttype == "ADMINISTRATOR") {
+    next();
+  }
+
+  if (req.session.isAuth && req.session.accounttype == "IT CUSTODIAN") {
+    next();
+  }
+
+  else {
+    res.redirect('/login');
+  }
+};
 
 const helper = require('./repository/customhelper');
 const LocationPath = `${__dirname}/data/masters/locations/`;

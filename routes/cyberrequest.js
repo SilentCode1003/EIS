@@ -2,10 +2,22 @@ const { json } = require('express');
 var express = require('express');
 var router = express.Router();
 
-const { isAuthAdmin } = require('./controller/authBasic');
 const helper = require('./repository/customhelper');
 const mysql = require('./repository/cyberpowerdb');
 const dictionary = require('./repository/dictionary');
+
+function isAuthAdmin(req, res, next) {
+ 
+  if (req.session.isAuth && req.session.accounttype == "CYBERPOWER") {
+    next();
+  }
+  else if (req.session.isAuth && req.session.accounttype == "ADMINISTRATOR") {
+    next();
+  }
+  else {
+    res.redirect('/login');
+  }
+};
 
 /* GET home page. */
 router.get('/', isAuthAdmin, function (req, res, next) {
@@ -65,9 +77,23 @@ router.get('/requestreport', (req, res) => {
 router.post('/requestdetails', (req, res) => {
   try {
     let requestid = req.body.requestid;
-    let sql = `select * from cyberpower_outgoing_details where not cod_status='PAID' AND cod_requestid='${requestid}'`;
-    mysql.Select(sql, 'CyberpowerOutgoingDetails', (err, result) => {
+    let sql = `select 
+    cod_requestid as requestid,
+    tcoe_modelname as modelname,
+    tcoe_itemtype as itemtype,
+    tcoe_quantity as itemcount,
+    tcoe_clientname as clientname,
+    tcoe_status as status
+    from cyberpower_outgoing_details cod
+    inner join transaction_cyberpower_outgoing_equipment tcoe
+    on cod_requestid = tcoe_requestid
+    where not cod_status='PD'
+    and cod_requestid='${requestid}'
+    order by cod_requestid`;
+    mysql.SelectResult(sql, (err, result) => {
       if (err) throw err;
+
+      console.log(result);
       res.json({
         msg: 'success',
         data: result
@@ -148,15 +174,25 @@ router.post('/getdetails', (req, res) => {
         var datajson = '';
         var dataArr_json = [];
 
-        dataArr.forEach(d => {
-          dataArr_json.push(
-            {
-              serial: d
-            }
-          )
-        })
+        console.log(dataArr);
+        if (dataArr != '') {
 
-        datajson = JSON.stringify(dataArr_json, null, 2);
+          dataArr.forEach(d => {
+            dataArr_json.push(
+              {
+                serial: d
+              }
+            )
+          })
+
+          datajson = JSON.stringify(dataArr_json, null, 2);
+
+        } else {
+
+        }
+
+
+
 
         data.push({
           transactionid: key.transactionid,
@@ -228,26 +264,29 @@ router.post('/assignserial', (req, res) => {
 
       console.log(result);
       result.forEach((key, item) => {
+        console.log(key.unitserial);
         if (key.unitserial == '') checker += key.itemtype;
+      })
 
-        if (checker == '') {
-          let sql2 = `UPDATE cyberpower_outgoing_details 
-              SET cod_remarks='${remarks}',
-              cod_status='${status}'
-              WHERE cod_requestid='${requestid}'`;
+      if (checker == '') {
+        let sql2 = `UPDATE cyberpower_outgoing_details 
+            SET cod_remarks='${remarks}',
+            cod_status='${status}'
+            WHERE cod_requestid='${requestid}'`;
 
-          mysql.Update(sql2, (err, result) => {
-            if (err) throw err;
-            console.log(result)
-          })
-        }
+        mysql.Update(sql2, (err, result) => {
+          if (err) throw err;
+          console.log(result)
+        })
+      }
+
+      res.json({
+        msg: 'success'
       })
 
     })
 
-    res.json({
-      msg: 'success'
-    })
+
 
   } catch (error) {
     res.status(500).json({
@@ -373,58 +412,72 @@ router.post('/transaction', (req, res) => {
           if (err) console.log(err);
           let receipttype = '';
           let receiptno = '';
-          let solddate = result[0].solddate;
-          let soldto = result[0].soldto;
-          let serials = result[0].serials;
+          let solddate = '';
+          let soldto = '';
+          let serials = '';
           let serial_list = [];
 
-          serials = serials.split('@');
 
-          serials.forEach(itemserial => {
-            serial_list.push([
-              `'${itemserial}'`,
-            ])
+
+          result.forEach((key, item) => {
+            serials = key.serials;
+            solddate = key.solddate;
+            soldto = key.soldto;
+            ponumber = key.ponumber;
+            drnumber = key.drnumber;
+            sinumber = key.sinumber;
+            crnumber = key.crnumber;
+
+            serials = serials.split('@');
+
+            serials.forEach(itemserial => {
+              serial_list.push([
+                `'${itemserial}'`,
+              ])
+            })
+
+            if (result[0].ponumber != '') {
+              receipttype += 'PO ';
+              receiptno += `PO-${result[0].ponumber} `;
+            }
+
+            if (result[0].drnumber != '') {
+              receipttype += 'DR ';
+              receiptno += `DR-${result[0].drnumber} `;
+            }
+
+            if (result[0].crnumber != '') {
+              receipttype += 'CR ';
+              receiptno += `CR-${result[0].crnumber} `;
+            }
+
+            if (result[0].sinumber != '') {
+              receipttype += 'SI ';
+              receiptno += `SI-${result[0].sinumber} `;
+            }
+
+            let sql = `update transaction_cyberpower_equipment
+            set tce_soldedate='${solddate}',
+            tce_soldeto='${soldto}',
+            tce_receipttype='${receipttype}',
+            tce_receiptno='${receiptno}',
+            tce_remarks='${remarks}',
+            tce_status='${status}'
+            where tce_itemserial in (${serial_list})`;
+
+            Update_TransactionCyberpowerEquipment(sql, (err, result) => {
+              if (err) console.error(err);
+
+              console.log(result);
+            })
+
+            serial_list = [];
+            receipttype = '';
+            receiptno = '';
           })
 
-
-          if (result[0].ponumber != '') {
-            receipttype += 'PO ';
-            receiptno += `PO-${result[0].ponumber} `;
-          }
-
-          if (result[0].drnumber != '') {
-            receipttype += 'DR ';
-            receiptno += `DR-${result[0].drnumber} `;
-          }
-
-          if (result[0].crnumber != '') {
-            receipttype += 'CR ';
-            receiptno += `CR-${result[0].crnumber} `;
-          }
-
-          if (result[0].sinumber != '') {
-            receipttype += 'SI ';
-            receiptno += `SI-${result[0].sinumber} `;
-          }
-
-
-          let sql = `update transaction_cyberpower_equipment
-          set tce_soldedate='${solddate}',
-          tce_soldeto='${soldto}',
-          tce_receipttype='${receipttype}',
-          tce_receiptno='${receiptno}',
-          tce_remarks='${remarks}',
-          tce_status='${status}'
-          where tce_itemserial in (${serial_list})`;
-
-          Update_TransactionCyberpowerEquipment(sql, (err, result) => {
-            if (err) console.error(err);
-
-            console.log(result);
-
-            res.json({
-              msg: 'success'
-            })
+          res.json({
+            msg: 'success'
           })
         })
 
@@ -442,9 +495,6 @@ router.post('/transaction', (req, res) => {
           console.log(result)
         })
 
-        res.json({
-          msg: 'success'
-        })
       }
     })
 

@@ -43,4 +43,4 @@ const isAuthAdmin = (req, res, next) => {
     }
 };
 
-module.exports = { isAuth, isAuthAdmin }
+module.exports = { isAuth }

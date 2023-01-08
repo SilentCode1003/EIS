@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 
-const { isAuthAdmin } = require('./controller/authBasic');
 const helper = require('./repository/customhelper');
 const mysql = require('./repository/dbconnect');
 const mysqlcyber = require('./repository/cyberpowerdb');
@@ -222,3 +221,18 @@ router.post('/cyberapproved', (req, res) => {
   }
 })
 //#endregion
+
+function isAuthAdmin(req, res, next) {
+ 
+  if (req.session.isAuth && req.session.accounttype == "ACCOUNTING") {
+    next();
+  }
+
+  if (req.session.isAuth && req.session.accounttype == "ADMINISTRATOR") {
+    next();
+  }
+
+  else {
+    res.redirect('/login');
+  }
+};

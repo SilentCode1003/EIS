@@ -15,7 +15,7 @@ router.get('/', function (req, res) {
 
   console.log(req.session);
   res.render('login', {
-    title: 'Budget Monitoring System',
+    title: 'Equipment Inventory System',
     user: req.session.username,
     password: req.session.passowrd,
     fullname: req.session.fullname,

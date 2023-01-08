@@ -12,9 +12,22 @@ const MasterItemPath = `${__dirname}/data/masters/items/`;
 const mysql = require('./repository/dbconnect');
 const dictionary = require('./repository/dictionary');
 
+function isAuthAdmin(req, res, next) {
+
+  if (req.session.isAuth && req.session.accounttype == "IT CUSTODIAN") {
+    next();
+  }
+  else if (req.session.isAuth && req.session.accounttype == "ADMINISTRATOR") {
+    next();
+  }
+  else {
+    res.redirect('/login');
+  }
+};
+
 
 /* GET home page. */
-router.get('/', function (req, res, next) {
+router.get('/', isAuthAdmin, function (req, res, next) {
   res.render('equipments', {
     title: 'Equipment Inventory System',
     user: req.session.username,

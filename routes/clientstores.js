@@ -1,9 +1,19 @@
 var express = require('express');
 var router = express.Router();
 
-const { isAuthAdmin } = require('./controller/authBasic');
 const helper = require('./repository/customhelper');
-const ClientStorePath = `${__dirname}/data/masters/clientstores/`
+const ClientStorePath = `${__dirname}/data/masters/clientstores/`;
+
+function isAuthAdmin(req, res, next) {
+ 
+  if (req.session.isAuth && req.session.accounttype == "ADMINISTRATOR") {
+    next();
+  }
+
+  else {
+    res.redirect('/login');
+  }
+};
 
 /* GET home page. */
 router.get('/', isAuthAdmin, function (req, res, next) {
