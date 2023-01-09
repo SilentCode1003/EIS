@@ -269,13 +269,6 @@
                         var dataArr = [];
 
                         $.each(data, (key, item) => {
-                            var serials = item.unitserial;
-
-                            serials = JSON.parse(serials);
-                            $.each(serials, (key, value) => {
-                                serilal_list += `${value.serial}, `;
-                            })
-
                             dataArr.push({
                                 transactionid: item.transactionid,
                                 transactiondate: item.transactiondate,
@@ -283,7 +276,6 @@
                                 quantity: item.quantity,
                                 modelname: item.modelname,
                                 itemtype: item.itemtype,
-                                unitserial: serilal_list,
                             })
 
                         })
@@ -303,7 +295,7 @@
                     { data: 'quantity' },
                     { data: 'modelname' },
                     { data: 'itemtype' },
-                    { data: 'unitserial' },
+          
                 ],
                 initComplete: function () {
                     console.log('init complete');
@@ -412,13 +404,8 @@
                         var serilal_list = '';
                         var dataArr = [];
 
+                        console.log(data);
                         $.each(data, (key, item) => {
-                            var serials = item.unitserial;
-
-                            serials = JSON.parse(serials);
-                            $.each(serials, (key, value) => {
-                                serilal_list += `${value.serial}, `;
-                            })
 
                             dataArr.push({
                                 transactionid: item.transactionid,
@@ -427,7 +414,6 @@
                                 quantity: item.quantity,
                                 modelname: item.modelname,
                                 itemtype: item.itemtype,
-                                unitserial: serilal_list,
                             })
                             serilal_list = '';
                         })
@@ -447,7 +433,6 @@
                     { data: 'quantity' },
                     { data: 'modelname' },
                     { data: 'itemtype' },
-                    { data: 'unitserial' },
                 ],
                 initComplete: function () {
                     console.log('init complete');

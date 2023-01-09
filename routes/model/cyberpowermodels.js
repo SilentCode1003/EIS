@@ -103,6 +103,18 @@ exports.TransactionCyberpowerOutgoingEquipments = (data) => {
 
     data.forEach((key, item) => {
 
+        var serial = key.tcoe_unitserial;
+        var serial_list = [];
+        serial = serial.split('@');
+
+        serial.forEach(itemserial => {
+            serial_list.push({
+                serial: itemserial
+            })
+        })
+
+        serial_list = JSON.stringify(serial_list, null, 2);
+
         dataResult.push({
             transactionid: key.tcoe_transactionid,
             transactiondate: key.tcoe_transactiondate,
@@ -110,7 +122,7 @@ exports.TransactionCyberpowerOutgoingEquipments = (data) => {
             quantity: key.tcoe_quantity,
             modelname: key.tcoe_modelname,
             itemtype: key.tcoe_itemtype,
-            unitserial: key.tcoe_unitserial,
+            unitserial: key.serial_list,
             requestid: key.tcoe_requestid,
             remarks: key.tcoe_remarks,
             status: key.tcoe_status,
