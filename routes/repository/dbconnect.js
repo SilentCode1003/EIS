@@ -205,6 +205,7 @@ exports.Select = (sql, table, callback) => {
             if (table == 'TransactionTransferITEquipment') {
                 callback(null, model.TransactionTransferITEquipment(results));
             }
+
         });
 
     } catch (error) {

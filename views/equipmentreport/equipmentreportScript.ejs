@@ -5,6 +5,10 @@
 
         LoadList();
 
+        $("#dtbox").DateTimePicker({
+            dateFormat: "yyyy-MM-dd"
+        });
+
         $(document).on('click', "#searchBtn", function () {
             var i, tabcontent, tablinks;
             tabcontent = document.getElementsByClassName("tabcontent");
@@ -18,6 +22,21 @@
             document.getElementById('search').style.display = "block";
             // evt.currentTarget.className += " active";
             TransactionITEquipmentTable();
+        });
+
+        $(document).on('click', "#returnBtn", function () {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById('return').style.display = "block";
+            // evt.currentTarget.className += " active";
+            ReturnEquipmentTable();
         });
 
         $(document).on('click', "#deplotBtn", function () {
@@ -404,6 +423,37 @@
                 }
             });
         };
+
+        function ReturnEquipmentTable(){
+            showloader();
+            dataTable = $('#return-tbl').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'GET',
+                'ajax': {
+                    'url': '/equipmentreport/loadreturn'
+                },
+                'columns': [
+                    { data: 'controlno' },
+                    { data: 'returndate' },
+                    { data: 'returnby' },
+                    { data: 'serial' },
+                    { data: 'brandname' },
+                    { data: 'itemtype' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+        }
+
 
         function LoadList() {
             $.ajax({

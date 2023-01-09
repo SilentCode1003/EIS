@@ -9,7 +9,7 @@ const DeployEquipmentPath = `${__dirname}/data/deploy/it/`;
 const PulloutEquipmentPath = `${__dirname}/data/pullout/`;
 
 function isAuthAdmin(req, res, next) {
- 
+
   if (req.session.isAuth && req.session.accounttype == "IT CUSTODIAN") {
     next();
   }
@@ -93,6 +93,25 @@ router.get('/loadpullout', (req, res) => {
   }
 });
 
+router.get('/loadreturn', (req, res) => {
+  try {
+    let sql = `select * from return_request_it_equipments`;
+    mysql.Select(sql, 'ReturnRequestITEquipments', (err, result) => {
+      if (err) throw err
+      console.log(result);
+
+      res.json({
+        msg: 'success',
+        data: result
+      });
+    });
+  } catch (error) {
+    res.json({
+      msg: 'success'
+    })
+  }
+})
+
 router.post('/find', (req, res) => {
   try {
     let ticket = req.body.searchticket;
@@ -111,8 +130,8 @@ router.post('/find', (req, res) => {
       if (serial != '') {
         cmd = `SELECT * FROM transaction_it_equipment WHERE tie_serial LIKE'${serial}%'`;
       }
-      
-      if(itemtype != ''){
+
+      if (itemtype != '') {
         cmd = `SELECT * FROM transaction_it_equipment WHERE tie_itemtype LIKE'${itemtype}%'`;
       }
 

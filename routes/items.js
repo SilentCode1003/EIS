@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 function isAuthAdmin(req, res, next) {
- 
+
   if (req.session.isAuth && req.session.accounttype == "ADMINISTRATOR") {
     next();
   }
@@ -125,40 +125,49 @@ router.get('/load', (req, res) => {
 
 router.post('/itemtype', (req, res) => {
   try {
-    var brandname = req.body.brandname;
-    var dataArr = [];
-    var files = helper.GetFiles(ItemPath);
+    let brandname = req.body.brandname;
+    let sql = `select * from master_item where mi_brandname='${brandname}'`;
 
-    files.forEach(file => {
-      var fileDir = `${ItemPath}${file}`;
-      var data = helper.ReadJSONFile(fileDir);
-
-      data.forEach((key, item) => {
-        dataArr.push({
-          itemname: key.itemname,
-          brandname: key.brandname
-        })
+    mysql.Select(sql, 'MasterItems', (err, result) => {
+      if (err) console.error(err);
+      res.json({
+        msg: 'success',
+        data: result
       })
-
-    });
-
-    var dataFilter = [];
-    var data = helper.Distinct(dataArr, 'itemtype', brandname);
-    data.forEach(d => {
-      if (d == null) {
-
-      } else {
-        dataFilter.push({
-          itemname: d,
-        });
-      }
     })
-    console.log(`Result: ${data}`);
+    // var dataArr = [];
+    // var files = helper.GetFiles(ItemPath);
 
-    res.json({
-      msg: 'success',
-      data: dataFilter
-    });
+    // files.forEach(file => {
+    //   var fileDir = `${ItemPath}${file}`;
+    //   var data = helper.ReadJSONFile(fileDir);
+
+    //   data.forEach((key, item) => {
+    //     dataArr.push({
+    //       itemname: key.itemname,
+    //       brandname: key.brandname
+    //     })
+    //   })
+
+    // });
+
+    // var dataFilter = [];
+    // var data = helper.Distinct(dataArr, 'itemtype', brandname);
+    // data.forEach(d => {
+    //   if (d == null) {
+
+    //   } else {
+    //     dataFilter.push({
+    //       itemname: d,
+    //     });
+    //   }
+    // })
+    // console.log(`Result: ${data}`);
+
+    // res.json({
+    //   msg: 'success',
+    //   data: dataFilter
+    // });
 
 
   } catch (error) {
@@ -216,46 +225,56 @@ router.get('/brandname', (req, res) => {
 
 router.post('/brandnamedepartment', (req, res) => {
   try {
-    var dataArr = [];
-    var files = helper.GetFiles(ItemPath);
-    let index = req.body.department;
+    let department = req.body.department;
+    let sql = `select distinct mi_brandname from master_item where mi_department='${department}'`;
 
-    console.log(index);
-
-    files.forEach(file => {
-      var fileDir = `${ItemPath}${file}`;
-      var data = helper.ReadJSONFile(fileDir);
-
-      data.forEach((key, item) => {
-        dataArr.push({
-          itemname: key.itemname,
-          brandname: key.brandname,
-          department: key.department,
-        })
-      })
-    });
-
-    helper.GetByDeparmentItems(dataArr, index, (err, result) => {
-      if (err) throw err;
-
-      var dataFilter = [];
-      var data = helper.Distinct(result, 'brandname', null)
-      data.forEach(d => {
-        if (d == null) {
-
-        } else {
-          dataFilter.push({
-            brandname: d
-          })
-        }
-
-      });
-
+    mysql.Select(sql, 'MasterItems', (err, result) => {
+      if (err) console.error(err);
       res.json({
         msg: 'success',
-        data: dataFilter
+        data: result
       })
-    });
+    })
+    // var dataArr = [];
+    // var files = helper.GetFiles(ItemPath);
+    // let index = req.body.department;
+
+    // console.log(index);
+
+    // files.forEach(file => {
+    //   var fileDir = `${ItemPath}${file}`;
+    //   var data = helper.ReadJSONFile(fileDir);
+
+    //   data.forEach((key, item) => {
+    //     dataArr.push({
+    //       itemname: key.itemname,
+    //       brandname: key.brandname,
+    //       department: key.department,
+    //     })
+    //   })
+    // });
+
+    // helper.GetByDeparmentItems(dataArr, index, (err, result) => {
+    //   if (err) throw err;
+
+    //   var dataFilter = [];
+    //   var data = helper.Distinct(result, 'brandname', null)
+    //   data.forEach(d => {
+    //     if (d == null) {
+
+    //     } else {
+    //       dataFilter.push({
+    //         brandname: d
+    //       })
+    //     }
+
+    //   });
+
+    //   res.json({
+    //     msg: 'success',
+    //     data: dataFilter
+    //   })
+    // });
 
   } catch (error) {
     res.json({
@@ -305,27 +324,27 @@ router.post('/saveexceldata', async (req, res) => {
       })
     }
 
-    Create_LocalMasterItem = (data, callback) => {
-      try {
-        data.forEach((key, item) => {
-          let filename = `${ItemPath}${key.itemname}_${key.brandname}.json`
-          let dataJson = [];
+    // Create_LocalMasterItem = (data, callback) => {
+    //   try {
+    //     data.forEach((key, item) => {
+    //       let filename = `${ItemPath}${key.itemname}_${key.brandname}.json`
+    //       let dataJson = [];
 
-          dataJson.push({
-            department: key.department,
-            itemname: key.itemname,
-            brandname: key.brandname,
-            createdby: key.createdby,
-            createddate: key.createddate
-          })
-          dataJson = JSON.stringify(dataJson, null, 2);
-          helper.CreateJSON(filename, dataJson);
-        })
-        callback(null, 'DONE')
-      } catch (error) {
-        callback(error, null);
-      }
-    }
+    //       dataJson.push({
+    //         department: key.department,
+    //         itemname: key.itemname,
+    //         brandname: key.brandname,
+    //         createdby: key.createdby,
+    //         createddate: key.createddate
+    //       })
+    //       dataJson = JSON.stringify(dataJson, null, 2);
+    //       helper.CreateJSON(filename, dataJson);
+    //     })
+    //     callback(null, 'DONE')
+    //   } catch (error) {
+    //     callback(error, null);
+    //   }
+    // }
 
     console.log(master_item);
     await Insert_MasterItem(master_item, (err, result) => {
@@ -334,11 +353,11 @@ router.post('/saveexceldata', async (req, res) => {
       console.log('Insert_MasterItem');
     })
 
-    Create_LocalMasterItem(local_master_item, (err, result) => {
-      if (err) throw err;
+    // Create_LocalMasterItem(local_master_item, (err, result) => {
+    //   if (err) throw err;
 
-      console.log(result);
-    })
+    //   console.log(result);
+    // })
 
     res.json({
       msg: 'success'

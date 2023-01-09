@@ -740,6 +740,7 @@ exports.ReturnRequestITEquipments = (data) => {
             returndate: key.rrie_returndate,
             brandname: key.rrie_brandname,
             itemtype: key.rrie_itemtype,
+            serial: key.rrie_serial,
             controlno: key.rrie_controlno,
         })
     });
@@ -821,7 +822,7 @@ exports.TransactionTransferITEquipment = (data) => {
             approveddate: key.ttie_approveddate,
             remarks: key.ttie_remarks,
             status: key.ttie_status,
-        }) 
+        })
     });
 
     return dataResult;

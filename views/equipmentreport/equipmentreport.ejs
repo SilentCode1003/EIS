@@ -6,8 +6,12 @@
             DEPLOY</button>
         <button class="approve-btn tablinks" id="pulloutBtn" name="pulloutBtn"><i class="fas fa-fw fa-caravan"></i>
             PULLOUT</button>
+        <button class="approve-btn tablinks" id="returnBtn" name="returnBtn"><i class="fas fa-fw fa-caravan"></i>
+            RETURN</button>
     </div>
 </div>
+
+<div id="dtbox"></div>
 
 <div id="search" class="tabcontent">
     <div class="row">
@@ -221,6 +225,40 @@
                 <th>PULLOUT DATE</th>
                 <th>TICKET</th>
                 <th>TRF</th>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<div id="return" class="tabcontent">
+    <div class="row">
+        <div class="col-xl-6 col-lg-5">
+            <div class="entry-area">
+                <input class="entry-input" type="text" data-field="date" placeholder="DATE FROM" readonly id="datefrom"
+                    name="datefrom">
+            </div>
+
+            <div class="entry-area">
+                <input class="entry-input" type="text" data-field="date" placeholder="DATE TO" readonly id="dateto"
+                    name="dateto">
+            </div>
+
+            <div class="entry-area">
+                <button class="approve-btn tablinks" id="searchReturnBtn" name="searchReturnBtn">SEARCH</button>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <table id="return-tbl">
+            <thead>
+                <th>CONTROL NO</th>
+                <th>RETURN DATE</th>
+                <th>RETURN BY</th>
+                <th>SERIAL</th>
+                <th>ITEM BRAND</th>
+                <th>ITEM TYPE</th>
             </thead>
             <tbody></tbody>
         </table>
