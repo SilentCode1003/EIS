@@ -5,9 +5,7 @@
 
         LoadList();
 
-        $("#dtbox").DateTimePicker({
-            dateFormat: "yyyy-MM-dd"
-        });
+
 
         $(document).on('click', "#searchBtn", function () {
             var i, tabcontent, tablinks;
@@ -36,6 +34,11 @@
             }
             document.getElementById('return').style.display = "block";
             // evt.currentTarget.className += " active";
+
+            $("#dtbox-return").DateTimePicker({
+                dateFormat: "yyyy-MM-dd"
+            });
+
             ReturnEquipmentTable();
         });
 
@@ -424,7 +427,7 @@
             });
         };
 
-        function ReturnEquipmentTable(){
+        function ReturnEquipmentTable() {
             showloader();
             dataTable = $('#return-tbl').DataTable({
                 'destroy': true,

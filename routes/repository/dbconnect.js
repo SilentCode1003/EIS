@@ -206,6 +206,9 @@ exports.Select = (sql, table, callback) => {
                 callback(null, model.TransactionTransferITEquipment(results));
             }
 
+            if (table == 'MasterItemPrice') {
+                callback(null, model.MasterItemPrice(results));
+            }
         });
 
     } catch (error) {

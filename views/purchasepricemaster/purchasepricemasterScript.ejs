@@ -1,0 +1,277 @@
+<script>
+    $(document).ready(function () {
+
+        //#region CABLING
+
+        $(document).on('click', "#cablingBtn", function () {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById('cablingtab').style.display = "block";
+            // evt.currentTarget.className += " active";
+
+            CablingTable();
+        });
+
+        $(document).on('change', "#brandname", function () {
+            var brandname = $('#brandname').val();
+            $("#itemtype").empty();
+
+            $.ajax({
+                type: "POST",
+                url: "/items/itemtype",
+                data: { brandname: brandname },
+                success: function (result) {
+                    var data = result.data;
+                    console.log(result.data);
+
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.itemname, item.itemname);
+                        $(options).html(item.itemname);
+                        $('#itemtype').append(options);
+                        console.log(item.itemname);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+        });
+
+        $(document).on('click', '#saveBtn', function () {
+            var brandname = $('#brandname').val();
+            var itemtype = $('#itemtype').val();
+            var price = $('#price').val();
+            var message = '';
+
+            if (brandname == '-') { message += 'BRAND NAME ' }
+            if (itemtype == '-') { message += 'ITEM TYPE' }
+            if (price == '') { message += 'PRICE ' }
+
+            if (message != '') { warning('Oops!', `Need to fillup ${message}.`) }
+            else {
+                $.ajax({
+                    type: 'POST',
+                    url: '/purchasepricemaster/save',
+                    data: {
+                        brandname: brandname,
+                        itemtype: itemtype,
+                        price: price,
+                        department: 'CABLING'
+                    },
+                    success: function (result) {
+                        CablingTable();
+                        success('Success', 'Data Saved!');
+                    },
+                    error: function (result) {
+                        error(`Error: ${result}`);
+                    }
+                })
+            }
+
+        })
+
+        $.ajax({
+            type: "POST",
+            url: "/items/brandnamedepartment",
+            data: { department: 'CABLING' },
+            success: function (result) {
+                console.log(result.data);
+                var data = result.data;
+
+                $.each(data, function (key, item) {
+                    var options = new Option(item.brandname, item.brandname);
+                    $(options).html(item.brandname);
+                    $('#brandname').append(options);
+                    console.log(item.brandname);
+                });
+            },
+            error: function (result) {
+                alert('error: ' + result.data);
+            }
+        });
+
+        function CablingTable() {
+            showloader();
+            purchaseOrderDetailsTbl = $('#cabling-price-master-table').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'POST',
+                'ajax': {
+                    'url': '/purchasepricemaster/load',
+                    'data': { department: 'CABLING' }
+                },
+                'columnDefs': [{
+                    targets: 1,
+                    className: 'td-indent',
+                }],
+                'columns': [
+                    { data: 'itemid' },
+                    { data: 'brandname' },
+                    { data: 'itemtype' },
+                    { data: 'currentprice' },
+                    { data: 'previousprice' },
+                    { data: 'updateby' },
+                    { data: 'updatedate' },
+                    { data: 'createdby' },
+                    { data: 'createddate' },
+                    { data: 'status' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+        }
+        //#endregion
+
+        //#region CYBERPOWER
+        $(document).on('click', "#cyberpowerBtn", function () {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById('cyberpowertab').style.display = "block";
+            // evt.currentTarget.className += " active";
+
+            CyberpowerTable();
+        });
+
+        $(document).on('change', "#cyberbrandname", function () {
+            var brandname = $('#cyberbrandname').val();
+            $("#cyberitemtype").empty();
+
+            $.ajax({
+                type: "POST",
+                url: "/items/itemtype",
+                data: { brandname: brandname },
+                success: function (result) {
+                    var data = result.data;
+                    console.log(result.data);
+
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.itemname, item.itemname);
+                        $(options).html(item.itemname);
+                        $('#cyberitemtype').append(options);
+                        console.log(item.itemname);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+        });
+
+        $(document).on('click', '#saveCyberBtn', function () {
+            var brandname = $('#cyberbrandname').val();
+            var itemtype = $('#cyberitemtype').val();
+            var price = $('#cyberprice').val();
+            var message = '';
+
+            if (brandname == '-') { message += 'BRAND NAME ' }
+            if (itemtype == '-') { message += 'ITEM TYPE' }
+            if (price == '') { message += 'PRICE ' }
+
+            if (message != '') { warning('Oops!', `Need to fillup ${message}.`) }
+            else {
+                $.ajax({
+                    type: 'POST',
+                    url: '/purchasepricemaster/save',
+                    data: {
+                        brandname: brandname,
+                        itemtype: itemtype,
+                        price: price,
+                        department: 'CYBERPOWER'
+                    },
+                    success: function (result) {
+                        CyberpowerTable();
+                        success('Success', 'Data Saved!');
+                    },
+                    error: function (result) {
+                        error(`Error: ${result}`);
+                    }
+                })
+            }
+
+        })
+
+        $.ajax({
+            type: "POST",
+            url: "/items/brandnamedepartment",
+            data: { department: 'CYBERPOWER' },
+            success: function (result) {
+                console.log(result.data);
+                var data = result.data;
+
+                $.each(data, function (key, item) {
+                    var options = new Option(item.brandname, item.brandname);
+                    $(options).html(item.brandname);
+                    $('#cyberbrandname').append(options);
+                    console.log(item.brandname);
+                });
+            },
+            error: function (result) {
+                alert('error: ' + result.data);
+            }
+        });
+
+        function CyberpowerTable() {
+            showloader();
+            purchaseOrderDetailsTbl = $('#cyberpower-price-master-table').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'POST',
+                'ajax': {
+                    'url': '/purchasepricemaster/load',
+                    'data': { department: 'CYBERPOWER' }
+                },
+                'columnDefs': [{
+                    targets: 1,
+                    className: 'td-indent',
+                }],
+                'columns': [
+                    { data: 'itemid' },
+                    { data: 'brandname' },
+                    { data: 'itemtype' },
+                    { data: 'currentprice' },
+                    { data: 'previousprice' },
+                    { data: 'updateby' },
+                    { data: 'updatedate' },
+                    { data: 'createdby' },
+                    { data: 'createddate' },
+                    { data: 'status' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+        }
+        //#endregion
+
+
+    })
+</script>

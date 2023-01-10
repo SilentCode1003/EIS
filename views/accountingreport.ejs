@@ -1,31 +1,36 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title><%= title %></title>
-    <%- include('header.ejs') %>
+
+<head>
+  <title>
+    <%= title %>
+  </title>
+  <%- include('header.ejs') %>
     <!-- <%- include('style.ejs') %> -->
-  <body>
-<!-- Page Wrapper -->
-<div id="wrapper">
+</head>
 
-  <!-- Sidebar bg-gradient-primary -->
-  <ul class="navbar-nav sidebar sidebar sidebar-dark accordion" id="accordionSidebar">
+<body>
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <!-- Sidebar bg-gradient-primary -->
+    <ul class="navbar-nav sidebar sidebar sidebar-dark accordion" id="accordionSidebar">
       <%- include('sidebar.ejs') %>
-  </ul>
-  <!-- End of Sidebar -->
+    </ul>
+    <!-- End of Sidebar -->
 
-  <!-- Content Wrapper -->
-  <div id="content-wrapper" class="d-flex flex-column">
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
 
       <!-- Main Content -->
       <div class="topbar" id="content">
 
-          <!-- Topbar -->
-          <%- include('topbar.ejs') %>
+        <!-- Topbar -->
+        <%- include('topbar.ejs') %>
           <!-- End of Topbar -->
 
           <!-- Begin Page Content -->
-          <div class="container-fluid">   
+          <div class="container-fluid">
             <%- include('./accountingreport/accountingreport.ejs') %>
           </div>
           <!-- /.container-fluid -->
@@ -35,16 +40,15 @@
 
       <!-- Footer -->
       <%- include('footer.ejs') %>
-      <!-- End of Footer -->
+        <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
 
   </div>
-  <!-- End of Content Wrapper -->
-
-</div>
-<!-- End of Page Wrapper -->
-    <%- include('scripts.ejs') %>
+  <!-- End of Page Wrapper -->
+  <%- include('scripts.ejs') %>
     <%- include('./accountingreport/accountingreportScript.ejs') %>
-  </body>
+</body>
+
 </html>
-
-

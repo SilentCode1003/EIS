@@ -827,3 +827,27 @@ exports.TransactionTransferITEquipment = (data) => {
 
     return dataResult;
 }
+
+exports.MasterItemPrice = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            itemid: key.mip_itemid,
+            department: key.mip_department,
+            brandname: key.mip_brandname,
+            itemtype: key.mip_itemtype,
+            currentprice: key.mip_currentprice,
+            previousprice: key.mip_previousprice,
+            updateby: key.mip_updateby,
+            updatedate: key.mip_updatedate,
+            createdby: key.mip_createdby,
+            createddate: key.mip_createddate,
+            status: key.mip_status,
+        })
+    });
+
+    return dataResult;
+}
+

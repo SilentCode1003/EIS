@@ -7,7 +7,8 @@
   </title>
   <!-- <meta http-equiv="refresh" content="60" /> -->
   <%- include('header.ejs') %>
-  <!-- <%- include('style.ejs') %>  -->
+    <!-- <%- include('style.ejs') %>  -->
+</head>
 
 <body id="page-top">
   <!-- Page Wrapper -->
@@ -27,13 +28,13 @@
 
         <!-- Topbar -->
         <%- include('topbar.ejs') %>
-        <!-- End of Topbar -->
+          <!-- End of Topbar -->
 
-        <!-- Begin Page Content -->
-        <div class="container-fluid content-background">
-           <%- include('./dashboard/dashboard.ejs') %>
-        </div>
-        <!-- /.container-fluid -->
+          <!-- Begin Page Content -->
+          <div class="container-fluid content-background">
+            <%- include('./dashboard/dashboard.ejs') %>
+          </div>
+          <!-- /.container-fluid -->
 
       </div>
       <!-- End of Main Content -->
@@ -48,10 +49,10 @@
   </div>
   <!-- End of Page Wrapper -->
 
-<!-- Scroll to Top Button-->
-<a class="scroll-to-top rounded" href="#page-top">
-  <i class="fas fa-angle-up"></i>
-</a>
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
   <%- include('scripts.ejs') %>
     <%- include('./dashboard/dashboardScript.ejs') %>
       <script src="/javascripts/equipment-chart.js"></script>
