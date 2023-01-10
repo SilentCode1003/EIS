@@ -89,6 +89,14 @@
             var serial = $('#serial').val();
             var createddate = '<%= date%>';
 
+            $('#requestlist-item-tbl').DataTable({
+                'destroy': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollCollapse': true,
+            });
+
             var message = "";
 
             if (personel == "-") { message += "PERSONEL " }
@@ -108,6 +116,8 @@
                         createddate: createddate,
                         status: 'PENDING'
                     });
+
+
 
                     var table = document.getElementById("requestlist-item-tbl");
                     var row = table.insertRow(1);

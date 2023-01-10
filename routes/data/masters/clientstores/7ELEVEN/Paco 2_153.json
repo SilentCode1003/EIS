@@ -2,13 +2,13 @@
   {
     "clientname": "7ELEVEN",
     "storenumber": 153,
-    "storename": "Paco 2",
-    "zone": "CLBU",
+    "storename": "PACO 2",
+    "zone": "L4 D1 A12",
     "storetype": "CO",
-    "contactnumber": "0998-965-1760",
-    "storeemail": "st0003@store.philseven.com",
-    "address": "Pedro Gil St. cor. Main St., Paco, Manila",
-    "googlemapaddress": "https:www.google.com.phmaps@14.3396033,121.0678958,15z?hl=en&authuser=39",
+    "contactnumber": "0998-9651760",
+    "storeemail": "st153@store.philseven.com",
+    "address": "P. GIL COR. MAIN ST., PACO, MANILA, PACO, MANILA, PHILIPPINES",
+    "googlemapaddress": "https://www.7-eleven.com.ph/store-locator/",
     "createdby": "",
     "createddate": ""
   }

@@ -2,13 +2,13 @@
   {
     "clientname": "7ELEVEN",
     "storenumber": 7,
-    "storename": "Quiapo",
-    "zone": "CLBU",
-    "storetype": "SA",
-    "contactnumber": 9223252008,
-    "storeemail": "st0003@store.philseven.com",
-    "address": "465 Quezon Blvd., Quiapo, Manila",
-    "googlemapaddress": "https:www.google.com.phmaps@14.3396033,121.0678958,15z?hl=en&authuser=3",
+    "storename": "QUIAPO",
+    "zone": "L4 D1 A1",
+    "storetype": "FC3",
+    "contactnumber": "0920-2359191",
+    "storeemail": "st007@store.philseven.com",
+    "address": "465 QUEZON BLVD., QUIAPO, MANILA, QUIAPO, MANILA, PHILIPPINES",
+    "googlemapaddress": "https://www.7-eleven.com.ph/store-locator/",
     "createdby": "",
     "createddate": ""
   }

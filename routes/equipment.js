@@ -46,13 +46,13 @@ router.post('/save', async (req, res) => {
     var brandname = req.body.brandname;
     var itemtype = req.body.itemtype;
     var data = req.body.data;
-    var folder = `${EquipmentPath}${brandname}`;
-    var fileDir = `${folder}/${itemtype}_${brandname}_${serial}.json`;
+    // var folder = `${EquipmentPath}${brandname}`;
+    // var fileDir = `${folder}/${itemtype}_${brandname}_${serial}.json`;
 
-    console.log(`Target Dir: ${folder}\n Data:${data} \nFilename: ${fileDir}`);
+    // console.log(`Target Dir: ${folder}\n Data:${data} \nFilename: ${fileDir}`);
 
-    helper.CreateFolder(folder);
-    helper.CreateJSON(fileDir, data);
+    // helper.CreateFolder(folder);
+    // helper.CreateJSON(fileDir, data);
 
     await Execute_TransactionItEquipment(data, (err) => {
       if (err) throw err;
@@ -204,12 +204,12 @@ router.post('/saveexceldata', (req, res) => {
         'ACTIVE'
       ])
 
-      var data = JSON.stringify(dataArr, null, 2);
+      // var data = JSON.stringify(dataArr, null, 2);
 
       //console.log(`Target Dir: ${folder}\n Data:${dataArr} \nFilename: ${fileDir}`);
 
-      helper.CreateFolder(folder);
-      helper.CreateJSON(fileDir, data);
+      // helper.CreateFolder(folder);
+      // helper.CreateJSON(fileDir, data);
 
 
       dataArr = [];

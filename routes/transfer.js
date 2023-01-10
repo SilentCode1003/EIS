@@ -3,7 +3,7 @@ var express = require('express');
 var router = express.Router();
 
 function isAuthAdmin(req, res, next) {
- 
+
   if (req.session.isAuth && req.session.accounttype == "ADMINISTRATOR") {
     next();
   }
@@ -26,6 +26,7 @@ const TransferPath = `${__dirname}/data/transfer/`;
 const EquipmentPath = `${__dirname}/data/equipments/`;
 const mysql = require('./repository/dbconnect');
 const dictionary = require('./repository/dictionary');
+const excel = require('./repository/excelhelper');
 
 /* GET home page. */
 router.get('/', isAuthAdmin, function (req, res, next) {
@@ -351,3 +352,52 @@ router.post('/transferitems', (req, res) => {
     })
   }
 });
+
+router.post('/excel', (req, res) => {
+  try {
+    let header = req.body.header;
+    let data = req.body.data;
+    let filename = req.body.filename;
+
+    let headertest = [];
+    let datatest = [];
+    let filenametest = 'Report';
+
+    headertest.push([
+      'BRAND',
+      'MODEL',
+      'SERIAL',
+      'FROM',
+      'TO',
+    ])
+
+    datatest.push([
+      'CYBERPOWER',
+      'CYBERPOWER UPS',
+      '32025AW320002312',
+      'MAIN OFFICE',
+      'PANGGASINAN',
+    ])
+
+    
+
+    excel.SaveExcel(headertest, datatest, filenametest)
+      .then(result => {
+        console.log(result);
+
+        res.json({
+          msg: '',
+        })
+      })
+      .catch(error => {
+        res.json({
+          msg: error
+        })
+      })
+
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+})

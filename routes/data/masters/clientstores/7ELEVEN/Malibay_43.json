@@ -2,13 +2,13 @@
   {
     "clientname": "7ELEVEN",
     "storenumber": 43,
-    "storename": "Malibay",
-    "zone": "CLBU",
-    "storetype": "FC2",
+    "storename": "MALIBAY",
+    "zone": "L4 D3 A4",
+    "storetype": "FC3",
     "contactnumber": 9989684801,
-    "storeemail": "st0003@store.philseven.com",
-    "address": "EDSA cor. C. Jose St., Malibay, Pasay City",
-    "googlemapaddress": "https:www.google.com.phmaps@14.3396033,121.0678958,15z?hl=en&authuser=15",
+    "storeemail": "st043@store.philseven.com",
+    "address": "EDSA COR. C. JOSE ST., MALIBAY, PASAY CITY, VILLAMOR AIRBASE, PASAY CITY, PHILIPPINES",
+    "googlemapaddress": "https://www.7-eleven.com.ph/store-locator/",
     "createdby": "",
     "createddate": ""
   }
