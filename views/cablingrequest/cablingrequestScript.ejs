@@ -434,6 +434,7 @@
                     success: function (result) {
                         if (result.msg == 'success') {
                             ClearListTable('request-list-tbl');
+                            
                             LoadMaterialRequestTbl();
                             success('Saved!', 'Data saved!')
                         }
@@ -577,12 +578,14 @@
                         console.log(data);
                         $.each(data, (key, item) => {
                             requestor = item.personel;
-                            createddate = item.date;
+                            createddate = item.requestdate;
                             status = item.status;
                             remarks = item.remarks;
 
+                            var detailsJson = JSON.parse(item.details);
+
                             // console.log(item.details);
-                            $.each(item.details, (key, item) => {
+                            $.each(detailsJson, (key, item) => {
                                 console.log(`BRAND: ${item.brandname} ITEM TYPE: ${item.itemtype} ITEM COUNT: ${item.itemcount}`);
                                 details += `BRAND: ${item.brandname} ITEM TYPE: ${item.itemtype} ITEM COUNT: ${item.itemcount}<br/>`;
                             })

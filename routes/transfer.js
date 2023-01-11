@@ -355,33 +355,26 @@ router.post('/transferitems', (req, res) => {
 
 router.post('/excel', (req, res) => {
   try {
-    let header = req.body.header;
     let data = req.body.data;
-    let filename = req.body.filename;
+    let filename = `${req.body.filename}_${helper.GetCurrentDate()}`;
+    let dataArr = [];
 
-    let headertest = [];
-    let datatest = [];
-    let filenametest = 'Report';
+    data.forEach((key, item) => {
+      dataArr.push([
+        key.transactionid,
+        key.requestby,
+        key.requestdate,
+        key.brandname,
+        key.itemtype,
+        key.quantity,
+        key.approvedby,
+        key.approveddate,
+        key.requestid,
+        key.status,
+      ]);
+    });
 
-    headertest.push([
-      'BRAND',
-      'MODEL',
-      'SERIAL',
-      'FROM',
-      'TO',
-    ])
-
-    datatest.push([
-      'CYBERPOWER',
-      'CYBERPOWER UPS',
-      '32025AW320002312',
-      'MAIN OFFICE',
-      'PANGGASINAN',
-    ])
-
-    
-
-    excel.SaveExcel(headertest, datatest, filenametest)
+    excel.SaveExcel(dataArr, filename)
       .then(result => {
         console.log(result);
 

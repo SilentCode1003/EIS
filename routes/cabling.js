@@ -35,6 +35,7 @@ router.post('/save', (req, res) => {
 
     // console.log(`Target Dir: ${folder}\n Data:${data} \nFilename: ${fileDir}`);
 
+    console.log(dataraw);
     Insert_CablingEquipment = (data, callback) => {
       let sql = `INSERT INTO cabling_equipment(
         ce_brandname,
@@ -83,9 +84,9 @@ router.post('/save', (req, res) => {
         console.log('Insert_CablingEquipment');
       });
 
-      localdata = JSON.stringify(localdata, null, 2);
+      // localdata = JSON.stringify(localdata, null, 2);
 
-      helper.CreateJSON(fileDir, localdata);
+      // helper.CreateJSON(fileDir, localdata);
 
       res.json({
         msg: 'success'
@@ -120,32 +121,37 @@ router.get('/load', (req, res) => {
 
 });
 
-router.post('/saveexceldata', async (req, res) => {
+router.post('/saveexceldata', (req, res) => {
   try {
-    var data = await req.body.data;
-    var dataraw = await JSON.parse(data);
-    let data_sql = [];
-    var dataArr = [];
+    var data = req.body.data;
+    var dataraw = JSON.parse(data);
+    var cabling_equipment = [];
 
-    //console.log(`${dataraw}`);
+    console.log(`${data}`);
 
-    Insert_CablingEquipment = (data, callback) => {
-      let sql = `INSERT INTO cabling_equipment(
-        ce_brandname,
-        ce_itemtype,
-        ce_itemcount,
-        ce_updateitemcount,
-        ce_updateby,
-        ce_updatedate
-      ) VALUES ? `;
+    function Insert_CablingEquipment(data) {
+      return new Promise((resolve, reject) => {
+        let sql = `INSERT INTO cabling_equipment(
+          ce_brandname,
+          ce_itemtype,
+          ce_itemcount,
+          ce_updateitemcount,
+          ce_updateby,
+          ce_updatedate
+        ) VALUES ? `;
 
-      callback(null, mysql.InsertMultiple(sql, data));
+        mysql.InsertPayload(sql, data, (err, result) => {
+          if (err) reject(err);
+
+          resolve(result);
+        });
+      })
     }
 
     dataraw.forEach((key, item) => {
 
-      var folder = `${CablingPath}${key.brandname}`;
-      var fileDir = `${folder}/${key.itemtype}_${key.brandname}.json`;
+      // var folder = `${CablingPath}${key.brandname}`;
+      // var fileDir = `${folder}/${key.itemtype}_${key.brandname}.json`;
 
       var brandname = key.brandname;
       var itemtype = key.itemtype;
@@ -154,16 +160,16 @@ router.post('/saveexceldata', async (req, res) => {
       var updateby = '';
       var updatedate = '';
 
-      dataArr.push({
-        brandname: brandname,
-        itemtype: itemtype,
-        itemcount: itemcount,
-        updateitemcount: updateitemcount,
-        updateby: updateby,
-        updatedate: updatedate,
-      });
+      // dataArr.push({
+      //   brandname: brandname,
+      //   itemtype: itemtype,
+      //   itemcount: itemcount,
+      //   updateitemcount: updateitemcount,
+      //   updateby: updateby,
+      //   updatedate: updatedate,
+      // });
 
-      data_sql.push([
+      cabling_equipment.push([
         brandname,
         itemtype,
         itemcount,
@@ -172,22 +178,29 @@ router.post('/saveexceldata', async (req, res) => {
         updatedate,
       ]);
 
-      var data = JSON.stringify(dataArr, null, 2);
+      // var data = JSON.stringify(dataArr, null, 2);
 
       //console.log(`Target Dir: ${folder}\n Data:${dataArr} \nFilename: ${fileDir}`);
 
-      helper.CreateFolder(folder);
-      helper.CreateJSON(fileDir, data);
+      // helper.CreateFolder(folder);
+      // helper.CreateJSON(fileDir, data);
       dataArr = [];
     });
 
-    await Insert_CablingEquipment(data_sql, (err, result) => {
-      if (err) throw err;
-      console.log('Insert_CablingEquipment');
-    }),
-      res.json({
-        msg: 'success'
+    Insert_CablingEquipment(cabling_equipment)
+      .then(result => {
+        console.log(result);
+
+        res.json({
+          msg: 'success'
+        })
+      }).catch(error => {
+        res.json({
+          msg: error
+        })
       })
+
+
 
   } catch (error) {
     res.json({
@@ -479,7 +492,7 @@ router.get('/materialcablingrequest', (req, res) => {
 })
 
 function isAuthAdmin(req, res, next) {
- 
+
   if (req.session.isAuth && req.session.accounttype == "CUSTODIAN") {
     next();
   }

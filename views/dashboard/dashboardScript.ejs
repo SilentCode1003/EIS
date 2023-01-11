@@ -215,13 +215,14 @@
                         console.log(data);
                         $.each(data, (key, item) => {
                             requestor = item.personel;
-                            createddate = item.date;
+                            createddate = item.requestdate;
                             status = item.status;
                             remarks = item.remarks;
                             requestid = item.requestid;
 
+                            var detailsJson = JSON.parse(item.details);
                             // console.log(item.details);
-                            $.each(item.details, (key, item) => {
+                            $.each(detailsJson, (key, item) => {
                                 console.log(`BRAND: ${item.brandname} ITEM TYPE: ${item.itemtype} ITEM COUNT: ${item.itemcount}`);
                                 details += `BRAND: ${item.brandname} ITEM TYPE: ${item.itemtype} ITEM COUNT: ${item.itemcount}<br/>`;
                             })

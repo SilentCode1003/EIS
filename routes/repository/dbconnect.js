@@ -102,6 +102,22 @@ exports.InsertMultiple = async (stmt, todos) => {
     }
 }
 
+exports.InsertPayload = async (stmt, todos, callback) => {
+    try {
+        connection.connect((err) => { return err; })
+        // console.log(`statement: ${stmt} data: ${todos}`);
+
+        connection.query(stmt, [todos], (err, results, fields) => {
+            if (err) callback(err.message, null);
+
+            callback(null, (`Row inserted: ${results.affectedRows}`));
+        });
+
+    } catch (error) {
+        callback(error, null)
+    }
+}
+
 exports.Select = (sql, table, callback) => {
     try {
         connection.connect((err) => { return err; })

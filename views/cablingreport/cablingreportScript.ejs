@@ -27,7 +27,52 @@
             }
         });
 
+        $(document).on('click', "#exportBtn", function () {
+            console.log('clicked!');
+            var content = $('#transaction-table tr');
+            var headerArr = [];
+            var dataArr = [];
+            var filename = 'Cabling_Report';
 
+            console.log(content.length);
+            var index = 1;
+            for (x = 0; x < content.length; x++) {
+                // console.log(header[x].innerText);
+                console.log(content[x].innerText);
+                var innerData = content[x].innerText;
+                innerData = innerData.split("\t");
+
+                dataArr.push({
+                    transactionid: innerData[0],
+                    requestby: innerData[1],
+                    requestdate: innerData[2],
+                    brandname: innerData[3],
+                    itemtype: innerData[4],
+                    quantity: innerData[5],
+                    approvedby: innerData[6],
+                    approveddate: innerData[7],
+                    requestid: innerData[8],
+                    status: innerData[9],
+                });
+            }
+
+            console.log(dataArr);
+
+            $.ajax({
+                type: 'POST',
+                url: '/transfer/excel',
+                data: {
+                    data: dataArr,
+                    filename: filename
+                },
+                success: function (result) {
+                    success('Success', 'Export to excel success');
+                },
+                error: function (error) {
+                    error(error);
+                }
+            })
+        })
 
         $(document).on('click', "#searchBtn", function () {
             var dateto = $('#dateto').val();
@@ -60,7 +105,7 @@
                     { data: 'requestdate' },
                     { data: 'brandname' },
                     { data: 'itemtype' },
-                    { data: 'itemcost' },
+                    // { data: 'itemcost' },
                     { data: 'quantity' },
                     { data: 'approvedby' },
                     { data: 'approveddate' },
@@ -97,7 +142,7 @@
                     { data: 'requestdate' },
                     { data: 'brandname' },
                     { data: 'itemtype' },
-                    { data: 'itemcost' },
+                    // { data: 'itemcost' },
                     { data: 'quantity' },
                     { data: 'approvedby' },
                     { data: 'approveddate' },

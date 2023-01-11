@@ -14,7 +14,7 @@ const mysql = require('./repository/dbconnect');
 const dictionary = require('./repository/dictionary');
 
 function isAuthAdmin(req, res, next) {
- 
+
   if (req.session.isAuth && req.session.accounttype == "CABLING") {
     next();
   }
@@ -46,29 +46,39 @@ module.exports = router;
 
 router.get('/load', (req, res) => {
   try {
-    let files = helper.GetFiles(CablingPendingPath);
-    let dataArr = [];
+    let sql = `select * from request_cabling_details where not rcd_status='APPROVED'`;
+    mysql.Select(sql, 'RequestCablingDetails', (err, result) => {
+      if (err) console.log(err);
 
-    files.forEach(file => {
-      let filename = `${CablingPendingPath}${file}`;
-      let data = helper.ReadJSONFile(filename);
-
-      data.forEach((key, item) => {
-        dataArr.push({
-          requestid: key.requestid,
-          date: key.date,
-          personel: key.personel,
-          details: key.details,
-          remarks: key.remarks,
-          status: key.status,
-        });
-      });
-    });
-
-    res.json({
-      msg: 'success',
-      data: dataArr
+      console.log(result);
+      res.json({
+        msg: 'success',
+        data: result
+      })
     })
+    // let files = helper.GetFiles(CablingPendingPath);
+    // let dataArr = [];
+
+    // files.forEach(file => {
+    //   let filename = `${CablingPendingPath}${file}`;
+    //   let data = helper.ReadJSONFile(filename);
+
+    //   data.forEach((key, item) => {
+    //     dataArr.push({
+    //       requestid: key.requestid,
+    //       date: key.date,
+    //       personel: key.personel,
+    //       details: key.details,
+    //       remarks: key.remarks,
+    //       status: key.status,
+    //     });
+    //   });
+    // });
+
+    // res.json({
+    //   msg: 'success',
+    //   data: dataArr
+    // })
 
 
   } catch (error) {
@@ -517,14 +527,14 @@ router.post('/approve', (req, res) => {
     let update_items_list = [];
     let requestid = '';
 
-    helper.CreateFolder(deployPathYearMonth);
+    // helper.CreateFolder(deployPathYearMonth);
 
-    UpdateItemCount = async (data) => {
-      console.log(data);
-      await data.forEach((key, item) => {
-        helper.UpdateCablingItemCount(key.file, key.deduction);
-      });
-    }
+    // UpdateItemCount = async (data) => {
+    //   console.log(data);
+    //   await data.forEach((key, item) => {
+    //     helper.UpdateCablingItemCount(key.file, key.deduction);
+    //   });
+    // }
 
     Update_CablingEquipment = (sql, callback) => {
       mysql.Update(sql, (err, result) => {
@@ -538,21 +548,21 @@ router.post('/approve', (req, res) => {
       var dataJson = key.details;
 
       dataJson.forEach((key, item) => {
-        let file = `${date}_${key.personel}_${key.brandname}.json`;
-        let deployFilename = `${deployPathYearMonth}/${file}`;
-        let dataArr = [];
+        // let file = `${date}_${key.personel}_${key.brandname}.json`;
+        // let deployFilename = `${deployPathYearMonth}/${file}`;
+        // let dataArr = [];
 
-        dataArr.push({
-          personel: key.personel,
-          brandname: key.brandname,
-          itemtype: key.itemtype,
-          itemcost: key.itemcost,
-          itemcount: key.itemcount,
-          createddate: key.createddate,
-          status: 'APPROVED'
-        });
+        // dataArr.push({
+        //   personel: key.personel,
+        //   brandname: key.brandname,
+        //   itemtype: key.itemtype,
+        //   itemcost: key.itemcost,
+        //   itemcount: key.itemcount,
+        //   createddate: key.createddate,
+        //   status: 'APPROVED'
+        // });
 
-        var dataArrJson = JSON.stringify(dataArr, null, 2);
+        // var dataArrJson = JSON.stringify(dataArr, null, 2);
         let brand = key.brandname;
         let itemtype = key.itemtype;
         let itemcount = key.itemcount;
@@ -577,7 +587,7 @@ router.post('/approve', (req, res) => {
           })
         })
 
-        helper.CreateJSON(deployFilename, dataArrJson);
+        // helper.CreateJSON(deployFilename, dataArrJson);
       });
 
 
@@ -600,9 +610,9 @@ router.post('/approve', (req, res) => {
 
     });
 
-    UpdateItemCount(update_items_list);
+    // UpdateItemCount(update_items_list);
 
-    helper.MoveFile(targetFile, approvedFile);
+    // helper.MoveFile(targetFile, approvedFile);
     res.json({
       msg: 'success'
     })

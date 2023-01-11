@@ -6,32 +6,25 @@ const workbook = new excel.Workbook();
 const homeDir = os.homedir();
 const dowloadsPath = path.join(homeDir, 'Downloads');
 
-exports.SaveExcel = (header, data, filename) => {
+exports.SaveExcel = (data, filename) => {
     return new Promise((resolve, reject) => {
         var worksheet = workbook.addWorksheet('Sheet 1');
         var row = 1;
         var col = 1;
 
-        console.log(header.length);
         console.log(data);
-
-        for (x = 0; x < header.length; x++) {
-            console.log(header[x].length);
-            for (z = 0; z < header[x].length; z++) {
-                console.log(`row: ${x} col: ${z}`);
-                console.log(`row: ${header[x][z]}`);
-                worksheet.cell(row, z + 1).string(header[x][z]);
-            }
-            row += 1;
-        }
+        console.log(`data length: ${data.length}`);
 
         for (x = 0; x < data.length; x++) {
-            console.log(data[x].length);
+            console.log(`header content length: ${data[x].length}`);
+
             for (z = 0; z < data[x].length; z++) {
-                console.log(`row: ${x} col: ${z}`);
-                console.log(`row: ${data[x][z]}`);
-                worksheet.cell(row, z + 1).string(data[x][z]);
+                console.log(`row: ${row} col ${col} data: ${data[x][z]}`);
+                worksheet.cell(row, col).string(data[x][z]);
+                col += 1;
             }
+
+            col = 1;
             row += 1;
         }
 
