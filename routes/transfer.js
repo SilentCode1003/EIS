@@ -1,6 +1,6 @@
-const { json } = require('express');
 var express = require('express');
 var router = express.Router();
+const xl = require('excel4node');
 
 function isAuthAdmin(req, res, next) {
 
@@ -26,7 +26,8 @@ const TransferPath = `${__dirname}/data/transfer/`;
 const EquipmentPath = `${__dirname}/data/equipments/`;
 const mysql = require('./repository/dbconnect');
 const dictionary = require('./repository/dictionary');
-const excel = require('./repository/excelhelper');
+const excel = require('./excelhelper');
+const { json } = require('express');
 
 /* GET home page. */
 router.get('/', isAuthAdmin, function (req, res, next) {
@@ -353,6 +354,8 @@ router.post('/transferitems', (req, res) => {
   }
 });
 
+let _excelDataArr = [];
+let _excelFile = '';
 router.post('/excel', (req, res) => {
   try {
     let data = req.body.data;
@@ -374,23 +377,57 @@ router.post('/excel', (req, res) => {
       ]);
     });
 
-    excel.SaveExcel(dataArr, filename)
-      .then(result => {
-        console.log(result);
+    // excel.SaveExcel(dataArr, filename)
+    //   .then(result => {
+    //     console.log(result);
 
-        res.json({
-          msg: '',
-        })
-      })
-      .catch(error => {
-        res.json({
-          msg: error
-        })
-      })
+
+    //     _excelFile = result;
+    //     res.json({
+    //       msg: 'success'
+    //     })
+    //   })
+    //   .catch(error => {
+    //     res.json({
+    //       msg: error
+    //     })
+    //   })
+
+    _excelDataArr = dataArr;
+    _excelFile = filename;
+    res.json({
+      msg: 'success'
+    })
+
 
   } catch (error) {
     res.json({
       msg: error
     })
   }
+})
+
+router.get('/generate-excel', (req, res) => {
+  // res.download(_excelFile);
+  const workbook = new xl.Workbook();
+  const worksheet = workbook.addWorksheet('Sheet 1');
+  var row = 1;
+  var col = 1;
+
+  // console.log(_excelDataArr);
+  // console.log(`data length: ${_excelDataArr.length}`);
+
+  for (x = 0; x < _excelDataArr.length; x++) {
+    // console.log(`header content length: ${_excelDataArr[x].length}`);
+
+    for (z = 0; z < _excelDataArr[x].length; z++) {
+      // console.log(`row: ${row} col ${col} data: ${_excelDataArr[x][z]}`);
+      worksheet.cell(row, col).string(_excelDataArr[x][z]);
+      col += 1;
+    }
+
+    col = 1;
+    row += 1;
+  }
+  workbook.write(`${_excelFile}.xlsx`, res);
 })

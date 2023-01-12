@@ -8,6 +8,15 @@
         $("#togglefrom").toggle(0, function () { });
         $("#toggleto").toggle(0, function () { });
 
+        $('#requestlist-item-tbl').DataTable({
+            'destroy': true,
+            'paging': false,
+            'searching': false,
+            'info': false,
+            'scrollCollapse': true,
+            'scrollY': 400,
+        });
+
         let requestTabel = $('#request-tbl').DataTable({
             'destroy': true,
             'paging': false,
@@ -89,14 +98,6 @@
             var serial = $('#serial').val();
             var createddate = '<%= date%>';
 
-            $('#requestlist-item-tbl').DataTable({
-                'destroy': true,
-                'paging': false,
-                'searching': false,
-                'info': false,
-                'scrollCollapse': true,
-            });
-
             var message = "";
 
             if (personel == "-") { message += "PERSONEL " }
@@ -171,29 +172,37 @@
             let remarks = $('#remarks').val();
             let data = JSON.stringify(dataArr, null, 2);
 
+            var message = '';
 
-            $.ajax({
-                type: "POST",
-                url: "/transfer/save",
-                data: {
-                    personel: personel,
-                    date: date,
-                    locationfrom: locationfrom,
-                    locationto: locationto,
-                    remarks: remarks,
-                    data: data
-                },
-                success: function (result) {
-                    success('Saved!', 'Data saved!');
-                    modal.style.display = "none";
-                    reloadTable();
-                    dataArr = [];
-                },
-                error: function (result) {
-                    alert('error: ' + result.data);
-                }
-            });
+            if (locationfrom == '-') { message += 'LOCATION FROM ' }
+            if (locationto == '-') { message += 'LOCATION TO ' }
 
+            if (message != '') {
+                warning('Warning', `Please fillup ${message}`);
+            }
+            else {
+                $.ajax({
+                    type: "POST",
+                    url: "/transfer/save",
+                    data: {
+                        personel: personel,
+                        date: date,
+                        locationfrom: locationfrom,
+                        locationto: locationto,
+                        remarks: remarks,
+                        data: data
+                    },
+                    success: function (result) {
+                        success('Saved!', 'Data saved!');
+                        modal.style.display = "none";
+                        reloadTable();
+                        dataArr = [];
+                    },
+                    error: function (result) {
+                        alert('error: ' + result.data);
+                    }
+                });
+            }
         });
 
         $(document).on('change', "#brand", function () {
@@ -456,6 +465,117 @@
                 }
             });
         });
+
+        $(document).on('click', "#upload", function () {
+            UploadProcess();
+        })
+
+        function UploadProcess() {
+            //Reference the FileUpload element.
+            var fileUpload = document.getElementById("fileUpload");
+
+            //Validate whether File is valid Excel file.
+            var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xls|.xlsx|.csv|.ods)$/;
+            if (regex.test(fileUpload.value.toLowerCase())) {
+                if (typeof (FileReader) != "undefined") {
+                    var reader = new FileReader();
+
+                    //For Browsers other than IE.
+                    if (reader.readAsBinaryString) {
+                        reader.onload = function (e) {
+                            GetTableFromExcel(e.target.result);
+                        };
+                        reader.readAsBinaryString(fileUpload.files[0]);
+                    } else {
+                        //For IE Browser.
+                        reader.onload = function (e) {
+                            var data = "";
+                            var bytes = new Uint8Array(e.target.result);
+                            for (var i = 0; i < bytes.byteLength; i++) {
+                                data += String.fromCharCode(bytes[i]);
+                            }
+                            GetTableFromExcel(data);
+                        };
+                        reader.readAsArrayBuffer(fileUpload.files[0]);
+                    }
+                } else {
+                    alert("This browser does not support HTML5.");
+                }
+            } else {
+                alert("Please upload a valid Excel file.");
+            }
+        };
+
+        function GetTableFromExcel(data) {
+            //Read the Excel File data in binary
+            var workbook = XLSX.read(data, {
+                type: 'binary'
+            });
+
+            //get the name of First Sheet.
+            var Sheet = workbook.SheetNames[0];
+
+            //Read all rows from First Sheet into an JSON array.
+            var excelRows = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[Sheet]);
+            var columns = Object.keys(excelRows[0]);
+            // progressbar.max = excelRows.length;
+
+
+            //Create a HTML Table element.
+            var myTable = document.createElement("table");
+            myTable.border = "1";
+
+            //Add the header row.
+            var row = myTable.insertRow(-1);
+
+            //Add the header cells.
+            var headerCell = document.createElement("TH");
+            for (var j = 0; j < columns.length; j++) {
+                headerCell = document.createElement("TH");
+                headerCell.innerHTML = columns[j];
+                row.appendChild(headerCell);
+            }
+            var createddate = '<%= date%>';
+            //Add the data rows from Excel file.
+            for (var i = 0; i < excelRows.length; i++) {
+                //Add the data row.
+                var data = [];
+                var row = myTable.insertRow(-1);
+                for (var j = 0; j < columns.length; j++) {
+                    var cell = row.insertCell(-1);
+                    cell.innerHTML = excelRows[i][columns[j]];
+                    data.push({
+                        item: excelRows[i][columns[j]]
+                    });
+                }
+
+                var table = document.getElementById("requestlist-item-tbl");
+                var row = table.insertRow(1);
+                var _PERSONEL = row.insertCell(0);
+                var _BRAND = row.insertCell(1);
+                var _ITEMTYPE = row.insertCell(2);
+                var _SERIAL = row.insertCell(3);
+
+                _PERSONEL.innerHTML = data[0].item;
+                _BRAND.innerHTML = data[1].item;
+                _ITEMTYPE.innerHTML = data[2].item;
+                _SERIAL.innerHTML = data[3].item;
+
+                dataArr.push({
+                    personel: data[0].item,
+                    brand: data[1].item,
+                    itemtype: data[2].item,
+                    serial: data[3].item,
+                    createddate: createddate,
+                    status: 'PENDING'
+                });
+
+            }
+        };
+
+
+
+
 
         //office from
         $.ajax({

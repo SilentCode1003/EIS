@@ -1,10 +1,16 @@
 const excel = require('excel4node');
 const path = require('path');
 const os = require('os');
+const express = require('express');
+const http = require('http');
+const fs = require('fs');
 
+const app = express();
 const workbook = new excel.Workbook();
 const homeDir = os.homedir();
 const dowloadsPath = path.join(homeDir, 'Downloads');
+
+const excelPath = `${__dirname}/data/excel/`
 
 exports.SaveExcel = (data, filename) => {
     return new Promise((resolve, reject) => {
@@ -27,13 +33,16 @@ exports.SaveExcel = (data, filename) => {
             col = 1;
             row += 1;
         }
+        // var buffer = workbook.writeToBuffer();
 
-        let filePath = path.join(dowloadsPath, `${filename}.xlsx`)
+        let filePath = `${excelPath}${filename}.xlsx`;
+
         workbook.write(filePath, (err, stats) => {
-            if (err) reject(err);
+            if(err) reject(err);
+
             console.log(stats);
-            resolve('Saved!');
-        })
+        });
+
+        resolve(filePath);
     });
 }
-

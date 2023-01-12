@@ -1,0 +1,92 @@
+[
+  {
+    "personel": "DEEJAY RANCES",
+    "date": "2023-01-11 15:25",
+    "locationfrom": "MAIN OFFICE",
+    "locationto": "PAMPANGA",
+    "remarks": "SITE SPARE",
+    "status": "PND",
+    "details": [
+      {
+        "personel": "DEEJAY RANCES",
+        "brand": "NEC G9 Cashdrawer",
+        "itemtype": "NEC G9 Cashdrawer - spare",
+        "serial": "K01566K800177",
+        "createddate": "2023-01-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "DEEJAY RANCES",
+        "brand": "NEC G9 Cashdrawer",
+        "itemtype": "NEC G9 Cashdrawer - spare",
+        "serial": "K01566K800186",
+        "createddate": "2023-01-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "DEEJAY RANCES",
+        "brand": "NEC G9 Cashdrawer",
+        "itemtype": "NEC G9 Cashdrawer - spare",
+        "serial": "K01566K800191",
+        "createddate": "2023-01-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "DEEJAY RANCES",
+        "brand": "NEC G9 Cashdrawer",
+        "itemtype": "NEC G9 Cashdrawer - spare",
+        "serial": "K01566K800230",
+        "createddate": "2023-01-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "DEEJAY RANCES",
+        "brand": "NEC G9 Cashdrawer",
+        "itemtype": "NEC G9 Cashdrawer - spare",
+        "serial": "K01566K800231",
+        "createddate": "2023-01-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "DEEJAY RANCES",
+        "brand": "NEC G9 Cashdrawer",
+        "itemtype": "NEC G9 Cashdrawer - spare",
+        "serial": "K01566K800233",
+        "createddate": "2023-01-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "DEEJAY RANCES",
+        "brand": "NEC G9 Cashdrawer",
+        "itemtype": "NEC G9 Cashdrawer - spare",
+        "serial": "K01566K800242",
+        "createddate": "2023-01-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "DEEJAY RANCES",
+        "brand": "NEC G9 Cashdrawer",
+        "itemtype": "NEC G9 Cashdrawer - spare",
+        "serial": "K01566K800258",
+        "createddate": "2023-01-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "DEEJAY RANCES",
+        "brand": "NEC G9 Cashdrawer",
+        "itemtype": "NEC G9 Cashdrawer - spare",
+        "serial": "K01566K800279",
+        "createddate": "2023-01-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "DEEJAY RANCES",
+        "brand": "NEC G9 Cashdrawer",
+        "itemtype": "NEC G9 Cashdrawer - spare",
+        "serial": "K01566K800284",
+        "createddate": "2023-01-11",
+        "status": "PENDING"
+      }
+    ]
+  }
+]

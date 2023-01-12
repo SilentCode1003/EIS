@@ -1,0 +1,43 @@
+[
+  {
+    "requestid": 1,
+    "personel": "AYLWIN BAGAPURO",
+    "date": "2023-01-11 16:31",
+    "details": [
+      {
+        "personel": "AYLWIN BAGAPURO",
+        "brandname": "ALANTEK",
+        "itemtype": "CAT 6",
+        "itemcount": "100",
+        "createddate": "2023-01-11 16:31",
+        "status": "PENDING"
+      },
+      {
+        "personel": "AYLWIN BAGAPURO",
+        "brandname": "COMMSCOPE",
+        "itemtype": "PATCH PANEL",
+        "itemcount": "100",
+        "createddate": "2023-01-11 16:31",
+        "status": "PENDING"
+      },
+      {
+        "personel": "AYLWIN BAGAPURO",
+        "brandname": "ROYU",
+        "itemtype": "AMCO BOX",
+        "itemcount": "100",
+        "createddate": "2023-01-11 16:31",
+        "status": "PENDING"
+      },
+      {
+        "personel": "AYLWIN BAGAPURO",
+        "brandname": "NO BRAND",
+        "itemtype": "SQUARE BOX",
+        "itemcount": "100",
+        "createddate": "2023-01-11 16:31",
+        "status": "PENDING"
+      }
+    ],
+    "remarks": "FOR INSTALLATION",
+    "status": "PENDING"
+  }
+]

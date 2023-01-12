@@ -66,7 +66,7 @@
                     filename: filename
                 },
                 success: function (result) {
-                    success('Success', 'Export to excel success');
+                    window.open('/transfer/generate-excel', '_blank');
                 },
                 error: function (error) {
                     error(error);

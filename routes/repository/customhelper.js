@@ -10,11 +10,27 @@ exports.ReadJSONFile = function (filepath) {
     return JSON.parse(data);
 };
 
+exports.ReadFileBuffer = (filepath) => {
+    var data = fs.readFileSync(filepath);
+
+    return data;
+}
+
 exports.GetFolderList = function (dir) {
     // console.log(`Content: ${dir}`);
     var data = fs.readdirSync(dir);
     return data;
 };
+
+exports.DeleteFile = (file) => {
+    try {
+        fs.unlinkSync(file);
+
+        console.log('File is deleted.')
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 exports.GetFileListContains = (path, contains) => {
     try {

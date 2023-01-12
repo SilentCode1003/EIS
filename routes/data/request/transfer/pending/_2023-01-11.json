@@ -1,0 +1,172 @@
+[
+  {
+    "personel": "",
+    "date": "2023-01-11 15:46",
+    "locationfrom": "MAIN OFFICE",
+    "locationto": "PAMPANGA",
+    "remarks": "SITE SPARE REQUEST",
+    "status": "PND",
+    "details": [
+      {
+        "personel": "JERIMIAH CAMASO",
+        "brand": "1008809300-057",
+        "itemtype": "NEC G9 Customer Display",
+        "serial": "NEC G9 POS Customer Display - spare",
+        "createddate": "2023-01-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JERIMIAH CAMASO",
+        "brand": "1008809300-020",
+        "itemtype": "NEC G9 Customer Display",
+        "serial": "NEC G9 POS Customer Display - spare",
+        "createddate": "2023-01-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JERIMIAH CAMASO",
+        "brand": "1008807200-060",
+        "itemtype": "NEC G9 Customer Display",
+        "serial": "NEC G9 POS Customer Display - spare",
+        "createddate": "2023-01-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JERIMIAH CAMASO",
+        "brand": "1008809300-047",
+        "itemtype": "NEC G9 Customer Display",
+        "serial": "NEC G9 POS Customer Display - spare",
+        "createddate": "2023-01-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JERIMIAH CAMASO",
+        "brand": "1008808800-355",
+        "itemtype": "NEC G9 Customer Display",
+        "serial": "NEC G9 POS Customer Display - spare",
+        "createddate": "2023-01-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JERIMIAH CAMASO",
+        "brand": "1008807200-020",
+        "itemtype": "NEC G9 Customer Display",
+        "serial": "NEC G9 POS Customer Display - spare",
+        "createddate": "2023-01-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JERIMIAH CAMASO",
+        "brand": "1008809300-064",
+        "itemtype": "NEC G9 Customer Display",
+        "serial": "NEC G9 POS Customer Display - spare",
+        "createddate": "2023-01-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JERIMIAH CAMASO",
+        "brand": "1008809300-029",
+        "itemtype": "NEC G9 Customer Display",
+        "serial": "NEC G9 POS Customer Display - spare",
+        "createddate": "2023-01-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JERIMIAH CAMASO",
+        "brand": "1008806600-008",
+        "itemtype": "NEC G9 Customer Display",
+        "serial": "NEC G9 POS Customer Display - spare",
+        "createddate": "2023-01-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JERIMIAH CAMASO",
+        "brand": "MS-9888B1605000873",
+        "itemtype": "NEC G9 POS Mainboard",
+        "serial": "NEC G9 POS Mainboard - spare",
+        "createddate": "2023-01-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JERIMIAH CAMASO",
+        "brand": "MS-9888B1812000899",
+        "itemtype": "NEC G9 POS Mainboard",
+        "serial": "NEC G9 POS Mainboard - spare",
+        "createddate": "2023-01-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JERIMIAH CAMASO",
+        "brand": "MS-9888B1612000964",
+        "itemtype": "NEC G9 POS Mainboard",
+        "serial": "NEC G9 POS Mainboard - spare",
+        "createddate": "2023-01-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JERIMIAH CAMASO",
+        "brand": "MS-9888B1809000046",
+        "itemtype": "NEC G9 POS Mainboard",
+        "serial": "NEC G9 POS Mainboard - spare",
+        "createddate": "2023-01-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JERIMIAH CAMASO",
+        "brand": "MS-9888B1612000958",
+        "itemtype": "NEC G9 POS Mainboard",
+        "serial": "NEC G9 POS Mainboard - spare",
+        "createddate": "2023-01-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JERIMIAH CAMASO",
+        "brand": "MS-9888B1612000503",
+        "itemtype": "NEC G9 POS Mainboard",
+        "serial": "NEC G9 POS Mainboard - spare",
+        "createddate": "2023-01-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JERIMIAH CAMASO",
+        "brand": "MS-9888B1812000748",
+        "itemtype": "NEC G9 POS Mainboard",
+        "serial": "NEC G9 POS Mainboard - spare",
+        "createddate": "2023-01-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JERIMIAH CAMASO",
+        "brand": "MS-9888B1812000914",
+        "itemtype": "NEC G9 POS Mainboard",
+        "serial": "NEC G9 POS Mainboard - spare",
+        "createddate": "2023-01-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JERIMIAH CAMASO",
+        "brand": "MS-9888B1612000960",
+        "itemtype": "NEC G9 POS Mainboard",
+        "serial": "NEC G9 POS Mainboard - spare",
+        "createddate": "2023-01-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JERIMIAH CAMASO",
+        "brand": "MS-9888B1812000891",
+        "itemtype": "NEC G9 POS Mainboard",
+        "serial": "NEC G9 POS Mainboard - spare",
+        "createddate": "2023-01-11",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JERIMIAH CAMASO",
+        "brand": "MS-9888B1809000818",
+        "itemtype": "NEC G9 POS Mainboard",
+        "serial": "NEC G9 POS Mainboard - spare",
+        "createddate": "2023-01-11",
+        "status": "PENDING"
+      }
+    ]
+  }
+]
