@@ -148,6 +148,25 @@ router.post('/save', (req, res) => {
   }
 })
 
+router.post('/getprice', (req, res) => {
+  let brand = req.body.brandname;
+  let type = req.body.itemtype;
+  let department = req.body.department;
+  let sql = `select * from master_item_price 
+  where mip_brandname='${brand}'
+  and mip_itemtype='${type}'
+  and mip_department='${department}'`;
+
+  mysql.Select(sql, 'MasterItemPrice', (err, result) => {
+    if (err) console.error(err);
+
+    res.json({
+      msg: 'success',
+      data: result
+    })
+  })
+})
+
 
 //#region Functions
 function Insert_MasterItemPrice(data) {

@@ -1,0 +1,19 @@
+[
+  {
+    "requestid": 2,
+    "personel": "JOSEPH ORENCIO",
+    "date": "2023-01-12 13:30",
+    "details": [
+      {
+        "personel": "JOSEPH ORENCIO",
+        "brandname": "ALANTEK",
+        "itemtype": "CAT 6",
+        "itemcount": "10",
+        "createddate": "2023-01-12 13:30",
+        "status": "PENDING"
+      }
+    ],
+    "remarks": "TEST",
+    "status": "PENDING"
+  }
+]

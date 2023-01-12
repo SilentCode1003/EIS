@@ -362,36 +362,9 @@ router.post('/excel', (req, res) => {
     let filename = `${req.body.filename}_${helper.GetCurrentDate()}`;
     let dataArr = [];
 
-    data.forEach((key, item) => {
-      dataArr.push([
-        key.transactionid,
-        key.requestby,
-        key.requestdate,
-        key.brandname,
-        key.itemtype,
-        key.quantity,
-        key.approvedby,
-        key.approveddate,
-        key.requestid,
-        key.status,
-      ]);
-    });
+    console.log(`Request Received: ${filename}`);
 
-    // excel.SaveExcel(dataArr, filename)
-    //   .then(result => {
-    //     console.log(result);
-
-
-    //     _excelFile = result;
-    //     res.json({
-    //       msg: 'success'
-    //     })
-    //   })
-    //   .catch(error => {
-    //     res.json({
-    //       msg: error
-    //     })
-    //   })
+    dataArr = data
 
     _excelDataArr = dataArr;
     _excelFile = filename;
@@ -410,20 +383,52 @@ router.post('/excel', (req, res) => {
 router.get('/generate-excel', (req, res) => {
   // res.download(_excelFile);
   const workbook = new xl.Workbook();
-  const worksheet = workbook.addWorksheet('Sheet 1');
+  const worksheet = workbook.addWorksheet(`${_excelFile}`);
   var row = 1;
   var col = 1;
 
+  var headerStyle = workbook.createStyle({
+    font: {
+      bold: true,
+      underline: false,
+    },
+    alignment: {
+      wrapText: true,
+      horizontal: 'center',
+    },
+  });
+
+  var dataStyle = workbook.createStyle({
+    font: {
+      bold: false,
+      underline: false,
+    },
+    alignment: {
+      wrapText: true,
+      horizontal: 'center',
+    },
+  });
+
   // console.log(_excelDataArr);
-  // console.log(`data length: ${_excelDataArr.length}`);
+  console.log(`data length: ${_excelDataArr.length}`);
 
   for (x = 0; x < _excelDataArr.length; x++) {
     // console.log(`header content length: ${_excelDataArr[x].length}`);
 
     for (z = 0; z < _excelDataArr[x].length; z++) {
       // console.log(`row: ${row} col ${col} data: ${_excelDataArr[x][z]}`);
-      worksheet.cell(row, col).string(_excelDataArr[x][z]);
-      col += 1;
+      let data = `${_excelDataArr[x][z]}`;
+      data = data.split(',');
+      for (i = 0; i < data.length; i++) {
+        if (row == 1) {
+          worksheet.cell(row, col).string(data[i]).style(headerStyle);
+        }
+        else {
+          worksheet.cell(row, col).string(data[i]).style(dataStyle);
+        }
+
+        col += 1;
+      }
     }
 
     col = 1;

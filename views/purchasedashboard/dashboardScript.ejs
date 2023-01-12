@@ -277,7 +277,37 @@
                         var datajson = JSON.parse(item.details);
                         // console.log(datajson);
                         $.each(datajson, (key, item) => {
-                            requestitemTabel.row.add([item.brandname, item.itemtype, item.itemcount, ""]).draw(false);
+                            var brandname = item.brandname;
+                            var itemtype = item.itemtype;
+                            var itemcount = item.itemcount;
+                            var department = 'CABLING';
+
+                            $.ajax({
+                                type: 'POST',
+                                url: '/purchasepricemaster/getprice',
+                                data: {
+                                    brandname: brandname,
+                                    itemtype: itemtype,
+                                    department: department,
+                                },
+                                success: function (result) {
+                                    var data = result.data;
+                                    $.each(data, (key, value) => {
+                                        var currentprice = value.currentprice;
+                                        requestitemTabel.row.add([brandname, itemtype, itemcount, currentprice]).draw(false);
+                                    })
+
+                                    if (data.length == 0) {
+                                        requestitemTabel.row.add([brandname, itemtype, itemcount, '']).draw(false);
+                                    }
+
+                                },
+                                error: function (error) {
+                                    console.log(error);
+                                }
+                            });
+
+
                         })
                     })
                 },
@@ -438,7 +468,7 @@
             }
 
             if (message != "") {
-                warning(`ITEM/S: ${message} cost prt piece not assigned!`)
+                warning(`ITEM/S: ${message} cost per piece not assigned!`)
             } else {
                 // console.log(dataRaw);
                 dataRaw = JSON.stringify(dataRaw, null, 2);
@@ -551,7 +581,35 @@
                         var datajson = JSON.parse(item.details);
                         // console.log(datajson);
                         $.each(datajson, (key, item) => {
-                            requestitemTabel.row.add([item.modelname, item.itemtype, item.itemcount, ""]).draw(false);
+                            var modelname = item.modelname;
+                            var itemtype = item.itemtype;
+                            var itemcount = item.itemcount;
+                            var department = 'CYBERPOWER';
+
+                            $.ajax({
+                                type: 'POST',
+                                url: '/purchasepricemaster/getprice',
+                                data: {
+                                    brandname: modelname,
+                                    itemtype: itemtype,
+                                    department: department,
+                                },
+                                success: function (result) {
+                                    var data = result.data;
+                                    $.each(data, (key, value) => {
+                                        var currentprice = value.currentprice;
+                                        requestitemTabel.row.add([modelname, itemtype, itemcount, currentprice]).draw(false);
+                                    })
+
+                                    if (data.length == 0) {
+                                        requestitemTabel.row.add([modelname, itemtype, itemcount, '']).draw(false);
+                                    }
+
+                                },
+                                error: function (error) {
+                                    console.log(error);
+                                }
+                            });
                         })
                     })
                 },

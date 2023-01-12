@@ -109,7 +109,7 @@ router.get('/loadrequeststocks', (req, res) => {
   }
 });
 
-router.post('/requestmaterial', async (req, res) => {
+router.post('/requestmaterial', (req, res) => {
   try {
     let details = req.body.details;
     let personel = req.body.personel;
@@ -184,7 +184,7 @@ router.post('/requestmaterial', async (req, res) => {
       });
     }
 
-    await Check_RequestExist(datetime[0], personel, (err, result) => {
+    Check_RequestExist(datetime[0], personel, (err, result) => {
       if (err) throw err;
 
       if (result.length == 0) {
@@ -285,13 +285,11 @@ router.post('/requeststocks', (req, res) => {
   try {
     let details = req.body.details;
     let personel = req.body.personel;
-    let date = req.body.date;
-    let datetime = date.split(" ");
+    let requestdate = helper.GetCurrentDate();
+    let datetime = helper.GetCurrentDatetime();
     let remarks = req.body.remarks;
     let status = req.body.status;
-    let filename = `${datetime[0]}_${personel}.json`;
-    let targetDir = `${RequestStocksPath}${filename}`;
-    let todo = [];
+    let request_cabling_stocks_details = [];
     let details_todo = [];
     let transaction_list = [];
     let requestid = '';
@@ -300,86 +298,27 @@ router.post('/requeststocks', (req, res) => {
     let tcsd_data = [];
     let purchase_details = [];
 
-    todo.push([datetime[0], personel, details, remarks, status]);
+    request_cabling_stocks_details.push([
+      requestdate,
+      personel,
+      details,
+      remarks,
+      status]);
 
-    function Save_Request(data, callback) {
-      let dataJson = JSON.stringify(data, null, 2);
-
-      callback(null, helper.CreateJSON(targetDir, dataJson));
-    }
-
-    function Insert_RequestCablingStocksDatails(data, callback) {
-      let sql = `INSERT INTO request_cabling_stocks_details(
-          rcsd_requestdate,
-          rcsd_requestby,
-          rcsd_details,
-          rcsd_remarks,
-          rcsd_status
-        ) VALUES ?`;
-
-      callback(null, mysql.InsertMultiple(sql, data));
-    }
-
-    function Insert_RequestCablingStocksEquipments(data, callback) {
-      let sql = `INSERT INTO request_cabling_stocks_equipments(
-        rcse_requestdate,
-        rcse_requestby,
-        rcse_brandname,
-        rcse_itemtype,
-        rcse_quantity,
-        rcse_referenceid,
-        rcse_status
-      ) VALUES ?`;
-
-      callback(null, mysql.InsertMultiple(sql, data));
-    }
-
-    function Insert_TransactionCablingStocksDetails(data, callback) {
-      let sql = `INSERT INTO transaction_cabling_stocks_details(
-        tcsd_requestby,
-        tcsd_requestdate,
-        tcsd_details,
-        tcsd_pruchasingofficer,
-        tcsd_accountofficer,
-        tcsd_status
-      ) VALUES ?`;
-
-      callback(null, mysql.InsertMultiple(sql, data));
-
-    }
-
-    function Insert_PurchaseDetails(data, callback) {
-      let sql = `call PurchaseDetails(?)`;
-
-      mysql.StoredProcedure(sql, data, (err, result) => {
-        if (err) callback(err, null);
-        callback(null, result);
-      })
-    }
-
-    function Check_RequestExist(date, personel, callback) {
-      let cmd = `SELECT * FROM request_cabling_stocks_details WHERE rcsd_requestdate='${date}' AND rcsd_requestby='${personel}'`;
-
-      mysql.Select(cmd, 'RequestCablingStocksDatails', (err, results) => {
-        if (err) throw err;
-
-        callback(null, results);
-      });
-    }
-
-    Check_RequestExist(datetime[0], personel, (err, result) => {
-      if (err) throw err;
+    Check_RequestExist(requestdate, personel, (err, result) => {
+      if (err) console.error(err);
 
       if (result.length == 0) {
-        Insert_RequestCablingStocksDatails(todo, (err, results) => {
-          if (err) throw err;
 
-          console.log('Insert_RequestCablingStocksDatails')
+        Insert_RequestCablingStocksDatails(request_cabling_stocks_details, (err, results) => {
+          if (err) console.error(err);
+
+          console.log(results)
         })
 
-        let sql = `SELECT * FROM request_cabling_stocks_details WHERE rcsd_requestdate='${datetime[0]}' AND rcsd_requestby='${personel}'`;
+        let sql = `SELECT * FROM request_cabling_stocks_details WHERE rcsd_requestdate='${requestdate}' AND rcsd_requestby='${personel}'`;
         mysql.SelectResult(sql, 'RequestCablingStocksDatails', (err, data) => {
-          if (err) throw err;
+          if (err) console.error(err);
 
           console.log(data);
 
@@ -390,14 +329,14 @@ router.post('/requeststocks', (req, res) => {
             dataRequest.push({
               requestid: requestid,
               personel: personel,
-              date: date,
+              date: datetime,
               details: detailsJson,
               remarks: remarks,
               status: status,
             });
 
             purchase_details.push([
-              helper.GetCurrentDatetime(),
+              datetime,
               personel,
               details,
               '',
@@ -407,7 +346,7 @@ router.post('/requeststocks', (req, res) => {
 
             tcsd_data.push([
               personel,
-              date,
+              datetime,
               details,
               '',
               '',
@@ -418,7 +357,7 @@ router.post('/requeststocks', (req, res) => {
             details.forEach((key, items) => {
               //equipment
               details_todo.push([
-                datetime[0],
+                requestdate,
                 key.personel,
                 key.brandname,
                 key.itemtype,
@@ -428,32 +367,27 @@ router.post('/requeststocks', (req, res) => {
             })
 
             //insert request stocks equipment
-            console.log(`equipments: ${transaction_list}`);
+            // console.log(`equipments: ${transaction_list}`);
             Insert_RequestCablingStocksEquipments(details_todo, (err, data) => {
-              if (err) throw err;
+              if (err) console.error(err);
 
-              console.log(`Insert_RequestCablingStocksEquipments`);
+              console.log(data)
             });
 
-            console.log(`details: ${tcsd_data}`);
+            // console.log(`details: ${tcsd_data}`);
             Insert_TransactionCablingStocksDetails(tcsd_data, (err, data) => {
-              if (err) throw err;
+              if (err) console.error(err);
 
-              console.log('Insert_TransactionCablingStocksDetails');
+              console.log(data)
             })
 
-            console.log(`purchase: ${purchase_details}`);
+            // console.log(`purchase: ${purchase_details}`);
             Insert_PurchaseDetails(purchase_details, (err, result) => {
-              if (err) throw err;
+              if (err) console.error(err);
 
-              console.log('Insert_PurchaseDetails')
+              console.log(result)
             })
           });
-
-          // Save_Request(dataRequest, (err, result) => {
-          //   if (err) throw err;
-          //   console.log('Save_Request');
-          // })
 
         });
 
@@ -661,3 +595,79 @@ router.post('/checkcount', (req, res) => {
     })
   }
 })
+
+
+
+
+
+
+//#region functions
+function Insert_RequestCablingStocksDatails(data, callback) {
+  let sql = `INSERT INTO request_cabling_stocks_details(
+          rcsd_requestdate,
+          rcsd_requestby,
+          rcsd_details,
+          rcsd_remarks,
+          rcsd_status
+        ) VALUES ?`;
+
+  console.log(data);
+
+  mysql.InsertPayload(sql, data, (err, result) => {
+    if (err) callback(err, null);
+    callback(null, result);
+  })
+}
+
+function Insert_RequestCablingStocksEquipments(data, callback) {
+  let sql = `INSERT INTO request_cabling_stocks_equipments(
+        rcse_requestdate,
+        rcse_requestby,
+        rcse_brandname,
+        rcse_itemtype,
+        rcse_quantity,
+        rcse_referenceid,
+        rcse_status
+      ) VALUES ?`;
+
+  mysql.InsertPayload(sql, data, (err, result) => {
+    if (err) callback(err, null);
+    callback(null, result);
+  })
+}
+
+function Insert_TransactionCablingStocksDetails(data, callback) {
+  let sql = `INSERT INTO transaction_cabling_stocks_details(
+        tcsd_requestby,
+        tcsd_requestdate,
+        tcsd_details,
+        tcsd_pruchasingofficer,
+        tcsd_accountofficer,
+        tcsd_status
+      ) VALUES ?`;
+
+  mysql.InsertPayload(sql, data, (err, result) => {
+    if (err) callback(err, null);
+    callback(null, result);
+  })
+}
+
+function Insert_PurchaseDetails(data, callback) {
+  let sql = `call PurchaseDetails(?)`;
+
+  mysql.StoredProcedure(sql, data, (err, result) => {
+    if (err) callback(err, null);
+    callback(null, result);
+  })
+}
+
+function Check_RequestExist(date, personel, callback) {
+  let cmd = `SELECT * FROM request_cabling_stocks_details WHERE rcsd_requestdate='${date}' AND rcsd_requestby='${personel}'`;
+  mysql.Select(cmd, 'RequestCablingStocksDetails', (err, results) => {
+    if (err) callback(err, null);
+
+    callback(null, results);
+  });
+}
+    //#endregion
+

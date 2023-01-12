@@ -455,13 +455,13 @@
                     type: "POST",
                     url: "/cablingrequest/requeststocks",
                     data: {
-                        date: date,
                         personel: personel,
                         details: data,
                         remarks: remarks,
                         status: 'PENDING',
                     },
                     success: function (result) {
+                        console.log(result);
                         if (result.msg == 'success') {
                             LoadStocksRequestTbl();
                             ClearListTable('request-stocks-list-tbl');

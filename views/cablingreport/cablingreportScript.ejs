@@ -32,7 +32,7 @@
             var content = $('#transaction-table tr');
             var headerArr = [];
             var dataArr = [];
-            var filename = 'Cabling_Report';
+            var filename = `Report`;
 
             console.log(content.length);
             var index = 1;
@@ -42,18 +42,7 @@
                 var innerData = content[x].innerText;
                 innerData = innerData.split("\t");
 
-                dataArr.push({
-                    transactionid: innerData[0],
-                    requestby: innerData[1],
-                    requestdate: innerData[2],
-                    brandname: innerData[3],
-                    itemtype: innerData[4],
-                    quantity: innerData[5],
-                    approvedby: innerData[6],
-                    approveddate: innerData[7],
-                    requestid: innerData[8],
-                    status: innerData[9],
-                });
+                dataArr.push([innerData]);
             }
 
             console.log(dataArr);

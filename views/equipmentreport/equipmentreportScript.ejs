@@ -2,6 +2,7 @@
     $(document).ready(function () {
         let wildcardbox = document.querySelector('#iswildcardsearch');
         let iswildcardsearch = false;
+        let tablename = '';
 
         LoadList();
 
@@ -19,6 +20,8 @@
             }
             document.getElementById('search').style.display = "block";
             // evt.currentTarget.className += " active";
+
+            tablename = 'search';
             TransactionITEquipmentTable();
         });
 
@@ -39,6 +42,7 @@
                 dateFormat: "yyyy-MM-dd"
             });
 
+            tablename = 'return';
             ReturnEquipmentTable();
         });
 
@@ -58,6 +62,8 @@
             $("#deploy-dtbox").DateTimePicker({
                 dateFormat: "yyyy-MM-dd"
             });
+
+            tablename = 'deploy';
 
             DeployITEquipmentTable();
         });
@@ -106,6 +112,7 @@
                 dateFormat: "yyyy-MM-dd"
             });
 
+            tablename = 'pullout';
             PulloutITEquipment();
         });
 
@@ -457,6 +464,62 @@
             });
         }
 
+        //#region Export to Excel
+        $(document).on('click', "#exportBtn", function () {
+            console.log('clicked!');
+            var targetTable = null;
+            var filename = '';
+
+            if (tablename == 'search') {
+                targetTable = $('#search-tbl tr');
+                filename = 'Reports';
+            }
+            if (tablename == 'deploy') {
+                targetTable = $('#deploy-tbl tr');
+                filename = 'Deploy';
+            }
+            if (tablename == 'pullout') {
+                targetTable = $('#pullout-tbl tr');
+                filename = 'Pullout';
+            }
+            if (tablename == 'return') {
+                targetTable = $('#return-tbl tr');
+                filename = 'Returns';
+            }
+
+            var content = targetTable;
+            var headerArr = [];
+            var dataArr = [];
+
+            console.log(content.length);
+            var index = 1;
+            for (x = 0; x < content.length; x++) {
+                // console.log(header[x].innerText);
+                console.log(content[x].innerText);
+                var innerData = content[x].innerText;
+                innerData = innerData.split("\t");
+
+                dataArr.push([innerData]);
+            }
+
+            console.log(dataArr);
+
+            $.ajax({
+                type: 'POST',
+                url: '/transfer/excel',
+                data: {
+                    data: dataArr,
+                    filename: filename
+                },
+                success: function (result) {
+                    window.open('/transfer/generate-excel', '_blank');
+                },
+                error: function (error) {
+                    error(error);
+                }
+            })
+        })
+        //#endregion
 
         function LoadList() {
             $.ajax({
