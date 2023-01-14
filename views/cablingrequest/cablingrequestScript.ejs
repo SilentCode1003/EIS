@@ -40,6 +40,8 @@
             document.getElementById('materials').style.display = "block";
             // evt.currentTarget.className += " active";
 
+            ClearListTable('request-list-tbl');
+            dataArr = [];
             LoadMaterialRequestTbl();
 
         });
@@ -57,8 +59,9 @@
             document.getElementById('stocks').style.display = "block";
             // evt.currentTarget.className += " active";
 
+            ClearListTable('request-stocks-list-tbl');
+            dataArr = [];
             LoadStocksRequestTbl();
-
         });
 
         var modal = document.getElementById("requestModal");
@@ -107,6 +110,7 @@
 
                 console.log(remarks);
                 savedata(data, remarks, selection);
+                dataArr = [];
             }
         })
 
@@ -151,6 +155,10 @@
                         itemcount, itemcount,
                     },
                     success: function (result) {
+                        if(result.msg == 'nodata'){
+                            warning('Warning', `${itemtype} has no data on inventory, Go to STOCKS >> EQUIPMENTS >> REGISTER to add ${itemtype} data..."`)
+                        }
+                        
                         if (result.msg == 'success') {
                             if (dataArr.length == 0) {
                                 dataArr.push({
@@ -439,7 +447,7 @@
                             success('Saved!', 'Data saved!')
                         }
                         else {
-                            warning('Use you own account to make request. System detected that this user was already request equipment today!')
+                            warning('Warning','This user has already done request for today.')
                         }
                         dataArr = [];
                         modal.style.display = "none";

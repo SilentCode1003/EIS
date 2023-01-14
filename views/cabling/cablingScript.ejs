@@ -46,7 +46,7 @@
                 tablinks[i].className = tablinks[i].className.replace(" active", "");
             }
             document.getElementById('register').style.display = "block";
-
+            dataArr = [];
             RegisterItemTable();
         })
 
@@ -62,6 +62,7 @@
             }
             document.getElementById('stockin').style.display = "block";
 
+            dataArr = [];
             StockinTable();
         })
 
@@ -200,7 +201,7 @@
 
         $(document).on('click', "#stockinModalBtn", function () {
             // newStocksArr = JSON.stringify(newStocksArr, null, 2);
-            
+
             $.ajax({
                 type: "POST",
                 url: "/cabling/addnewstocks",
@@ -265,7 +266,7 @@
             stockinmodal.style.display = "block";
         })
 
-        $(document).on('click', "#printStockRequestBtn", function (){
+        $(document).on('click', "#printStockRequestBtn", function () {
             console.log('clicked!');
             var printContents = document.getElementById('PrintArea').innerHTML;
             var originalContents = document.body.innerHTML;
@@ -417,9 +418,10 @@
                     },
                     success: function (result) {
                         if (result.msg == 'warning') {
-                            warning('Warning!', `${result.data} is already registered, to update item count, click the update tab...`)
+                            warning('Warning!', `${brandname} - ${itemtype} is already registered...`)
                         } else {
                             StockinTable();
+                            RegisterItemTable();
                             success('Saved!', 'Data saved!')
                         }
 

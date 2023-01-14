@@ -44,7 +44,8 @@ var purchasepricemasterRouter = require('./routes/purchasepricemaster');
 var networkdashboardRouter = require('./routes/networkdashboard');
 var networkstocksRouter = require('./routes/networkstocks');
 var networkrequestRouter = require('./routes/networkrequest');
-var networkreportRouter = require('./routes/networkrequest');
+var networkreportRouter = require('./routes/networkreport');
+var sitespareRouter = require('./routes/sitespare');
 
 
 var app = express();
@@ -122,6 +123,7 @@ app.use('/networkdashboard', networkdashboardRouter);
 app.use('/networkstocks', networkstocksRouter);
 app.use('/networkrequest', networkrequestRouter);
 app.use('/networkreport', networkreportRouter);
+app.use('/sitespare', sitespareRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -1,0 +1,27 @@
+[
+  {
+    "requestid": 1,
+    "personel": "AYLWIN BAGAPURO",
+    "date": "2023-01-14 08:58",
+    "details": [
+      {
+        "personel": "AYLWIN BAGAPURO",
+        "brandname": "ALANTEK",
+        "itemtype": "CAT 6",
+        "itemcount": "2",
+        "createddate": "2023-01-14 08:58",
+        "status": "PENDING"
+      },
+      {
+        "personel": "AYLWIN BAGAPURO",
+        "brandname": "COMMSCOPE",
+        "itemtype": "PATCH PANEL",
+        "itemcount": "10",
+        "createddate": "2023-01-14 08:58",
+        "status": "PENDING"
+      }
+    ],
+    "remarks": "FOR SOF",
+    "status": "PENDING"
+  }
+]
