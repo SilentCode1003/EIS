@@ -1,0 +1,171 @@
+<script>
+    $(document).ready(function () {
+        var _brandname = '';
+        var _itemtype = '';
+        var _site = '';
+
+        LoadSiteList();
+
+        dataTable2 = $('#tsite-tbl').DataTable({
+            'destroy': true,
+            'processing': true,
+            'serverSide': true,
+            'paging': false,
+            'searching': false,
+            'info': false,
+            'scrollY': 400,
+            'scrollCollapse': true,
+        });
+
+        function LoadSiteList() {
+            $.ajax({
+                type: 'GET',
+                url: '/locations/load',
+                success: function (result) {
+                    console.log(result.data);
+                    var data = result.data;
+
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.locationname, item.locationname);
+                        $(options).html(item.locationname);
+                        $('#sitelist').append(options);
+                        console.log(item.locationname);
+                    });
+                },
+                error: function (result) {
+                    error(result)
+                }
+
+            })
+        }
+
+        $(document).on('click', '#loadBtn', function () {
+            var site = $('#sitelist').val();
+            var department = 'IT';
+            _site = site;
+
+            console.log('clicked')
+
+            showloader();
+            dataTable2 = $('#site-tbl').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'POST',
+                'ajax': {
+                    'url': '/sitespare/getspare',
+                    'data': {
+                        site: site,
+                        department: department
+                    },
+                    'dataSrc': (result) => {
+                        var finalData = [];
+                        var data = result.data;
+
+                        $.each(data, (key, item) => {
+
+                            finalData.push({
+                                itembrand: item.itembrand,
+                                itemtype: item.itemtype,
+                                itemcount: item.itemcount,
+                                action: action = `<button class="approve-btn" id="exportBtn" name="exportBtn">EXPORT</button>`
+                            });
+                        })
+
+                        return finalData;
+                    }
+                },
+                'columnDefs': [{
+                    targets: 2,
+                    className: 'td-indent',
+                }],
+                'columns': [
+                    { data: 'itembrand' },
+                    { data: 'itemtype' },
+                    { data: 'itemcount' },
+                    { data: 'action' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+        })
+
+        $('#site-tbl tbody').on('click', 'tr', function (e) {
+            var data = [];
+            $(this).closest('tr').find('td').each(function () {
+                data.push([$(this).text()]);
+            });
+
+            console.log(data);
+
+            _brandname = data[0];
+            _itemtype = data[1];
+        })
+
+        $(document).on('click', '#exportBtn', function () {
+            var filename = `${_site}_Spare`;
+            var header = [];
+            var data = [];
+
+            $.ajax({
+                type: 'POST',
+                url: '/sitespare/getsparesite',
+                data: {
+                    site: _site,
+                    brandname: _brandname,
+                    itemtype: _itemtype
+                },
+                success: function (result) {
+                    console.log(result.data)
+                    header.push([
+                        'SERIAL',
+                        'BRAND',
+                        'TYPE',
+                        'RECEIVED BY',
+                        'RECEIVED DATE',
+                        'STATUS'
+                    ])
+
+                    $.each(result.data, (key, item) => {
+                        console.log(item);
+
+                        data.push([
+                            item.serial,
+                            item.brandname,
+                            item.itemtype,
+                            item.receivedby,
+                            item.receiveddate,
+                            item.status
+                        ])
+                    })
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/sitespare/excel',
+                        data: {
+                            header: header,
+                            data: data,
+                            filename: `${_site}_Spares`,
+                        },
+                        success: function (result) {
+                            window.open('/sitespare/generate-excel', '_blank');
+                        },
+                        error: function (error) {
+                            error(error)
+                        }
+                    })
+                },
+                error: function (result) {
+                    error(error);
+                }
+            });
+        })
+    })
+</script>

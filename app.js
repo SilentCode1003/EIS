@@ -41,6 +41,12 @@ var accountingrequestRouter = require('./routes/accountingrequest');
 var accountingreportRouter = require('./routes/accountingreport');
 var warehouseRouter = require('./routes/warehouse');
 var purchasepricemasterRouter = require('./routes/purchasepricemaster');
+var networkdashboardRouter = require('./routes/networkdashboard');
+var networkstocksRouter = require('./routes/networkstocks');
+var networkrequestRouter = require('./routes/networkrequest');
+var networkreportRouter = require('./routes/networkreport');
+var sitespareRouter = require('./routes/sitespare');
+
 
 var app = express();
 
@@ -113,7 +119,11 @@ app.use('/accountingrequest', accountingrequestRouter);
 app.use('/accountingreport', accountingreportRouter);
 app.use('/warehouse', warehouseRouter);
 app.use('/purchasepricemaster', purchasepricemasterRouter);
-
+app.use('/networkdashboard', networkdashboardRouter);
+app.use('/networkstocks', networkstocksRouter);
+app.use('/networkrequest', networkrequestRouter);
+app.use('/networkreport', networkreportRouter);
+app.use('/sitespare', sitespareRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

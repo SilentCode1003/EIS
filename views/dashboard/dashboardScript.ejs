@@ -9,42 +9,45 @@
         let requestby = '';
 
         EquipmentRequestLoadTables();
+        
+        LoadRequestList();
+        function LoadRequestList() {
+            $.ajax({
+                type: "GET",
+                url: "/equipment/getitemrequest",
+                success: function (result) {
+                    console.log(result);
+                    document.getElementById('itequipmentrequest').textContent = result.data;
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
 
-        $.ajax({
-            type: "GET",
-            url: "/equipment/getitemrequest",
-            success: function (result) {
-                console.log(result);
-                document.getElementById('itequipmentrequest').textContent = result.data;
-            },
-            error: function (result) {
-                alert('error: ' + result.data);
-            }
-        });
+            $.ajax({
+                type: "GET",
+                url: "/equipment/gettransferrequest",
+                success: function (result) {
+                    console.log(result);
+                    document.getElementById('equipmentrequesttransfer').textContent = result.data;
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
 
-        $.ajax({
-            type: "GET",
-            url: "/equipment/gettransferrequest",
-            success: function (result) {
-                console.log(result);
-                document.getElementById('equipmentrequesttransfer').textContent = result.data;
-            },
-            error: function (result) {
-                alert('error: ' + result.data);
-            }
-        });
-
-        $.ajax({
-            type: "GET",
-            url: "/cabling/materialcablingrequest",
-            success: function (result) {
-                console.log(result);
-                document.getElementById('cablingequipmentrequest').textContent = result.data;
-            },
-            error: function (result) {
-                alert('error: ' + result.data);
-            }
-        });
+            $.ajax({
+                type: "GET",
+                url: "/cabling/materialcablingrequest",
+                success: function (result) {
+                    console.log(result);
+                    document.getElementById('cablingequipmentrequest').textContent = result.data;
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+        }
 
         function EquipmentRequestLoadTables() {
             showloader();
@@ -933,6 +936,7 @@
                 },
                 success: function (result) {
                     success('Approved!', 'Request approved!')
+                    LoadRequestList();
                     EquipmentRequestLoadTables();
                 },
                 error: function (result) {

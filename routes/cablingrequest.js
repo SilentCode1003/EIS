@@ -568,9 +568,15 @@ router.post('/checkcount', (req, res) => {
     and ce_itemtype='${itemtype}'`;
 
     mysql.Select(sql, 'CablingEquipment', (err, result) => {
-      if (err) return res.status(500).json({
-        error: err
-      })
+      if (err) console.error(err);
+
+      console.log(result);
+
+      if(result.length == 0){
+        return res.json({
+          msg: 'nodata'
+        })
+      }
 
       let currentcount = result[0].itemcount;
 

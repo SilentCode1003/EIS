@@ -40,7 +40,7 @@ router.get('/', isAuthAdmin, function (req, res, next) {
 
 module.exports = router;
 
-router.post('/save', async (req, res) => {
+router.post('/save', (req, res) => {
   try {
     var serial = req.body.serial;
     var brandname = req.body.brandname;
@@ -54,13 +54,14 @@ router.post('/save', async (req, res) => {
     // helper.CreateFolder(folder);
     // helper.CreateJSON(fileDir, data);
 
-    await Execute_TransactionItEquipment(data, (err) => {
-      if (err) throw err;
-
+    Execute_TransactionItEquipment(data, (err, result) => {
+      if (err) console.log(err);
+      console.log(result);
     });
 
-    await Execute_RegisterItEquipment(data, (err) => {
-      if (err) throw err;
+    Execute_RegisterItEquipment(data, (err, result) => {
+      if (err) console.log(err);
+      console.log(result);
     })
 
     res.json({
@@ -182,7 +183,8 @@ router.post('/saveexceldata', (req, res) => {
         itemtype,
         receivedby,
         helper.GetCurrentDate(),
-        'ACTIVE'
+        'MAIN',
+        'ACTIVE',
       ])
 
       excelTransaction.push([
@@ -413,9 +415,8 @@ router.get('/GetDetailedEquipmentSummary', (req, res) => {
   }
 })
 
-
 //SQL Functions
-Execute_TransactionItEquipment = (data, callback) => {
+function Execute_TransactionItEquipment(data, callback) {
   let dataJson = JSON.parse(data);
   let stmt = '';
 
@@ -444,7 +445,7 @@ Execute_TransactionItEquipment = (data, callback) => {
 
 }
 
-Execute_RegisterItEquipment = (data, callback) => {
+function Execute_RegisterItEquipment(data, callback) {
   let dataJson = JSON.parse(data);
   let stmt = '';
 
@@ -455,8 +456,9 @@ Execute_RegisterItEquipment = (data, callback) => {
       rie_itemtype,
       rie_receivedby,
       rie_receiveddate,
+      rie_site,
       rie_status
-      ) VALUES('${key.serial}','${key.brandname}','${key.itemtype}','${key.receivedby}','${key.receiveddate}','ACTIVE')`;
+      ) VALUES('${key.serial}','${key.brandname}','${key.itemtype}','${key.receivedby}','${key.receiveddate}','MAIN','ACTIVE')`;
   });
 
   callback(null, mysql.Insert(stmt));
@@ -497,6 +499,7 @@ function Execute_ExcelRegisterItEquipment(data, callback) {
       rie_itemtype,
       rie_receivedby,
       rie_receiveddate,
+      rie_site,
       rie_status
       ) VALUES ?`;
 

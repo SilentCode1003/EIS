@@ -29,14 +29,13 @@ router.post('/save', (req, res) => {
     var fileDir = `${folder}/${itemtype}_${brandname}.json`;
     var dataraw = JSON.parse(data);
     var data_sql = [];
-    var localdata = [];
     var createdby = req.session.fullname;
     var createddate = helper.GetCurrentDate();
 
     // console.log(`Target Dir: ${folder}\n Data:${data} \nFilename: ${fileDir}`);
 
-    console.log(dataraw);
-    Insert_CablingEquipment = (data, callback) => {
+    // console.log(dataraw);
+    function Insert_CablingEquipment(data, callback) {
       let sql = `INSERT INTO cabling_equipment(
         ce_brandname,
         ce_itemtype,
@@ -59,39 +58,30 @@ router.post('/save', (req, res) => {
         '',
         '',
       ])
-
-      localdata.push({
-        brandname: key.brandname,
-        itemtype: key.itemtype,
-        itemcount: key.itemcount,
-        updateitemcount: '',
-        updateby: '',
-        updatedate: '',
-      })
     });
 
-    let check_exist = helper.CreateFolder(folder);
+    let sql_check = `select * from cabling_equipment where ce_brandname='${brandname}' and ce_itemtype='${itemtype}'`;
+    mysql.Select(sql_check, 'CablingEquipment', (err, result) => {
+      if (err) console.log(err);
 
-    if (check_exist == 'exist') {
-      res.json({
-        msg: 'warning',
-        data: itemtype
-      })
-    } else {
-      Insert_CablingEquipment(data_sql, (err, result) => {
-        if (err) throw err;
+      if (result.length != 0) {
+        console.log('exist');
+        res.json({
+          msg: 'warning'
+        })
+      } else {
+        console.log('insert');
+        Insert_CablingEquipment(data_sql, (err, result) => {
+          if (err) console.log(err);
 
-        console.log('Insert_CablingEquipment');
-      });
+          console.log(result);
+        });
 
-      // localdata = JSON.stringify(localdata, null, 2);
-
-      // helper.CreateJSON(fileDir, localdata);
-
-      res.json({
-        msg: 'success'
-      })
-    }
+        res.json({
+          msg: 'success'
+        });
+      }
+    })
 
   } catch (error) {
     res.json({
