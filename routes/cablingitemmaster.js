@@ -111,15 +111,17 @@ router.post('/save', (req, res) => {
     mysql.SelectResult(sql, 'CablingItemMaster', (err, result) => {
       if (err) console.log(err);
 
+      console.log(result);
+
       if (result.length == 0) {
         Insert_CablingItemMaster(dataSql, (err, result) => {
-          if (err) throw err;
+          if (err) console.log(err);
 
           console.log('Insert_CablingItemMaster');
         })
 
         Save_CablingItemMasterJson(targetDir, dataJson, (err, result) => {
-          if (err) throw err;
+          if (err) console.log(err);
 
           console.log('Save_CablingItemMasterJson');
         })
@@ -132,32 +134,32 @@ router.post('/save', (req, res) => {
       if (result.length == 1) {
 
         Update_CablingItemMaster(minstocks, maxstocks, brandname, itemtype, req.session.fullname, helper.GetCurrentDatetime(), (err, result) => {
-          if (err) throw err;
+          if (err) console.log(err);
           console.log('Update_CablingItemMaster');
         })
 
-        let data = helper.ReadJSONFile(targetDir);
-        let dataUpdate = [];
+        // let data = helper.ReadJSONFile(targetDir);
+        // let dataUpdate = [];
 
-        data.forEach((key, item) => {
-          dataUpdate.push({
-            brandname: key.brandname,
-            itemtype: key.itemtype,
-            minstocks: minstocks,
-            maxstocks: maxstocks,
-            updateby: req.session.fullname,
-            updatedate: helper.GetCurrentDatetime(),
-            createdby: key.createdby,
-            createddate: key.createddate
-          })
-        });
+        // data.forEach((key, item) => {
+        //   dataUpdate.push({
+        //     brandname: key.brandname,
+        //     itemtype: key.itemtype,
+        //     minstocks: minstocks,
+        //     maxstocks: maxstocks,
+        //     updateby: req.session.fullname,
+        //     updatedate: helper.GetCurrentDatetime(),
+        //     createdby: key.createdby,
+        //     createddate: key.createddate
+        //   })
+        // });
 
-        dataUpdate = JSON.stringify(dataUpdate, null, 2);
+        // dataUpdate = JSON.stringify(dataUpdate, null, 2);
 
-        helper.CreateJSON(targetDir, dataUpdate);
+        // helper.CreateJSON(targetDir, dataUpdate);
 
         res.json({
-          msg: 'warning'
+          msg: 'success'
         })
       }
     })
@@ -189,7 +191,7 @@ router.get('/getmincount', (req, res) => {
 })
 
 function isAuthAdmin(req, res, next) {
- 
+
   if (req.session.isAuth && req.session.accounttype == "CUSTODIAN") {
     next();
   }
