@@ -1,8 +1,9 @@
 var express = require('express');
 var router = express.Router();
+var linq = require('node-linq');
 
 function isAuthAdmin(req, res, next) {
- 
+
   if (req.session.isAuth && req.session.accounttype == "PURCHASING") {
     next();
   }
@@ -18,7 +19,6 @@ const helper = require('./repository/customhelper');
 const mysql = require('./repository/dbconnect');
 const cybersql = require('./repository/cyberpowerdb');
 const dictionary = require('./repository/dictionary');
-const { json } = require('express');
 
 /* GET home page. */
 router.get('/', isAuthAdmin, function (req, res, next) {
@@ -81,7 +81,7 @@ router.post('/getdetails', (req, res) => {
 router.post('/getdetailitems', (req, res) => {
   try {
     let requestid = req.body.requestid;
-    let sql = `SELECT * FROM purchase_item WHERE pi_requestid='${requestid}'`;
+    let sql = `SELECT * FROM purchase_item WHERE pi_requestid='${requestid}' and not pi_status='${dictionary.GetValue(dictionary.REM())}'`;
     mysql.Select(sql, 'PurchaseItems', (err, result) => {
       if (err) throw err;
 
@@ -234,6 +234,247 @@ router.post('/updatestockrequest', (req, res) => {
       msg: error
     })
   }
+})
+
+router.post('/updaterequest', (req, res) => {
+  let requestid = req.body.requestid;
+  let requestby = req.body.requestby;
+  let requestdate = req.body.requestdate;
+  let totalcost = req.body.totalcost;
+  let details = req.body.details;
+  let request_cabling_stocks_equipments = [];
+  let purchase_item = [];
+  let new_details = [];
+  let old_details = [];
+  let new_data = [];
+  let update_data = [];
+  let remove_data = [];
+
+
+  function Extract_NewDeatails(details) {
+    return new Promise((resolve, reject) => {
+      try {
+        details = JSON.parse(details);
+        details.forEach((key, item) => {
+          new_details.push({
+            brandname: key.brandname,
+            itemtype: key.itemtype,
+            itemcount: key.itemcount,
+            itemcost: key.itemcost,
+          })
+        });
+
+        resolve(new_details)
+      } catch (error) {
+        reject(error);
+      }
+    })
+
+  }
+
+  function Retrieve_OldDetails(requestid) {
+    return new Promise((resolve, reject) => {
+
+      try {
+        let sql = `select * from purchase_item where pi_requestid='${requestid}'`;
+
+        mysql.Select(sql, 'PurchaseItems', (err, result) => {
+          if (err) console.error(err);
+
+          result.forEach((key, item) => {
+            old_details.push({
+              brandname: key.brandname,
+              itemtype: key.itemtype,
+              itemcount: key.quantity,
+              itemcost: key.cost,
+            })
+          })
+          resolve(old_details);
+        })
+      } catch (error) {
+        reject(error);
+      }
+    })
+  }
+
+  function Update_RequestCablingStocksDetails(details, requestid) {
+    return new Promise((resolve, reject) => {
+      let sql = `update request_cabling_stocks_details set
+      rcsd_details='${details}'
+      where rcsd_requestid='${requestid}'`;
+
+      mysql.Update(sql, (err, result) => {
+        if (err) reject(err);
+
+        resolve(result);
+      })
+    })
+  }
+
+  function Update_TransactionCablingStocksDetails(details, requestid) {
+    return new Promise((resolve, reject) => {
+      let sql = `update transaction_cabling_stocks_details set
+      tcsd_details='${details}'
+      where tcsd_requestid='${requestid}'`;
+
+      mysql.Update(sql, (err, result) => {
+        if (err) reject(err);
+
+        resolve(result);
+      })
+    })
+  }
+
+  function Update_PurchaseDetails(details, requestid) {
+    return new Promise((resolve, reject) => {
+      let sql = `update purchase_details set
+      pd_details='${details}',
+      pd_details='${totalcost}'
+      where pd_requestid='${requestid}'`;
+
+      mysql.Update(sql, (err, result) => {
+        if (err) reject(err);
+
+        resolve(result);
+      })
+    })
+  }
+
+  function Update_PurchaseItems(requestid, brandname, itemtype, quantity, cost, callback) {
+    let sql = `update purchase_item set
+    pi_quantity='${quantity}',
+    pi_cost='${cost}'
+    where pi_brandname='${brandname}'
+    and pi_itemtype='${itemtype}'
+    and pi_requestid='${requestid}'`;
+
+    mysql.Update(sql, (err, result) => {
+      if (err) callback(err, null);
+
+      callback(null, result);
+    })
+  }
+
+  function Insert_PurchaseItems(requestid, officer, brandname, itemtype, quantity, cost, callback) {
+    var orderdate = helper.GetCurrentDate();
+    var status = dictionary.GetValue(dictionary.REQ());
+    let sql = `insert into purchase_item(
+      pi_brandname,
+      pi_itemtype,
+      pi_quantity,
+      pi_cost,
+      pi_requestid,
+      pi_officer,
+      pi_orderdate,
+      pi_status,
+    ) values('${brandname}','${itemtype}','${quantity}','${cost}','${requestid}','${officer}','${orderdate}','${status}')`;
+
+    mysql.InsertPayload(sql, (err, result) => {
+      if (err) callback(err, null);
+
+      callback(null, result);
+    })
+  }
+
+  function Update_RequestCablingStocksEquipment(requestid, brandname, itemtype, callback) {
+    var status = dictionary.GetValue(dictionary.REM());
+    let sql = `update request_cabling_stocks_equipments set 
+    rcse_status='${status}'
+    where rcse_brandname='${brandname}'
+    and rcse_itemtype='${itemtype}'
+    and rcse_referenceid='${requestid}'`;
+
+    mysql.Update(sql, (err, result) => {
+      if (err) callback(err, null);
+
+      callback(null, result);
+    })
+  }
+
+  function Insert_RequestCablingStocksEquipment(requestid, requestby, brandname, itemtype, quantity, callback) {
+    var req
+    let sql = `insert into request_cabling_stocks_equipments(
+      rcse_requestdate,
+      rcse_requestby,
+      rcse_brandname,
+      rcse_itemtype,
+      rcse_quantity,
+      rcse_referenceid,
+      rcse_status) values('${requestid}','${requestby}','${brandname}','${itemtype}','${quantity}','${requestdate}')`;
+  }
+
+  function Check_Exist(brandname, itemtype, callback) {
+    let sql = `select * from purchase_item where pi_brandname='${brandname}' amd pi_itemtype='${itemtype}'`;
+
+    mysql.Select(sql, 'PurchaseItem', (err, result) => {
+      if (err) callback(err, null);
+
+      callback(null, result);
+    })
+  }
+
+  Extract_NewDeatails(details)
+    .then(ndata => {
+
+      ndata.forEach((key, item) => {
+        Check_Exist(key.brandname, key.itemtype, (err, result) => {
+          if (err) console.error(err)
+          if (result.length != 0) {
+            //update
+            Update_PurchaseItems(requestid, key.brandname, key.itemtype, key.itemcount, key.itemcost, (err, result) => {
+              if (err) console.error(err);
+
+              console.log(result);
+            })
+
+            Update_RequestCablingStocksEquipment(requestid, key.brandname, key.itemtype, (err, result) => {
+              if (err) console.error(err);
+
+              console.log(result);
+            })
+          } else {
+            //insert
+            var officer = req.session.fullname;
+            Insert_PurchaseItems(requestid, officer, key.brandname, key.itemtype, key.itemcount, key.itemcost, (err, result) => {
+              if (err) console.error(err);
+
+              console.log(result);
+            })
+          }
+        })
+      })
+
+
+
+    })
+    .catch(error => {
+      res.json({
+        msg: error
+      })
+    });
+
+
+  // update_data = old_details.filter(oelem => {
+  //   return new_details.some(nelem => oelem.brandname === nelem.brandname && oelem.itemtype === oelem.itemtype);
+  // })
+
+  // remove_data = old_details.filter(oelem => {
+  //   return new_details.some(nelem => oelem.brandname !== nelem.brandname && oelem.itemtype !== oelem.itemtype);
+  // })
+
+  // console.log(`Update Data: ${new_details}`);
+
+  // console.log(`Remove Data: ${old_details}`);
+
+
+  // console.log(`Update Data: ${update_data}`);
+
+  // console.log(`Remove Data: ${remove_data}`);
+
+  res.json({
+    msg: 'success'
+  })
+
 })
 
 router.post('/gettransactionpurchseitems', (req, res) => {

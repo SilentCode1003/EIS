@@ -68,6 +68,8 @@
         </table>
     </div>
 </div>
+
+
 <!-- The Modal -->
 <div id="stocksrequestModal" class="modal card shadow mb-4">
     <!-- Modal content -->
@@ -215,12 +217,71 @@
         </div>
 
         <div class="modal-body modal-print-background">
+
             <div>
-                <h2 class='report-header' style="text-align: center"> STOCKS REQUEST</h2>
-                <br>
-                <br>
+                <h2 class='report-header entry-area-bg' style="text-align: center; color: white;"> STOCKS REQUEST</h2>
+                <div class="row">
+                    <div class="col-xl-6 col-lg-5">
+                        <div class="entry-area">
+                            <select class="entry-input" name="brandlist" id="brandlist">
+                                <option value="-">BRAND</option>
+                            </select>
+                        </div>
+                        <div class="entry-area">
+                            <select class="entry-input" name="itemlist" id="itemlist">
+                                <option value="-">ITEM</option>
+                            </select>
+                        </div>
+                        <div class="entry-area">
+                            <input class="entry-input" id="quantity" name="quantity" type="text" placeholder="QUANTITY">
+                        </div>
+                        <div class="entry-area">
+                            <input class="entry-input" id="cost" name="cost" type="text" placeholder="COST"
+                                disabled="disabled">
+                        </div>
+
+                        <div class="entry-area">
+                            <button class="approved-btn" id="addEquipmentBtn" name="addEquipmentBtn">ADD</button>
+                        </div>
+                    </div>
+                </div>
                 <div>
                     <table id="modal-stocks-request-tbl">
+                        <thead>
+                            <th>BRAND</th>
+                            <th>TYPE</th>
+                            <th>QUANTITY</th>
+                            <th>COST</th>
+                            <th>ACTION</th>
+                        </thead>
+                        <tbody></tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="modal-button-container" class="center-content">
+            <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
+            <button class="approve-btn" id="saveUpdateDetails" name="saveUpdateDetails">SAVE</button>
+        </div>
+    </div>
+</div>
+
+<!-- The Modal -->
+<div id="requestapproveModal" class="modal card shadow mb-4">
+    <!-- Modal content -->
+    <div class="modal-content modal-print-background">
+        <div class="modal-button-container modal-print-background">
+            <span id="requestapprovespan" class="close">&times;</span>
+        </div>
+
+        <div class="modal-body modal-print-background">
+
+            <div>
+                <h2 class='report-header entry-area-bg' style="text-align: center; color: white;"> STOCKS REQUEST</h2>
+                <div>
+                    <table id="modal-approve-restock-list-tbl">
                         <thead>
                             <th>BRAND</th>
                             <th>TYPE</th>

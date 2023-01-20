@@ -187,91 +187,91 @@ router.post('/requestmaterial', (req, res) => {
     Check_RequestExist(datetime[0], personel, (err, result) => {
       if (err) throw err;
 
-      if (result.length == 0) {
-        Execute_Cabling_Request_Details(todo, (err, data) => {
-          if (err) throw err;
-          console.log('Execute_Cabling_Request_Details');
-        });
+      // if (result.length == 0) {
+      Execute_Cabling_Request_Details(todo, (err, data) => {
+        if (err) throw err;
+        console.log('Execute_Cabling_Request_Details');
+      });
 
 
-        let sql = `SELECT * FROM request_cabling_details WHERE rcd_requestdate='${datetime[0]}' AND rcd_personel='${personel}'`;
-        mysql.SelectResult(sql, 'RequestCablingDetails', (err, data) => {
-          if (err) throw err;
+      let sql = `SELECT * FROM request_cabling_details WHERE rcd_requestdate='${datetime[0]}' AND rcd_personel='${personel}'`;
+      mysql.SelectResult(sql, 'RequestCablingDetails', (err, data) => {
+        if (err) throw err;
 
-          console.log(data);
+        console.log(data);
 
-          data.forEach((key, item) => {
-            requestid = key.requestid;
-            console.log(`REQUEST ID: ${requestid}`);
+        data.forEach((key, item) => {
+          requestid = key.requestid;
+          console.log(`REQUEST ID: ${requestid}`);
 
-            dataRequest.push({
-              requestid: requestid,
-              personel: personel,
-              date: date,
-              details: detailsJson,
-              remarks: remarks,
-              status: status,
-            });
-
-            details = JSON.parse(details);
-            details.forEach((key, items) => {
-              //equipment
-              details_todo.push([
-                key.personel,
-                datetime[0],
-                key.brandname,
-                key.itemtype,
-                key.itemcount,
-                requestid,
-                status]);
-
-              //transaction
-              transaction_list.push([
-                key.brandname,
-                key.itemtype,
-                key.itemcount,
-                key.personel,
-                datetime[0],
-                '',
-                '',
-                requestid,
-                status,
-              ]);
-            })
-
-            //insert request equipment
-            console.log(details_todo);
-            Execute_Cabling_Request_Equipment(details_todo, (err, data) => {
-              if (err) throw err;
-            });
-
-            //insert transaction equipment
-            console.log(transaction_list);
-            Insert_TransactionCablingEquipment(transaction_list, (err, data) => {
-              if (err) throw err;
-
-              console.log(`Insert_TransactionCablingEquipment`);
-            });
-
-
+          dataRequest.push({
+            requestid: requestid,
+            personel: personel,
+            date: date,
+            details: detailsJson,
+            remarks: remarks,
+            status: status,
           });
 
-          Save_Request(dataRequest, (err, result) => {
-            if (err) throw err;
-            console.log('Save_Request');
+          details = JSON.parse(details);
+          details.forEach((key, items) => {
+            //equipment
+            details_todo.push([
+              key.personel,
+              datetime[0],
+              key.brandname,
+              key.itemtype,
+              key.itemcount,
+              requestid,
+              status]);
+
+            //transaction
+            transaction_list.push([
+              key.brandname,
+              key.itemtype,
+              key.itemcount,
+              key.personel,
+              datetime[0],
+              '',
+              '',
+              requestid,
+              status,
+            ]);
           })
+
+          //insert request equipment
+          console.log(details_todo);
+          Execute_Cabling_Request_Equipment(details_todo, (err, data) => {
+            if (err) throw err;
+          });
+
+          //insert transaction equipment
+          console.log(transaction_list);
+          Insert_TransactionCablingEquipment(transaction_list, (err, data) => {
+            if (err) throw err;
+
+            console.log(`Insert_TransactionCablingEquipment`);
+          });
+
 
         });
 
-        res.json({
-          msg: 'success'
+        Save_Request(dataRequest, (err, result) => {
+          if (err) throw err;
+          console.log('Save_Request');
         })
-      }
-      if (result.length == 1) {
-        res.json({
-          msg: 'warning'
-        })
-      }
+
+      });
+
+      res.json({
+        msg: 'success'
+      })
+      // }
+      // if (result.length == 1) {
+      //   res.json({
+      //     msg: 'warning'
+      //   })
+      // }
     })
 
   } catch (error) {
@@ -305,65 +305,65 @@ router.post('/requeststocks', (req, res) => {
       remarks,
       status]);
 
-    Check_RequestExist(requestdate, personel, (err, result) => {
-      if (err) console.error(err);
 
-      if (result.length == 0) {
 
-        Insert_RequestCablingStocksDatails(request_cabling_stocks_details, (err, results) => {
-          if (err) console.error(err);
+    // if (result.length == 0) {
 
-          console.log(results)
-        })
+    Insert_RequestCablingStocksDatails(request_cabling_stocks_details)
+      .then(result => {
+        console.log(result);
 
-        let sql = `SELECT * FROM request_cabling_stocks_details WHERE rcsd_requestdate='${requestdate}' AND rcsd_requestby='${personel}'`;
-        mysql.SelectResult(sql, 'RequestCablingStocksDatails', (err, data) => {
-          if (err) console.error(err);
+        let sql = `SELECT * FROM request_cabling_stocks_details 
+        WHERE rcsd_requestdate='${requestdate}' 
+        AND rcsd_requestby='${personel}'
+        AND rcsd_details='${details}'`;
 
-          console.log(data);
+        Retrieve_Details(sql)
+          .then(data => {
 
-          data.forEach((key, item) => {
-            requestid = key.requestid;
-            console.log(`REQUEST ID: ${requestid}`);
+            data.forEach((key, item) => {
+              requestid = key.requestid;
+              console.log(`REQUEST ID: ${requestid}`);
 
-            dataRequest.push({
-              requestid: requestid,
-              personel: personel,
-              date: datetime,
-              details: detailsJson,
-              remarks: remarks,
-              status: status,
-            });
+              dataRequest.push({
+                requestid: requestid,
+                personel: personel,
+                date: datetime,
+                details: detailsJson,
+                remarks: remarks,
+                status: status,
+              });
 
-            purchase_details.push([
-              datetime,
-              personel,
-              details,
-              '',
-              remarks,
-              status,
-            ]);
+              purchase_details.push([
+                datetime,
+                personel,
+                details,
+                '',
+                remarks,
+                status,
+              ]);
 
-            tcsd_data.push([
-              personel,
-              datetime,
-              details,
-              '',
-              '',
-              status
-            ]);
+              tcsd_data.push([
+                personel,
+                datetime,
+                details,
+                '',
+                '',
+                status
+              ]);
 
-            details = JSON.parse(details);
-            details.forEach((key, items) => {
-              //equipment
-              details_todo.push([
-                requestdate,
-                key.personel,
-                key.brandname,
-                key.itemtype,
-                key.itemcount,
-                requestid,
-                status]);
+              var detaillist = JSON.parse(details);
+              detaillist.forEach((key, items) => {
+                details_todo.push([
+                  requestdate,
+                  key.personel,
+                  key.brandname,
+                  key.itemtype,
+                  key.itemcount,
+                  requestid,
+                  status]);
+              })
+
             })
 
             //insert request stocks equipment
@@ -387,22 +387,22 @@ router.post('/requeststocks', (req, res) => {
 
               console.log(result)
             })
-          });
 
-        });
+            res.json({
+              msg: 'success'
+            })
 
+          }).catch(error => {
+            res.json({
+              msg: error
+            })
+          })
+
+      }).catch(error => {
         res.json({
-          msg: 'success'
+          msg: error
         })
-
-      }
-
-      if (result.length == 1) {
-        res.json({
-          msg: 'warning'
-        })
-      }
-    });
+      });
 
   } catch (error) {
     res.json({
@@ -572,7 +572,7 @@ router.post('/checkcount', (req, res) => {
 
       console.log(result);
 
-      if(result.length == 0){
+      if (result.length == 0) {
         return res.json({
           msg: 'nodata'
         })
@@ -608,21 +608,33 @@ router.post('/checkcount', (req, res) => {
 
 
 //#region functions
-function Insert_RequestCablingStocksDatails(data, callback) {
-  let sql = `INSERT INTO request_cabling_stocks_details(
-          rcsd_requestdate,
-          rcsd_requestby,
-          rcsd_details,
-          rcsd_remarks,
-          rcsd_status
-        ) VALUES ?`;
 
-  console.log(data);
-
-  mysql.InsertPayload(sql, data, (err, result) => {
-    if (err) callback(err, null);
-    callback(null, result);
+function Retrieve_Details(data) {
+  return new Promise((resolve, reject) => {
+    mysql.Select(data, 'RequestCablingStocksDatails', (err, data) => {
+      if (err) reject(err);
+      console.log(data);
+      resolve(data);
+    })
   })
+}
+
+function Insert_RequestCablingStocksDatails(data) {
+  return new Promise((resolve, reject) => {
+    let sql = `INSERT INTO request_cabling_stocks_details(
+      rcsd_requestdate,
+      rcsd_requestby,
+      rcsd_details,
+      rcsd_remarks,
+      rcsd_status
+    ) VALUES ?`;
+
+    mysql.InsertPayload(sql, data, (err, result) => {
+      if (err) reject(err);
+      resolve(result);
+    })
+  })
+
 }
 
 function Insert_RequestCablingStocksEquipments(data, callback) {
@@ -659,9 +671,15 @@ function Insert_TransactionCablingStocksDetails(data, callback) {
 }
 
 function Insert_PurchaseDetails(data, callback) {
-  let sql = `call PurchaseDetails(?)`;
+  let sql = `insert into purchase_details(
+    pd_requestdate, 
+    pd_requestby, 
+    pd_details, 
+    pd_totalbudget,
+    pd_remarks, 
+    pd_status) values ?`;
 
-  mysql.StoredProcedure(sql, data, (err, result) => {
+  mysql.InsertPayload(sql, data, (err, result) => {
     if (err) callback(err, null);
     callback(null, result);
   })

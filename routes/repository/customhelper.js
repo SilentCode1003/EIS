@@ -372,3 +372,20 @@ exports.GetByClientStores = (data, index, callback) => {
     }
 }
 //#endregion
+
+//#region 
+exports.JSONNoSpace = (data) => {
+    const jsonString = JSON.stringify(data, (key, value) => {
+        if (typeof value === 'string') {
+            return value.replace(/\s/g, '');
+        }
+        console.log(jsonString);
+        return value;
+    })
+}
+
+exports.JSONRevert = (json) => {
+
+}
+//#endregion
+

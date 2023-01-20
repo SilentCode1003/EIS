@@ -85,6 +85,39 @@
             });
         });
 
+        $(document).on('change click', "#itemtype", function () {
+            var brandname = $('#brandname').val();
+            var itemtype = $('#itemtype').val();
+            $("#cost").empty();
+
+            $.ajax({
+                type: "POST",
+                url: "/purchasepricemaster/getprice",
+                data: {
+                    brandname: brandname,
+                    itemtype: itemtype,
+                    department: 'CABLING',
+                },
+                success: function (result) {
+                    var data = result.data;
+                    console.log(result.data);
+                    const _const = document.getElementById('cost');
+
+                    if (data.length != 0) {
+                        $.each(data, function (key, item) {
+                            _const.value = item.currentprice
+                        });
+                    }else{
+                        warning('No Data',`Need to add current price for ${brandname} - ${itemtype}. Go to PURCHASE >> PRICE MASTER`)
+                    }
+
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+        });
+
         $(document).on('click', "#addBtn", function () {
             var podate = $('#podate').val();
             var ponumber = $('#ponumber').val();

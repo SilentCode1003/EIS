@@ -65,6 +65,27 @@ exports.Insert = async (stmt) => {
     }
 }
 
+exports.InsertPayload = (sql, callback) => {
+    try {
+
+        // console.log(`statement: ${stmt} data: ${todos}`);
+        connection.connect((err) => { return err; })
+
+        connection.query(sql, (err, results, fields) => {
+            if (err) {
+                return callback(err.message, null);
+            }
+
+            // console.log(`Row inserted: ${results.affectedRows}`);
+
+            callback(null, `Row inserted: ${results.affectedRows}`);
+        });
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 exports.InsertTable = (stmt, todos, callback) => {
     try {
         connection.connect((err) => { return err; })
@@ -224,6 +245,10 @@ exports.Select = (sql, table, callback) => {
 
             if (table == 'MasterItemPrice') {
                 callback(null, model.MasterItemPrice(results));
+            }
+
+            if (table == 'RequestCablingStocksDatails') {
+                callback(null, model.RequestCablingStocksDetails(results));
             }
         });
 

@@ -1,0 +1,103 @@
+<script>
+    $(document).ready(function () {
+        CablingTable();
+
+        $("#podate-dtbox").DateTimePicker({
+            dateFormat: "yyyy-MM-dd"
+        });
+
+        function CablingTable() {
+            showloader();
+            purchaseOrderDetailsTbl = $('#cabling-table').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'GET',
+                'ajax': {
+                    'url': '/purchaserequest/load',
+                    'dataSrc': (json) => {
+                        var finalData = [];
+                        var data = json.data;
+
+                        console.log(data);
+                        $.each(data, (key, item) => {
+                            var action = '';
+                            var details = '';
+                            var detailsjson = JSON.parse(item.details);
+                            var totalcost = 0;
+
+                            $.each(detailsjson, (key, item) => {
+
+                                totalcost += parseFloat(item.subtotal);
+                                details += `(${item.ponumber})${item.brandname}${item.itemtype}@${item.quantity}<br>`;
+                            })
+
+                            totalcost = `₱ ${(totalcost).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+
+                            finalData.push({
+                                podate: item.podate,
+                                details: details,
+                                totalcost: totalcost,
+                                officer: item.officer,
+                                entrydate: item.entrydate,
+                                action: action = '<button class="assign-btn" id="printBtn" name="printBtn">PRINT</button>',
+                            })
+
+                            details = '';
+                        })
+
+                        return finalData;
+                    },
+                },
+                'columnDefs': [{
+                    targets: 1,
+                    className: 'td-indent',
+                }],
+                'columns': [
+                    { data: 'podate' },
+                    { data: 'details' },
+                    { data: 'totalcost' },
+                    { data: 'officer' },
+                    { data: 'entrydate' },
+                    { data: 'action' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+        }
+
+        var POEquimentModal = document.getElementById("POEquimentModal");
+        var POEquimentModalSpan = document.getElementById("POEquimentModalSpan");
+
+        POEquimentModalSpan.onclick = function () {
+            POEquimentModal.style.display = "none";
+        }
+
+        window.onclick = function () {
+            if (event.target == POEquimentModal) {
+                POEquimentModal.style.display = "none";
+            }
+        }
+
+        $(document).on('click', '#printBtn', function () {
+            POEquimentModal.style.display = "block";
+        })
+
+        $(document).on('click', "#printModalBtn", function () {
+            console.log('clicked!');
+            var printContents = document.getElementById('PrintArea').innerHTML;
+            var originalContents = document.body.innerHTML;
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+            location.reload();
+        })
+    })
+</script>

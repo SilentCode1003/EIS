@@ -310,11 +310,11 @@ router.post('/addnewstocks', (req, res) => {
       })
     }
 
-    Update_CablingEquipmengJSONFile = (tragetDir, foldername, dataJson, callback) => {
-      helper.CreateFolder(foldername);
-      helper.CreateJSON(tragetDir, dataJson)
-      callback(null, `Path: ${tragetDir} Data:${dataJson}`)
-    }
+    // Update_CablingEquipmengJSONFile = (tragetDir, foldername, dataJson, callback) => {
+    //   helper.CreateFolder(foldername);
+    //   helper.CreateJSON(tragetDir, dataJson)
+    //   callback(null, `Path: ${tragetDir} Data:${dataJson}`)
+    // }
 
     Update_Cablingequipment = (data, callback) => {
 
@@ -324,45 +324,64 @@ router.post('/addnewstocks', (req, res) => {
         WHERE ce_brandname='${key.brandname}' 
         AND ce_itemtype='${key.itemtype}'`;
 
-        mysql.SelectSingleResult(result, data => {
+        mysql.Select(result, 'CablingEquipment', (err, data) => {
+          if (err) console.error(err);
           let dataJson = [];
-          var current_quantity = parseFloat(data);
+          var current_quantity = parseFloat(data[0].itemcount);
           var additional_quantity = parseFloat(key.quantity)
           var new_quantity = current_quantity + additional_quantity;
+          let sql = '';
 
           console.log(`Current Quantity: ${data}`)
-          let sql = `UPDATE cabling_equipment 
-          SET ce_itemcount='${new_quantity}',
-          ce_updateitemcount='${additional_quantity}',
-          ce_updateby='${req.session.fullname}',
-          ce_updatedate='${helper.GetCurrentDatetime()}' 
-          WHERE ce_brandname='${key.brandname}' 
-          AND ce_itemtype='${key.itemtype}'`;
+          if (data != 0) {
+            sql = `UPDATE cabling_equipment 
+            SET ce_itemcount='${new_quantity}',
+            ce_updateitemcount='${additional_quantity}',
+            ce_updateby='${req.session.fullname}',
+            ce_updatedate='${helper.GetCurrentDatetime()}' 
+            WHERE ce_brandname='${key.brandname}' 
+            AND ce_itemtype='${key.itemtype}'`;
 
-          dataJson.push({
-            brandname: key.brandname,
-            itemtype: key.itemtype,
-            itemcount: new_quantity,
-            updateitemcount: additional_quantity,
-            updateby: req.session.fullname,
-            updatedate: helper.GetCurrentDatetime(),
-          });
+            mysql.Update(sql, (err, result) => {
+              if (err) console.log(err);
+              console.log(result)
+            })
+          } else {
+            sql = `insert into cabling_equipment(
+              ce_brandname,
+              ce_itemtype,
+              ce_itemcount
+              ) values('${key.brandname}','${key.itemtype}','${additional_quantity}')`;
 
-          dataJson = JSON.stringify(dataJson, null, 2);
+            mysql.InsertPayload(sql, (err, result) => {
+              if (err) console.error(err);
 
-          let foldername = `${CablingPath}${key.brandname}`;
-          let filename = `${key.itemtype}_${key.brandname}.json`;
-          let tragetDir = `${foldername}/${filename}`;
+              console.log(result);
+            })
+          }
 
-          mysql.Update(sql, (err, result) => {
-            if (err) console.log(err);
-            console.log(result)
-          })
 
-          Update_CablingEquipmengJSONFile(tragetDir, foldername, dataJson, (err, result) => {
-            if (err) throw err;
-            // console.log(result);
-          });
+          // dataJson.push({
+          //   brandname: key.brandname,
+          //   itemtype: key.itemtype,
+          //   itemcount: new_quantity,
+          //   updateitemcount: additional_quantity,
+          //   updateby: req.session.fullname,
+          //   updatedate: helper.GetCurrentDatetime(),
+          // });
+
+          // dataJson = JSON.stringify(dataJson, null, 2);
+
+          // let foldername = `${CablingPath}${key.brandname}`;
+          // let filename = `${key.itemtype}_${key.brandname}.json`;
+          // let tragetDir = `${foldername}/${filename}`;
+
+
+
+          // Update_CablingEquipmengJSONFile(tragetDir, foldername, dataJson, (err, result) => {
+          //   if (err) throw err;
+          //   // console.log(result);
+          // });
 
         })
 
@@ -432,7 +451,7 @@ router.post('/addnewstocks', (req, res) => {
       console.log(result);
     })
 
-    helper.MoveFile(requeststockcabling, requeststockdone);
+    // helper.MoveFile(requeststockcabling, requeststockdone);
 
     res.json({
       msg: 'success',
