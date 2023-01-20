@@ -9,7 +9,7 @@
         let requestby = '';
 
         EquipmentRequestLoadTables();
-        
+
         LoadRequestList();
         function LoadRequestList() {
             $.ajax({
@@ -691,6 +691,7 @@
                 console.log(personel, date, dataRaw);
                 dataRaw = JSON.stringify(dataRaw, null, 2);
                 await assignequipemnt(personel, date, dataRaw)
+                modal.style.display = "none";
             }
         });
 
@@ -705,8 +706,14 @@
                     data: data
                 },
                 success: function (result) {
-                    success('Saved!', 'Data saved!')
-                    EquipmentRequestLoadTables();
+                    if (result.msg == 'success') {
+                        success('Saved!', 'Data saved!')
+                        EquipmentRequestLoadTables();
+                    }
+
+                    if (result.msg == 'exist') {
+                        warning('Not Exist', `Please check serial/s ${result.data}. Go to REPORTS >> SEARCH to check serial exist on database.`)
+                    }
                 },
                 error: function (result) {
                     error(result.data);

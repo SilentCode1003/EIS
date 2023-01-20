@@ -442,11 +442,16 @@
                 var _TYPE = row.insertCell(1);
                 var _QUANTITY = row.insertCell(2);
                 var _COST = row.insertCell(3);
+                var _ACTION = row.insertCell(4);
+                var action = `<button class="circle-btn" id="removeBtn" name="removeBtn">
+                                                <div class="delete-line"></div>
+                                            </button>`;
 
                 _BRAND.innerHTML = brand;
                 _TYPE.innerHTML = type;
                 _QUANTITY.innerHTML = quantity;
                 _COST.innerHTML = cost;
+                _ACTION.innerHTML = action;
             }
         })
 

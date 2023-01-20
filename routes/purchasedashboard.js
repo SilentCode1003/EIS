@@ -340,6 +340,14 @@ router.post('/updaterequest', (req, res) => {
     })
   }
 
+  function Update_TramsactopmPurchaseItem(requestid, brandname, itemtype, quantity, cost) {
+    // let sql = `update transaction_purchase_item set
+    // tpi_quantity='${}',
+    // tpi_cost='${}',
+    // tpi_subtotal='${}'
+    // where `
+  }
+
   function Update_PurchaseItems(requestid, brandname, itemtype, quantity, cost, callback) {
     let sql = `update purchase_item set
     pi_quantity='${quantity}',
@@ -404,9 +412,9 @@ router.post('/updaterequest', (req, res) => {
   }
 
   function Check_Exist(brandname, itemtype, callback) {
-    let sql = `select * from purchase_item where pi_brandname='${brandname}' amd pi_itemtype='${itemtype}'`;
+    let sql = `select * from purchase_item where pi_brandname='${brandname}' and pi_itemtype='${itemtype}'`;
 
-    mysql.Select(sql, 'PurchaseItem', (err, result) => {
+    mysql.Select(sql, 'PurchaseItems', (err, result) => {
       if (err) callback(err, null);
 
       callback(null, result);
@@ -415,11 +423,15 @@ router.post('/updaterequest', (req, res) => {
 
   Extract_NewDeatails(details)
     .then(ndata => {
-
+      console.log(`${ndata}`);
       ndata.forEach((key, item) => {
+        console.log(`${key.brandname} ${key.itemtype} `);
         Check_Exist(key.brandname, key.itemtype, (err, result) => {
           if (err) console.error(err)
+          console.log(`${result}`);
+
           if (result.length != 0) {
+            console.log('Update');
             //update
             Update_PurchaseItems(requestid, key.brandname, key.itemtype, key.itemcount, key.itemcost, (err, result) => {
               if (err) console.error(err);
@@ -434,6 +446,7 @@ router.post('/updaterequest', (req, res) => {
             })
           } else {
             //insert
+            console.log('Insert');
             var officer = req.session.fullname;
             Insert_PurchaseItems(requestid, officer, key.brandname, key.itemtype, key.itemcount, key.itemcost, (err, result) => {
               if (err) console.error(err);
@@ -444,32 +457,12 @@ router.post('/updaterequest', (req, res) => {
         })
       })
 
-
-
     })
     .catch(error => {
       res.json({
         msg: error
       })
     });
-
-
-  // update_data = old_details.filter(oelem => {
-  //   return new_details.some(nelem => oelem.brandname === nelem.brandname && oelem.itemtype === oelem.itemtype);
-  // })
-
-  // remove_data = old_details.filter(oelem => {
-  //   return new_details.some(nelem => oelem.brandname !== nelem.brandname && oelem.itemtype !== oelem.itemtype);
-  // })
-
-  // console.log(`Update Data: ${new_details}`);
-
-  // console.log(`Remove Data: ${old_details}`);
-
-
-  // console.log(`Update Data: ${update_data}`);
-
-  // console.log(`Remove Data: ${remove_data}`);
 
   res.json({
     msg: 'success'

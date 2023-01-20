@@ -23,7 +23,7 @@ function isAuthAdmin(req, res, next) {
     }
     else if (req.session.isAuth && req.session.accounttype == "ADMINISTRATOR") {
         next();
-      }
+    }
     else {
         res.redirect('/login');
     }
@@ -347,24 +347,65 @@ router.post('/assign', async (req, res) => {
             helper.CreateJSON(pendingFile, dataArrJson)
         }
 
-        Update();
-        Execute();
+        function Check_Exist(data) {
+            return new Promise((resolve, reject) => {
+                var data_length = data.length;
+                var counter = 0;
+                var seriallist_notexist = '';
+                data.forEach((key, item) => {
+                  
+                    let sql = `select * from register_it_equipment where rie_serial='${key.serial}'`;
+                    mysql.Select(sql, 'RegisterITEquipment', (err, result) => {
+                        if (err) reject(err);
+                        console.log(`CHECK RESULT: ${result}`);
+                        if (result.length == 0) { seriallist_notexist += `[${key.serial}] ` }
 
-        console.log(request_spare_items);
-        Insert_RequestSpareItems(request_spare_items, (err, result) => {
-            if (err) console.error(err);
+                        console.log(`NO RESULT: ${seriallist_notexist}`);
+                        counter += 1;
+                        console.log(`data: ${data_length} counter:${counter}`)
+                        if (data_length == counter) {
+                            resolve(seriallist_notexist);
+                        }
+                    })
+                })
+            })
+        }
 
-            console.log(result);
-        })
+        Check_Exist(dataJson)
+            .then(result => {
+                if (result == '') {
 
-        Update_RequestSpareDetails(controlno, remarks, status, (err, result) => {
-            if (err) console.error(err);
-            console.log(result);
-        })
+                    Update();
+                    Execute();
 
-        res.json({
-            msg: 'success'
-        })
+                    console.log(request_spare_items);
+                    Insert_RequestSpareItems(request_spare_items, (err, result) => {
+                        if (err) console.error(err);
+
+                        console.log(result);
+                    })
+
+                    Update_RequestSpareDetails(controlno, remarks, status, (err, result) => {
+                        if (err) console.error(err);
+                        console.log(result);
+                    })
+
+                    res.json({
+                        msg: 'success'
+                    })
+                } else {
+                    res.json({
+                        msg: 'exist',
+                        data: result
+                    })
+                }
+
+
+            }).catch(error => {
+                res.json({
+                    msg: error
+                })
+            })
 
     } catch (error) {
         res.json({
