@@ -329,7 +329,7 @@ router.post('/updaterequest', (req, res) => {
     return new Promise((resolve, reject) => {
       let sql = `update purchase_details set
       pd_details='${details}',
-      pd_details='${totalcost}'
+      pd_totalbudget='${totalcost}'
       where pd_requestid='${requestid}'`;
 
       mysql.Update(sql, (err, result) => {
@@ -340,16 +340,29 @@ router.post('/updaterequest', (req, res) => {
     })
   }
 
-  function Update_TramsactopmPurchaseItem(requestid, brandname, itemtype, quantity, cost) {
-    // let sql = `update transaction_purchase_item set
-    // tpi_quantity='${}',
-    // tpi_cost='${}',
-    // tpi_subtotal='${}'
-    // where `
+  function Update_TramsactopmPurchaseItem(requestid, brandname, itemtype, quantity, cost, callback) {
+    var status = dictionary.GetValue(dictionary.UPD());
+    let subtotal = parseFloat(quantity) * parseFloat(cost);
+    let sql = `update transaction_purchase_item set
+    tpi_status='${status}',
+    tpi_quantity='${quantity}',
+    tpi_cost='${cost}',
+    tpi_subtotal='${subtotal}'
+    where tpi_requestid='${requestid}'
+    and tpi_brandname='${brandname}'
+    and tpi_itemtype='${itemtype}'`;
+
+    mysql.Update(sql, (err, result) => {
+      if (err) callback(err, null);
+
+      callback(null, result);
+    })
   }
 
   function Update_PurchaseItems(requestid, brandname, itemtype, quantity, cost, callback) {
+    var status = dictionary.GetValue(dictionary.UPD());
     let sql = `update purchase_item set
+    pi_status='${status}',
     pi_quantity='${quantity}',
     pi_cost='${cost}'
     where pi_brandname='${brandname}'
@@ -365,7 +378,7 @@ router.post('/updaterequest', (req, res) => {
 
   function Insert_PurchaseItems(requestid, officer, brandname, itemtype, quantity, cost, callback) {
     var orderdate = helper.GetCurrentDate();
-    var status = dictionary.GetValue(dictionary.REQ());
+    var status = dictionary.GetValue(dictionary.INST());
     let sql = `insert into purchase_item(
       pi_brandname,
       pi_itemtype,
@@ -374,10 +387,9 @@ router.post('/updaterequest', (req, res) => {
       pi_requestid,
       pi_officer,
       pi_orderdate,
-      pi_status,
-    ) values('${brandname}','${itemtype}','${quantity}','${cost}','${requestid}','${officer}','${orderdate}','${status}')`;
+      pi_status) values('${brandname}','${itemtype}','${quantity}','${cost}','${requestid}','${officer}','${orderdate}','${status}')`;
 
-    mysql.InsertPayload(sql, (err, result) => {
+    mysql.InsertDirectPayLoad(sql, (err, result) => {
       if (err) callback(err, null);
 
       callback(null, result);
@@ -385,7 +397,7 @@ router.post('/updaterequest', (req, res) => {
   }
 
   function Update_RequestCablingStocksEquipment(requestid, brandname, itemtype, callback) {
-    var status = dictionary.GetValue(dictionary.REM());
+    var status = dictionary.GetValue(dictionary.UPD());
     let sql = `update request_cabling_stocks_equipments set 
     rcse_status='${status}'
     where rcse_brandname='${brandname}'
@@ -400,7 +412,7 @@ router.post('/updaterequest', (req, res) => {
   }
 
   function Insert_RequestCablingStocksEquipment(requestid, requestby, brandname, itemtype, quantity, callback) {
-    var req
+    let status = dictionary.GetValue(dictionary.INST());
     let sql = `insert into request_cabling_stocks_equipments(
       rcse_requestdate,
       rcse_requestby,
@@ -408,7 +420,39 @@ router.post('/updaterequest', (req, res) => {
       rcse_itemtype,
       rcse_quantity,
       rcse_referenceid,
-      rcse_status) values('${requestid}','${requestby}','${brandname}','${itemtype}','${quantity}','${requestdate}')`;
+      rcse_status) values('${requestdate}','${requestby}','${brandname}','${itemtype}','${quantity}','${requestid}','${status}')`;
+
+    mysql.InsertDirectPayLoad(sql, (err, result) => {
+      if (err) callback(err, null);
+      callback(null, err);
+    });
+
+  }
+
+  function Insert_TransactionPurchaseItem(requestid, requestby, officer, requestdate, brandname, itemtype, quantity, cost, callback) {
+    var subtotal = parseFloat(quantity) * parseFloat(cost);
+    var status = dictionary.GetValue(dictionary.INST());
+    var purchasedate = helper.GetCurrentDate();
+    let sql = `insert into transaction_purchase_item(
+      tpi_brandname,
+      tpi_itemtype,
+      tpi_quantity,
+      tpi_cost,
+      tpi_subtotal,
+      tpi_requestby,
+      tpi_requestdate,
+      tpi_purchasingofficer,
+      tpi_purchasedate,
+      tpi_ponumber,
+      tpi_podate,
+      tpi_requestid,
+      tpi_status) values('${brandname}','${itemtype}','${quantity}','${cost}','${subtotal}','${requestby}','${requestdate}','${officer}','${purchasedate}','','','${requestid}','${status}')`;
+
+    mysql.InsertDirectPayLoad(sql, (err, result) => {
+      if (err) callback(err, null);
+
+      callback(null, result);
+    })
   }
 
   function Check_Exist(brandname, itemtype, callback) {
@@ -421,9 +465,94 @@ router.post('/updaterequest', (req, res) => {
     })
   }
 
+  function Update_RemoveToRequestBudget(requestid) {
+    let sql = `SELECT * FROM purchase_item WHERE pi_requestid='${requestid}' and pi_status='${dictionary.GetValue(dictionary.REQB())}'`;
+    var status = dictionary.GetValue(dictionary.REM());
+
+    //ITEMS
+    mysql.Select(sql, 'PurchaseItems', (err, result) => {
+      if (err) console.error(err);
+
+      console.log(result);
+      //Purchase Item update items that status not set to UPDATE
+      result.forEach((key, item) => {
+        let sql = `UPDATE purchase_item set pi_status='${status}' where pi_requestid='${requestid}' and pi_brandname='${key.brandname}' and pi_itemtype='${key.itemtype}'`;
+        mysql.Update(sql, (err, result) => {
+          if (err) console.error(err);
+          console.log(result);
+        })
+      })
+
+      //Purchase Item update items that status not set to UPDATE
+      result.forEach((key, item) => {
+        let sql = `UPDATE request_cabling_stocks_equipments set rcse_status='${status}' where rcse_referenceid='${requestid}' and rcse_brandname='${key.brandname}' and rcse_itemtype='${key.itemtype}'`;
+        mysql.Update(sql, (err, result) => {
+          if (err) console.error(err);
+          console.log(result);
+        })
+      })
+
+      //Purchase Item update items that status not set to UPDATE
+      result.forEach((key, item) => {
+        let sql = `UPDATE transaction_purchase_item set tpi_status='${status}' where tpi_requestid='${requestid}' and tpi_brandname='${key.brandname}' and tpi_itemtype='${key.itemtype}'`;
+        mysql.Update(sql, (err, result) => {
+          if (err) console.error(err);
+          console.log(result);
+        })
+      })
+    })
+
+    //DETAILS
+
+  }
+
+  function Update_UpdateToRequestBudget(requestid) {
+    let sql = `SELECT * FROM purchase_item WHERE pi_requestid='${requestid}' and pi_status='${dictionary.GetValue(dictionary.UPD())}' or pi_status='${dictionary.GetValue(dictionary.INST())}'`;
+    var status = dictionary.GetValue(dictionary.REQB());
+
+    //ITEMS
+    mysql.Select(sql, 'PurchaseItems', (err, result) => {
+      if (err) console.error(err);
+
+      console.log(result);
+      //Purchase Item update items that status not set to UPDATE
+      result.forEach((key, item) => {
+        let sql = `UPDATE purchase_item set pi_status='${status}' where pi_requestid='${requestid}' and pi_brandname='${key.brandname}' and pi_itemtype='${key.itemtype}'`;
+        mysql.Update(sql, (err, result) => {
+          if (err) console.error(err);
+          console.log(result);
+        })
+      })
+
+      //Purchase Item update items that status not set to UPDATE
+      result.forEach((key, item) => {
+        let status = dictionary.GetValue(dictionary.PND());
+        let sql = `UPDATE request_cabling_stocks_equipments set rcse_status='${status}' where rcse_referenceid='${requestid}' and rcse_brandname='${key.brandname}' and rcse_itemtype='${key.itemtype}'`;
+        mysql.Update(sql, (err, result) => {
+          if (err) console.error(err);
+          console.log(result);
+        })
+      })
+
+      //Purchase Item update items that status not set to UPDATE
+      result.forEach((key, item) => {
+        let sql = `UPDATE transaction_purchase_item set tpi_status='${status}' where tpi_requestid='${requestid}' and tpi_brandname='${key.brandname}' and tpi_itemtype='${key.itemtype}'`;
+        mysql.Update(sql, (err, result) => {
+          if (err) console.error(err);
+          console.log(result);
+        })
+      })
+    })
+
+    //DETAILS
+
+  }
+
   Extract_NewDeatails(details)
     .then(ndata => {
       console.log(`${ndata}`);
+
+      var counter = 0;
       ndata.forEach((key, item) => {
         console.log(`${key.brandname} ${key.itemtype} `);
         Check_Exist(key.brandname, key.itemtype, (err, result) => {
@@ -444,6 +573,12 @@ router.post('/updaterequest', (req, res) => {
 
               console.log(result);
             })
+
+            Update_TramsactopmPurchaseItem(requestid, key.brandname, key.itemtype, key.itemcount, key.itemcost, (err, result) => {
+              if (err) console.error(err);
+
+              console.log(result);
+            })
           } else {
             //insert
             console.log('Insert');
@@ -453,8 +588,21 @@ router.post('/updaterequest', (req, res) => {
 
               console.log(result);
             })
+
+            Insert_RequestCablingStocksEquipment(requestid, requestby, key.brandname, key.itemtype, key.itemcount, (err, result) => {
+              if (err) console.error(err);
+
+              console.log(result);
+            })
+
+            Insert_TransactionPurchaseItem(requestid, requestby, officer, requestdate, key.brandname, key.itemtype, key.itemcount, key.itemcost, (err, result) => {
+              if (err) console.error(err);
+
+              console.log(result);
+            })
           }
         })
+        counter += 1;
       })
 
     })
@@ -464,16 +612,57 @@ router.post('/updaterequest', (req, res) => {
       })
     });
 
-  res.json({
-    msg: 'success'
-  })
+  setTimeout(() => {
+    Update_RemoveToRequestBudget(requestid); //Update Items that not set status to UPDATE
+
+  }, 2000);
+
+  setTimeout(() => {
+    Update_UpdateToRequestBudget(requestid); //Update Items that set status to UPDATE change to REQUEST BUDGET
+
+    Update_RequestCablingStocksDetails(details, requestid)
+      .then(result => {
+        console.log(result);
+
+        Update_PurchaseDetails(details, requestid)
+          .then(result => {
+            console.log(result);
+
+            Update_TransactionCablingStocksDetails(details, requestid)
+              .then(result => {
+                console.log(result);
+
+                res.json({
+                  msg: 'success'
+                })
+              })
+              .catch(error => {
+                res.json({
+                  msg: error
+                })
+              })
+          })
+          .catch(error => {
+            res.json({
+              msg: error
+            })
+          })
+      })
+      .catch(error => {
+        res.json({
+          msg: error
+        })
+      })
+  }, 2000);
+
 
 })
 
 router.post('/gettransactionpurchseitems', (req, res) => {
   try {
     let requestid = req.body.requestid;
-    let sql = `SELECT * FROM transaction_purchase_item WHERE tpi_requestid='${requestid}'`;
+    let status = dictionary.GetValue(dictionary.REQB());
+    let sql = `SELECT * FROM transaction_purchase_item WHERE tpi_requestid='${requestid}' and tpi_status='${status}'`;
     mysql.Select(sql, 'TransactionPurchaseItem', (err, result) => {
       if (err) throw err;
 

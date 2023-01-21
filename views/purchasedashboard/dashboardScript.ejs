@@ -200,12 +200,21 @@
         var requestapproveModal = document.getElementById("requestapproveModal");
         var requestapprovespan = document.getElementById("requestapprovespan");
 
+        var POEquimentModal = document.getElementById("POEquimentModal");
+        var POEquimentModalSpan = document.getElementById("POEquimentModalSpan");
+
+        POEquimentModalSpan.onclick = function () {
+            POEquimentModal.style.display = "none";
+        }
+
         stocksmodalspan.onclick = function () {
             stocksmodal.style.display = "none";
         }
+
         equipmentrequestspan.onclick = function () {
             equipmentrequestmodal.style.display = "none";
         }
+
         requestapprovespan.onclick = function () {
             requestapproveModal.style.display = "none";
         }
@@ -214,11 +223,17 @@
             if (event.target == stocksmodal) {
                 stocksmodal.style.display = "none";
             }
+
             if (event.target == equipmentrequestmodal) {
                 equipmentrequestmodal.style.display = "none";
             }
+
             if (event.target == requestapproveModal) {
                 requestapproveModal.style.display = "none";
+            }
+
+            if (event.target == POEquimentModal) {
+                POEquimentModal.style.display = "none";
             }
         }
 
@@ -278,6 +293,10 @@
 
         $(document).on('click', "#printStocksBtn", function () {
             stocksmodal.style.display = "block";
+        })
+
+        $(document).on('click', '#generateBtn', function () {
+            POEquimentModal.style.display = "block";
         })
 
         $(document).on('click', "#assignBtn", function () {
@@ -483,8 +502,6 @@
                     alert('error: ' + result.data);
                 }
             });
-
-
 
             $.ajax({
                 type: "POST",
@@ -697,6 +714,10 @@
 
                 console.log(`${requestby} ${requestdate}`)
 
+                requestapproveModal.style.display = "NONE";
+                equipmentrequestmodal.style.display = 'NONE';
+
+                showloader();
                 $.ajax({
                     type: "POST",
                     url: "/purchasedashboard/updaterequest",
@@ -708,15 +729,16 @@
                         details: dataRaw
                     },
                     success: function (result) {
-                        requestapproveModal.style.display = "NONE";
-                        equipmentrequestmodal.style.display = 'NONE';
+
                         success('Saved!', 'Data Saved!');
                         LoadTableData();
+                        hideload();
                     },
                     error: function (result) {
                         error('error: ' + result);
                     }
                 });
+
             }
         })
         //#endregion

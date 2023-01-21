@@ -47,7 +47,7 @@
             console.log('clicked')
 
             showloader();
-            dataTable2 = $('#site-tbl').DataTable({
+            sitespare = $('#site-tbl').DataTable({
                 'destroy': true,
                 'processing': true,
                 'serverSide': true,
@@ -89,6 +89,105 @@
                     { data: 'itemtype' },
                     { data: 'itemcount' },
                     { data: 'action' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+         
+            showloader();
+            sparetable = $('#spare-tbl').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'POST',
+                'ajax': {
+                    'url': '/sitespare/getactivespare',
+                    'data': {
+                        site: site,
+                        department: department
+                    },
+                    'dataSrc': (result) => {
+                        var finalData = [];
+                        var data = result.data;
+
+                        $.each(data, (key, item) => {
+
+                            finalData.push({
+                                itembrand: item.itembrand,
+                                itemtype: item.itemtype,
+                                itemcount: item.itemcount,
+                                
+                            });
+                        })
+
+                        return finalData;
+                    }
+                },
+                'columnDefs': [{
+                    targets: 2,
+                    className: 'td-indent',
+                }],
+                'columns': [
+                    { data: 'itembrand' },
+                    { data: 'itemtype' },
+                    { data: 'itemcount' },
+                  
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+
+            showloader();
+            deploytable = $('#deploy-tbl').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'POST',
+                'ajax': {
+                    'url': '/sitespare/getdeployspare',
+                    'data': {
+                        site: site,
+                        department: department
+                    },
+                    'dataSrc': (result) => {
+                        var finalData = [];
+                        var data = result.data;
+
+                        $.each(data, (key, item) => {
+
+                            finalData.push({
+                                itembrand: item.itembrand,
+                                itemtype: item.itemtype,
+                                itemcount: item.itemcount,
+                            });
+                        })
+
+                        return finalData;
+                    }
+                },
+                'columnDefs': [{
+                    targets: 2,
+                    className: 'td-indent',
+                }],
+                'columns': [
+                    { data: 'itembrand' },
+                    { data: 'itemtype' },
+                    { data: 'itemcount' },
+                
                 ],
                 initComplete: function () {
                     console.log('init complete');

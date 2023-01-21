@@ -65,7 +65,7 @@ exports.Insert = async (stmt) => {
     }
 }
 
-exports.InsertPayload = (sql, callback) => {
+exports.InsertDirectPayLoad = (sql, callback) => {
     try {
 
         // console.log(`statement: ${stmt} data: ${todos}`);

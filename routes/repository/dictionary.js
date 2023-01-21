@@ -21,6 +21,8 @@ exports.GetValue = (abr) => {
     if (abr == 'RET') return 'RETURNED';
     if (abr == 'ACT') return 'ACTIVE';
     if (abr == 'REM') return 'REMOVE';
+    if (abr == 'UPD') return 'UPDATE';
+    if (abr == 'INST') return 'INST';
 }
 
 //#region STATUS CODE
@@ -106,5 +108,13 @@ exports.ACT = () => {
 
 exports.REM = () => {
     return 'REM';
+}
+
+exports.UPD = () => {
+    return 'UPD';
+}
+
+exports.INST = () => {
+    return 'INST';
 }
 //#endregion
