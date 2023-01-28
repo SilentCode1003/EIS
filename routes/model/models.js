@@ -851,3 +851,63 @@ exports.MasterItemPrice = (data) => {
     return dataResult;
 }
 
+exports.MasterSupplier = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            suppliercode: key.ms_suppliercode,
+            suppliername: key.ms_suppliername,
+            location: key.ms_location,
+            department: key.ms_supplierdepartment,
+            createdby: key.ms_createdby,
+            createddate: key.ms_createddate,
+            status: key.ms_status,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.PORequestDetails = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            detailid: key.prd_detailid,
+            supplier: key.prd_supplier,
+            details: key.prd_details,
+            createdby: key.prd_createdby,
+            createddate: key.prd_createddate,
+            remarks: key.prd_remarks,
+            status: key.prd_status,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.PORequestItems = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            transactionid: key.pri_transactionid,
+            itembrand: key.pri_itembrand,
+            itemname: key.pri_itemname,
+            quantity: key.pri_quantity,
+            costperunit: key.pri_costperunit,
+            subtotal: key.pri_subtotal,
+            detailid: key.pri_detailid,
+            preparedby: key.pri_preparedby,
+            prepareddate: key.pri_prepareddate,
+            remarks: key.pri_remarks,
+            status: key.pri_status,
+        })
+    });
+
+    return dataResult;
+}

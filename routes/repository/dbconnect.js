@@ -95,7 +95,7 @@ exports.InsertTable = (stmt, todos, callback) => {
             if (err) {
                 callback(err, null);
             }
-            callback(null, `Row inserted: ${results.affectedRows}`);
+            callback(null, `Row inserted: ${results}`);
             // console.log(`Row inserted: ${results.affectedRows}`);
         });
 
@@ -250,6 +250,18 @@ exports.Select = (sql, table, callback) => {
             if (table == 'RequestCablingStocksDatails') {
                 callback(null, model.RequestCablingStocksDetails(results));
             }
+
+            if (table == 'MasterSupplier') {
+                callback(null, model.MasterSupplier(results));
+            }
+
+            if (table == 'PORequestDetails') {
+                callback(null, model.PORequestDetails(results));
+            }
+
+            if (table == 'PORequestItems') {
+                callback(null, model.PORequestItems(results));
+            }
         });
 
     } catch (error) {
@@ -278,10 +290,6 @@ exports.SelectResult = async (sql, table, callback) => {
 
             if (table == 'CablingItemMaster') {
                 callback(null, model.CablingItemMaster(results));
-            }
-
-            if (table == 'PurchaseDatails') {
-                callback(null, model.PurchaseDatails(results));
             }
         });
 

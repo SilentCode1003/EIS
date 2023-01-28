@@ -203,6 +203,13 @@
         var POEquimentModal = document.getElementById("POEquimentModal");
         var POEquimentModalSpan = document.getElementById("POEquimentModalSpan");
 
+        var GeneratePOModal = document.getElementById("GeneratePOModal");
+        var GeneratePOModalSpan = document.getElementById("GeneratePOModalSpan");
+
+        GeneratePOModalSpan.onclick = function () {
+            GeneratePOModal.style.display = "none";
+        }
+
         POEquimentModalSpan.onclick = function () {
             POEquimentModal.style.display = "none";
         }
@@ -234,6 +241,10 @@
 
             if (event.target == POEquimentModal) {
                 POEquimentModal.style.display = "none";
+            }
+
+            if (event.target == GeneratePOModal) {
+                GeneratePOModal.style.display = "none";
             }
         }
 
@@ -295,8 +306,76 @@
             stocksmodal.style.display = "block";
         })
 
+        $(document).on('change click', '#supllierlist', function () {
+            var suppliername = $('#supllierlist').val();
+
+            $.ajax({
+                type: "POST",
+                url: "/supplier/getsupplierlocation",
+                data: {
+                    department: 'CABLING',
+                    suppliername: suppliername
+                },
+                success: function (result) {
+                    console.log(result.data);
+                    var data = result.data;
+
+                    $.each(data, function (key, item) {
+                        const _inputLocation = document.getElementById('supplierlocation');
+                        _inputLocation.value = item.location;
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+        })
+
+        $(document).on('click', '#poBtn', function () {
+            var suppliername = $('#supllierlist').val();
+            var location = $('#supplierlocation').val();
+
+            console.log('clicked!');
+            $.ajax({
+                type: 'POST',
+                url: '/purchasereport/save',
+                data: {
+                    suppliername: suppliername,
+                    location: location,
+                    requestid: requestid
+                },
+                success: function (result) {
+                    GeneratePOModal.style = 'none';
+                    success('Success', 'Data Saved!');
+                },
+                error: function (error) {
+                    error(error);
+                }
+            })
+        })
+
         $(document).on('click', '#generateBtn', function () {
-            POEquimentModal.style.display = "block";
+            $("#supllierlist").empty();
+            $.ajax({
+                type: "POST",
+                url: "/supplier/getsupplier",
+                data: { department: 'CABLING' },
+                success: function (result) {
+                    console.log(result.data);
+                    var data = result.data;
+
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.suppliername, item.suppliername);
+                        $(options).html(item.suppliername);
+                        $('#supllierlist').append(options);
+                        console.log(item.suppliername);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+            GeneratePOModal.style.display = "block";
         })
 
         $(document).on('click', "#assignBtn", function () {
@@ -482,6 +561,8 @@
                 'info': false,
                 'scrollCollapse': true,
             });
+
+            $("#brandlist").empty();
 
             $.ajax({
                 type: "POST",

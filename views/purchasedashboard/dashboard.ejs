@@ -104,7 +104,7 @@
 
             <div class="modal-body modal-print-background">
                 <div>
-                    <h2 class='report-header' style="text-align: center"> PURCHASE ORDER REQUEST</h2>
+                    <h2 class='report-header' style="text-align: center"> REQUEST LIST</h2>
                     <br>
                     <br>
 
@@ -337,137 +337,32 @@
     </div>
 </div>
 
-
 <!-- The Modal -->
-<div id="POEquimentModal" class="modal card shadow mb-4">
+<div id="GeneratePOModal" class="modal card shadow mb-4">
     <!-- Modal content -->
     <div class="modal-content modal-print-background">
         <div class="modal-button-container modal-print-background">
-            <span id="POEquimentModalSpan" class="close">&times;</span>
-        </div>
-        <!-- AREA TO PRINT ONLY -->
-        <div id="PrintArea">
-            <div class="modal-header center-content modal-print-background">
-                <div class="row">
-                    <div class="col-xl-3 col-lg-2">
-                        <img class="logo" src="/images/img/logo.jpg" alt="...">
-                    </div>
-                </div>
-            </div>
-
-            <div class="center-text modal-print-background">
-                <div class="modal-print-background modal-company-header">
-                    <p><strong><span class="report-header">5L SOLUTIONS SUPPLY &amp; ALLIED SERVICES
-                                CORP.</span></strong></p>
-                </div>
-                <div class="modal-print-background">
-                    <p><span class="report-subheader">Phase 3B Block 18 Lot 15, Golf Drive Street Pacita
-                            Complex 1,
-                            City of Bi&ntilde;an, Laguna</span></p>
-                </div>
-                <div class="modal-print-background">
-                    <p><span class="report-subheader">Tel.Nos: 273-44-69/952-15-60</span></p>
-                </div>
-            </div>
-
-            <div class="modal-body modal-print-background">
-                <div>
-                    <h2 class='report-header' style="text-align: center"> PURCHASE ORDER</h2>
-                    <br>
-                    <br>
-
-                    <div class="row modal-signature-info">
-                        <div class="col-sm-6">
-                            <p><strong>Date/Time: <span id="podate">2023-01-17</span> </strong></p>
-                        </div>
-                    </div>
-
-                    <div class="row modal-signature-info">
-                        <div class="col-sm-6">
-                            <p><strong>P.O #: <span id="ponumber">2023-001</strong></p>
-                        </div>
-                    </div>
-
-                    <div class="row modal-signature-info">
-                        <div class="col-sm-6">
-                            <p><strong>Company: <span id="company">AWS Distribution Corp</span></strong></p>
-                        </div>
-                    </div>
-
-                    <div class="row modal-signature-info">
-                        <div class="col-sm-6">
-                            <p><strong>Location: <span id="location">Head Office</span></strong></p>
-                        </div>
-                    </div>
-
-                    <div class="center-text">
-                        <p><strong>This serves as Purchase Request for the below items.</strong></p>
-                    </div>
-                    <div>
-                        <table id="po=equipments-tbl">
-                            <thead>
-                                <th>ITEM</th>
-                                <th>Description</th>
-                                <th>QTY</th>
-                                <th>Unit Price</th>
-                                <th>Sub Total</th>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Alantek CAT6</td>
-                                    <td>20</td>
-                                    <td>5,750.00</td>
-                                    <td>115,000.00</td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>Alantek CAT6</td>
-                                    <td>20</td>
-                                    <td>5,750.00</td>
-                                    <td>115,000.00</td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Alantek CAT6</td>
-                                    <td>20</td>
-                                    <td>5,750.00</td>
-                                    <td>115,000.00</td>
-                                </tr>
-
-                                <tr>
-                                    <td></td>
-                                    <td>TOTAL</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td>207,500.00</td>
-                                </tr>
-                            </tbody>
-
-                        </table>
-                    </div>
-                    <br>
-                    <br>
-                    <div class="row modal-signature-info">
-                        <div class="col-sm-6">
-                            <p><strong>Prepared by:</strong></p>
-                        </div>
-                    </div>
-                    <br>
-                    <br>
-                    <div class="row modal-signature-info">
-                        <div class="col-sm-6">
-                            <span id="officer">LESTER BAGAPURO</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+            <span id="GeneratePOModalSpan" class="close">&times;</span>
         </div>
 
-        <div id="modal-button-container" class="center-content">
-            <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
-            <button class="approve-btn" id="POEquimentModalPrintBtn" name="POEquimentModalPrintBtn">PRINT</button>
+        <div class="row">
+            <div class="coontent-center col-sm-4"></div>
+            <div class="coontent-center col-sm-4">
+                <div class="entry-area">
+                    <select class="entry-input" name="supllierlist" id="supllierlist">
+                        <option value="-">COMPANY</option>
+                    </select>
+                </div>
+
+                <div class="entry-area">
+                    <input class="entry-input" type="text" name="supplierlocation" id="supplierlocation" disabled="disabled" placeholder="LOCATION">
+                </div>
+
+                <div class="entry-area">
+                    <button class="approve-btn" name="poBtn" id="poBtn">GENERATE PO</button>
+                </div>
+            </div>
+            <div class="coontent-center col-sm-4"></div>
         </div>
     </div>
 </div>
