@@ -108,6 +108,7 @@ router.post('/save', (req, res) => {
       ]);
 
       var datajson = JSON.parse(details);
+      console.log(datajson);
       datajson.forEach((key, item) => {
         var subtotal = parseFloat(key.itemcount) * parseFloat(key.itemcost);
         po_request_items.push([

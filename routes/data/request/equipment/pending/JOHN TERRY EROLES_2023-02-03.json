@@ -1,0 +1,26 @@
+[
+  {
+    "controlno": 1003,
+    "personel": "JOHN TERRY EROLES",
+    "data": [
+      {
+        "store": "1948 6TH AVE. CALOOCAN",
+        "ticket": "INC-5212542",
+        "brandname": "SANDISK",
+        "itemtype": "SANDISK 2.5 SSD 500GB",
+        "quantity": "1",
+        "remarks": "ADDITIONAL SSD"
+      },
+      {
+        "store": "3553 8 WAVES RESORT",
+        "ticket": "INC-5212652",
+        "brandname": "CLIQQ",
+        "itemtype": "CLIQQ STAR PINTER",
+        "quantity": "1",
+        "remarks": "CLIQQ PRINTER ISOLATION"
+      }
+    ],
+    "createddate": "2023-02-03",
+    "status": "ALLOC"
+  }
+]

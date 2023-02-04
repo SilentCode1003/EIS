@@ -90,11 +90,11 @@
                                 action = '<button class="assign-btn" id="assignBtn" name="assignBtn">ASSIGN SERIAL</button>'
                             }
                             if (status == 'FAPR') {
-                                action = '<button class="approve-btn" id="approvedBtn" name="approvedBtn">APPROVED</button><br><button class="edit-btn" id="editBtn" name="editBtn">EDIT</button>'
+                                action = '<button class="approve-btn" id="approvedBtn" name="approvedBtn">APPROVED</button><br><button class="edit-btn" id="editBtn" name="editBtn">EDIT</button><br><button class="edit-btn" id="detailsBtn" name="detailsBtn">DETAILS</button>'
                             }
 
                             if (status == 'ALLOC') {
-                                action = '<button class="approve-btn" id="deploybtn" name="deploybtn">DEPLOY</button><br><button class="edit-btn" id="printRequestBtn" name="printRequestBtn">PRINT</button>'
+                                action = '<button class="approve-btn" id="deploybtn" name="deploybtn">DEPLOY</button><br><button class="edit-btn" id="printRequestBtn" name="printRequestBtn">PRINT</button><br><button class="edit-btn" id="cancelRequestBtn" name="cancelRequestBtn">CANCEL</button>'
                             }
 
                             finalData.push({
@@ -357,6 +357,13 @@
         var deploymodal = document.getElementById("deployModal");
         var deployspan = document.getElementById("deployspan");
 
+        var detailsModal = document.getElementById("detailsModal");
+        var detailModalSpan = document.getElementById("detailModalSpan");
+
+        detailModalSpan.onclick = function () {
+            detailsModal.style.display = "none";
+        }
+
         span.onclick = function () {
             modal.style.display = "none";
         }
@@ -377,7 +384,6 @@
             modalrequestprint.style.display = "none";
         }
 
-
         window.onclick = function (event) {
             if (event.target == modal) {
                 modal.style.display = "none";
@@ -393,6 +399,10 @@
             }
             if (event.target == deploymodal) {
                 deploymodal.style.display = "none";
+            }
+
+            if (event.target == detailsModal) {
+                detailsModal.style.display = "none";
             }
         }
 
@@ -472,9 +482,295 @@
             $(this).focus();
         });
 
+
+        let detailrow = '';
+        $('#request-details-tbl tbody').on('click', 'tr', function (e) {
+            var data = [];
+            detailrow = $(this).closest('tr');
+            $(this).closest('tr').find('td').each(function () {
+                data.push([$(this).text()]);
+
+            });
+        });
+
+        $(document).on('click', '#removedetailBtn', function () {
+            var details = [];
+
+            var index = 0;
+            $('#request-details-tbl tbody').find('tr').each(function () {
+                var datatd = [];
+                $(this).find('td').each(function () {
+                    datatd.push([$(this).text()]);
+                })
+
+                let requestby = datatd[0];
+                let store = datatd[1];
+                let ticket = datatd[2];
+                let brand = datatd[3];
+                let type = datatd[4];
+                let total = parseInt(datatd[5]);
+                let remarks = datatd[6];
+
+                details.push({
+                    requestby,
+                    store,
+                    ticket,
+                    brand,
+                    type,
+                    total,
+                    remarks,
+                    index
+                });
+
+                index += 1;
+            })
+
+            var items = [];
+            var index = 0;
+            $('#detail-request-items-table tbody').find('tr').each(function () {
+                var datatd = [];
+                $(this).find('td').each(function () {
+                    datatd.push([$(this).text()]);
+                })
+
+                let requestby = datatd[0];
+                let store = datatd[1];
+                let ticket = datatd[2];
+                let brand = datatd[3];
+                let type = datatd[4];
+                let total = parseInt(datatd[5]);
+                let remarks = datatd[6];
+
+                items.push({
+                    requestby,
+                    store,
+                    ticket,
+                    brand,
+                    type,
+                    total,
+                    remarks,
+                    index
+                });
+
+                index += 1;
+            })
+            
+            
+            
+            detailrow.remove();
+        })
+
+        let itemsrow = '';
+        let itemrow_type = '';
+        let itemrow_brand = '';
+        $('#detail-request-items-table tbody').on('click', 'tr', function (e) {
+            var data = [];
+            itemsrow = $(this).closest('tr');
+            $(this).closest('tr').find('td').each(function () {
+                data.push([$(this).text()]);
+
+            });
+
+
+            itemrow_type = data[3];
+            itemrow_brand = data[2];
+        });
+
+        $(document).on('click', '#removeitemsBtn', function () {
+            var details = [];
+
+            var index = 0;
+            $('#request-details-tbl tbody').find('tr').each(function () {
+                var datatd = [];
+                $(this).find('td').each(function () {
+                    datatd.push([$(this).text()]);
+                })
+
+                let requestby = datatd[0];
+                let store = datatd[1];
+                let ticket = datatd[2];
+                let brand = datatd[3];
+                let type = datatd[4];
+                let total = parseInt(datatd[5]);
+                let remarks = datatd[6];
+
+                details.push({
+                    requestby,
+                    store,
+                    ticket,
+                    brand,
+                    type,
+                    total,
+                    remarks,
+                    index
+                });
+
+                index += 1;
+            })
+
+            console.log(itemrow_type);
+            console.log(itemrow_brand);
+            console.log(details);
+
+            var requestdetail = $('#request-details-tbl').DataTable({
+                'destroy': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollCollapse': true,
+            });
+
+            requestdetail.clear().draw();
+
+            $.each(details, (key, item) => {
+                // console.log(item.type[0]);
+                var itemtype = item.type[0];
+                var itemrow = itemrow_type[0]
+
+                if (itemrow === itemtype) {
+                    var quantity = item.total - 1;
+
+                    console.log(`type: ${itemrow} quantity: ${quantity}`)
+
+                    if (quantity > 0) {
+                        var action = `<button class="circle-btn" id="removedetailBtn" name="removedetailBtn">
+                                <div class="delete-line"></div>
+                            </button>`;
+                        requestdetail.row.add([item.requestby,
+                        item.store,
+                        item.ticket,
+                        item.brand,
+                        item.type,
+                            quantity,
+                        item.remarks,
+                            action]).draw(false);
+                    }
+                    else {
+                        requestdetail.row(item.index).remove().draw();
+                    }
+                }
+                else {
+                    var action = `<button class="circle-btn" id="removedetailBtn" name="removedetailBtn">
+                                <div class="delete-line"></div>
+                            </button>`;
+                    requestdetail.row.add([item.requestby,
+                    item.store,
+                    item.ticket,
+                    item.brand,
+                    item.type,
+                    item.total,
+                    item.remarks,
+                        action]).draw(false);
+                }
+            })
+
+            itemsrow.remove();
+        })
+
+
         $('#requestModal').on('hidden.bs.modal', function (e) {
             EquipmentRequestLoadTables();
         });
+
+        $(document).on('click', '#detailsBtn', function () {
+            showloader();
+            var requestdetail = $('#request-details-tbl').DataTable({
+                'destroy': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollCollapse': true,
+            });
+
+            var requestitems = $('#detail-request-items-table').DataTable({
+                'destroy': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollCollapse': true,
+            });
+
+            requestdetail.clear().draw();
+            requestitems.clear().draw();
+
+            $.ajax({
+                type: "POST",
+                url: "/requestequipment/getrequestdetails",
+                data: {
+                    requestby: requestby,
+                    requestdate: requestdate
+                },
+                success: function (result) {
+
+                    console.log(result.data['details']);
+                    console.log(result.data['items']);
+
+                    var items = result.data['items'];
+                    var details = result.data['details'];
+
+                    $.each(details, (key, item) => {
+                        var requestlist = item.details;
+                        var action = `<button class="circle-btn" id="removedetailBtn" name="removedetailBtn">
+                                                <div class="delete-line"></div>
+                                            </button>`;
+                        requestlist = JSON.parse(requestlist);
+                        $.each(requestlist, (ket, value) => {
+                            requestdetail.row.add([item.requestby,
+                            value.store,
+                            value.ticket,
+                            value.brandname,
+                            value.itemtype,
+                            value.quantity,
+                            value.remarks,
+                                action]).draw(false);
+                        })
+                    })
+
+                    $.each(items, (key, item) => {
+                        var action = `<button class="circle-btn" id="removeitemsBtn" name="removeitemsBtn">
+                                                <div class="delete-line"></div>
+                                            </button>`;
+                        requestitems.row.add([
+                            item.ticket,
+                            item.store,
+                            item.brandname,
+                            item.itemtype,
+                            item.serial,
+                            action]).draw(false);
+
+                    })
+
+                    setTimeout(() => {
+                        hideload();
+                        detailsModal.style.display = "block";
+                    }, 1000);
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+
+
+        })
+
+        $(document).on('click', '#cancelRequestBtn', function () {
+            $.ajax({
+                type: 'POST',
+                url: '/requestequipment/cancelrequest',
+                data: {
+                    requestby: requestby,
+                    requestdate: requestdate
+                },
+                success: function () {
+                    EquipmentRequestLoadTables();
+
+                    success('Success', 'Cancel Request Successfull');
+                },
+                error: function (error) {
+                    warning('Error', error);
+                }
+            })
+        })
 
         $(document).on('click', "#printRequestBtn", function () {
             var requestitemTabel = $('#print-requesttbl').DataTable({

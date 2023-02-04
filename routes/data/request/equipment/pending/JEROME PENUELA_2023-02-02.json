@@ -1,0 +1,18 @@
+[
+  {
+    "controlno": 1002,
+    "personel": "JEROME PENUELA",
+    "data": [
+      {
+        "store": "3786 68 ROCESS",
+        "ticket": "INC-4521523",
+        "brandname": "CYBERPOWER",
+        "itemtype": "Cyberpower UPS",
+        "quantity": "1",
+        "remarks": "POS UPS REPLACEMENT"
+      }
+    ],
+    "createddate": "2023-02-02",
+    "status": "PENDING"
+  }
+]

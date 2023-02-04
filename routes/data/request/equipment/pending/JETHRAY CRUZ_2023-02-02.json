@@ -1,0 +1,18 @@
+[
+  {
+    "controlno": 1001,
+    "personel": "JETHRAY CRUZ",
+    "data": [
+      {
+        "store": "2727 21ST AVE.",
+        "ticket": "INC-4585252",
+        "brandname": "ZEBRA",
+        "itemtype": "Zebra Barcode Scanner",
+        "quantity": "2",
+        "remarks": "POS SCANNER ISOLATION"
+      }
+    ],
+    "createddate": "2023-02-02",
+    "status": "ALLOC"
+  }
+]

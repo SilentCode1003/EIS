@@ -29,8 +29,6 @@ function isAuthAdmin(req, res, next) {
     }
 };
 
-const { normalizeUnits } = require('moment');
-/* GET home page. */
 router.get('/', isAuthAdmin, function (req, res, next) {
     res.render('requestequipment', {
         title: 'Equipment Inventory System',
@@ -97,6 +95,24 @@ router.post('/save', (req, res) => {
             })
         }
 
+        function Check_RequestDetailsExist() {
+            return new Promise((resolve, reject) => {
+                let sql = `SELECT * FROM request_sapre_details
+                    WHERE rsd_requestby='${personel}'
+                    AND rsd_requestdate='${createddate}'`;
+
+                mysql.Select(sql, 'RequestSpareDetails', (err, result) => {
+                    if (err) reject(err);
+
+                    if (result.length != 0) {
+                        resolve(1);
+                    } else {
+                        resolve(0);
+                    }
+                })
+            })
+        }
+
         var dataRaw = JSON.parse(data);
         var details = [];
 
@@ -127,22 +143,39 @@ router.post('/save', (req, res) => {
             stats,
         ])
 
-        Insert_RequestSpareDetails(request_spare_details, (err, result) => {
-            if (err) console.error(err);
-            console.log(result);
-        })
+        Check_RequestDetailsExist()
+            .then(result => {
+                if (result != 0) {
+                    res.json({
+                        msg: 'exist'
+                    })
+                }
+                else {
+                    Insert_RequestSpareDetails(request_spare_details, (err, result) => {
+                        if (err) console.error(err);
+                        console.log(result);
+                    })
 
-        let sql = `SELECT * FROM request_sapre_details
-        WHERE rsd_requestby='${personel}'
-        AND rsd_requestdate='${createddate}'`;
-        CreateFile_RequestSpareDetails(sql, personel, createddate, details, remarks, (err, result) => {
-            if (err) console.error(err);
+                    let sql = `SELECT * FROM request_sapre_details
+                    WHERE rsd_requestby='${personel}'
+                    AND rsd_requestdate='${createddate}'
+                    AND rsd_details='${data}'`;
+                    CreateFile_RequestSpareDetails(sql, personel, createddate, details, remarks, (err, result) => {
+                        if (err) console.error(err);
 
-            console.log(result);
-            res.json({
-                msg: 'success'
+                        console.log(result);
+                        res.json({
+                            msg: 'success'
+                        })
+                    })
+                }
+
             })
-        })
+            .catch(error => {
+                return res.json({
+                    msg: error
+                })
+            });
 
     } catch (error) {
         res.json({
@@ -353,7 +386,7 @@ router.post('/assign', async (req, res) => {
                 var counter = 0;
                 var seriallist_notexist = '';
                 data.forEach((key, item) => {
-                  
+
                     let sql = `select * from register_it_equipment where rie_serial='${key.serial}'`;
                     mysql.Select(sql, 'RegisterITEquipment', (err, result) => {
                         if (err) reject(err);
@@ -871,6 +904,147 @@ router.post('/deployitem', (req, res) => {
             })
         })
 
+    } catch (error) {
+        res.json({
+            msg: error
+        })
+    }
+})
+
+router.post('/cancelrequest', (req, res) => {
+    try {
+        let requestby = req.body.requestby;
+        let requestdate = req.body.requestdate;
+        let status = dictionary.FAPR();
+        let remarks = dictionary.GetValue(status);
+        let update_rsd = `update request_sapre_details 
+        set rsd_remarks='${remarks}', 
+        rsd_status='${status}' 
+        where rsd_requestby='${requestby}' 
+        and rsd_requestdate='${requestdate}'`;
+        let update_rsi = `update request_spare_items 
+        set rsi_remarks='${remarks}', 
+        rsi_status='${status}' 
+        where rsi_requestby='${requestby}' 
+        and rsi_requestdate='${requestdate}'`;
+
+        function Update_Request(rsd, rsi) {
+            return new Promise((resolve, reject) => {
+                mysql.Update(rsd, (err, result) => {
+                    if (err) reject(err);
+
+                    console.log(result);
+                })
+
+                mysql.Update(rsi, (err, result) => {
+                    if (err) reject(err);
+
+                    console.log(result);
+                })
+
+                resolve('DENE');
+            })
+        }
+
+        Update_Request(update_rsd, update_rsi)
+            .then(result => {
+                console.log(result);
+                var pendingFile = `${RequestEquipmentPathPending}${requestby}_${requestdate}.json`;
+                var approveFile = `${RequestEquipmentPathApprove}${requestby}_${requestdate}.json`;
+
+                helper.MoveFile(approveFile, pendingFile);
+
+                res.json({
+                    msg: 'success'
+                })
+            })
+            .catch(error => {
+                res.json({
+                    msg: error
+                })
+            })
+
+    } catch (error) {
+        res.json({
+            msg: error
+        })
+    }
+})
+
+router.post('/getrequestdetails', (req, res) => {
+    try {
+        let requestby = req.body.requestby;
+        let requestdate = req.body.requestdate;
+        let request_spare_details = [];
+        let request_spare_items = [];
+
+
+
+        function Get_Details() {
+            return new Promise((resolve, reject) => {
+                let sql_rsd = `select * from request_sapre_details where rsd_requestby='${requestby}' and rsd_requestdate='${requestdate}'`;
+                mysql.Select(sql_rsd, 'RequestSpareDetails', (err, result) => {
+                    if (err) reject(err);
+
+                    resolve(result);
+                })
+            })
+        }
+        function Get_Items() {
+            return new Promise((resolve, reject) => {
+                let sql_rsi = `select * from request_spare_items where rsi_requestby='${requestby}' and rsi_requestdate='${requestdate}'`;
+                mysql.Select(sql_rsi, 'RequestSpareItems', (err, result) => {
+                    if (err) reject(err);
+
+                    resolve(result);
+                })
+            })
+        }
+
+        var details = [];
+        Get_Details().then(result => {
+            result.forEach((key, value) => {
+                details.push({
+                    requestid: key.requestid,
+                    requestby: key.requestby,
+                    requestdate: key.requestdate,
+                    details: key.details,
+                    remarks: key.remarks,
+                    status: key.status,
+                })
+            })
+            return details
+        }).catch(error => { console.error(error) });
+
+        var items = [];
+        request_spare_items = Get_Items().then(result => {
+            result.forEach((key, value) => {
+                items.push({
+                    requestid: key.requestid,
+                    requestby: key.requestby,
+                    requestdate: key.requestdate,
+                    ticket: key.ticket,
+                    store: key.store,
+                    brandname: key.brandname,
+                    itemtype: key.itemtype,
+                    serial: key.serial,
+                    detailid: key.detailid,
+                    remarks: key.remarks,
+                    status: key.status,
+                })
+            })
+            return items
+        }).catch(error => { console.error(error) });
+
+        setTimeout(() => {
+            res.json({
+                msg: 'success',
+                data: {
+                    details: details,
+                    items: items
+                }
+            })
+        }, 1000)
     } catch (error) {
         res.json({
             msg: error

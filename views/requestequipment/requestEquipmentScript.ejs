@@ -145,6 +145,7 @@
 
         function savedata(data) {
             console.log(data);
+            var personel = $('#personel').val();
             $.ajax({
                 type: "POST",
                 url: "/requestequipment/save",
@@ -154,8 +155,16 @@
                 success: function (result) {
                     loadtable();
                     table_request.clear().draw();
-                    success('Saved!', 'Data saved!')
                     dataArr = [];
+
+                    if (result.msg == 'success') {
+                        success('Saved!', 'Data saved!')
+                    }
+
+                    if (result.msg == 'exist') {
+                        warning('Exist',`${personel} had already requested equipment for today. Go to the dashboard to add the requested equipment.`)
+                    }
+
                 },
                 error: function (result) {
                     error(result.data);

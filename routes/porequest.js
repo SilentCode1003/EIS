@@ -80,3 +80,13 @@ router.get('/load', (req, res) => {
         })
     }
 })
+
+router.post('/getpodetails', (req, res) => {
+    try {
+        
+    } catch (error) {
+        res.json({
+            msg: error  
+        })
+    }
+})

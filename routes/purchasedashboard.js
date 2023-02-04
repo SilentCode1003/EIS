@@ -146,9 +146,11 @@ router.post('/updatestockrequest', (req, res) => {
     }
 
     Update_PurchaseDetails = (id, budget, callback) => {
+      let detailjson = JSON.stringify(details, null, 2);
       let sql = `UPDATE purchase_details 
       SET pd_totalbudget='${budget}',
-      pd_status='REQUEST BUDGET'
+      pd_status='REQUEST BUDGET',
+      pd_details='${detailjson}'
       WHERE pd_requestid='${id}'`;
 
       mysql.Update(sql, (err, result) => {
