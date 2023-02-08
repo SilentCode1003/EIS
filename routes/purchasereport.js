@@ -47,6 +47,8 @@ router.post('/save', (req, res) => {
     function Insert_PORequestDetails(details, items) {
       return new Promise((resolve, reject) => {
         let request_details = `insert into po_request_details(
+          prd_year,
+          prd_ponumber,
           prd_supplier,
           prd_location,
           prd_details,
@@ -70,6 +72,7 @@ router.post('/save', (req, res) => {
           pri_costperunit,
           pri_subtotal,
           pri_detailid,
+          pri_ponumber,
           pri_preparedby,
           pri_prepareddate,
           pri_remarks,
@@ -87,57 +90,102 @@ router.post('/save', (req, res) => {
       })
     }
 
+    function Check_PORequestDetail(year) {
+      return new Promise((resolve, reject) => {
+        let sql = `select prd_detailid as id, count(*) as count from po_request_details where prd_year='${year}'`;
+
+        mysql.SelectCustomizeResult(sql, (err, result) => {
+          if (err) reject(err);
+          // console.log(result);
+
+          var count = result[0].count;
+          var id = result[0].id;
+
+          if (count != 0) {
+            console.log(count);
+            resolve(id);
+          } else {
+            console.log('NO RESULT');
+            // let sql_reset = 'ALTER TABLE po_request_details AUTO_INCREMENT=1';
+            // mysql.StoredProcedureResult(sql_reset, (err, result) => {
+            //   if (err) reject(err);
+            //   resolve(0);
+            // });
+            resolve(0);
+          }
+        })
+      });
+    }
+
     mysql.Select(sql_getdetail, 'PurchaseDatails', (err, result) => {
       if (err) console.error(err);
       var details = result[0].details;
       var createdby = req.session.fullname;
       var createddate = helper.GetCurrentDate();
       var remarks = dictionary.GetValue(dictionary.PND());
+      let year = helper.GetCurrentYear();
       var status = dictionary.PND();
 
       // console.log(result);
-
-      po_request_details.push([
-        suppliername,
-        location,
-        details,
-        createdby,
-        createddate,
-        remarks,
-        status
-      ]);
-
-      var datajson = JSON.parse(details);
-      console.log(datajson);
-      datajson.forEach((key, item) => {
-        var subtotal = parseFloat(key.itemcount) * parseFloat(key.itemcost);
-        po_request_items.push([
-          key.brandname,
-          key.itemtype,
-          key.itemcount,
-          key.itemcost,
-          subtotal,
-          requestid,
-          createdby,
-          createddate,
-          remarks,
-          status
-        ])
-      });
-
-      Insert_PORequestDetails(po_request_details, po_request_items)
+      Check_PORequestDetail(year)
         .then(result => {
-          console.log(result);
+          var count = parseFloat(result) + 1;
+          var ponumber = helper.GeneratePO(year, count);
 
-          res.json({
-            msg: 'success',
-          })
+          console.log(`PO NUMBER: ${ponumber}`);
+
+          po_request_details.push([
+            year,
+            ponumber,
+            suppliername,
+            location,
+            details,
+            createdby,
+            createddate,
+            remarks,
+            status
+          ]);
+
+          var datajson = JSON.parse(details);
+          console.log(datajson);
+          datajson.forEach((key, item) => {
+            var subtotal = parseFloat(key.itemcount) * parseFloat(key.itemcost);
+            po_request_items.push([
+              key.brandname,
+              key.itemtype,
+              key.itemcount,
+              key.itemcost,
+              subtotal,
+              requestid,
+              ponumber,
+              createdby,
+              createddate,
+              remarks,
+              status
+            ])
+          });
+
+          Insert_PORequestDetails(po_request_details, po_request_items)
+            .then(result => {
+              console.log(result);
+
+              res.json({
+                msg: 'success',
+              })
+            })
+            .catch(error => {
+              res.json({
+                msg: error
+              })
+            })
         })
         .catch(error => {
           res.json({
             msg: error
           })
         })
+
+
     })
 
     // res.json({

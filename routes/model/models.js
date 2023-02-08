@@ -876,8 +876,11 @@ exports.PORequestDetails = (data) => {
     data.forEach((key, item) => {
 
         dataResult.push({
+            year: key.prd_year,
+            ponumber: key.prd_ponumber,
             detailid: key.prd_detailid,
             supplier: key.prd_supplier,
+            location: key.prd_location,
             details: key.prd_details,
             createdby: key.prd_createdby,
             createddate: key.prd_createddate,
@@ -902,6 +905,7 @@ exports.PORequestItems = (data) => {
             costperunit: key.pri_costperunit,
             subtotal: key.pri_subtotal,
             detailid: key.pri_detailid,
+            ponumber: key.pri_ponumber,
             preparedby: key.pri_preparedby,
             prepareddate: key.pri_prepareddate,
             remarks: key.pri_remarks,

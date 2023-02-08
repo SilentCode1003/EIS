@@ -44,9 +44,9 @@ router.get('/load', (req, res) => {
 
             console.log(result);
             result.forEach((key, item) => {
-                var id = parseFloat(key.detailid);
-                let paddedNumber = id.toString().padStart(3, '0');
-                let ponumber = `${helper.GetCurrentYear()}-${paddedNumber}`;
+                // var id = parseFloat(key.detailid);
+                // let paddedNumber = id.toString().padStart(4, '0');
+                // let ponumber = `${helper.GetCurrentYear()}-${paddedNumber}`;
                 let details = '';
 
                 var datajson = JSON.parse(key.details);
@@ -59,8 +59,9 @@ router.get('/load', (req, res) => {
 
                 data.push({
                     detailid: key.detailid,
-                    ponumber: ponumber,
+                    ponumber: key.ponumber,
                     supplier: key.supplier,
+                    location: key.location,
                     details: details,
                     action: '<button class="approve-btn" id="printBtn" name="printBtn">PRINT</button>',
                 })
@@ -81,12 +82,24 @@ router.get('/load', (req, res) => {
     }
 })
 
-router.post('/getpodetails', (req, res) => {
+router.post('/getporequestitems', (req, res) => {
     try {
-        
+        let ponumber = req.body.ponumber;
+        let sql = `select * from po_request_items where pri_ponumber='${ponumber}'`;
+
+        mysql.Select(sql, 'PORequestItems', (err, result) => {
+            if (err) console.error(err);
+
+            res.json({
+                msg: 'success',
+                data: result
+            })
+        })
+
+
     } catch (error) {
         res.json({
-            msg: error  
+            msg: error
         })
     }
 })

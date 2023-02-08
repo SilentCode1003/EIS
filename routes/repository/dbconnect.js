@@ -76,7 +76,7 @@ exports.InsertDirectPayLoad = (sql, callback) => {
                 return callback(err.message, null);
             }
 
-            // console.log(`Row inserted: ${results.affectedRows}`);
+            // console.log(`Row inserted: ${results}`);
 
             callback(null, `Row inserted: ${results.affectedRows}`);
         });
@@ -95,8 +95,8 @@ exports.InsertTable = (stmt, todos, callback) => {
             if (err) {
                 callback(err, null);
             }
-            callback(null, `Row inserted: ${results}`);
-            // console.log(`Row inserted: ${results.affectedRows}`);
+            callback(null, `Row inserted: ${results.affectedRows}`);
+            // console.log(`Row inserted: ${results}`);
         });
 
     } catch (error) {
@@ -305,8 +305,8 @@ exports.Update = async (sql, callback) => {
             if (error) {
                 callback(error, null)
             }
-            // console.log('Rows affected:', results.affectedRows);
-            message += `Number of rows affected: ${results.affectedRows} `;
+            // console.log('Rows affected:', results);
+            message += `Number of rows affected: ${results} `;
             message += `ID of last inserted row: ${results.insertId} `;
             message += `Warning status:: ${results.warningStatus} `;
             message += `Rows: ${results.rows} `;
@@ -324,7 +324,7 @@ exports.UpdateWithPayload = async (sql, data, callback) => {
             if (error) {
                 callback(error, null)
             }
-            // console.log('Rows affected:', results.affectedRows);
+            // console.log('Rows affected:', results);
 
             callback(null, `Rows affected: ${results.affectedRows}`);
         });

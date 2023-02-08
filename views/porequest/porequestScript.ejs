@@ -3,6 +3,7 @@
         var requestid = '';
         var ponumber = '';
         var supplier = '';
+        var location = '';
 
         $("#dtbox").DateTimePicker({
             dateFormat: "yyyy-MM-dd"
@@ -25,16 +26,62 @@
         }
 
         $(document).on('click', '#printBtn', function () {
+            var requestitemTabel = $('#po-equipments-tbl').DataTable({
+                'destroy': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollCollapse': true,
+            });
+
+            requestitemTabel.clear().draw();
+
             $.ajax({
                 type: 'POST',
                 url: '/porequest/getporequestitems',
                 data: {
-                    requestid: requestid,
                     ponumber: ponumber,
-                    supplier: supplier,
                 },
                 success: function (result) {
-                    console.log(result.data);
+                    var data = result.data;
+                    var length = data.length;
+                    console.log(data.length);
+                    var index = 1;
+                    var total = 0;
+                    $.each(data, (key, item) => {
+                        var cost = parseFloat(item.costperunit);
+                        var subtotal = parseFloat(item.subtotal);
+                        var _subtotal = subtotal;
+                        cost = `${(cost).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+                        subtotal = `₱ ${(subtotal).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+
+                        requestitemTabel.row.add([index, `${item.itembrand} ${item.itemname}`, item.quantity, cost, subtotal]);
+
+                        document.getElementById('officer').innerText = item.preparedby;
+                        document.getElementById('ponumber').innerText = item.ponumber;
+                        document.getElementById('company').innerText = supplier;
+                        document.getElementById('location').innerText = location;
+                        document.getElementById('podate').innerText = item.prepareddate;
+                        total += _subtotal
+
+
+                        console.log(`index: ${index} length: ${length}`)
+                        if (index === length) {
+                            total = `₱ ${(total).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+                            requestitemTabel.row.add(['TOTAL', ``, '', '', total]);
+                            requestitemTabel.draw();
+                        }
+                        index += 1;
+                    })
+
+                    requestitemTabel
+                        .column('0:visible')
+                        .order('asc')
+                        .draw();
+
+
+
+
                 },
                 error: function (error) {
                     error(error);
@@ -58,6 +105,7 @@
             requestid = data[0];
             ponumber = data[1];
             supplier = data[2];
+            location = data[3];
 
             data = [];
 
@@ -65,6 +113,16 @@
             // budgetrequest = budgetrequest.replace(/,/g,'');
             // detailrequest = detailrequest.replace(/<br>/g,'')
             // console.log(data);
+        })
+
+        $(document).on('click', '#POEquimentModalPrintBtn', function () {
+            console.log('clicked!');
+            var printContents = document.getElementById('PrintArea').innerHTML;
+            var originalContents = document.body.innerHTML;
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+            location.reload();
         })
 
         function LoadTable() {
@@ -89,6 +147,7 @@
                     { data: 'detailid' },
                     { data: 'ponumber' },
                     { data: 'supplier' },
+                    { data: 'location' },
                     { data: 'details' },
                     { data: 'action' },
                 ],

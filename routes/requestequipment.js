@@ -623,7 +623,7 @@ router.post('/deployitem', (req, res) => {
         let remakrs = dictionary.GetValue(dictionary.DLY());
         let status = dictionary.DLY();
 
-        console.log(`${requestby} ${requestdate}`);
+        // console.log(`${requestby} ${requestdate}`);
 
         data = JSON.parse(data);
         data.forEach((key, item) => {
@@ -821,7 +821,7 @@ router.post('/deployitem', (req, res) => {
 
             return new Promise((resolve, reject) => {
                 if (deploy_items.length != 0) {
-                    console.log(deploy_items)
+                    // console.log(deploy_items)
                     Insert_DeployITEquipment(deploy_items, (err, result) => {
                         if (err) reject(err);
                         console.log(result)
@@ -829,7 +829,7 @@ router.post('/deployitem', (req, res) => {
                 }
 
                 if (pullout_items.length != 0) {
-                    console.log(pullout_items)
+                    // console.log(pullout_items)
                     Insert_PulloutITEquipment(pullout_items, (err, result) => {
                         if (err) reject(err);
                         console.log(result)
