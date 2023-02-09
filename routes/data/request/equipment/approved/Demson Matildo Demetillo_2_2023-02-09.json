@@ -1,0 +1,18 @@
+[
+  {
+    "controlno": 2,
+    "personel": "Demson Matildo Demetillo",
+    "data": [
+      {
+        "store": "2762 CPI SILANGAN CARMEL TOWN",
+        "ticket": "INC-5468215",
+        "brandname": "CYBERPOWER",
+        "itemtype": "Cyberpower UPS",
+        "quantity": "1",
+        "remarks": "REPLACEMENT"
+      }
+    ],
+    "createddate": "2023-02-09",
+    "status": "ALLOC"
+  }
+]

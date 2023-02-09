@@ -1,0 +1,18 @@
+[
+  {
+    "controlno": 1,
+    "personel": "Deejay Repala Rances",
+    "data": [
+      {
+        "store": "3438 15TH AVE. CUBAO",
+        "ticket": "INC-4587545",
+        "brandname": "CYBERPOWER",
+        "itemtype": "Cyberpower UPS",
+        "quantity": "1",
+        "remarks": "REPLACEMENT"
+      }
+    ],
+    "createddate": "2023-02-09",
+    "status": "ALLOC"
+  }
+]

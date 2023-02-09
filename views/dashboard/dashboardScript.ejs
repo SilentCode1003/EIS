@@ -7,6 +7,7 @@
         var dataTable2;
         let requestdate = '';
         let requestby = '';
+        let controlno = '';
 
         EquipmentRequestLoadTables();
 
@@ -72,6 +73,7 @@
                         var createddate = '';
                         var status = '';
                         var personel = '';
+                        var controlid = '';
 
                         // console.log(data);
                         $.each(data, (key, item) => {
@@ -79,6 +81,7 @@
                             personel = item.requestby;
                             createddate = item.requestdate;
                             status = item.status;
+                            controlid = item.requestid;
 
                             var datajson = JSON.parse(item.details)
                             $.each(datajson, (key, item) => {
@@ -100,6 +103,7 @@
                             finalData.push({
                                 personel: personel,
                                 details: details,
+                                controlno: controlid,
                                 createddate: createddate,
                                 status: item.remarks,
                                 action: action
@@ -118,6 +122,7 @@
                 'columns': [
                     { data: 'createddate' },
                     { data: 'personel' },
+                    { data: 'controlno' },
                     { data: 'details' },
                     { data: 'status' },
                     { data: 'action' }
@@ -447,6 +452,7 @@
 
             requestdate = dataRow[0];
             requestby = dataRow[1];
+            controlno = dataRow[2];
 
             console.log(dataRow);
 
@@ -887,7 +893,8 @@
                 url: "/requestequipment/getrequestdetails",
                 data: {
                     requestby: requestby,
-                    requestdate: requestdate
+                    requestdate: requestdate,
+                    requestid: controlno,
                 },
                 success: function (result) {
 
@@ -948,7 +955,8 @@
                 url: '/requestequipment/cancelrequest',
                 data: {
                     requestby: requestby,
-                    requestdate: requestdate
+                    requestdate: requestdate,
+                    requestid: controlno,
                 },
                 success: function () {
                     EquipmentRequestLoadTables();
@@ -996,6 +1004,7 @@
                 data: {
                     requestby: requestby,
                     requestdate: requestdate,
+                    requestid: controlno,
                 },
                 success: function (result) {
                     requestitemTabel.clear().draw();
@@ -1037,7 +1046,8 @@
                 url: "/requestequipment/getassign",
                 data: {
                     requestby: requestby,
-                    requestdate: requestdate
+                    requestdate: requestdate,
+                    requestid: controlno,
                 },
                 success: function (result) {
                     requestlistTabel.clear().draw();
@@ -1103,6 +1113,7 @@
                 data: {
                     requestby: requestby,
                     requestdate: requestdate,
+                    requestid: controlno,
                     data: dataRaw
                 },
                 success: function (result) {
@@ -1175,29 +1186,42 @@
             } else {
                 console.log(personel, date, dataRaw);
                 dataRaw = JSON.stringify(dataRaw, null, 2);
-                assignequipemnt(personel, date, dataRaw)
+                assignequipemnt(personel, date, dataRaw, controlno)
                 modal.style.display = "none";
             }
         });
 
-        function assignequipemnt(personel, date, data) {
+        function assignequipemnt(personel, date, data, controlid) {
             console.log(`${personel} ${date} ${data}`);
             $.ajax({
                 type: "POST",
                 url: "/requestequipment/assign",
                 data: {
+                    requestid: controlid,
                     personel: personel,
                     date: date,
                     data: data
                 },
                 success: function (result) {
+                    console.log(result.msg);
                     if (result.msg == 'success') {
                         success('Saved!', 'Data saved!')
                         EquipmentRequestLoadTables();
                     }
 
-                    if (result.msg == 'exist') {
+                    if (result.msg == 'serials') {
                         warning('Not Exist', `Please check serial/s ${result.data}. Go to REPORTS >> SEARCH to check serial exist on database.`)
+                    }
+
+                    if (result.msg == 'items') {
+                        var data = result.data;
+                        var message = '';
+                        data = JSON.parse(data);
+
+                        $.each(data, (key, item)=>{
+                            message += `[Control ID: ${item.requestid} (${item.requestby} ${item.requestdate}) Ticket:${item.ticket} Store:${item.store} Serial:${item.serial}]\n`;
+                        })
+                        warning('Exist', `There are certain items that have already been allocated but have not yet been returned. \n ${message}`);
                     }
                 },
                 error: function (result) {
@@ -1215,6 +1239,7 @@
                 data: {
                     requestby: requestby,
                     requestdate: requestdate,
+                    requestid: controlno,
                 },
                 success: function (result) {
                     success('Approved!', 'Request approved!')
@@ -1250,7 +1275,8 @@
                 url: "/requestequipment/getdetails",
                 data: {
                     requestby: requestby,
-                    requestdate: requestdate
+                    requestdate: requestdate,
+                    requestid: controlno,
                 },
                 success: function (result) {
                     requestlistTabel.clear().draw();
@@ -1309,7 +1335,8 @@
                 url: "/requestequipment/getdetails",
                 data: {
                     requestby: requestby,
-                    requestdate: requestdate
+                    requestdate: requestdate,
+                    requestid: controlno,
                 },
                 success: function (result) {
                     requestlistTabel.clear().draw();
@@ -1338,6 +1365,7 @@
                 data: {
                     requestby: requestby,
                     requestdate: requestdate,
+                    requestid: controlno,
                 },
                 success: function (result) {
                     requestitemTabel.clear().draw();

@@ -1,0 +1,18 @@
+[
+  {
+    "controlno": 2,
+    "personel": "Eldie John Retirado Manque",
+    "data": [
+      {
+        "store": "2783 CPI SAN FRANS",
+        "ticket": "INC-45854458",
+        "brandname": "CYBERPOWER",
+        "itemtype": "Cyberpower UPS",
+        "quantity": "1",
+        "remarks": "REPLACEMENT"
+      }
+    ],
+    "createddate": "2023-02-09",
+    "status": "ALLOC"
+  }
+]

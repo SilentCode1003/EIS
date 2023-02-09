@@ -1,0 +1,18 @@
+[
+  {
+    "controlno": 1,
+    "personel": "Daniel J Nibot",
+    "data": [
+      {
+        "store": "1080 CPI SOLDIERS HILL",
+        "ticket": "INC-4587215",
+        "brandname": "CYBERPOWER",
+        "itemtype": "Cyberpower UPS",
+        "quantity": "1",
+        "remarks": "REPLACEMENT"
+      }
+    ],
+    "createddate": "2023-02-09",
+    "status": "ALLOC"
+  }
+]
