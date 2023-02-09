@@ -21,14 +21,22 @@ truncate table transaction_cabling_stocks_equipments;
 truncate table transaction_it_equipment;
 truncate table transaction_purchase_item;
 truncate table transaction_request_budget;
-truncate table master_item;
 truncate table transaction_transfer_it_details;
 truncate table transaction_transfer_it_equipment;
 truncate table request_sapre_details;
 truncate table request_spare_items;
 truncate table return_request_it_equipments;
 truncate table master_item_price;
+truncate table po_request_details;
+truncate table po_request_items;
+
+ALTER TABLE po_request_details AUTO_INCREMENT=1;
 ALTER TABLE master_item AUTO_INCREMENT=1001;
 ALTER TABLE request_sapre_details AUTO_INCREMENT=1000;
 ALTER TABLE master_warehouse AUTO_INCREMENT=1000;
 ALTER TABLE master_item_price AUTO_INCREMENT=1000;
+
+ALTER TABLE transaction_it_equipment modify column tie_pulloutitemtype varchar(300);
+ALTER TABLE pullout_it_equipment modify column pie_itemtype varchar(300);
+ALTER TABLE deploy_it_equipment modify column die_itemtype varchar(300);
+ALTER TABLE return_request_it_equipments modify column rrie_itemtype varchar(300);

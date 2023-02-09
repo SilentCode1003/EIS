@@ -604,6 +604,27 @@
             let _data_details = [];
             var message = '';
 
+            //#region DETAILS
+            for (x = 1; x < _details.length; x++) {
+                console.log(_details[x].innerText);
+                var innerData = _details[x].innerText;
+                innerData = innerData.split("\t");
+
+                _data_details.push({
+                    personel: innerData[0],
+                    store: innerData[1],
+                    ticket: innerData[2],
+                    brandname: innerData[3],
+                    itemtype: innerData[4],
+                    quantity: innerData[5],
+                    remarks: innerData[6],
+                    createddate: '<%= date%>',
+                    status: 'PENDING'
+                });
+            }
+            //#endregion
+
+            //#region ITEMS
             var index = 1;
             for (x = 1; x < _items.length; x++) {
                 console.log(_items[x].innerText);
@@ -627,11 +648,29 @@
                 }
 
             }
+            //#endregion
+            // _data_items = JSON.stringify(_data_items, null, 2);
+            // _data_details = JSON.stringify(_data_details, null, 2);
+            // console.log(`ITEMS: ${_data_items}`);
+            // console.log(`DETAILS: ${_data_details}`);
 
-            _data_details = JSON.stringify(_data_details, null, 2);
-            console.log(`ITEMS: ${_data_items}`);
+            $.ajax({
+                type: 'POST',
+                url: '/requestequipment/updatedetails',
+                data: {
+                    items: _data_items,
+                    details: _data_details,
+                },
+                success: function (result) {
+                    success('Success', 'Update details successfully');
+                },
+                error: function (error) {
+                    warning('Error', error);
+                }
+            });
 
-            _input_details = [];
+            _data_items = [];
+            _data_details = [];
         })
 
         $('#detail-request-items-table tbody').on('click', 'tr', function (e) {
@@ -835,6 +874,7 @@
 
         $(document).on('click', '#detailsBtn', function () {
             showloader();
+            _input_details = [];
             requestdetail.clear().draw();
             requestitems.clear().draw();
             loadlist();
@@ -1098,7 +1138,7 @@
             location.reload();
         })
 
-        $(document).on('click', "#saveBtn", async function () {
+        $(document).on('click', "#saveBtn", function () {
             console.log('clicked!');
             var data = $('#requesttbl tr');
             var dataRaw = [];
@@ -1135,7 +1175,7 @@
             } else {
                 console.log(personel, date, dataRaw);
                 dataRaw = JSON.stringify(dataRaw, null, 2);
-                await assignequipemnt(personel, date, dataRaw)
+                assignequipemnt(personel, date, dataRaw)
                 modal.style.display = "none";
             }
         });

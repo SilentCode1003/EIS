@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 function isAuthAdmin(req, res, next) {
- 
+
   if (req.session.isAuth && req.session.accounttype == "ADMINISTRATOR") {
     next();
   }
@@ -134,9 +134,10 @@ router.post('/excelsave', (req, res) => {
     function CreateFile(datajson) {
       return new Promise((resolve, reject) => {
         datajson = JSON.parse(datajson);
-        var dataDetails = [];
+
 
         datajson.forEach((key, item) => {
+          var dataDetails = [];
           dataDetails.push({
             fullname: key.fullname,
             location: key.location,
@@ -145,15 +146,10 @@ router.post('/excelsave', (req, res) => {
             createddate: key.createddate
           })
 
-          try {
-            var fileDir = `${PersonelPath}${key.fullname}.json`;
+          var fileDir = `${PersonelPath}${key.fullname}.json`;
 
-            dataDetails = JSON.stringify(dataDetails, null, 2);
-            helper.CreateJSON(fileDir, data);
-          } catch (error) {
-            reject(error);
-          }
-
+          dataDetails = JSON.stringify(dataDetails, null, 2);
+          helper.CreateJSON(fileDir, dataDetails);
         });
 
         resolve('DONE');

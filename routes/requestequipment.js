@@ -143,39 +143,42 @@ router.post('/save', (req, res) => {
             stats,
         ])
 
-        Check_RequestDetailsExist()
-            .then(result => {
-                if (result != 0) {
-                    res.json({
-                        msg: 'exist'
-                    })
-                }
-                else {
-                    Insert_RequestSpareDetails(request_spare_details, (err, result) => {
-                        if (err) console.error(err);
-                        console.log(result);
-                    })
+        // Check_RequestDetailsExist()
+        //     .then(result => {
+        //         if (result != 0) {
+        //             res.json({
+        //                 msg: 'exist'
+        //             })
+        //         }
+        //         else {
 
-                    let sql = `SELECT * FROM request_sapre_details
-                    WHERE rsd_requestby='${personel}'
-                    AND rsd_requestdate='${createddate}'
-                    AND rsd_details='${data}'`;
-                    CreateFile_RequestSpareDetails(sql, personel, createddate, details, remarks, (err, result) => {
-                        if (err) console.error(err);
+        //         }
 
-                        console.log(result);
-                        res.json({
-                            msg: 'success'
-                        })
-                    })
-                }
+        //     })
+        //     .catch(error => {
+        //         return res.json({
+        //             msg: error
+        //         })
+        //     });
 
+
+        Insert_RequestSpareDetails(request_spare_details, (err, result) => {
+            if (err) console.error(err);
+            console.log(result);
+        })
+
+        let sql = `SELECT * FROM request_sapre_details
+            WHERE rsd_requestby='${personel}'
+            AND rsd_requestdate='${createddate}'
+            AND rsd_details='${data}'`;
+        CreateFile_RequestSpareDetails(sql, personel, createddate, details, remarks, (err, result) => {
+            if (err) console.error(err);
+
+            console.log(result);
+            res.json({
+                msg: 'success'
             })
-            .catch(error => {
-                return res.json({
-                    msg: error
-                })
-            });
+        })
 
     } catch (error) {
         res.json({
@@ -1045,6 +1048,25 @@ router.post('/getrequestdetails', (req, res) => {
                 }
             })
         }, 1000)
+    } catch (error) {
+        res.json({
+            msg: error
+        })
+    }
+})
+
+router.post('/updatedetails', (req, res) => {
+    try {
+        let details = req.body.details;
+        let items = req.body.items;
+
+        console.log(details);
+        console.log(items);
+
+        function Insert_RequestDetails() {
+
+        }
+
     } catch (error) {
         res.json({
             msg: error
