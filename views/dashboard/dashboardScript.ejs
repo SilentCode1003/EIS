@@ -610,6 +610,7 @@
             let _data_details = [];
             var message = '';
 
+            console.log(rem_data);
             //#region DETAILS
             for (x = 1; x < _details.length; x++) {
                 console.log(_details[x].innerText);
@@ -660,23 +661,57 @@
             // console.log(`ITEMS: ${_data_items}`);
             // console.log(`DETAILS: ${_data_details}`);
 
-            $.ajax({
-                type: 'POST',
-                url: '/requestequipment/updatedetails',
-                data: {
-                    items: _data_items,
-                    details: _data_details,
-                },
-                success: function (result) {
-                    success('Success', 'Update details successfully');
-                },
-                error: function (error) {
-                    warning('Error', error);
+            if (_data_items.length == 0) {
+                warning('Empty', 'If you want to cancel all the request, just DEPLOY it wihtout ATF or any input to return to ACTIVE');
+            } else {
+                if (message != '') {
+                    warning('Empty', `No serial assign at ticket no. ${message}`);
                 }
-            });
+                else {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/requestequipment/updatedetails',
+                        data: {
+                            requestby: requestby,
+                            requestdate: requestdate,
+                            controlno: controlno,
+                            items: _data_items,
+                            details: _data_details,
+                            remove: rem_data,
+                        },
+                        success: function (result) {
+                            console.log(result.msg);
+                            if (result.msg == 'success') {
+                                success('Successfull', 'Update details successfully');
+                                EquipmentRequestLoadTables();
+                            }
+
+                            if (result.msg == 'serials') {
+                                warning('Not Exist', `Please check serial/s ${result.data}. Go to REPORTS >> SEARCH to check serial exist on database.`)
+                            }
+
+                            if (result.msg == 'items') {
+                                var data = result.data;
+                                var message = '';
+                                data = JSON.parse(data);
+
+                                $.each(data, (key, item) => {
+                                    message += `[Control ID: ${item.requestid} (${item.requestby} ${item.requestdate}) Ticket:${item.ticket} Store:${item.store} Serial:${item.serial}]\n`;
+                                })
+                                warning('Exist', `There are certain items that have already been allocated but have not yet been returned. \n ${message}`);
+                            }
+                        },
+                        error: function (error) {
+                            warning('Error', error);
+                        }
+                    });
+                }
+
+            }
 
             _data_items = [];
             _data_details = [];
+            rem_data = [];
         })
 
         $('#detail-request-items-table tbody').on('click', 'tr', function (e) {
@@ -766,6 +801,10 @@
                 console.log(_detailitem);
 
                 if (_detailitem === rowdata[3]) {
+                    rem_data.push({
+                        controlno: controlno,
+                        serial: rowdata[4],
+                    })
                     this.remove();
                 }
             });
@@ -777,6 +816,7 @@
         let itemsrow = '';
         let itemrow_type = '';
         let itemrow_brand = '';
+        let rem_data = [];
         $('#detail-request-items-table tbody').on('click', 'tr', function (e) {
             var data = [];
             itemsrow = $(this).closest('tr');
@@ -788,6 +828,12 @@
 
             itemrow_type = data[3];
             itemrow_brand = data[2];
+
+            rem_data.push({
+                controlno: controlno,
+                serial: data[4],
+            })
+
         });
 
         $(document).on('click', '#removeitemsBtn', function () {
@@ -835,6 +881,8 @@
 
                 if (itemrow === itemtype) {
                     var quantity = item.total - 1;
+
+
 
                     console.log(`type: ${itemrow} quantity: ${quantity}`)
 
@@ -984,6 +1032,7 @@
                 data: {
                     requestby: requestby,
                     requestdate: requestdate,
+                    requestid: controlno,
                 },
                 success: function (result) {
                     var data = result.data;
@@ -1218,7 +1267,7 @@
                         var message = '';
                         data = JSON.parse(data);
 
-                        $.each(data, (key, item)=>{
+                        $.each(data, (key, item) => {
                             message += `[Control ID: ${item.requestid} (${item.requestby} ${item.requestdate}) Ticket:${item.ticket} Store:${item.store} Serial:${item.serial}]\n`;
                         })
                         warning('Exist', `There are certain items that have already been allocated but have not yet been returned. \n ${message}`);
@@ -1327,7 +1376,6 @@
                 'info': false,
                 'scrollCollapse': true,
             });
-
 
 
             $.ajax({

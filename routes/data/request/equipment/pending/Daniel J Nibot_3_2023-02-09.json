@@ -1,0 +1,18 @@
+[
+  {
+    "controlno": 3,
+    "personel": "Daniel J Nibot",
+    "data": [
+      {
+        "store": "3438 15TH AVE. CUBAO",
+        "ticket": "INC-4585215",
+        "brandname": "NEC",
+        "itemtype": "NEC G9 Cash Drawer",
+        "quantity": "1",
+        "remarks": "REPLACEMENT"
+      }
+    ],
+    "createddate": "2023-02-09",
+    "status": "ALLOC"
+  }
+]

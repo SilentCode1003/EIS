@@ -298,28 +298,6 @@ router.post('/assign', async (req, res) => {
             })
         }
 
-        function Insert_RequestSpareItems(data, callback) {
-            let sql = `INSERT INTO request_spare_items(
-                rsi_requestby,
-                rsi_requestdate,
-                rsi_ticket,
-                rsi_store,
-                rsi_brandname,
-                rsi_itemtype,
-                rsi_serial,
-                rsi_approvedby,
-                rsi_approveddate,
-                rsi_detailid,
-                rsi_remarks,
-                rsi_status
-            ) VALUES ?`;
-
-            mysql.InsertTable(sql, data, (err, result) => {
-                if (err) callback(err, null);
-                callback(null, result);
-            })
-        }
-
         function Update_RequestSpareDetails(requestid, remarks, status, callback) {
             let sql = `UPDATE request_sapre_details 
             SET rsd_remarks='${remarks}',
@@ -384,86 +362,6 @@ router.post('/assign', async (req, res) => {
 
             var dataArrJson = JSON.stringify(dataArr, null, 2);
             helper.CreateJSON(pendingFile, dataArrJson)
-        }
-
-        function Check_Exist(data) {
-            return new Promise((resolve, reject) => {
-                var data_length = data.length;
-                var counter = 0;
-                var seriallist_notexist = '';
-                var itemlist = [];
-                data.forEach((key, item) => {
-                    var serial = key.serial;
-                    let sql = `select * from register_it_equipment where rie_serial='${serial}'`;
-                    mysql.Select(sql, 'RegisterITEquipment', (err, result) => {
-                        if (err) reject(err);
-                        console.log(`CHECK RESULT: ${result.length}`);
-                        if (result.length == 0) { seriallist_notexist += `[${serial}] ` }
-
-                        console.log(`NO RESULT: ${seriallist_notexist}`);
-                        counter += 1;
-                        console.log(`data: ${data_length} counter:${counter}`)
-
-                        if (data_length == counter) {
-                            resolve(seriallist_notexist);
-                        }
-                    })
-                })
-            })
-        }
-
-        function Check_AssignItems(data) {
-            return new Promise((resolve, reject) => {
-                var data_length = data.length;
-                var counter = 0;
-                var status = dictionary.GetValue(dictionary.SPR())
-                var datares = [];
-                data.forEach((key, item) => {
-                    var serial = key.serial;
-                    let sql = `select rie_serial as serial,
-                    rsi_ticket as ticket,
-                    rsi_store as store,
-                    rsi_requestdate as requestdate,
-                    rsi_requestby as requestby,
-                    rsi_requestid as requestid
-                    from request_spare_items
-                    inner join register_it_equipment on request_spare_items.rsi_serial = register_it_equipment.rie_serial
-                    where request_spare_items.rsi_serial='${serial}'
-                    and register_it_equipment.rie_status='${status}'
-                    order by request_spare_items.rsi_serial`;
-
-                    counter += 1;
-
-                    mysql.SelectCustomizeResult(sql, (err, result) => {
-                        if (err) reject(err);
-
-                        console.log(result);
-
-                        if (result.length == 0) {
-                            if (data_length == counter) {
-                                resolve(datares);
-                            }
-                        }
-                        else {
-                            result.forEach((key, item) => {
-                                datares.push({
-                                    serial: key.serial,
-                                    ticket: key.ticket,
-                                    store: key.store,
-                                    requestdate: key.requestdate,
-                                    requestby: key.requestby,
-                                    requestid: key.requestid,
-                                })
-
-                                if (data_length == counter) {
-                                    resolve(datares);
-                                }
-                            })
-                        }
-                    });
-                })
-
-            });
         }
 
         Check_Exist(dataJson)
@@ -539,13 +437,15 @@ router.post('/getassign', (req, res) => {
         var requestby = req.body.requestby;
         var requestdate = req.body.requestdate;
         var requestid = req.body.requestid;
+        let status = dictionary.GetValue(dictionary.RET())
 
         console.log(`${requestby} ${requestdate} ${requestid}`);
 
         let sql = `SELECT * FROM request_spare_items
         WHERE rsi_requestby='${requestby}'
         AND rsi_requestdate='${requestdate}'
-        AND rsi_detailid='${requestid}'`;
+        AND rsi_detailid='${requestid}'
+        AND not rsi_status='${status}'`;
 
         mysql.Select(sql, 'RequestSpareItems', (err, result) => {
             if (err) console.error(err);
@@ -1023,12 +923,14 @@ router.post('/cancelrequest', (req, res) => {
         set rsd_remarks='${remarks}', 
         rsd_status='${status}' 
         where rsd_requestby='${requestby}' 
-        and rsd_requestdate='${requestdate}'`;
+        and rsd_requestdate='${requestdate}'
+        and rsd_requestid='${requestid}'`;
         let update_rsi = `update request_spare_items 
         set rsi_remarks='${remarks}', 
         rsi_status='${status}' 
         where rsi_requestby='${requestby}' 
-        and rsi_requestdate='${requestdate}'`;
+        and rsi_requestdate='${requestdate}'
+        and rsi_detailid='${requestid}'`;
 
         function Update_Request(rsd, rsi) {
             return new Promise((resolve, reject) => {
@@ -1157,15 +1059,91 @@ router.post('/getrequestdetails', (req, res) => {
 
 router.post('/updatedetails', (req, res) => {
     try {
+        let requestby = req.body.requestby;
+        let requestdate = req.body.requestdate;
+        let controlno = req.body.controlno;
         let details = req.body.details;
         let items = req.body.items;
+        let removedata = req.body.remove;
+        let remarks = dictionary.GetValue(dictionary.FAPR());
+        let status = dictionary.FAPR();
+        let rsi_items = [];
 
-        console.log(details);
-        console.log(items);
+        console.log(`details ${details}`);
+        console.log(`items ${items}`);
+        console.log(`removed ${removedata}`);
 
-        function Insert_RequestDetails() {
+        Check_Exist(items)
+            .then(seriallist => {
+                // console.log(`SERIAL: ${seriallist}`);
 
-        }
+                if (seriallist == '') {
+                    details = JSON.stringify(details, null, 2)
+                    let data = [details, controlno];
+                    let sql = `update request_sapre_details set rsd_details=? where rsd_requestid=?`;
+                    mysql.UpdateWithPayload(sql, data, (err, result) => {
+                        if (err) console.log(err);
+
+                        console.log(result);
+                    })
+
+
+                    // if (removedata != null) {
+                    //     console.log(`REMOVED: ${removedata}`);
+                    //     Update_RemovedItems(removedata)
+                    //         .then(result => {
+                    //             console.log(result);
+                    //         })
+                    //         .catch(error => {
+                    //             res.json({
+                    //                 msg: error
+                    //             })
+                    //         })
+                    // }
+
+                    items.forEach((key, item) => {
+                        rsi_items.push([
+                            requestby,
+                            requestdate,
+                            key.ticket,
+                            key.store,
+                            key.brandname,
+                            key.itemtype,
+                            key.serial,
+                            '',
+                            '',
+                            controlno,
+                            remarks,
+                            status
+                        ]);
+                    })
+
+                    Upsert_RequestSpareItems(rsi_items)
+                        .then(result => {
+                            console.log(result);
+                            res.json({
+                                msg: 'success'
+                            })
+                        })
+                        .catch(error => {
+                            res.json({
+                                msg: error
+                            })
+                        })
+
+                } else {
+                    return res.json({
+                        msg: 'serials',
+                        data: seriallist
+                    })
+                }
+
+
+            }).catch(error => {
+                res.json({
+                    msg: error
+                })
+            })
 
     } catch (error) {
         res.json({
@@ -1173,3 +1151,210 @@ router.post('/updatedetails', (req, res) => {
         })
     }
 })
+
+
+//#region FUNCTIONS
+function Check_Exist(data) {
+    return new Promise((resolve, reject) => {
+        var data_length = data.length;
+        var counter = 0;
+        var seriallist_notexist = '';
+        data.forEach((key, item) => {
+            var serial = key.serial;
+            let sql = `select * from register_it_equipment where rie_serial='${serial}'`;
+            mysql.Select(sql, 'RegisterITEquipment', (err, result) => {
+                if (err) reject(err);
+                console.log(`CHECK RESULT: ${result.length}`);
+                if (result.length == 0) { seriallist_notexist += `[${serial}] ` }
+
+                console.log(`NO RESULT: ${seriallist_notexist}`);
+                counter += 1;
+                console.log(`data: ${data_length} counter:${counter}`)
+
+                if (data_length == counter) {
+                    resolve(seriallist_notexist);
+                }
+            })
+        })
+    })
+}
+
+function Check_AssignItems(data) {
+    return new Promise((resolve, reject) => {
+        var data_length = data.length;
+        var counter = 0;
+        var status = dictionary.GetValue(dictionary.SPR())
+        var datares = [];
+        data.forEach((key, item) => {
+            var serial = key.serial;
+            let sql = `select rie_serial as serial,
+            rsi_ticket as ticket,
+            rsi_store as store,
+            rsi_requestdate as requestdate,
+            rsi_requestby as requestby,
+            rsi_requestid as requestid
+            from request_spare_items
+            inner join register_it_equipment on request_spare_items.rsi_serial = register_it_equipment.rie_serial
+            where request_spare_items.rsi_serial='${serial}'
+            and register_it_equipment.rie_status='${status}'
+            order by request_spare_items.rsi_serial`;
+
+            counter += 1;
+
+            mysql.SelectCustomizeResult(sql, (err, result) => {
+                if (err) reject(err);
+
+                console.log(result);
+
+                if (result.length == 0) {
+                    if (data_length == counter) {
+                        resolve(datares);
+                    }
+                }
+                else {
+                    result.forEach((key, item) => {
+                        datares.push({
+                            serial: key.serial,
+                            ticket: key.ticket,
+                            store: key.store,
+                            requestdate: key.requestdate,
+                            requestby: key.requestby,
+                            requestid: key.requestid,
+                        })
+
+                        if (data_length == counter) {
+                            resolve(datares);
+                        }
+                    })
+                }
+            });
+        })
+
+    });
+}
+
+function Update_RemovedItems(data) {
+    return new Promise((resolve, reject) => {
+        let rsi_remarks = dictionary.GetValue(dictionary.RET());
+        let rsi_status = dictionary.RET();
+        let status = dictionary.GetValue(dictionary.ACT());
+
+        console.log(data);
+
+        data.forEach((key, item) => {
+            var serial = key.serial;
+            var controlno = key.controlno;
+
+            let update_rsi = `update request_spare_items 
+            set rsi_remarks='${rsi_remarks}', 
+            rsi_status='${rsi_status}' 
+            where rsi_detailid='${controlno}' 
+            and rsi_serial='${serial}'`;
+
+            let update_rie = `update register_it_equipment 
+            set rie_status='${status}' 
+            where rie_serial='${serial}'`;
+
+            let update_tie = `update transaction_it_equipment 
+            tie_status='${status}'
+             where tie_seria='${serial}'`;
+
+            mysql.Update(update_rsi, (err, result) => {
+                if (err) reject(err)
+                console.log(result);
+            })
+
+            mysql.Update(update_rie, (err, result) => {
+                if (err) reject(err)
+                console.log(result);
+            })
+
+            mysql.Update(update_tie, (err, result) => {
+                if (err) reject(err)
+                console.log(result);
+            })
+        })
+        resolve('DONE REMOVING ITEMS TO DETAILS')
+    })
+}
+
+function Upsert_RequestSpareItems(data) {
+    return new Promise((resolve, reject) => {
+        // console.log(`${data}`)
+        data.forEach(data => {
+            var requestby = data[0];
+            var requestdate = data[1];
+            var ticket = data[2];
+            var store = data[3];
+            var brandname = data[4];
+            var itemtype = data[5];
+            var serial = data[6];
+            var approvedby = data[7];
+            var approveddate = data[8];
+            var detailid = data[9];
+            var remarks = data[10];
+            var status = data[11];
+            let check = `select * from request_spare_items where rsi_serial='${serial}'`;
+
+            console.log(check);
+            mysql.Select(check, 'RequestSpareItems', (err, result) => {
+                if (err) reject(err);
+                if (result.length != 0) {
+                    console.log(`EXIST: ${serial}`)
+                }
+                else {
+                    var rsi = [];
+                    rsi.push([
+                        requestby,
+                        requestdate,
+                        ticket,
+                        store,
+                        brandname,
+                        itemtype,
+                        serial,
+                        approvedby,
+                        approveddate,
+                        detailid,
+                        remarks,
+                        status
+                    ])
+                    Insert_RequestSpareItems(rsi)
+                        .then(result => {
+                            console.log(result);
+                        })
+                        .catch(error => {
+                            reject(error);
+                        })
+                }
+            })
+        })
+
+        resolve('DONE');
+    })
+}
+
+function Insert_RequestSpareItems(data) {
+    return new Promise((resolve, reject) => {
+        let sql = `INSERT INTO request_spare_items(
+            rsi_requestby,
+            rsi_requestdate,
+            rsi_ticket,
+            rsi_store,
+            rsi_brandname,
+            rsi_itemtype,
+            rsi_serial,
+            rsi_approvedby,
+            rsi_approveddate,
+            rsi_detailid,
+            rsi_remarks,
+            rsi_status
+        ) VALUES ?`;
+
+        mysql.InsertTable(sql, data, (err, result) => {
+            if (err) reject(err);
+            console.log(result);
+            resolve(result);
+        })
+    })
+}
+//#endregion

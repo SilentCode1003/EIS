@@ -120,9 +120,10 @@
             var printContents = document.getElementById('PrintArea').innerHTML;
             var originalContents = document.body.innerHTML;
             document.body.innerHTML = printContents;
+            document.title=`PURCHASE_ORDER_${ponumber}`;
             window.print();
             document.body.innerHTML = originalContents;
-            location.reload();
+            window.location.reload();
         })
 
         function LoadTable() {

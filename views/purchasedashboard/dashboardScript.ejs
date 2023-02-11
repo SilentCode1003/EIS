@@ -682,6 +682,7 @@
             var printContents = document.getElementById('PrintArea').innerHTML;
             var originalContents = document.body.innerHTML;
             document.body.innerHTML = printContents;
+            document.title=`MATERIAL_REQUEST_LIST_${requestby}`;
             window.print();
             document.body.innerHTML = originalContents;
             location.reload();

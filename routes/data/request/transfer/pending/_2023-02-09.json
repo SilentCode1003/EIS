@@ -1,0 +1,284 @@
+[
+  {
+    "personel": "",
+    "date": "2023-02-09 16:37",
+    "locationfrom": "MAIN",
+    "locationto": "PAMPANGA",
+    "remarks": "SPARE ALLOCATION",
+    "status": "PND",
+    "details": [
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "NEC",
+        "itemtype": "NEC G9 Cash Drawer",
+        "serial": "K01566K800281",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "NEC",
+        "itemtype": "NEC G9 Cash Drawer",
+        "serial": "K01566K800231",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "NEC",
+        "itemtype": "NEC G9 Cash Drawer",
+        "serial": "K01566K800330",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "NEC",
+        "itemtype": "NEC G5200 Cash Drawer",
+        "serial": "220524005-370",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "NEC",
+        "itemtype": "NEC G5200 Cash Drawer",
+        "serial": "CDABS2219881442",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "NEC",
+        "itemtype": "NEC G5200 Cash Drawer",
+        "serial": "220524005-355",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "NEC",
+        "itemtype": "NEC G5200 Cash Drawer",
+        "serial": "220524005-363",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "NEC",
+        "itemtype": "NEC G5200 Cash Drawer",
+        "serial": "CDABS2219881395",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "ZEBRA",
+        "itemtype": "ZEBRA POS SCANNER",
+        "serial": "S22208010553212",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "ZEBRA",
+        "itemtype": "ZEBRA POS SCANNER",
+        "serial": "S22203010550502",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "ZEBRA",
+        "itemtype": "ZEBRA POS SCANNER",
+        "serial": "S22203010550661",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "ZEBRA",
+        "itemtype": "ZEBRA POS SCANNER",
+        "serial": "S22207010555310",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "ZEBRA",
+        "itemtype": "ZEBRA POS SCANNER",
+        "serial": "S22207010555266",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "ZEBRA",
+        "itemtype": "ZEBRA POS SCANNER",
+        "serial": "S22207010555320",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "ZEBRA",
+        "itemtype": "ZEBRA POS SCANNER",
+        "serial": "S22203010550683",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "ZEBRA",
+        "itemtype": "ZEBRA POS SCANNER",
+        "serial": "S22207010555302",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "ZEBRA",
+        "itemtype": "ZEBRA POS SCANNER",
+        "serial": "S22207010555267",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "ZEBRA",
+        "itemtype": "ZEBRA POS SCANNER",
+        "serial": "S22203010552393",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "POSIFLEX",
+        "itemtype": "POSIFLEX PRINTER PP9000",
+        "serial": "PPM63034",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "POSIFLEX",
+        "itemtype": "POSIFLEX PRINTER PP9000",
+        "serial": "PPM62372",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "POSIFLEX",
+        "itemtype": "POSIFLEX PRINTER PP9000",
+        "serial": "PPM63149",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "POSIFLEX",
+        "itemtype": "POSIFLEX PRINTER PP9000",
+        "serial": "PPM62496",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "POSIFLEX",
+        "itemtype": "POSIFLEX PRINTER PP9000",
+        "serial": "PPM62373",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "POSIFLEX",
+        "itemtype": "POS ADAPTOR POSIFLEX",
+        "serial": "DPD0380A0729",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "POSIFLEX",
+        "itemtype": "POS ADAPTOR POSIFLEX",
+        "serial": "DPC2980A0597",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "POSIFLEX",
+        "itemtype": "POS ADAPTOR POSIFLEX",
+        "serial": "DPH2880H0113",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "STAR",
+        "itemtype": "CLIQQ STAR PRINTER",
+        "serial": "045534111B",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "STAR",
+        "itemtype": "CLIQQ STAR PRINTER",
+        "serial": "045534107B",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "STAR",
+        "itemtype": "CLIQQ STAR PRINTER",
+        "serial": "045534106B",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "STAR",
+        "itemtype": "CLIQQ STAR PRINTER",
+        "serial": "045534110B",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "STAR",
+        "itemtype": "CLIQQ STAR PRINTER",
+        "serial": "045534105B",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "STAR",
+        "itemtype": "CLIQQ STAR PRINTER",
+        "serial": "045534108B",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "STAR",
+        "itemtype": "CLIQQ STAR PRINTER",
+        "serial": "045534104B",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "STAR",
+        "itemtype": "CLIQQ STAR PRINTER",
+        "serial": "045534109B",
+        "createddate": "2023-02-09",
+        "status": "PENDING"
+      }
+    ]
+  }
+]

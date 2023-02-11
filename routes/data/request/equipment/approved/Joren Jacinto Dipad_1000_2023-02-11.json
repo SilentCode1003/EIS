@@ -1,0 +1,18 @@
+[
+  {
+    "controlno": 1000,
+    "personel": "Joren Jacinto Dipad",
+    "data": [
+      {
+        "store": "1080 CPI SOLDIERS HILL",
+        "ticket": "INC-4587124",
+        "brandname": "ZEBRA",
+        "itemtype": "Zebra Barcode Scanner",
+        "quantity": "1",
+        "remarks": "REPLACEMENT"
+      }
+    ],
+    "createddate": "2023-02-11",
+    "status": "ALLOC"
+  }
+]
