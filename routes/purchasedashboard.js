@@ -663,7 +663,7 @@ router.post('/updaterequest', (req, res) => {
 router.post('/gettransactionpurchseitems', (req, res) => {
   try {
     let requestid = req.body.requestid;
-    let status = dictionary.GetValue(dictionary.REQB());
+    let status = dictionary.GetValue(dictionary.APD());
     let sql = `SELECT * FROM transaction_purchase_item WHERE tpi_requestid='${requestid}' and tpi_status='${status}'`;
     mysql.Select(sql, 'TransactionPurchaseItem', (err, result) => {
       if (err) throw err;
