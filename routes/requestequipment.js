@@ -1161,7 +1161,8 @@ function Check_Exist(data) {
         var seriallist_notexist = '';
         data.forEach((key, item) => {
             var serial = key.serial;
-            let sql = `select * from register_it_equipment where rie_serial='${serial}'`;
+            var itemtype = key.itemtype;
+            let sql = `select * from register_it_equipment where rie_serial='${serial}' and rie_itemtype='${itemtype}'`;
             mysql.Select(sql, 'RegisterITEquipment', (err, result) => {
                 if (err) reject(err);
                 console.log(`CHECK RESULT: ${result.length}`);
