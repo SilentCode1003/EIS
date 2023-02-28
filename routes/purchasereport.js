@@ -103,7 +103,7 @@ router.post('/save', (req, res) => {
 
           if (count != 0) {
             console.log(count);
-            resolve(id);
+            resolve(count);
           } else {
             console.log('NO RESULT');
             // let sql_reset = 'ALTER TABLE po_request_details AUTO_INCREMENT=1';

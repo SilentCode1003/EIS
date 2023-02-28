@@ -85,9 +85,23 @@ router.get('/load', (req, res) => {
 router.post('/getporequestitems', (req, res) => {
     try {
         let ponumber = req.body.ponumber;
-        let sql = `select * from po_request_items where pri_ponumber='${ponumber}'`;
+        // let sql = `select * from po_request_items where pri_ponumber='${ponumber}'`;
+        let sql = `select 
+        pri_itembrand as itembrand,
+        pri_itemname as itemname, 
+        pri_quantity as quantity,
+        pri_costperunit as costperunit,
+        pri_subtotal as subtotal, 
+        pri_preparedby as preparedby, 
+        pri_prepareddate as prepareddate, 
+        rcsd_requestby as requestby,
+        pri_ponumber as ponumber
+        from po_request_items 
+        inner join request_cabling_stocks_details on rcsd_requestid = pri_detailid
+        where pri_ponumber='${ponumber}'
+        group by pri_itemname`;
 
-        mysql.Select(sql, 'PORequestItems', (err, result) => {
+        mysql.SelectCustomizeResult(sql, (err, result) => {
             if (err) console.error(err);
 
             res.json({

@@ -57,6 +57,7 @@
 
                         requestitemTabel.row.add([index, `${item.itembrand} ${item.itemname}`, item.quantity, cost, subtotal]);
 
+                        document.getElementById('custodian').innerText = item.requestby;
                         document.getElementById('officer').innerText = item.preparedby;
                         document.getElementById('ponumber').innerText = item.ponumber;
                         document.getElementById('company').innerText = supplier;
@@ -78,10 +79,6 @@
                         .column('0:visible')
                         .order('asc')
                         .draw();
-
-
-
-
                 },
                 error: function (error) {
                     error(error);

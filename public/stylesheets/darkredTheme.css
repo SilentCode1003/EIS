@@ -127,11 +127,11 @@ table td.expand {
 }
 
 tr:hover {
-  background-color: #2c0701;
+  background-color: #b56558;
 }
 
 label {
-  color: white;
+  color: rgb(177, 62, 62);
 }
 
 .fileUpload {
