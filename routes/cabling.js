@@ -267,7 +267,7 @@ router.post('/addnewstocks', (req, res) => {
     let requeststockcabling = `${RequestStocCablingPath}${datestring}_${requestby}.json`;
 
 
-    console.log(`${datestring} ${requeststockdone} ${requeststockcabling}`);
+    console.log(`${data}`);
 
     data.forEach((key, item) => {
       transaction_cabling_stocks_equipments.push([
@@ -320,20 +320,24 @@ router.post('/addnewstocks', (req, res) => {
 
       data.forEach((key, item) => {
         console.log(`Paramenters: ${key.brandname} ${key.itemtype} ${key.quantity}`)
-        let result = `SELECT ce_itemcount FROM cabling_equipment 
+        let sql_check_count = `SELECT ce_itemcount as itemcount FROM cabling_equipment 
         WHERE ce_brandname='${key.brandname}' 
         AND ce_itemtype='${key.itemtype}'`;
+        let additional_quantity = parseFloat(key.quantity);
 
-        mysql.Select(result, 'CablingEquipment', (err, data) => {
+        mysql.SelectCustomizeResult(sql_check_count, (err, result) => {
           if (err) console.error(err);
           let dataJson = [];
-          var current_quantity = parseFloat(data[0].itemcount);
-          var additional_quantity = parseFloat(key.quantity)
-          var new_quantity = current_quantity + additional_quantity;
           let sql = '';
 
-          console.log(`Current Quantity: ${data}`)
-          if (data != 0) {
+          console.log(`New Stocks: ${additional_quantity}`);
+          console.log(`Current Quantity: ${result.length}`);
+          if (result.length != 0) {
+            let current_quantity = parseFloat(data[0].itemcount);
+            let new_quantity = current_quantity + additional_quantity;
+
+            console.log('UPDATE');
+
             sql = `UPDATE cabling_equipment 
             SET ce_itemcount='${new_quantity}',
             ce_updateitemcount='${additional_quantity}',
@@ -346,20 +350,24 @@ router.post('/addnewstocks', (req, res) => {
               if (err) console.log(err);
               console.log(result)
             })
-          } else {
+          }
+          else {
+            console.log('INSERT');
             sql = `insert into cabling_equipment(
               ce_brandname,
               ce_itemtype,
-              ce_itemcount
-              ) values('${key.brandname}','${key.itemtype}','${additional_quantity}')`;
+              ce_itemcount,
+              ce_updateitemcount,
+              ce_updateby,
+              ce_updatedate
+              ) values('${key.brandname}','${key.itemtype}','${additional_quantity}','','','')`;
 
-            mysql.InsertPayload(sql, (err, result) => {
+            mysql.Insert(sql, (err, result) => {
               if (err) console.error(err);
 
               console.log(result);
             })
           }
-
 
           // dataJson.push({
           //   brandname: key.brandname,

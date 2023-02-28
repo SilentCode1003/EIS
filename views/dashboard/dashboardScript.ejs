@@ -1,6 +1,7 @@
 <script>
     $(document).ready(function () {
         var filename = '';
+        var requestid = '';
         var personel = '';
         var date = '';
         var dataTable;
@@ -429,11 +430,11 @@
         })
 
         $('#cabling-equipment-item-tbl').on('click', 'td', function () {
-            var data = dataTable3.row(this).data();
-            let date = data.date;
-            const dateArr = date.split(" ");
-            filename = `${dateArr[0]}_${data.personel}.json`;
-
+            var data = [];
+            $(this).closest('tr').find('td').each(function () {
+                data.push([$(this).text()]);
+            })
+            cabling_requestid = data[0];
 
         })
 
@@ -1500,17 +1501,19 @@
                 type: "POST",
                 url: "/cablingrequest/approve",
                 data: {
-                    filename: filename
+                    requestid: cabling_requestid
                 },
                 success: function (result) {
                     success('Approved!', 'Request approved!')
-                    LoadRequestList();
-                    EquipmentRequestLoadTables();
+
                 },
                 error: function (result) {
                     alert('error: ' + result.data);
                 }
             });
+
+            LoadRequestList();
+            EquipmentRequestLoadTables();
         })
 
         let cabling_requestid = '';
@@ -1550,7 +1553,7 @@
                 type: "POST",
                 url: "/cablingrequest/getcablingrequestdetail",
                 data: {
-                    filename: filename
+                    requestid: cabling_requestid
                 },
                 success: function (result) {
                     t.clear().draw();
@@ -1559,7 +1562,7 @@
                         // let count = parseFloat(item.itemcount);
                         // let total = cost * count;
 
-                        t.row.add([item.brandname, item.itemtype, item.itemcount]).draw(false);
+                        t.row.add([item.brandname, item.itemtype, item.quantity]).draw(false);
                     })
 
                     document.getElementById('requestby').innerText = cabling_requestby;

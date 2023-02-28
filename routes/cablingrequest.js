@@ -46,7 +46,8 @@ module.exports = router;
 
 router.get('/load', (req, res) => {
   try {
-    let sql = `select * from request_cabling_details where not rcd_status='APPROVED'`;
+    let status = dictionary.GetValue(dictionary.APD());
+    let sql = `select * from request_cabling_details where not rcd_status='${status}'`;
     mysql.Select(sql, 'RequestCablingDetails', (err, result) => {
       if (err) console.log(err);
 
@@ -112,167 +113,151 @@ router.get('/loadrequeststocks', (req, res) => {
 router.post('/requestmaterial', (req, res) => {
   try {
     let details = req.body.details;
-    let personel = req.body.personel;
-    let date = req.body.date;
-    let datetime = date.split(" ");
+    let personel = req.session.fullname;
+    let date = helper.GetCurrentDatetime();
     let remarks = req.body.remarks;
-    let status = req.body.status;
-    let filename = `${datetime[0]}_${personel}.json`;
-    let targetDir = `${CablingPendingPath}${filename}`;
-    let todo = [];
-    let details_todo = [];
-    let transaction_list = [];
-    let requestid = '';
-    let dataRequest = [];
-    let detailsJson = JSON.parse(details);
+    let status = dictionary.GetValue(dictionary.PND());
+    let detailjson = JSON.stringify(details, null, 2);
+    let rcd = [];
+    let rce = [];
+    let tce = [];
 
-    todo.push([datetime[0], personel, details, remarks, status]);
+    rcd.push([
+      date,
+      personel,
+      detailjson,
+      remarks,
+      status
+    ]);
 
-    Save_Request = (data, callback) => {
-      let dataJson = JSON.stringify(data, null, 2);
+    function Insert_RequestCablingDatails(rcd) {
+      return new Promise((resolve, reject) => {
+        let sql_rcd = `INSERT INTO request_cabling_details(
+          rcd_requestdate,
+          rcd_personel,
+          rcd_details,
+          rcd_remarks,
+          rcd_status) VALUES ?`;
 
-      callback(null, helper.CreateJSON(targetDir, dataJson));
-    }
+        mysql.InsertPayload(sql_rcd, rcd, (err, result) => {
+          if (err) reject(err);
 
-    Execute_Cabling_Request_Details = (data, callback) => {
-      let stmt = `INSERT INTO request_cabling_details(
-        rcd_requestdate,
-        rcd_personel,
-        rcd_details,
-        rcd_remarks,
-        rcd_status) VALUES ?`;
-
-      callback(null, mysql.InsertMultiple(stmt, data));
-    }
-
-    Execute_Cabling_Request_Equipment = (data, callback) => {
-      let stmt_tce = `INSERT INTO request_cabling_equipment(
-        rce_personel,
-        rce_requestdate,
-        rce_brandname,
-        rce_itemtype,
-        rce_quantity,
-        rce_referenceid,
-        rce_status) VALUES ?`;
-
-      callback(null, mysql.InsertMultiple(stmt_tce, data));
-    }
-
-    Insert_TransactionCablingEquipment = (data, callback) => {
-      let cmd = `INSERT INTO transaction_cabling_equipment (
-        tce_brandname,
-        tce_itemtype,
-        tce_quantity,
-        tce_requestby,
-        tce_requestdate,
-        tce_approvedby,
-        tce_approveddate,
-        tce_requestid,
-        tce_status
-      ) VALUES ?`
-
-      callback(null, mysql.InsertMultiple(cmd, data));
-    }
-
-    Check_RequestExist = (date, personel, callback) => {
-      let cmd = `SELECT * FROM request_cabling_details WHERE rcd_requestdate='${date}' AND rcd_personel='${personel}'`;
-
-      mysql.Select(cmd, 'RequestCablingDetails', (err, results) => {
-        if (err) throw err;
-
-        callback(null, results);
-      });
-    }
-
-    Check_RequestExist(datetime[0], personel, (err, result) => {
-      if (err) throw err;
-
-      // if (result.length == 0) {
-      Execute_Cabling_Request_Details(todo, (err, data) => {
-        if (err) throw err;
-        console.log('Execute_Cabling_Request_Details');
-      });
-
-
-      let sql = `SELECT * FROM request_cabling_details WHERE rcd_requestdate='${datetime[0]}' AND rcd_personel='${personel}'`;
-      mysql.SelectResult(sql, 'RequestCablingDetails', (err, data) => {
-        if (err) throw err;
-
-        console.log(data);
-
-        data.forEach((key, item) => {
-          requestid = key.requestid;
-          console.log(`REQUEST ID: ${requestid}`);
-
-          dataRequest.push({
-            requestid: requestid,
-            personel: personel,
-            date: date,
-            details: detailsJson,
-            remarks: remarks,
-            status: status,
-          });
-
-          details = JSON.parse(details);
-          details.forEach((key, items) => {
-            //equipment
-            details_todo.push([
-              key.personel,
-              datetime[0],
-              key.brandname,
-              key.itemtype,
-              key.itemcount,
-              requestid,
-              status]);
-
-            //transaction
-            transaction_list.push([
-              key.brandname,
-              key.itemtype,
-              key.itemcount,
-              key.personel,
-              datetime[0],
-              '',
-              '',
-              requestid,
-              status,
-            ]);
-          })
-
-          //insert request equipment
-          console.log(details_todo);
-          Execute_Cabling_Request_Equipment(details_todo, (err, data) => {
-            if (err) throw err;
-          });
-
-          //insert transaction equipment
-          console.log(transaction_list);
-          Insert_TransactionCablingEquipment(transaction_list, (err, data) => {
-            if (err) throw err;
-
-            console.log(`Insert_TransactionCablingEquipment`);
-          });
-
-
-        });
-
-        Save_Request(dataRequest, (err, result) => {
-          if (err) throw err;
-          console.log('Save_Request');
+          resolve(result);
         })
 
       });
+    }
 
-      res.json({
-        msg: 'success'
+    function Insert_RequestCablingEquipment(rce) {
+      return new Promise((resolve, reject) => {
+        let sql_rce = `INSERT INTO request_cabling_equipment(
+          rce_personel,
+          rce_requestdate,
+          rce_brandname,
+          rce_itemtype,
+          rce_quantity,
+          rce_referenceid,
+          rce_status) VALUES ?`;
+
+        mysql.InsertPayload(sql_rce, rce, (err, result) => {
+          if (err) reject(err);
+
+          resolve(result);
+        })
+      });
+    }
+
+    function Insert_TransactionCablingEquipment(tce) {
+      return new Promise((resolve, reject) => {
+
+        let sql_tce = `INSERT INTO transaction_cabling_equipment (
+          tce_brandname,
+          tce_itemtype,
+          tce_quantity,
+          tce_requestby,
+          tce_requestdate,
+          tce_approvedby,
+          tce_approveddate,
+          tce_requestid,
+          tce_status) VALUES ?`
+
+
+        mysql.InsertPayload(sql_tce, tce, (err, result) => {
+          if (err) reject(err);
+
+          resolve(result);
+        })
       })
-      // }
-      // if (result.length == 1) {
-      //   res.json({
-      //     msg: 'warning'
-      //   })
-      // }
-    })
+    }
+
+    // console.log(rcd);
+    Insert_RequestCablingDatails(rcd)
+      .then(result => {
+        console.log(result);
+      })
+      .catch(error => {
+        res.json({
+          msg: error
+        })
+      })
+
+    let sql = `select * from request_cabling_details where rcd_details='${detailjson}'`;
+    mysql.Select(sql, 'RequestCablingDetails', (err, result) => {
+      if (err) console.log(err);
+
+      result.forEach((key, item) => {
+        var itemdetails = JSON.parse(key.details);
+
+        itemdetails.forEach((value, item) => {
+          rce.push([
+            key.personel,
+            key.requestdate,
+            value.brandname,
+            value.itemtype,
+            value.itemcount,
+            key.requestid,
+            status
+          ]);
+
+          tce.push([
+            value.brandname,
+            value.itemtype,
+            value.itemcount,
+            key.personel,
+            key.requestdate,
+            'N/A',
+            'N/A',
+            key.requestid,
+            status
+          ]);
+        });
+
+        Insert_RequestCablingEquipment(rce)
+          .then(result => {
+            console.log(result);
+          })
+          .catch(error => {
+            res.json({
+              msg: error
+            })
+          });
+
+
+        Insert_TransactionCablingEquipment(tce)
+          .then(result => {
+            console.log(result);
+
+            res.json({
+              msg: 'success'
+            });
+          })
+          .catch(error => {
+            res.json({
+              msg: error
+            })
+          });
+      });
+    });
 
   } catch (error) {
     res.json({
@@ -413,32 +398,17 @@ router.post('/requeststocks', (req, res) => {
 
 router.post('/getcablingrequestdetail', (req, res) => {
   try {
-    let dataArr = [];
-    let filename = req.body.filename;
-    let targetFile = `${CablingPendingPath}${filename}`;
-    let data = helper.ReadJSONFile(targetFile);
+    let requestid = req.body.requestid;
+    let sql = `SELECT * FROM transaction_cabling_equipment where tce_requestid='${requestid}'`;
 
-    data.forEach((key, item) => {
-      var details = key.details;
+    mysql.Select(sql, 'TransactionCablingEquipment', (err, result) => {
+      if (err) console.log(err);
 
-      details.forEach((key, item) => {
-        dataArr.push({
-          personel: key.personel,
-          brandname: key.brandname,
-          itemtype: key.itemtype,
-          itemcount: key.itemcount,
-          itemcost: key.itemcost,
-          createddate: key.createddate,
-          status: key.status,
-        });
-      });
-    })
-
-    res.json({
-      msg: 'success',
-      data: dataArr
+      res.json({
+        msg: 'success',
+        data: result
+      })
     });
-
   } catch (error) {
     res.json({
       msg: error
@@ -448,108 +418,120 @@ router.post('/getcablingrequestdetail', (req, res) => {
 
 router.post('/approve', (req, res) => {
   try {
-    let filename = req.body.filename;
-    let filenameArr = filename.split("_");
-    let folderArr = filenameArr[0].split('-');
-    let date = filenameArr[0];
-    let year = folderArr[0];
-    let month = folderArr[1];
-    let targetFile = `${CablingPendingPath}${filename}`;
-    let approvedFile = `${CablingApprovedPath}${filename}`;
-    let deployPathYearMonth = `${DeployCablingPath}${year}${month}`;
-    let data = helper.ReadJSONFile(targetFile);
-    let update_items_list = [];
-    let requestid = '';
+    let requestid = req.body.requestid;
+    let sql_check = `select * from request_cabling_details where rcd_requestid='${requestid}'`;
+    let approvedby = req.session.fullname;
+    let approveddate = helper.GetCurrentDate();
+    let status = dictionary.GetValue(dictionary.APD());
 
-    // helper.CreateFolder(deployPathYearMonth);
-
-    // UpdateItemCount = async (data) => {
-    //   console.log(data);
-    //   await data.forEach((key, item) => {
-    //     helper.UpdateCablingItemCount(key.file, key.deduction);
-    //   });
-    // }
-
-    Update_CablingEquipment = (sql, callback) => {
-      mysql.Update(sql, (err, result) => {
-        if (err) callback(err, null);
-        callback(null, result);
+    function Check_RequestCablingDetails(cmd) {
+      return new Promise((resolve, reject) => {
+        mysql.Select(cmd, 'RequestCablingDetails', (err, result) => {
+          if (err) reject(err);
+          resolve(result);
+        })
       })
     }
 
-    console.log(data);
-    data.forEach((key, item) => {
-      var dataJson = key.details;
+    function Update_CablingEquipment(sql, callback) {
+      return new Promise((resolve, reject) => {
+        mysql.Update(sql, (err, result) => {
+          if (err) reject(err);
+          resolve(result);
+        })
+      })
+    }
 
-      dataJson.forEach((key, item) => {
-        // let file = `${date}_${key.personel}_${key.brandname}.json`;
-        // let deployFilename = `${deployPathYearMonth}/${file}`;
-        // let dataArr = [];
+    function Update_Request(aprrovedby, approveddate, requestid, status) {
+      return new Promise((resolve, reject) => {
+        let update_tce = `UPDATE transaction_cabling_equipment SET tce_approvedby= '${aprrovedby}', tce_approveddate='${approveddate}', tce_status='${status}' WHERE tce_requestid='${requestid}'`;
+        let update_rce = `UPDATE request_cabling_equipment SET rce_status='${status}' WHERE rce_referenceid='${requestid}'`;
+        let update_rcd = `UPDATE request_cabling_details SET rcd_status='${status}' WHERE rcd_requestid='${requestid}'`;
 
-        // dataArr.push({
-        //   personel: key.personel,
-        //   brandname: key.brandname,
-        //   itemtype: key.itemtype,
-        //   itemcost: key.itemcost,
-        //   itemcount: key.itemcount,
-        //   createddate: key.createddate,
-        //   status: 'APPROVED'
-        // });
-
-        // var dataArrJson = JSON.stringify(dataArr, null, 2);
-        let brand = key.brandname;
-        let itemtype = key.itemtype;
-        let itemcount = key.itemcount;
-        let cablingitemFilename = `${CablingPath}${brand}/${itemtype}_${brand}.json`;
-
-        update_items_list.push({
-          file: cablingitemFilename,
-          deduction: itemcount,
-        });
-
-        let result = `SELECT * FROM cabling_equipment WHERE ce_brandname='${brand}' AND ce_itemtype='${key.itemtype}'`;
-        mysql.SelectSingleResult(result, data => {
-          let currentcount = parseFloat(data);
-          let requestcount = parseFloat(key.itemcount);
-          let difference = currentcount - requestcount;
-          console.log(`${currentcount} ${requestcount} ${difference} ${brand} ${itemtype}`);
-
-          let update_ce = `UPDATE cabling_equipment SET ce_itemcount='${difference}' WHERE ce_brandname='${brand}' AND ce_itemtype='${itemtype}'`;
-          Update_CablingEquipment(update_ce, (err, result) => {
-            if (err) throw err;
-            console.log(result);
-          })
+        mysql.Update(update_tce, (err, result) => {
+          if (err) reject(err);
+          console.log(result);
         })
 
-        // helper.CreateJSON(deployFilename, dataArrJson);
+        mysql.Update(update_rce, (err, result) => {
+          if (err) reject(err);
+          console.log(result);
+        })
+
+        mysql.Update(update_rcd, (err, result) => {
+          if (err) reject(err);
+          console.log(result);
+        })
+
+        resolve('DONE UPDATE');
+
       });
+    }
+
+    Check_RequestCablingDetails(sql_check)
+      .then(result => {
+        if (result.length != 0) {
+          var details = result[0].details;
+          var detailsjson = JSON.parse(details);
+
+          detailsjson.forEach((key, item) => {
+            console.log('hit');
+            let brandname = key.brandname;
+            let itemtype = key.itemtype;
+            let itemcount = key.itemcount;
+
+            console.log(`${brandname} ${itemtype} ${itemcount}`)
+
+            let sql_get_item_count = `SELECT * FROM cabling_equipment WHERE ce_brandname='${brandname}' AND ce_itemtype='${itemtype}'`;
+            mysql.Select(sql_get_item_count, 'CablingEquipment', (err, result) => {
+              if (err) console.log(err);
+              console.log(result);
+
+              result.forEach((key, item) => {
+                let currentcount = parseFloat(key.itemcount);
+                let requestcount = parseFloat(itemcount);
+                let difference = currentcount - requestcount;
+                console.log(`${currentcount} ${requestcount} ${difference} ${brandname} ${itemtype}`);
+
+                let update_cablingequipment = `UPDATE cabling_equipment SET ce_itemcount='${difference}' WHERE ce_brandname='${brandname}' AND ce_itemtype='${itemtype}'`;
+                Update_CablingEquipment(update_cablingequipment, (err, result) => {
+                  if (err) throw err;
+                  console.log(result);
+                });
+              })
 
 
+            });
 
-      let update = `UPDATE transaction_cabling_equipment SET tce_approvedby= '${req.session.fullname}', tce_approveddate='${helper.GetCurrentDate()}', tce_status='APPROVED' WHERE tce_requestid='${key.requestid}'`;
-      let update_rce = `UPDATE request_cabling_equipment SET rce_status='APPROVED' WHERE rce_referenceid='${key.requestid}'`;
-      let update_rcd = `UPDATE request_cabling_details SET rcd_status='APPROVED' WHERE rcd_requestid='${key.requestid}'`;
+          });
 
-      mysql.Update(update, (err, result) => {
-        if (err) throw err;
-      });
+          Update_Request(approvedby, approveddate, requestid, status)
+            .then(result => {
+              console.log(result);
 
-      mysql.Update(update_rce, (err, result) => {
-        if (err) throw err;
-      });
+              res.json({
+                msg: 'success'
+              })
+            })
+            .catch(error => {
+              res.json({
+                msg: error
+              });
+            })
 
-      mysql.Update(update_rcd, (err, result) => {
-        if (err) throw err;
-      });
+        }
+        else {
+          res.json({
+            msg: 'invalid'
+          })
+        }
 
-    });
-
-    // UpdateItemCount(update_items_list);
-
-    // helper.MoveFile(targetFile, approvedFile);
-    res.json({
-      msg: 'success'
-    })
+      })
+      .catch(error => {
+        res.json({
+          msg: error
+        });
+      })
   } catch (error) {
     res.json({
       msg: error

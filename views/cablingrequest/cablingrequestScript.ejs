@@ -109,7 +109,7 @@
                 let remarks = $('#remarks').val();
 
                 console.log(remarks);
-                savedata(data, remarks, selection);
+                savedata(dataArr, remarks, selection);
                 dataArr = [];
             }
         })
@@ -433,11 +433,8 @@
                     type: "POST",
                     url: "/cablingrequest/requestmaterial",
                     data: {
-                        date: date,
-                        personel: personel,
                         details: data,
                         remarks: remarks,
-                        status: 'PENDING',
                     },
                     success: function (result) {
                         if (result.msg == 'success') {

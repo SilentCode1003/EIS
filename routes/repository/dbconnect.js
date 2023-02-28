@@ -129,9 +129,9 @@ exports.InsertPayload = async (stmt, todos, callback) => {
         // console.log(`statement: ${stmt} data: ${todos}`);
 
         connection.query(stmt, [todos], (err, results, fields) => {
-            if (err) callback(err.message, null);
+            if (err) callback(err, null);
 
-            callback(null, (`Row inserted: ${results.affectedRows}`));
+            callback(null, `Row inserted: ${results.affectedRows}`);
         });
 
     } catch (error) {
@@ -404,12 +404,10 @@ exports.SelectCustomizeResult = (sql, callback) => {
         connection.connect((err) => { return err; })
         connection.query(sql, (error, results, fields) => {
 
-            console.log(`Customized: ${results}`);
-
             if (error) {
                 callback(error, null);
             }
-
+            console.log(results);
             callback(null, results);
         });
 
