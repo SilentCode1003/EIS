@@ -22,7 +22,7 @@
             <th>PO NUMBER</th>
             <th>OFFICER</th>
             <th>DATE</th>
-            <th>COMPANY</th>
+            <th>TOTAL COST</th>
             <th>DETAILS</th>
             <th>ACTIONS</th>
         </thead>
@@ -70,25 +70,25 @@
 
                     <div class="row modal-signature-info">
                         <div class="col-sm-6">
-                            <p><strong>Date/Time: <span id="podate">2023-01-17</span> </strong></p>
+                            <p><strong>Date/Time: <span id="podate"></span> </strong></p>
                         </div>
                     </div>
 
                     <div class="row modal-signature-info">
                         <div class="col-sm-6">
-                            <p><strong>P.O #: <span id="ponumber">2023-001</strong></p>
+                            <p><strong>P.O #: <span id="ponumber"></strong></p>
                         </div>
                     </div>
 
                     <div class="row modal-signature-info">
                         <div class="col-sm-6">
-                            <p><strong>Company: <span id="company">AWS Distribution Corp</span></strong></p>
+                            <p><strong>Company: <span id="company"></span></strong></p>
                         </div>
                     </div>
 
                     <div class="row modal-signature-info">
                         <div class="col-sm-6">
-                            <p><strong>Location: <span id="location">Head Office</span></strong></p>
+                            <p><strong>Location: <span id="location"></span></strong></p>
                         </div>
                     </div>
 
@@ -96,7 +96,7 @@
                         <p><strong>This serves as Purchase Request for the below items.</strong></p>
                     </div>
                     <div>
-                        <table id="po=equipments-tbl">
+                        <table id="po-equipments-tbl">
                             <thead>
                                 <th>ITEM</th>
                                 <th>Description</th>
@@ -104,7 +104,7 @@
                                 <th>Unit Price</th>
                                 <th>Sub Total</th>
                             </thead>
-                            <tbody> </tbody>
+                            <tbody></tbody>
 
                         </table>
                     </div>
@@ -115,11 +115,10 @@
                             <p><strong>Prepared by:</strong> <span id="custodian"></span></p>
                         </div>
                     </div>
-                    <br>
-                    <br>
                     <div class="row modal-signature-info">
                         <div class="col-sm-6">
-                            <p><strong>Prepared by:</strong> <span id="officer"></span></p>
+                            <p><strong>Approved by:</strong> <span id="officer"></span></p>
+
                         </div>
                     </div>
                 </div>
@@ -128,8 +127,7 @@
         </div>
 
         <div id="modal-button-container" class="center-content">
-            <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
-            <button class="approve-btn" id="printModalBtn" name="printModalBtn">PRINT</button>
+            <button class="approve-btn" id="POEquimentModalPrintBtn" name="POEquimentModalPrintBtn">PRINT</button>
         </div>
     </div>
 </div>

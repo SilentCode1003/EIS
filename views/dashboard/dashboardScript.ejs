@@ -1505,15 +1505,12 @@
                 },
                 success: function (result) {
                     success('Approved!', 'Request approved!')
-
+                    location.reload();
                 },
                 error: function (result) {
                     alert('error: ' + result.data);
                 }
             });
-
-            LoadRequestList();
-            EquipmentRequestLoadTables();
         })
 
         let cabling_requestid = '';

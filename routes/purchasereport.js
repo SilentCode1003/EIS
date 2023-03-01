@@ -198,3 +198,42 @@ router.post('/save', (req, res) => {
     })
   }
 })
+
+router.post('/getporequestitems', (req, res) => {
+  try {
+      let ponumber = req.body.ponumber;
+      // let sql = `select * from po_request_items where pri_ponumber='${ponumber}'`;
+      let sql = `select 
+      pri_ponumber as ponumber,
+      prd_createddate as podate,
+      prd_supplier as supplier,
+      prd_location as location,
+      pri_itembrand as itembrand,
+      pri_itemname itemname,
+      pri_quantity as quantity,
+      pri_costperunit as costperunit,
+      pri_subtotal as subtotal,
+      rcsd_requestby as preparedby,
+      prd_createdby as createdby
+      from po_request_details
+      inner join po_request_items on prd_detailid = pri_detailid
+      inner join request_cabling_stocks_details on pri_detailid = rcsd_requestid
+      where prd_ponumber='${ponumber}'
+      order by pri_itemname`;
+
+      mysql.SelectCustomizeResult(sql, (err, result) => {
+          if (err) console.error(err);
+
+          res.json({
+              msg: 'success',
+              data: result
+          })
+      })
+
+
+  } catch (error) {
+      res.json({
+          msg: error
+      })
+  }
+})
