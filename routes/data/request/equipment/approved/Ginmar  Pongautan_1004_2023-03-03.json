@@ -1,0 +1,18 @@
+[
+  {
+    "controlno": 1004,
+    "personel": "Ginmar  Pongautan",
+    "data": [
+      {
+        "store": "2450 2ND AVENUE",
+        "ticket": "INC-4585152",
+        "brandname": "Cyberpower UPS",
+        "itemtype": "UT650EGU",
+        "quantity": "1",
+        "remarks": "POS UPS REPALCEMENT"
+      }
+    ],
+    "createddate": "2023-03-03",
+    "status": "ALLOC"
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "controlno": 1002,
+    "personel": "Demson Matildo Demetillo",
+    "data": [
+      {
+        "store": "3542 1A HOTEL CDO",
+        "ticket": "INC-236251",
+        "brandname": "Cyberpower UPS",
+        "itemtype": "UT650EGU",
+        "quantity": "1",
+        "remarks": "POS UPS REPLACEMENT"
+      }
+    ],
+    "createddate": "2023-03-03",
+    "status": "ALLOC"
+  }
+]

@@ -153,16 +153,17 @@
                     data: data
                 },
                 success: function (result) {
-                    loadtable();
-                    table_request.clear().draw();
-                    dataArr = [];
 
                     if (result.msg == 'success') {
+                        loadtable();
+                        table_request.clear().draw();
+                        dataArr = [];
+                        window.location.reload();
                         success('Saved!', 'Data saved!')
                     }
 
                     if (result.msg == 'exist') {
-                        warning('Exist',`${personel} had already requested equipment for today. Go to the dashboard to add the requested equipment.`)
+                        warning('Exist', `${personel} had already requested equipment for today. Go to the dashboard to add the requested equipment.`)
                     }
 
                 },

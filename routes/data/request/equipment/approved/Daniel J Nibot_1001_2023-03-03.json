@@ -1,0 +1,18 @@
+[
+  {
+    "controlno": 1001,
+    "personel": "Daniel J Nibot",
+    "data": [
+      {
+        "store": "3438 15TH AVE. CUBAO",
+        "ticket": "INC-2365261",
+        "brandname": "Cyberpower UPS",
+        "itemtype": "UT650EGU",
+        "quantity": "1",
+        "remarks": "POS UPS REPLACEMENT"
+      }
+    ],
+    "createddate": "2023-03-03",
+    "status": "ALLOC"
+  }
+]

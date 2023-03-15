@@ -36,7 +36,8 @@ module.exports = router;
 
 router.get('/load', (req, res) => {
     try {
-        let sql = `select * from po_request_details`;
+        let currentdate = helper.GetCurrentDate();
+        let sql = `select * from po_request_details where prd_createddate='${currentdate}'`;
 
         mysql.Select(sql, 'PORequestDetails', (err, result) => {
             if (err) console.error(er);
@@ -59,6 +60,7 @@ router.get('/load', (req, res) => {
 
                 data.push({
                     detailid: key.detailid,
+                    podate: key.createddate,
                     ponumber: key.ponumber,
                     supplier: key.supplier,
                     location: key.location,
@@ -110,6 +112,58 @@ router.post('/getporequestitems', (req, res) => {
             })
         })
 
+
+    } catch (error) {
+        res.json({
+            msg: error
+        })
+    }
+})
+
+router.post('/getporequest', (req, res) => {
+    try {
+        let datefrom = req.body.datefrom;
+        let dateto = req.body.dateto;
+        let sql = `SELECT * FROM po_request_details WHERE prd_createddate BETWEEN DATE('${datefrom}') AND DATE('${dateto}')`;
+
+        mysql.Select(sql, 'PORequestDetails', (err, result) => {
+            if (err) console.error(er);
+            var data = [];
+
+            console.log(result);
+            result.forEach((key, item) => {
+                // var id = parseFloat(key.detailid);
+                // let paddedNumber = id.toString().padStart(4, '0');
+                // let ponumber = `${helper.GetCurrentYear()}-${paddedNumber}`;
+                let details = '';
+
+                var datajson = JSON.parse(key.details);
+                datajson.forEach((key, item) => {
+                    var itemcount = parseFloat(key.itemcount);
+                    var itemcost = parseFloat(key.itemcost);
+                    var subtotal = itemcount * itemcost;
+                    details += `(${key.brandname})${key.itemtype} ${itemcount}x${itemcost} subtotal: ${subtotal} <br>`;
+                })
+
+                data.push({
+                    detailid: key.detailid,
+                    podate: key.createddate,
+                    ponumber: key.ponumber,
+                    supplier: key.supplier,
+                    location: key.location,
+                    details: details,
+                    action: '<button class="approve-btn" id="printBtn" name="printBtn">PRINT</button>',
+                })
+            })
+
+            // console.log(result);
+
+            res.json({
+                msg: 'success',
+                data: data
+            })
+
+        })
 
     } catch (error) {
         res.json({

@@ -25,6 +25,53 @@
             }
         }
 
+        $(document).on('click', '#searchBtn', function () {
+            var datefrom = $('#datefrom').val();
+            var dateto = $('#dateto').val();
+            var message = '';
+
+            if (datefrom == '') { message += 'DATE FROM' };
+            if (dateto == '') { message += 'DATE TO ' }
+
+            if (message != '') {
+                warning('Empty!', `Required to fillup ${message}`);
+            }
+            else {
+                showloader();
+                dataTable = $('#porequest-table').DataTable({
+                    'destroy': true,
+                    'processing': true,
+                    'serverSide': true,
+                    'paging': false,
+                    'searching': false,
+                    'info': false,
+                    'scrollY': 400,
+                    'scrollCollapse': true,
+                    'serverMethod': 'POST',
+                    'ajax': {
+                        'url': '/porequest/getporequest',
+                        'data': {
+                            datefrom: datefrom,
+                            dateto: dateto
+                        }
+                    },
+                    'columns': [
+                        { data: 'detailid' },
+                        { data: 'ponumber' },
+                        { data: 'supplier' },
+                        { data: 'location' },
+                        { data: 'details' },
+                        { data: 'podate' },
+                        { data: 'action' },
+                    ],
+                    initComplete: function () {
+                        console.log('init complete');
+                        hideload();
+                    }
+                });
+            }
+        })
+
         $(document).on('click', '#printBtn', function () {
             var requestitemTabel = $('#po-equipments-tbl').DataTable({
                 'destroy': true,
@@ -117,7 +164,7 @@
             var printContents = document.getElementById('PrintArea').innerHTML;
             var originalContents = document.body.innerHTML;
             document.body.innerHTML = printContents;
-            document.title=`PURCHASE_ORDER_${ponumber}`;
+            document.title = `PURCHASE_ORDER_${ponumber}`;
             window.print();
             document.body.innerHTML = originalContents;
             window.location.reload();
@@ -147,6 +194,7 @@
                     { data: 'supplier' },
                     { data: 'location' },
                     { data: 'details' },
+                    { data: 'podate' },
                     { data: 'action' },
                 ],
                 initComplete: function () {

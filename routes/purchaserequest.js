@@ -121,7 +121,6 @@ router.post('/restock', (req, res) => {
       })
     }
 
-
     console.log(purchase_oreder_details);
     Insert_PurchaseOrderDetails(purchase_oreder_details, (err, result) => {
       if (err) throw err;

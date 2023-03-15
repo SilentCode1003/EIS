@@ -1,0 +1,231 @@
+<script>
+    $(document).ready(function () {
+        // LoadTable();
+        LoadList();
+
+        $(document).on('click', '#addBtn', function () {
+            var data = $("#requestlisttable tr");
+            let personel = $('#personel').val();
+            let brand = $('#brand').val();
+            let itemname = $('#itemname').val();
+            let serial = $('#serial').val();
+            var message = '';
+
+            if (personel == '-') { message += 'PERSONEL ' }
+            if (brand == '-') { message += 'BRAND ' }
+            if (itemname == '-') { message += 'ITEMNAME ' }
+            if (serial == '-') { message += 'SERIAL/TAG ' }
+
+            if (message != '') {
+                warning("Warning!", "Must fill-up " + message + " field!")
+            }
+            else {
+                for (x = 0; x < data.length; x++) {
+                    // console.log(header[x].innerText);
+                    console.log(data[x].innerText);
+                    var innerData = data[x].innerText;
+                    innerData = innerData.split("\t");
+
+                    if (innerData[3] == serial) {
+                        return warning('Already Exist', `Already request ${brand}[${itemname}] serial: ${serial}`);
+                    }
+                }
+
+                var requestlisttable = document.getElementById('requestlisttable');
+                var row = requestlisttable.insertRow(1);
+                var _personel = row.insertCell(0);
+                var _brand = row.insertCell(1);
+                var _itemname = row.insertCell(2);
+                var _serial = row.insertCell(3);
+
+                _personel.innerHTML = personel;
+                _brand.innerHTML = brand;
+                _itemname.innerHTML = itemname;
+                _serial.innerHTML = serial;
+
+            }
+        })
+
+        $(document).on('click', '#brand', function () {
+            var brand = $('#brand').val();
+            $('#itemname').empty();
+            let options = new Option('ITEM NAME', '-');
+            $('#itemname').append(options);
+
+            $.ajax({
+                type: "POST",
+                url: "/tool/gettoolsitem",
+                data: {
+                    department: 'CABLING',
+                    brand: brand
+                },
+                success: function (result) {
+                    console.log(result.data);
+                    var data = result.data;
+
+                    $.each(data, function (key, item) {
+                        options = new Option(item.itemname, item.itemname);
+                        $(options).html(item.itemname);
+                        $('#itemname').append(options);
+                        // console.log(item.fullname);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+
+        })
+
+        $(document).on('click', '#itemname', function () {
+            var brand = $('#brand').val();
+            var itemname = $('#itemname').val();
+            $('#serial').empty();
+            let options = new Option('SERIAL / TAG', '-');
+            $('#serial').append(options);
+
+            $.ajax({
+                type: "POST",
+                url: "/tool/gettoolserialtag",
+                data: {
+                    department: 'CABLING',
+                    brand: brand,
+                    itemname: itemname
+                },
+                success: function (result) {
+                    console.log(result.data);
+                    var data = result.data;
+
+                    $.each(data, function (key, item) {
+                        if (item.serial != 'N/A') {
+                            options = new Option(item.serial, item.serial);
+                            $(options).html(item.serial);
+                            $('#serial').append(options);
+                        }
+                        else {
+                            options = new Option(item.tag, item.tag);
+                            $(options).html(item.tag);
+                            $('#serial').append(options);
+                        }
+                        // console.log(item.fullname);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+
+        })
+
+        $(document).on('click', '#assignBtn', function () {
+            var requestdata = $("#requestlisttable tr");
+            var dataraw = [];
+
+            for (x = 1; x < requestdata.length; x++) {
+                // console.log(header[x].innerText);
+                console.log(requestdata[x].innerText);
+                var innerData = requestdata[x].innerText;
+                innerData = innerData.split("\t");
+
+                dataraw.push({
+                    personel: innerData[0],
+                    brand: innerData[1],
+                    itemname: innerData[2],
+                    serialtag: innerData[3],
+                })
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '/cablingrequesttool/assigntool',
+                data: {
+                    data: dataraw
+                },
+                success: function (result) {
+                    success('Success', 'Assign success!');
+                },
+                error: function (err) {
+                    warning('Error', err);
+                }
+            })
+        })
+
+        function LoadTable() {
+            var table = $('#toolTable').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'get',
+                'ajax': {
+                    'url': '/tool/load',
+                },
+                'columns': [
+                    { data: 'toolid' },
+                    { data: 'brand' },
+                    { data: 'itemname' },
+                    { data: 'serial' },
+                    { data: 'tag' },
+                    { data: 'assignto' },
+                    { data: 'assigndate' },
+                    { data: 'action' },
+                ]
+            });
+        }
+
+        function LoadList() {
+            $.ajax({
+                type: "POST",
+                url: "/personel/personelposition",
+                data: { position: 'CABLING' },
+                success: function (result) {
+                    console.log(result.data);
+                    var data = result.data;
+
+                    $('#personel').empty();
+                    let options = new Option('PERSONEL', '-');
+                    $('#personel').append(options);
+
+                    $.each(data, function (key, item) {
+                        options = new Option(item.fullname, item.fullname);
+                        $(options).html(item.fullname);
+                        $('#personel').append(options);
+                        // console.log(item.fullname);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/tool/gettoolsbrand",
+                data: { department: 'CABLING' },
+                success: function (result) {
+                    console.log(result.data);
+                    var data = result.data;
+
+                    $('#brand').empty();
+                    let options = new Option('BRAND', '-');
+                    $('#brand').append(options);
+
+                    $.each(data, function (key, item) {
+                        options = new Option(item.brand, item.brand);
+                        $(options).html(item.brand);
+                        $('#brand').append(options);
+                        // console.log(item.fullname);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+        }
+
+    })
+</script>

@@ -380,6 +380,10 @@
         $(`#${tablename}`).find("tr:gt(0)").remove();
     }
 
+    function RemovedTableData(tablename) {
+        $(`'#${tablename}'`).find('tbody').empty();
+    }
+
     document.getElementById("theme-switcher").addEventListener("click", function () {
         const lightTheme = document.getElementById("light-theme");
         const darkTheme = document.getElementById("dark-theme");

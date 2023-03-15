@@ -1,0 +1,18 @@
+[
+  {
+    "controlno": 1005,
+    "personel": "Jander Detalo Ani",
+    "data": [
+      {
+        "store": "3438 15TH AVE. CUBAO",
+        "ticket": "INC-4585215",
+        "brandname": "Cyberpower UPS",
+        "itemtype": "UT650EGU",
+        "quantity": "1",
+        "remarks": "REQUEST POS UPS"
+      }
+    ],
+    "createddate": "2023-03-15",
+    "status": "PENDING"
+  }
+]

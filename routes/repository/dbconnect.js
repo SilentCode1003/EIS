@@ -262,6 +262,22 @@ exports.Select = (sql, table, callback) => {
             if (table == 'PORequestItems') {
                 callback(null, model.PORequestItems(results));
             }
+
+            if(table == 'MasterTool'){
+                callback(null, model.MasterTool(results));
+            }
+
+            if(table == 'RequestToolDetail'){
+                callback(null, model.RequestToolDetail(results));
+            }
+
+            if(table == 'RequestToolItem'){
+                callback(null, model.RequestToolItem(results));
+            }
+
+            if(table == 'ReturnToolItem'){
+                callback(null, model.ReturnToolItem(results));
+            }
         });
 
     } catch (error) {
