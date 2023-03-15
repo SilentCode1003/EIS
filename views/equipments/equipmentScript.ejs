@@ -241,15 +241,23 @@
                         data: data
                     },
                     success: function (result) {
-                        loadtable();
-                        success('Saved!', 'Data saved!')
-                        dataArr = [];
+                        if (result.msg == 'success') {
+                            loadtable();
+                            success('Saved!', 'Data saved!')
+                            dataArr = [];
+                        }
+
+                        if (result.msg == 'duplicate') {
+                            warning('Duplicate!', `List of serial duplicate [${result.data}]`);
+                        }
                     },
                     error: function (result) {
                         error(result.data);
                     }
                 });
             }
+
+            hideload();
         };
 
         async function excelDataSave(data) {
@@ -264,13 +272,20 @@
                     data: dataraw
                 },
                 success: function (result) {
-                    // success('Saved!', 'Data saved!')
-                    // $('#item-tbl').DataTable().ajax.reload();
+                    if (result.msg == 'success') {
+                        success('Saved!', 'Data saved!')
+                        $('#item-tbl').DataTable().ajax.reload();
+                    }
+                    if (result.msg == 'duplicate') {
+                        warning('Duplicate!', `List of serial duplicate [${result.data}]`);
+                        $('#item-tbl').DataTable().ajax.reload();
+                    }
+
                     loadtable();
                     dataArr = [];
                 },
                 error: function (result) {
-                    error(result.data);
+                    error(result.data)
                 }
             });
 
