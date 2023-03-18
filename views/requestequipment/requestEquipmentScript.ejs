@@ -146,6 +146,11 @@
         function savedata(data) {
             console.log(data);
             var personel = $('#personel').val();
+            var store = $('#store').val();
+            var ticket = $('#ticket').val();
+            var brandname = $('#brandname').val();
+            var itemtype = $('#itemtype').val();
+            var quantity = $('#quantity').val();
             $.ajax({
                 type: "POST",
                 url: "/requestequipment/save",
@@ -163,7 +168,7 @@
                     }
 
                     if (result.msg == 'exist') {
-                        warning('Exist', `${personel} had already requested equipment for today. Go to the dashboard to add the requested equipment.`)
+                        warning('Exist', `${personel} had already requested equipment for today with the same details: [${store},${ticket},${brandname},${itemtype},${quantity},]. Go to the dashboard to add the requested equipment.`)
                     }
 
                 },

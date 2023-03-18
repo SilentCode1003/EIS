@@ -1,0 +1,18 @@
+[
+  {
+    "controlno": 1012,
+    "personel": "Francis Adrian Vidal Viray",
+    "data": [
+      {
+        "store": "3438 15TH AVE. CUBAO",
+        "ticket": "INC-4568525",
+        "brandname": "POSIFLEX",
+        "itemtype": "Posiflex Cash Drawer",
+        "quantity": "1",
+        "remarks": "POS CASHDRAWER ISOLATION"
+      }
+    ],
+    "createddate": "2023-03-18",
+    "status": "PENDING"
+  }
+]

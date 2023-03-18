@@ -95,21 +95,33 @@ router.post('/save', (req, res) => {
             })
         }
 
-        function Check_RequestDetailsExist() {
+        function Check_RequestDetailsExist(data) {
             return new Promise((resolve, reject) => {
                 let sql = `SELECT * FROM request_sapre_details
                     WHERE rsd_requestby='${personel}'
                     AND rsd_requestdate='${createddate}'`;
 
+                var detail_exist = 0;
+
                 mysql.Select(sql, 'RequestSpareDetails', (err, result) => {
                     if (err) reject(err);
 
-                    if (result.length != 0) {
-                        resolve(1);
-                    } else {
-                        resolve(0);
+                    result.forEach((key, item) => {
+                        var details = key.details;
+
+                        if (data == details) {
+                            detail_exist += 1;
+                        }
+                    });
+
+                    if (detail_exist != 0) {
+                        return resolve('exist');
+                    }
+                    else {
+                        return resolve('');
                     }
                 })
+
             })
         }
 
@@ -143,42 +155,43 @@ router.post('/save', (req, res) => {
             stats,
         ])
 
-        // Check_RequestDetailsExist()
-        //     .then(result => {
-        //         if (result != 0) {
-        //             res.json({
-        //                 msg: 'exist'
-        //             })
-        //         }
-        //         else {
+        Check_RequestDetailsExist(data)
+            .then(result => {
+                if (result != 'exist') {
+                    Insert_RequestSpareDetails(request_spare_details, (err, result) => {
+                        if (err) console.error(err);
+                        console.log(result);
+                    })
 
-        //         }
+                    let sql = `SELECT * FROM request_sapre_details
+                        WHERE rsd_requestby='${personel}'
+                        AND rsd_requestdate='${createddate}'
+                        AND rsd_details='${data}'`;
+                    CreateFile_RequestSpareDetails(sql, personel, createddate, details, remarks, (err, result) => {
+                        if (err) console.error(err);
 
-        //     })
-        //     .catch(error => {
-        //         return res.json({
-        //             msg: error
-        //         })
-        //     });
+                        console.log(result);
 
+                    })
 
-        Insert_RequestSpareDetails(request_spare_details, (err, result) => {
-            if (err) console.error(err);
-            console.log(result);
-        })
+                    res.json({
+                        msg: 'success'
+                    })
+                }
+                else {
 
-        let sql = `SELECT * FROM request_sapre_details
-            WHERE rsd_requestby='${personel}'
-            AND rsd_requestdate='${createddate}'
-            AND rsd_details='${data}'`;
-        CreateFile_RequestSpareDetails(sql, personel, createddate, details, remarks, (err, result) => {
-            if (err) console.error(err);
+                    res.json({
+                        msg: 'exist',
+                        data: result
+                    })
+                }
 
-            console.log(result);
-            res.json({
-                msg: 'success'
             })
-        })
+            .catch(error => {
+                return res.json({
+                    msg: error
+                })
+            });
 
     } catch (error) {
         res.json({
