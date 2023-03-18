@@ -7,7 +7,7 @@ const mysql = require('./repository/cyberpowerdb');
 const dictionary = require('./repository/dictionary');
 
 function isAuthAdmin(req, res, next) {
- 
+
   if (req.session.isAuth && req.session.accounttype == "CYBERPOWER") {
     next();
   }
@@ -168,44 +168,42 @@ router.post('/getdetails', (req, res) => {
     mysql.Select(sql, 'TransactionCyberpowerOutgoingEquipments', (err, result) => {
       if (err) throw err;
 
+      console.log(result);
+
       result.forEach((key, item) => {
-        var serialStrings = key.unitserial;
-        var dataArr = serialStrings.split('@');
-        var datajson = '';
-        var dataArr_json = [];
+        var unitserial = key.unitserial;
+        console.log(`${key.unitserial}`);
 
-        console.log(dataArr);
-        if (dataArr != '') {
-
-          dataArr.forEach(d => {
-            dataArr_json.push(
-              {
-                serial: d
-              }
-            )
+        if (key.unitserial == '') {
+          data.push({
+            transactionid: key.transactionid,
+            transactiondate: key.transactiondate,
+            clientname: key.clientname,
+            quantity: key.quantity,
+            modelname: key.modelname,
+            itemtype: key.itemtype,
+            unitserial: key.unitserial,
+            requestid: key.requestid,
+            remarks: key.remarks,
+            status: key.status,
           })
-
-          datajson = JSON.stringify(dataArr_json, null, 2);
-
-        } else {
-
         }
+        else {
+          var unitserial = JSON.parse(unitserial);
 
-
-
-
-        data.push({
-          transactionid: key.transactionid,
-          transactiondate: key.transactiondate,
-          clientname: key.clientname,
-          quantity: key.quantity,
-          modelname: key.modelname,
-          itemtype: key.itemtype,
-          unitserial: datajson,
-          requestid: key.requestid,
-          remarks: key.remarks,
-          status: key.status,
-        })
+          data.push({
+            transactionid: key.transactionid,
+            transactiondate: key.transactiondate,
+            clientname: key.clientname,
+            quantity: key.quantity,
+            modelname: key.modelname,
+            itemtype: key.itemtype,
+            unitserial: unitserial,
+            requestid: key.requestid,
+            remarks: key.remarks,
+            status: key.status,
+          })
+        }
       });
 
       res.json({
@@ -235,62 +233,101 @@ router.post('/assignserial', (req, res) => {
     let clientname = req.body.clientname;
     let cyberpower_outgoing_details = [];
 
-    var serials_extract = JSON.parse(serials);
-    let serial_list = '';
-    serials_extract.forEach((key, item) => {
-      console.log(key.serial);
+    // var serials_extract = JSON.parse(serials);
+    // let serial_list = '';
+    // serials_extract.forEach((key, item) => {
+    //   console.log(key.serial);
 
-      serial_list += `${key.serial}@`;
-    })
+    //   serial_list += `${key.serial}@`;
+    // })
 
-    console.log(`Request ID: ${requestid} Parameters: ${modelname} ${itemtype} ${itemcount}`);
-    let sql = `UPDATE transaction_cyberpower_outgoing_equipment 
-      SET tcoe_unitserial='${serial_list}',
-      tcoe_remarks='${remarks}',
-      tcoe_status='${status}'
-      WHERE tcoe_requestid='${requestid}'
-      and tcoe_modelname='${modelname}'
-      and tcoe_itemtype='${itemtype}'`;
+    Check_SerialExist(serials)
+      .then(result => {
 
-    mysql.Update(sql, (err, result) => {
-      if (err) throw err;
-      console.log(result);
-    })
+        console.log(result);
 
-    let checker = '';
-    let sql_checker = `SELECT * FROM transaction_cyberpower_outgoing_equipment WHERE tcoe_requestid='${requestid}'`;
-    mysql.Select(sql_checker, 'TransactionCyberpowerOutgoingEquipments', (err, result) => {
-      if (err) throw err;
+        if (result.length != 0) {
+          res.json({
+            msg: 'notexist',
+            data: result
+          })
+        }
+        else {
 
-      console.log(result);
-      result.forEach((key, item) => {
-        console.log(key.unitserial);
-        if (key.unitserial == '') checker += key.itemtype;
+          Check_SerialSold(serials)
+            .then(result => {
+
+              // console.log(result);
+
+              if (result.length != 0) {
+
+                res.json({
+                  msg: 'sold',
+                  data: result
+                })
+
+              }
+              else {
+                console.log(`Request ID: ${requestid} Parameters: ${modelname} ${itemtype} ${itemcount}`);
+                let sql = `UPDATE transaction_cyberpower_outgoing_equipment 
+              SET tcoe_unitserial='${serials}',
+              tcoe_remarks='${remarks}',
+              tcoe_status='${status}'
+              WHERE tcoe_requestid='${requestid}'
+              and tcoe_modelname='${modelname}'
+              and tcoe_itemtype='${itemtype}'`;
+
+                mysql.Update(sql, (err, result) => {
+                  if (err) throw err;
+                  console.log(result);
+                })
+
+                let checker = '';
+                let sql_checker = `SELECT * FROM transaction_cyberpower_outgoing_equipment WHERE tcoe_requestid='${requestid}'`;
+                mysql.Select(sql_checker, 'TransactionCyberpowerOutgoingEquipments', (err, result) => {
+                  if (err) throw err;
+
+                  console.log(result);
+                  result.forEach((key, item) => {
+                    console.log(key.unitserial);
+                    if (key.unitserial == '') checker += key.itemtype;
+                  })
+
+                  if (checker == '') {
+                    let sql2 = `UPDATE cyberpower_outgoing_details 
+                    SET cod_remarks='${remarks}',
+                    cod_status='${status}'
+                    WHERE cod_requestid='${requestid}'`;
+
+                    mysql.Update(sql2, (err, result) => {
+                      if (err) throw err;
+                      console.log(result)
+                    })
+                  }
+                })
+
+                res.json({
+                  msg: 'success'
+                })
+
+              }
+            })
+            .catch(error => {
+              res, json({
+                msg: error
+              })
+            })
+        }
       })
-
-      if (checker == '') {
-        let sql2 = `UPDATE cyberpower_outgoing_details 
-            SET cod_remarks='${remarks}',
-            cod_status='${status}'
-            WHERE cod_requestid='${requestid}'`;
-
-        mysql.Update(sql2, (err, result) => {
-          if (err) throw err;
-          console.log(result)
+      .catch(error => {
+        res, json({
+          msg: error
         })
-      }
-
-      res.json({
-        msg: 'success'
       })
-
-    })
-
-
 
   } catch (error) {
-    res.status(500).json({
-      error: error.message
+    res, json({
+      msg: error
     })
   }
 })
@@ -420,7 +457,7 @@ router.post('/transaction', (req, res) => {
 
 
           result.forEach((key, item) => {
-            serials = key.serials;
+            serials = JSON.parse(key.serials);
             solddate = key.solddate;
             soldto = key.soldto;
             ponumber = key.ponumber;
@@ -428,11 +465,11 @@ router.post('/transaction', (req, res) => {
             sinumber = key.sinumber;
             crnumber = key.crnumber;
 
-            serials = serials.split('@');
+            // serials = serials.split('@');
 
-            serials.forEach(itemserial => {
+            serials.forEach((key, item) => {
               serial_list.push([
-                `'${itemserial}'`,
+                `'${key.serial}'`,
               ])
             })
 
@@ -710,18 +747,16 @@ function Update_CyberpowerEquipment(requestid, callback) {
   let status = dictionary.SLD();
   mysql.Select(sql_select_transaction_cyberpower_outgoing_equipment, 'TransactionCyberpowerOutgoingEquipments', (err, result) => {
     if (err) callback(err, null);
-    var data = result;
     var serialArr = [];
 
 
-    data.forEach((key, item) => {
-      var unitserial = key.unitserial;
+    result.forEach((key, item) => {
+      var unitserial = JSON.parse(key.unitserial)
 
-      unitserial = unitserial.split('@');
       // console.log(unitserial);
-      unitserial.forEach(itemserial => {
+      unitserial.forEach((key, item) => {
         serialArr.push([
-          `'${itemserial}'`,
+          `'${key.serial}'`,
         ])
       });
 
@@ -790,4 +825,95 @@ function Update_TransactionCyberpowerEquipment(sql, callback) {
   callback(null, 'DONE');
 
 }
+
+function Check_SerialExist(data) {
+  return new Promise((resolve, reject) => {
+    var seriallist = '';
+    data = JSON.parse(data);
+    let count = 0;
+    var serials = [];
+
+    data.forEach((key, item) => {
+      serials.push([
+        key.serial
+      ])
+    })
+
+    let data_length = serials.length;
+
+    for (x = 0; x < data_length; x++) {
+      console.log(serials[x]);
+      var serial = serials[x];
+
+      let sql = `select * from cyberpower_equipments where ce_itemserial='${serial}'`;
+      mysql.Select(sql, 'CyberpowerEquipments', (err, result) => {
+        if (err) reject(err);
+
+        // console.log(result);
+
+        if (result.length != 0) {
+          console.log(`Exist: ${serial}`);
+        }
+        else {
+          console.log('0');
+
+          seriallist += serial;
+          console.log(`Not Exist: ${serial}`);
+        }
+        count += 1;
+
+        if (data_length == count) {
+          resolve(seriallist);
+        }
+      })
+    }
+  })
+}
+
+function Check_SerialSold(data) {
+  return new Promise((resolve, reject) => {
+    var seriallist = '';
+    let status = dictionary.SLD();
+    data = JSON.parse(data);
+    let count = 0;
+    var serials = [];
+
+    data.forEach((key, item) => {
+      serials.push([
+        key.serial
+      ])
+    })
+
+    let data_length = serials.length;
+
+    for (x = 0; x < data_length; x++) {
+      console.log(serials[x]);
+      var serial = serials[x];
+
+      let sql = `select * from cyberpower_equipments where ce_itemserial='${serial}' and ce_status='${status}'`;
+
+      console.log(sql);
+      mysql.Select(sql, 'CyberpowerEquipments', (err, result) => {
+        if (err) reject(err);
+
+        console.log(result);
+
+        if (result.length != 0) {
+          seriallist += serial;
+          console.log(`Sold: ${serial}`);
+        }
+        else {
+          console.log(`Not Sold: ${serial}`);
+
+        }
+        count += 1;
+
+        if (data_length == count) {
+          resolve(seriallist);
+        }
+      })
+    }
+  })
+}
+
 //#endregion

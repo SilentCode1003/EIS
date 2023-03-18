@@ -148,7 +148,7 @@
                                 ]).draw(false);
                             }
                         } else {
-                            dataJson = JSON.parse(dataJson);
+                            // dataJson = JSON.parse(dataJson);
                             console.log(dataJson);
                             $.each(dataJson, (key, item) => {
                                 requestlistTabel.row.add([
@@ -254,6 +254,7 @@
             } else {
                 // console.log(dataRaw);
                 dataRaw = JSON.stringify(dataRaw, null, 2);
+                showloader();
 
                 $.ajax({
                     type: "POST",
@@ -267,19 +268,29 @@
                         serials: dataRaw
                     },
                     success: function (result) {
-                        success('Saved!', 'Data Saved!');
-
+                        console.log(result.msg);
+                        if (result.msg == 'success') {
+                            setTimeout(() => {
+                                RequestDetailsTable();
+                                LoadTable();
+                                modal.style.display = "none";
+                                success('Saved!', 'Data Saved!');
+                            }, 3000)
+                        }
+                        if (result.msg == 'notexist') {
+                            warning('Not Exist', `List of serials no exist ${result.data}`);
+                        }
+                        if (result.msg == 'sold') {
+                            warning('Sold', `List of serials already sold ${result.data}`);
+                        }
                     },
                     error: function (result) {
                         error('error: ' + result);
                     }
                 });
             }
-            showloader();
-            setTimeout(() => {
-                LoadTable();
-                modal.style.display = "none";
-            }, 3000)
+
+
             hideload();
 
             serialArr = [];
@@ -303,21 +314,30 @@
                     },
                     success: function (result) {
 
-                        success('Saved!', 'Data Saved!');
+                        console.log(result.msg);
+                        if (result.msg == 'success') {
+                            setTimeout(() => {
+                                RequestDetailsTable();
+                                LoadTable();
+                                modal2.style.display = "none";
+                                modal3.style.display = "block";
+                            }, 3000);
+                            dataRaw = [];
+                            serialArr = [];
+                        }
+                        if (result.msg == 'notexist') {
+                            warning('Not Exist', `List of serials no exist ${result.data}`);
+                        }
+                        if (result.msg == 'sold') {
+                            warning('Sold', `List of serials already sold ${result.data}`);
+                        }
                     },
                     error: function (result) {
                         error('error: ' + result);
                     }
                 });
 
-                setTimeout(() => {
-                    RequestDetailsTable();
-                    LoadTable();
-                    modal2.style.display = "none";
-                    modal3.style.display = "block";
-                }, 2000);
-                dataRaw = [];
-                serialArr = [];
+
             } else {
                 warning('Oh no!', 'What are you doing, saving without uploading!')
             }
@@ -486,9 +506,6 @@
                             itemcount,
                             action,
                         ]).draw(false);
-
-
-
                     })
                 },
                 error: function (result) {
