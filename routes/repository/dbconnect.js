@@ -86,10 +86,10 @@ exports.InsertDirectPayLoad = (sql, callback) => {
     }
 }
 
-exports.InsertTable = (stmt, todos, callback) => {
+exports.InsertTable = async (stmt, todos, callback) => {
     try {
         connection.connect((err) => { return err; })
-        // console.log(`statement: ${stmt} data: ${todos}`);
+        console.log(`statement: ${stmt} data: ${todos}`);
 
         connection.query(stmt, [todos], (err, results, fields) => {
             if (err) {
@@ -126,7 +126,7 @@ exports.InsertMultiple = async (stmt, todos) => {
 exports.InsertPayload = async (stmt, todos, callback) => {
     try {
         connection.connect((err) => { return err; })
-        // console.log(`statement: ${stmt} data: ${todos}`);
+        //console.log(`statement: ${stmt} data: ${todos}`);
 
         connection.query(stmt, [todos], (err, results, fields) => {
             if (err) callback(err, null);

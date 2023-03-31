@@ -6,7 +6,7 @@ const mysql = require('./repository/cyberpowerdb');
 const dictionary = require('./repository/dictionary');
 
 function isAuthAdmin(req, res, next) {
- 
+
   if (req.session.isAuth && req.session.accounttype == "CYBERPOWER") {
     next();
   }
@@ -147,9 +147,12 @@ router.post('/exceldatasave', (req, res) => {
     let data = req.body.data;
     let cyberpower_equipments = [];
     let transaction_cyberpower_equipment = [];
+    let receivedby = req.session.fullname;
     let serial_list = [];
 
     data = JSON.parse(data);
+
+    // console.log(data);
 
     data.forEach((key, item) => {
       serial_list.push([
@@ -162,7 +165,7 @@ router.post('/exceldatasave', (req, res) => {
         key.serial,
         key.ponumber,
         key.podate,
-        req.session.fullname,
+        receivedby,
         helper.GetCurrentDatetime(),
         `${dictionary.GetValue(dictionary.WH())}`,
         `${dictionary.WH()}`,
@@ -173,7 +176,7 @@ router.post('/exceldatasave', (req, res) => {
         key.itemtype,
         key.serial,
         helper.GetCurrentDatetime(),
-        req.session.fullname,
+        receivedby,
         key.podate,
         key.ponumber,
         '',
@@ -185,7 +188,7 @@ router.post('/exceldatasave', (req, res) => {
       ])
     });
 
-     let sql_check = `select ce_itemserial as itemserial 
+    let sql_check = `select ce_itemserial as itemserial 
     from cyberpower_equipments
      where ce_itemserial in (${serial_list})`;
 
@@ -199,9 +202,11 @@ router.post('/exceldatasave', (req, res) => {
         })
 
       } else {
+        console.log(cyberpower_equipments);
         Insert_CyberpowerEquipment(cyberpower_equipments)
           .then(result => {
             console.log(result);
+
             Insert_TransactionCyberpowerEquipment(transaction_cyberpower_equipment)
               .then(result => {
                 console.log(result);
@@ -460,6 +465,7 @@ router.post('/search', (req, res) => {
 //Functions
 function Insert_CyberpowerEquipment(data) {
   return new Promise((resolve, reject) => {
+    console.log(data);
     mysql.InsertTable('cyberpower_equipments', data, (err, result) => {
       if (err) reject(err);
 

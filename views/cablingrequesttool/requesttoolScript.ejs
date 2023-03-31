@@ -133,6 +133,8 @@
                     itemname: innerData[2],
                     serialtag: innerData[3],
                 })
+
+                personel = innerData[0];
             }
 
             $.ajax({
@@ -142,10 +144,11 @@
                     data: dataraw
                 },
                 success: function (result) {
+                    LoadTable();
                     success('Success', 'Assign success!');
                 },
                 error: function (err) {
-                    warning('Error', err);
+                    warning(err);
                 }
             })
         })
@@ -160,9 +163,9 @@
                 'info': false,
                 'scrollY': 400,
                 'scrollCollapse': true,
-                'serverMethod': 'get',
+                'serverMethod': 'GET',
                 'ajax': {
-                    'url': '/tool/load',
+                    'url': '/cablingrequesttool/load',
                 },
                 'columns': [
                     { data: 'toolid' },

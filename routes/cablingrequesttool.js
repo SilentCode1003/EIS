@@ -37,34 +37,40 @@ router.post('/assigntool', (req, res) => {
         let details = [];
         let currentdate = helper.GetCurrentDate();
         let approvedby = req.session.fullname;
-        let assignto = '';
         let request_tool_detail = [];
         let request_tool_item = [];
         let status = dictionary.GetValue(dictionary.ACT());
 
         console.log(data);
 
+        var data_length = data.length;
+        var count = 0;
         data.forEach((key, item) => {
-            assignto = key.assignto;
             details.push({
                 personel: key.personel,
                 brand: key.brand,
                 itemname: key.itemname,
                 serialtag: key.serialtag,
             });
+
+            count += 1;
+
+            if (data_length == count) {
+                details = JSON.stringify(details, null, 2);
+
+                request_tool_detail.push([
+                    currentdate,
+                    key.personel,
+                    details,
+                    approvedby,
+                    currentdate,
+                    status
+                ]);
+            }
         });
 
-        details = JSON.stringify(details);
 
-        request_tool_detail.push([
-            currentdate,
-            assignto,
-            details,
-            approvedby,
-            currentdate,
-            status
-        ]);
-
+        console.log(request_tool_detail);
         Insert_RequestToolsDetails(request_tool_detail)
             .then(result => {
                 console.log(result);
@@ -85,20 +91,40 @@ router.post('/assigntool', (req, res) => {
     }
 })
 
+router.get('/load', (req, res) => {
+    try {
+        let sql = `SELECT * FROM request_tool_detail`;
+
+        mysql.Select(sql, 'RequestToolDetail', (err, result) => {
+            if (err) console.error(err);
+
+            res.json({
+                msg: 'success',
+                data: result
+            })
+        })
+    } catch (error) {
+        res.json({
+            msg: error
+        })
+    }
+})
+
 //#region FUNCTION
 function Insert_RequestToolsDetails(data) {
     return new Promise((resolve, reject) => {
-        let sql = `insert into request_tool_detail(
-            rtd_requestdate,
-            rtd_requestby,
-            rtd_details,
-            rtd_approvedby,
-            rtd_approveddate,
-            rtd_status) values ?`;
+        let sql = `INSERT INTO request_tool_detail(
+                rtd_requestdate,
+                rtd_requestby,
+                rtd_details,
+                rtd_approvedby,
+                rtd_approveddate,
+                rtd_status) VALUES ?`;
 
-        mysql.InsertTable(sql, data, (err, result) => {
+        mysql.InsertPayload(sql, data, (err, result) => {
             if (err) reject(err);
 
+            console.log(result);
             resolve(result);
         })
     })

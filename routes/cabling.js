@@ -333,7 +333,7 @@ router.post('/addnewstocks', (req, res) => {
           console.log(`New Stocks: ${additional_quantity}`);
           console.log(`Current Quantity: ${result.length}`);
           if (result.length != 0) {
-            let current_quantity = parseFloat(data[0].itemcount);
+            let current_quantity = parseFloat(data[0].itemcount) == 'NaN' ? 0 : parseFloat(data[0].itemcount);
             let new_quantity = current_quantity + additional_quantity;
 
             console.log('UPDATE');

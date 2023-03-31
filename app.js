@@ -50,6 +50,7 @@ var supplierRouter = require('./routes/supplier');
 var porequestRouter = require('./routes/porequest');
 var toolRouter = require('./routes/tool');
 var cablingrequesttoolRouter = require('./routes/cablingrequesttool');
+var ittoolsrequestRouter = require('./routes/ittoolsrequest');
 
 
 var app = express();
@@ -132,6 +133,7 @@ app.use('/supplier', supplierRouter);
 app.use('/porequest', porequestRouter);
 app.use('/tool', toolRouter);
 app.use('/cablingrequesttool', cablingrequesttoolRouter);
+app.use('/ittoolsrequest', ittoolsrequestRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
