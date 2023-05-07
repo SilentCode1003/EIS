@@ -146,7 +146,7 @@
 
         $(document).on('click', "#requestBtn", function () {
             if (dataArr.length == 0) {
-                warning('You have no request? IDIOT!');
+                warning('You have no request?');
             } else {
                 let data = JSON.stringify(dataArr, null, 2);
                 let clientname = $('#clientname').val();

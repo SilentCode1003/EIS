@@ -254,7 +254,7 @@ router.get('/stockin', (req, res) => {
   }
 })
 
-router.post('/addnewstocks', (req, res) => {
+router.post('/addnewstocks', (req, res) => { //need to revise with more optimize code
   try {
     let requestid = req.body.requestid;
     let requestby = req.body.requestby;
@@ -291,22 +291,24 @@ router.post('/addnewstocks', (req, res) => {
 
     // console.log(transaction_cabling_stocks_equipments);
 
-    Insert_TransactionCalingStocksEquipment = (data, callback) => {
-      let sql = `INSERT INTO transaction_cabling_stocks_equipments(
-        tcse_requestdate,
-        tcse_requestby,
-        tcse_brandname,
-        tcse_itemtype,
-        tcse_quantity,
-        tcse_approvedby,
-        tcse_approvedate,
-        tcse_referenceid,
-        tcse_status ) VALUES ?`;
+    function Insert_TransactionCalingStocksEquipment(data) {
+      return new Promise((resolve, reject) => {
+        let sql = `INSERT INTO transaction_cabling_stocks_equipments(
+          tcse_requestdate,
+          tcse_requestby,
+          tcse_brandname,
+          tcse_itemtype,
+          tcse_quantity,
+          tcse_approvedby,
+          tcse_approvedate,
+          tcse_referenceid,
+          tcse_status ) VALUES ?`;
 
-      mysql.InsertMultiple(sql, data, (err, result) => {
-        if (err) callback(err, null);
+        mysql.InsertMultiple(sql, data, (err, result) => {
+          if (err) reject(err);
 
-        callback(null, result);
+          resolve(result);
+        })
       })
     }
 
@@ -316,148 +318,155 @@ router.post('/addnewstocks', (req, res) => {
     //   callback(null, `Path: ${tragetDir} Data:${dataJson}`)
     // }
 
-    Update_Cablingequipment = (data, callback) => {
+    function Update_Cablingequipment(data) {
+      return new Promise((resolve, reject) => {
+        data.forEach((key, item) => {
+          console.log(`Paramenters: ${key.brandname} ${key.itemtype} ${key.quantity}`)
 
-      data.forEach((key, item) => {
-        console.log(`Paramenters: ${key.brandname} ${key.itemtype} ${key.quantity}`)
-        let sql_check_count = `SELECT ce_itemcount as itemcount FROM cabling_equipment 
-        WHERE ce_brandname='${key.brandname}' 
-        AND ce_itemtype='${key.itemtype}'`;
-        let additional_quantity = parseFloat(key.quantity);
+          let sql_check_count = `SELECT ce_itemcount as itemcount FROM cabling_equipment 
+          WHERE ce_brandname='${key.brandname}' 
+          AND ce_itemtype='${key.itemtype}'`;
+          let additional_quantity = parseFloat(key.quantity);
 
-        mysql.SelectCustomizeResult(sql_check_count, (err, result) => {
-          if (err) console.error(err);
-          let dataJson = [];
-          let sql = '';
+          mysql.SelectCustomizeResult(sql_check_count, (err, result) => {
+            if (err) reject(err);
+            // let dataJson = [];
+            let sql = '';
 
-          console.log(`New Stocks: ${additional_quantity}`);
-          console.log(`Current Quantity: ${result.length}`);
-          if (result.length != 0) {
-            let current_quantity = parseFloat(data[0].itemcount) == 'NaN' ? 0 : parseFloat(data[0].itemcount);
-            let new_quantity = current_quantity + additional_quantity;
+            console.log(`New Stocks: ${additional_quantity}`);
+            console.log(`Current Quantity: ${result[0].itemcount}`);
+            if (result.length != 0) {
+              let current_quantity = parseFloat(result[0].itemcount);
+              let new_quantity = current_quantity + additional_quantity;
 
-            console.log('UPDATE');
+              console.log(`New Count: ${new_quantity}`);
 
-            sql = `UPDATE cabling_equipment 
-            SET ce_itemcount='${new_quantity}',
-            ce_updateitemcount='${additional_quantity}',
-            ce_updateby='${req.session.fullname}',
-            ce_updatedate='${helper.GetCurrentDatetime()}' 
-            WHERE ce_brandname='${key.brandname}' 
-            AND ce_itemtype='${key.itemtype}'`;
+              sql = `UPDATE cabling_equipment 
+              SET ce_itemcount='${new_quantity}',
+              ce_updateitemcount='${additional_quantity}',
+              ce_updateby='${req.session.fullname}',
+              ce_updatedate='${helper.GetCurrentDatetime()}' 
+              WHERE ce_brandname='${key.brandname}' 
+              AND ce_itemtype='${key.itemtype}'`;
 
-            mysql.Update(sql, (err, result) => {
-              if (err) console.log(err);
-              console.log(result)
-            })
-          }
-          else {
-            console.log('INSERT');
-            sql = `insert into cabling_equipment(
-              ce_brandname,
-              ce_itemtype,
-              ce_itemcount,
-              ce_updateitemcount,
-              ce_updateby,
-              ce_updatedate
-              ) values('${key.brandname}','${key.itemtype}','${additional_quantity}','','','')`;
+              mysql.Update(sql, (err, result) => {
+                if (err) reject(err);
+                console.log(result)
+              })
+            }
+            else {
+              console.log('INSERT');
+              sql = `insert into cabling_equipment(
+                ce_brandname,
+                ce_itemtype,
+                ce_itemcount,
+                ce_updateitemcount,
+                ce_updateby,
+                ce_updatedate
+                ) values('${key.brandname}','${key.itemtype}','${additional_quantity}','','','')`;
 
-            mysql.Insert(sql, (err, result) => {
-              if (err) console.error(err);
+              mysql.Insert(sql, (err, result) => {
+                if (err) reject(err);
 
-              console.log(result);
-            })
-          }
-
-          // dataJson.push({
-          //   brandname: key.brandname,
-          //   itemtype: key.itemtype,
-          //   itemcount: new_quantity,
-          //   updateitemcount: additional_quantity,
-          //   updateby: req.session.fullname,
-          //   updatedate: helper.GetCurrentDatetime(),
-          // });
-
-          // dataJson = JSON.stringify(dataJson, null, 2);
-
-          // let foldername = `${CablingPath}${key.brandname}`;
-          // let filename = `${key.itemtype}_${key.brandname}.json`;
-          // let tragetDir = `${foldername}/${filename}`;
-
-
-
-          // Update_CablingEquipmengJSONFile(tragetDir, foldername, dataJson, (err, result) => {
-          //   if (err) throw err;
-          //   // console.log(result);
-          // });
+                console.log(result);
+              })
+            }
+          })
 
         })
 
-      })
-      callback(null, 'DONE UPDATE!');
-    }
-
-    Update_RequestCablingStocksDetails = (requestid, callback) => {
-      let sql = `UPDATE request_cabling_stocks_details 
-      SET rcsd_status='APPROVED'
-      WHERE rcsd_requestid='${requestid}'`;
-
-      mysql.Update(sql, (err, result) => {
-        if (err) callback(err, null);
-        callback(null, result);
+        resolve('DONE')
       })
     }
 
-    Update_RequestCablingStocksEquipment = (requestid, callback) => {
-      let sql = `UPDATE request_cabling_stocks_equipments 
-      SET rcse_status='APPROVED'
-      WHERE rcse_referenceid='${requestid}'`;
+    function Update_RequestCablingStocksDetails(requestid) {
+      return new Promise((resolve, reject) => {
+        let sql = `UPDATE request_cabling_stocks_details 
+        SET rcsd_status='APPROVED'
+        WHERE rcsd_requestid='${requestid}'`;
 
-      mysql.Update(sql, (err, result) => {
-        if (err) callback(err, null);
-        callback(null, result);
+        mysql.Update(sql, (err, result) => {
+          if (err) reject(err);
+          resolve(result);
+        })
       })
     }
 
-    Update_TransactionCablingStocksDetails = (requestid, callback) => {
-      let sql = `UPDATE transaction_cabling_stocks_details 
-      SET tcsd_status='DONE'
-      WHERE tcsd_requestid='${requestid}'`;
+    function Update_RequestCablingStocksEquipment(requestid) {
+      return new Promise((resolve, reject) => {
+        let sql = `UPDATE request_cabling_stocks_equipments 
+        SET rcse_status='APPROVED'
+        WHERE rcse_referenceid='${requestid}'`;
 
-      mysql.Update(sql, (err, result) => {
-        if (err) callback(err, null);
-        callback(null, result);
+        mysql.Update(sql, (err, result) => {
+          if (err) reject(err);
+          resolve(result);
+        })
       })
     }
 
-    Insert_TransactionCalingStocksEquipment(transaction_cabling_stocks_equipments, (err, result) => {
-      if (err) throw err;
+    function Update_TransactionCablingStocksDetails(requestid) {
+      return new Promise((resolve, reject) => {
+        let sql = `UPDATE transaction_cabling_stocks_details 
+        SET tcsd_status='DONE'
+        WHERE tcsd_requestid='${requestid}'`;
 
-      console.log('Insert_TransactionCalingStocksEquipment');
-    })
+        mysql.Update(sql, (err, result) => {
+          if (err) reject(err);
+          resolve(result);
+        })
+      })
+    }
 
-    Update_TransactionCablingStocksDetails(requestid, (err, result) => {
-      if (err) throw err;
+    Insert_TransactionCalingStocksEquipment(transaction_cabling_stocks_equipments)
+      .then(result => {
+        console.log(result);
+      })
+      .catch(error => {
+        res.json({
+          msg: error
+        })
+      })
 
-      console.log('Update_TransactionCablingStocksDetails');
-    })
+    Update_Cablingequipment(update_cabling_equipment)
+      .then(result => {
+        console.log(result);
+      })
+      .catch(error => {
+        res.json({
+          msg: error
+        })
+      })
 
-    Update_RequestCablingStocksEquipment(requestid, (err, result) => {
-      if (err) throw err;
+    Update_RequestCablingStocksDetails(requestid)
+      .then(result => {
+        console.log(result);
+      })
+      .catch(error => {
+        res.json({
+          msg: error
+        })
+      })
 
-      console.log('Update_RequestCablingStocksEquipment');
-    })
+    Update_RequestCablingStocksEquipment(requestid)
+      .then(result => {
+        console.log(result);
+      })
+      .catch(error => {
+        res.json({
+          msg: error
+        })
+      })
 
-    Update_RequestCablingStocksDetails(requestid, (err, result) => {
-      if (err) throw err;
-
-      console.log('Update_RequestCablingStocksDetails');
-    })
-
-    Update_Cablingequipment(update_cabling_equipment, (err, result) => {
-      if (err) throw err;
-      console.log(result);
-    })
+    Update_TransactionCablingStocksDetails(requestid)
+      .then(result => {
+        console.log(result);
+      })
+      .catch(error => {
+        res.json({
+          msg: error
+        })
+      })
 
     // helper.MoveFile(requeststockcabling, requeststockdone);
 

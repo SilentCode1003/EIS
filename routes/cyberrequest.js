@@ -638,7 +638,8 @@ router.post('/checkcount', (req, res) => {
             count(*) as itemcount
             from cyberpower_equipments
             where ce_itemmodel='${model}'
-            and ce_itemtype='${type}'`;
+            and ce_itemtype='${type}'
+            and ce_status != 'SLD'`;
 
         mysql.SelectResult(sql, (err, result) => {
           if (err) reject(err);
@@ -704,6 +705,24 @@ router.get('/restockrequestload', (req, res) => {
   } catch (error) {
     res.status(500).json({
       error: error.message
+    })
+  }
+})
+
+router.post('/delivery', (req, res) => {
+  try {
+    let requestid = req.body.requestid;
+    let ponumber = req.body.ponumber;
+    let drnumber = req.body.drnumber;
+    let sinumber = req.body.sinumber;
+    let deliverydate = helper.GetCurrentDate();
+    let status = dictionary.DLVR();
+    let remarks = dictionary.GetValue(status);
+    let transaction_cyberpower = [];
+
+  } catch (error) {
+    res.json({
+      msg: error
     })
   }
 })

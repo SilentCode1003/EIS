@@ -7,7 +7,6 @@
         let _clientname = '';
         let serialArr = [];
 
-
         LoadTable();
         var modal = document.getElementById("outgoingModal");
         var span = document.getElementById("outgoingspan");
@@ -21,6 +20,8 @@
         var modal4 = document.getElementById("paidModal");
         var span4 = document.getElementById("paidspan");
 
+        var delivermodal = document.getElementById("deliverModal");
+        var deliverspan = document.getElementById("deliverspan");
 
         span.onclick = function () {
             modal.style.display = "none";
@@ -40,6 +41,11 @@
         span4.onclick = function () {
             modal4.style.display = "none";
         }
+
+        deliverspan.onclick = function () {
+            delivermodal.style.display = "none";
+        }
+
 
         window.onclick = function (event) {
             if (event.target == modal) {
@@ -172,6 +178,10 @@
             modal4.style.display = "block";
         })
 
+        $(document).on('click', '#deliverBtn', function () {
+            delivermodal.style.display = "block";
+        })
+
         $(document).on('click', "#printBtn", function () {
             modal5.style.display = "block";
         })
@@ -212,6 +222,38 @@
                 LoadTable();
             }, 3000);
             hideload();
+        })
+
+        $(document).on('click', '#submitDlvBtn', function () {
+            let dlvponumber = $('#dlvponumber').val();
+            let dlvdrnumber = $('#dlvdrnumber').val();
+            let dlvsinumber = $('#dlvsinumber').val();
+            var message = '';
+
+            if (dlvponumber == '') { message += "PO NUMBER " }
+            if (dlvdrnumber == '') { message += "DR NUMBER " }
+            if (dlvsinumber == '') { message += "SI NUMBER " }
+
+            if (message != '') { warning('Required', `Required to fillup ${message}`) }
+            else {
+                $.ajax({
+                    type: 'POST',
+                    url: '/cyberrequest/delivery',
+                    data: {
+                        requestid:_requestid,
+                        ponumber: dlvponumber,
+                        drnumber: dlvdrnumber,
+                        sinumber: dlvsinumber
+                    },
+                    success: function (result) {
+
+                    },
+                    error: function (err) {
+                        warning('Error', err);
+                    }
+                })
+
+            }
         })
 
         $(document).on('click', "#batchBtn", function () {
@@ -433,7 +475,8 @@
 
                             if (status == 'REQ') { action = '<button class="assign-btn" id="assignBtn" name="assignBtn">ASSIGN SERIAL</button>'; }
                             if (status == 'ALLOC') { action = '<button class="assign-btn" id="assignBtn" name="assignBtn">EDIT</button><button class="assign-btn" id="approvedBtn" name="approvedBtn">APPROVED</button>'; }
-                            if (status == 'APD') { action = '<button class="assign-btn" id="paidBtn" name="paidBtn">PAID</button><button class="assign-btn" id="cancelBtn" name="cancelBtn">CANCEL</button>'; }
+                            if (status == 'APD') { action = '<button class="assign-btn" id="deliverBtn" name="deliverBtn">DELIVER</button><button class="assign-btn" id="cancelBtn" name="cancelBtn">CANCEL</button>'; }
+                            if (status == 'DLV') { action = '<button class="assign-btn" id="paidBtn" name="paidBtn">PAID</button><button class="assign-btn" id="cancelBtn" name="cancelBtn">CANCEL</button>'; }
 
                             finalData.push({
                                 requestid: reqid,

@@ -36,7 +36,6 @@ crypt.Decrypter(process.env._PASSWORD, (err, result) => {
     // console.log(`${result}`);
 });
 
-
 const connection = mysql.createConnection({
     host: process.env._HOST,
     user: process.env._USER,
