@@ -113,8 +113,8 @@ router.get('/loadrequeststocks', (req, res) => {
 router.post('/requestmaterial', (req, res) => {
   try {
     let details = req.body.details;
-    let personel = req.session.fullname;
-    let date = helper.GetCurrentDatetime();
+    let personel = req.body.personel;
+    let date = req.body.requestdate;
     let remarks = req.body.remarks;
     let status = dictionary.GetValue(dictionary.PND());
     let detailjson = JSON.stringify(details, null, 2);

@@ -26,6 +26,10 @@
         loadlist();
         // loadtable();
 
+        $("#dtbox").DateTimePicker({
+            dateFormat: "yyyy-MM-dd"
+        });
+
         $(document).on('click', "#sofBtn", function () {
             var i, tabcontent, tablinks;
             tabcontent = document.getElementsByClassName("tabcontent");
@@ -103,7 +107,7 @@
             var requestlist = $("#request-list-tbl tr");
             var data_length = requestlist.length;
             var dataArr = [];
-            var createddate = '<%=date%>';
+            var createddate = $('#requestdate').val();
 
             for (x = 1; x < data_length; x++) {
                 console.log(requestlist[x].innerText);
@@ -124,7 +128,7 @@
             console.log(dataArr);
 
             if (dataArr.length == 0) {
-                warning('Empty','No data request list');
+                warning('Empty', 'No data request list');
             } else {
                 let data = JSON.stringify(dataArr, null, 2);
                 // let data = dataArr;
@@ -159,7 +163,7 @@
             }
 
             if (dataArr.length == 0) {
-                warning('Empty','No data request list');
+                warning('Empty', 'No data request list');
             } else {
                 let data = JSON.stringify(dataArr, null, 2);
                 // let data = dataArr;
@@ -170,18 +174,19 @@
         })
 
         $(document).on('click', "#addBtn", function () {
-            var personel = '<%= fullname%>'
+            var personel = $('#personel').val();
             var brandname = $('#brandname').val();
             var itemtype = $('#itemtype').val();
             var itemcount = $('#itemcount').val();
             // var itemcost = $('#itemcost').val();
             // var remarks = $('#remarks').val();
-            var createddate = '<%= date%>';
+            var requestdate = $('#requestdate').val();
             var data = $("#request-list-tbl tr");
 
             var message = "";
 
             if (personel == "-") { message += "FE NAME " }
+            if (requestdate == "-") { message += "REQUEST DATE " }
             if (brandname == "-") { message += "BRAND NAME " }
             if (itemtype == "-") { message += "ITEM TYPE " }
             if (itemcount == "") { message += "QUANTITY " }
@@ -528,29 +533,31 @@
                 }
             });
 
-            // $.ajax({
-            //     type: "POST",
-            //     url: "/personel/personelposition",
-            //     data: { position: 'CABLING' },
-            //     success: function (result) {
-            //         console.log(result.data);
-            //         var data = result.data;
+            $.ajax({
+                type: "POST",
+                url: "/personel/personelposition",
+                data: { position: 'CABLING' },
+                success: function (result) {
+                    console.log(result.data);
+                    var data = result.data;
 
-            //         $.each(data, function (key, item) {
-            //             var options = new Option(item.fullname, item.fullname);
-            //             $(options).html(item.fullname);
-            //             $('#personel').append(options);
-            //             console.log(item.fullname);
-            //         });
-            //     },
-            //     error: function (result) {
-            //         alert('error: ' + result.data);
-            //     }
-            // });
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.fullname, item.fullname);
+                        $(options).html(item.fullname);
+                        $('#personel').append(options);
+                        console.log(item.fullname);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
         }
 
         function savedata(data, remarks, type) {
             let request_data = [];
+            let requestdate = $('#requestdate').val();
+            let personel = $('#personel').val();
 
             // console.log(`${data} ${remarks} ${type}`);
             if (type == 'MATERIALS') {
@@ -566,7 +573,7 @@
                         brandname: innerData[1],
                         itemtype: innerData[2],
                         itemcount: innerData[3],
-                        createddate: '<%= date%>',
+                        requestdate: requestdate = '' ? '<%= date%>' : requestdate,
                         status: 'PENDING'
                     });
                 }
@@ -576,6 +583,8 @@
                     type: "POST",
                     url: "/cablingrequest/requestmaterial",
                     data: {
+                        personel: personel,
+                        requestdate: requestdate,
                         details: request_data,
                         remarks: remarks,
                     },
