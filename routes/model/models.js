@@ -955,7 +955,7 @@ exports.RequestToolDetail = (data) => {
     return dataResult;
 }
 
-exports.RequestToolItem= (data) => {
+exports.RequestToolItem = (data) => {
     let dataResult = [];
 
     data.forEach((key, item) => {
@@ -967,8 +967,8 @@ exports.RequestToolItem= (data) => {
             requestby: key.rti_requestby,
             brand: key.rti_brand,
             item: key.rti_item,
-            serial: key.rti_serial,
-            tag: key.rti_tag,
+            serialtag: key.rti_serialtag,
+            status: key.rti_status,
         })
     });
 

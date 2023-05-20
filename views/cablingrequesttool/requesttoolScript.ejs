@@ -1,6 +1,6 @@
 <script>
     $(document).ready(function () {
-        // LoadTable();
+        LoadTable();
         LoadList();
 
         $(document).on('click', '#addBtn', function () {
@@ -153,7 +153,7 @@
             })
         })
 
-        function LoadTable() {
+        function LoadTable() {//need to revise to add return btn
             var table = $('#toolTable').DataTable({
                 'destroy': true,
                 'processing': true,
@@ -166,15 +166,47 @@
                 'serverMethod': 'GET',
                 'ajax': {
                     'url': '/cablingrequesttool/load',
+                    'dataSrc': (json) => {
+                        var finalData = [];
+                        var data = json.data;
+                        var action = '';
+
+                        // console.log(data);
+                        $.each(data, (key, item) => {
+                            var status = item.status;
+
+                            if (status == 'ACTIVE') {
+                                action = `<button class="approve-btn" id="returnBtn" name="returnBtn">RETURN</button><br>
+                                        <button class="edit-btn" id="printRequestBtn" name="printRequestBtn">PRINT</button><br>
+                                        <button class="edit-btn" id="cancelRequestBtn" name="cancelRequestBtn">CANCEL</button>`;
+                            }
+
+                            finalData.push({
+                                requestid: item.requestid,
+                                requestdate: item.requestdate,
+                                requestby: item.requestby,
+                                details: item.details,
+                                approvedby: item.approvedby,
+                                approveddate: item.approveddate,
+                                action: action
+                            })
+
+                        })
+
+                        return finalData;
+                    },
                 },
+                'columnDefs': [{
+                    targets: 1,
+                    className: 'td-indent',
+                }],
                 'columns': [
-                    { data: 'toolid' },
-                    { data: 'brand' },
-                    { data: 'itemname' },
-                    { data: 'serial' },
-                    { data: 'tag' },
-                    { data: 'assignto' },
-                    { data: 'assigndate' },
+                    { data: 'requestid' },
+                    { data: 'requestdate' },
+                    { data: 'requestby' },
+                    { data: 'details' },
+                    { data: 'approvedby' },
+                    { data: 'approveddate' },
                     { data: 'action' },
                 ]
             });
