@@ -269,7 +269,7 @@ router.post('/requestmaterial', (req, res) => {
 router.post('/requeststocks', (req, res) => {
   try {
     let details = req.body.details;
-    let personel = req.body.personel;
+    let personel = req.session.fullname;
     let requestdate = helper.GetCurrentDate();
     let datetime = helper.GetCurrentDatetime();
     let remarks = req.body.remarks;

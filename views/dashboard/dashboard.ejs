@@ -1,722 +1,854 @@
-<br>
-<div class="row">
+<div class="container-fluid">
+  <br />
+  <div class="row mb-2">
     <div id="itrequest" class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-primary shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            IT EQUIPMENTS REQUEST</div>
-                        <div id="itequipmentrequest" class="h5 mb-0 font-weight-bold text-gray-800"></div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-store fa-2x text-gray-300"></i>
-                    </div>
-                </div>
+      <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div
+                class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+              >
+                IT EQUIPMENTS REQUEST
+              </div>
+              <div
+                id="itequipmentrequest"
+                class="h5 mb-0 font-weight-bold text-gray-800"
+              ></div>
             </div>
+            <div class="col-auto">
+              <i class="fas fa-store fa-2x text-gray-300"></i>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
 
     <div id="equipmentrequest" class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-primary shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            EQUIPMENTS REQUEST TRANSFER</div>
-                        <div id="equipmentrequesttransfer" class="h5 mb-0 font-weight-bold text-gray-800"></div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-store fa-2x text-gray-300"></i>
-                    </div>
-                </div>
+      <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div
+                class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+              >
+                EQUIPMENTS REQUEST TRANSFER
+              </div>
+              <div
+                id="equipmentrequesttransfer"
+                class="h5 mb-0 font-weight-bold text-gray-800"
+              ></div>
             </div>
+            <div class="col-auto">
+              <i class="fas fa-store fa-2x text-gray-300"></i>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
 
     <div id="cablingrequest" class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-primary shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            CABLING EQUIPMENT REQUEST</div>
-                        <div id="cablingequipmentrequest" class="h5 mb-0 font-weight-bold text-gray-800"></div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-store fa-2x text-gray-300"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="equipments-it">
-    <div class="div-table">
-        <div>
-            <h1>
-                IT EQUIPMENT REQUEST
-            </h1>
-        </div>
-        <table id="equipment-item-tbl">
-            <thead>
-                <th>DATE</th>
-                <th>PERSONEL</th>
-                <th>CONTROL NO</th>
-                <th>DETAILS</th>
-                <th>STATUS</th>
-                <th>ACTIONS</th>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
-</div>
-<br>
-
-<div id="equipments-it-transfer">
-    <div class="div-table">
-        <div>
-            <h1>
-                EQUIPMENT TRANSFER REQUEST
-            </h1>
-        </div>
-        <table id="transfer-equipment-item-tbl">
-            <thead>
-                <th>ID</th>
-                <th>DATE</th>
-                <th>PERSONEL</th>
-                <th>DETAILS</th>
-                <th>FROM</th>
-                <th>TO</th>
-                <th>REMARKS</th>
-                <th>STATUS</th>
-                <th>ACTIONS</th>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
-</div>
-<br>
-
-<div id="cablingequipmentrequesttable">
-    <div class="div-table">
-        <div>
-            <h1>
+      <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div
+                class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+              >
                 CABLING EQUIPMENT REQUEST
-            </h1>
+              </div>
+              <div
+                id="cablingequipmentrequest"
+                class="h5 mb-0 font-weight-bold text-gray-800"
+              ></div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-store fa-2x text-gray-300"></i>
+            </div>
+          </div>
         </div>
-        <table id="cabling-equipment-item-tbl">
-            <thead>
-                <th>REQUEST ID</th>
-                <th>DATE</th>
-                <th>PERSONEL</th>
-                <th>DETAILS</th>
-                <th>REMARKS</th>
-                <th>STATUS</th>
-                <th>ACTIONS</th>
-            </thead>
-            <tbody></tbody>
-        </table>
+      </div>
     </div>
-</div>
+  </div>
 
-<hr>
+  <div id="equipments-it">
+    <div class="div-table">
+      <div>
+        <h1>IT EQUIPMENT REQUEST</h1>
+      </div>
+      <table id="equipment-item-tbl">
+        <thead>
+          <th>DATE</th>
+          <th>PERSONEL</th>
+          <th>CONTROL NO</th>
+          <th>DETAILS</th>
+          <th>STATUS</th>
+          <th>ACTIONS</th>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  <br />
 
-<div id="itdashboard" class="row">
+  <div id="equipments-it-transfer">
+    <div class="div-table">
+      <div>
+        <h1>EQUIPMENT TRANSFER REQUEST</h1>
+      </div>
+      <table id="transfer-equipment-item-tbl">
+        <thead>
+          <th>ID</th>
+          <th>DATE</th>
+          <th>PERSONEL</th>
+          <th>DETAILS</th>
+          <th>FROM</th>
+          <th>TO</th>
+          <th>REMARKS</th>
+          <th>STATUS</th>
+          <th>ACTIONS</th>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  <br />
+
+  <div id="cablingequipmentrequesttable">
+    <div class="div-table">
+      <div>
+        <h1>CABLING EQUIPMENT REQUEST</h1>
+      </div>
+      <table id="cabling-equipment-item-tbl">
+        <thead>
+          <th>REQUEST ID</th>
+          <th>DATE</th>
+          <th>PERSONEL</th>
+          <th>DETAILS</th>
+          <th>REMARKS</th>
+          <th>STATUS</th>
+          <th>ACTIONS</th>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <hr />
+
+  <div id="itdashboard" class="row mb-2">
     <div class="col-xl-9 col-lg-5">
-        <div class="card shadow mb-4">
-            <!-- Card Header - Dropdown -->
-            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between chart-title">
-                <h6 class="m-0 font-weight-bold ">IT Equipments Stocks</h6>
-                <div class="dropdown no-arrow">
-                    <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                        aria-labelledby="dropdownMenuLink">
-                        <div class="dropdown-header">Actions:</div>
-                        <a class="dropdown-item" href="#">Generate Report</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">...</a>
-                    </div>
-                </div>
+      <div class="card shadow mb-4">
+        <!-- Card Header - Dropdown -->
+        <div
+          class="card-header py-3 d-flex flex-row align-items-center justify-content-between chart-title"
+        >
+          <h6 class="m-0 font-weight-bold">IT Equipments Stocks</h6>
+          <div class="dropdown no-arrow">
+            <a
+              class="dropdown-toggle"
+              href="#"
+              role="button"
+              id="dropdownMenuLink"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+            </a>
+            <div
+              class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+              aria-labelledby="dropdownMenuLink"
+            >
+              <div class="dropdown-header">Actions:</div>
+              <a class="dropdown-item" href="#">Generate Report</a>
+              <a class="dropdown-item" href="#">Another action</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">...</a>
             </div>
-            <!-- Card Body -->
-            <div class="card-body">
-                <div class="chart-bar chart-content">
-                    <canvas id="myBarChart-it"></canvas>
-                </div>
-            </div>
+          </div>
         </div>
+        <!-- Card Body -->
+        <div class="card-body">
+          <div class="chart-bar chart-content">
+            <canvas id="myBarChart-it"></canvas>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="col-lg-3 col-sm-3">
-        <h1 class="center-text">IT EQUIPMENT STOCKS</h1>
-        <div class="card shadow mb-4">
-            <table id="IT-Equipment_Tbl">
-                <thead>
-                    <th>ITEM NAME</th>
-                    <th>ITEM COUNT</th>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
+      <h1 class="center-text">IT EQUIPMENT STOCKS</h1>
+      <div class="card shadow mb-4">
+        <table id="IT-Equipment_Tbl">
+          <thead>
+            <th>ITEM NAME</th>
+            <th>ITEM COUNT</th>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
-</div>
+  </div>
 
-
-<div id="cabling-dashboard" class="row">
+  <div id="cabling-dashboard" class="row mb-2">
     <div class="col-xl-6 col-lg-5">
-        <div class="card shadow mb-4">
-            <!-- Card Header - Dropdown -->
-            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between chart-title">
-                <h6 class="m-0 font-weight-bold">Cabling Equipments Stocks</h6>
-                <div class="dropdown no-arrow">
-                    <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                        aria-labelledby="dropdownMenuLink">
-                        <div class="dropdown-header">Actions:</div>
-                        <a class="dropdown-item" href="#">Generate Report</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">...</a>
-                    </div>
-                </div>
+      <div class="card shadow mb-4">
+        <!-- Card Header - Dropdown -->
+        <div
+          class="card-header py-3 d-flex flex-row align-items-center justify-content-between chart-title"
+        >
+          <h6 class="m-0 font-weight-bold">Cabling Equipments Stocks</h6>
+          <div class="dropdown no-arrow">
+            <a
+              class="dropdown-toggle"
+              href="#"
+              role="button"
+              id="dropdownMenuLink"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+            </a>
+            <div
+              class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+              aria-labelledby="dropdownMenuLink"
+            >
+              <div class="dropdown-header">Actions:</div>
+              <a class="dropdown-item" href="#">Generate Report</a>
+              <a class="dropdown-item" href="#">Another action</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">...</a>
             </div>
-            <!-- Card Body -->
-            <div class="card-body">
-                <div class="chart-bar chart-content">
-                    <canvas id="myBarChart-cabling"></canvas>
-                </div>
-            </div>
+          </div>
         </div>
+        <!-- Card Body -->
+        <div class="card-body">
+          <div class="chart-bar chart-content">
+            <canvas id="myBarChart-cabling"></canvas>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="col-xl-6 col-lg-5">
-        <h1>CABLING EQUIPMENT STOCKS</h1>
-        <div class="card shadow mb-4">
-            <table id="Cabling-Equipment_Tbl">
-                <thead>
-                    <th>ITEM NAME</th>
-                    <th>ITEM COUNT</th>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
+      <h1>CABLING EQUIPMENT STOCKS</h1>
+      <div class="card shadow mb-4">
+        <table id="Cabling-Equipment_Tbl">
+          <thead>
+            <th>ITEM NAME</th>
+            <th>ITEM COUNT</th>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
-</div>
-<hr>
-<div id="cabling-equipment-below-min" class="center-text">
+  </div>
+  <hr />
+  <div id="cabling-equipment-below-min" class="center-text">
     <h1>NEED TO RESTOCK</h1>
     <div>
-        <table id="restockstble">
-            <thead>
-                <th>BRAND NAME</th>
-                <th>ITEM NAME</th>
-                <th>CURRENT STOCKS</th>
-                <th>MINIMUM STOCKS</th>
-            </thead>
-            <tbody></tbody>
-        </table>
+      <table id="restockstble">
+        <thead>
+          <th>BRAND NAME</th>
+          <th>ITEM NAME</th>
+          <th>CURRENT STOCKS</th>
+          <th>MINIMUM STOCKS</th>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
+  </div>
 </div>
 
 <!-- The Modal -->
 <div id="requestModal" class="modal card shadow mb-4">
-    <!-- Modal content -->
-    <div class="modal-content">
-        <div class="modal-button-container">
-            <span class="close">&times;</span>
-        </div>
-        <div class="modal-body">
-            <div>
-                <div class="row">
-                    <div class="col-xl-4 col-lg-3">
-                        <h4> REQUEST ITEM'S</h4>
-                        <table id="requestlist">
-                            <thead>
-                                <th>TICKET</th>
-                                <th>ITEM</th>
-                                <th>QTY</th>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-                <hr>
-                <div>
-                    <table id="requesttbl">
-                        <thead>
-                            <th>TICKET</th>
-                            <th>STORE</th>
-                            <th>BRAND</th>
-                            <th>TYPE</th>
-                            <th>SERIAL</th>
-                        </thead>
-                        <tbody></tbody>
-
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div id="modal-button-container" class="center-content">
-            <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
-            <button class="btn-glow-modal" id="saveBtn" name="saveBtn">SAVE</button>
-        </div>
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div class="modal-button-container">
+      <span class="close">&times;</span>
     </div>
+    <div class="modal-body">
+      <div>
+        <div class="row">
+          <div class="col-xl-4 col-lg-3">
+            <h4>REQUEST ITEM'S</h4>
+            <table id="requestlist">
+              <thead>
+                <th>TICKET</th>
+                <th>ITEM</th>
+                <th>QTY</th>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+        <hr />
+        <div>
+          <table id="requesttbl">
+            <thead>
+              <th>TICKET</th>
+              <th>STORE</th>
+              <th>BRAND</th>
+              <th>TYPE</th>
+              <th>SERIAL</th>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="modal-button-container" class="center-content">
+      <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
+      <button class="btn-glow-modal" id="saveBtn" name="saveBtn">SAVE</button>
+    </div>
+  </div>
 </div>
 
 <!-- The Modal -->
 <div id="requestPringModal" class="modal card shadow mb-4">
-    <!-- Modal content -->
-    <div class="modal-content">
-        <div class="modal-button-container">
-            <span id="requestprintspan" class="close">&times;</span>
-        </div>
-        <div id="PrintArea" name="PrintArea">
-            <div class="modal-header center-content modal-print-background">
-                <div class="row">
-                    <div class="col-xl-3 col-lg-2">
-                        <img class="logo" src="/images/img/logo.jpg" alt="...">
-                    </div>
-                </div>
-            </div>
-            <div class="center-text modal-print-background">
-                <div class="modal-print-background modal-company-header">
-                    <p><strong><span class="report-header">5L SOLUTIONS SUPPLY &amp; ALLIED SERVICES
-                                CORP.</span></strong></p>
-                </div>
-                <div class="modal-print-background">
-                    <p><span class="report-subheader">Lot 12 Block19 3B Pacita 1, Brgy. San Francisco, Bi&ntilde;an
-                            Laguna</span></p>
-                </div>
-                <div class="modal-print-background">
-                    <p><span class="report-subheader">Contact No. : (8)952-15-60 , (8)273-44-69</span></p>
-                </div>
-            </div>
-            <div class="modal-body">
-                <div>
-                    <h1 class="center-text"> REQUESTING FORM</h1>
-                    <br>
-                    <div class="row modal-signature-info">
-                        <div class="col-sm-6">
-                            <p><strong>CONTROL NO: </strong><span id="requestid"></span></p>
-                        </div>
-                    </div>
-                    <div class="row modal-signature-info">
-                        <div class="col-sm-6">
-                            <p><strong>DATE: </strong><span id="requestdate"></span></p>
-                        </div>
-                    </div>
-                    <div class="row modal-signature-info">
-                        <div class="col-sm-6">
-                            <p><strong>DEPARTMENT: </strong><span id="department">IT</span></p>
-                        </div>
-                    </div>
-                    <div>
-                        <table id="print-requesttbl">
-                            <thead>
-                                <th>TICKET</th>
-                                <th>STORE</th>
-                                <th>BRAND</th>
-                                <th>TYPE</th>
-                                <th>SERIAL</th>
-                            </thead>
-                            <tbody></tbody>
-
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <br>
-            <br>
-            <br>
-            <!-- SIGNATURE AREA -->
-            <div class="row modal-signature-info center-content">
-                <div class="col-sm-3 center-content">
-                    <p><strong><span id="requestbysig"></span></strong></p>
-                </div>
-                <div class="col-sm-3 center-content">
-                    <p><strong><span id="officersig"></span></strong></p>
-                </div>
-                <div class="col-sm-3 center-content">
-                    <p><strong><span id="checkersig"></span></strong></p>
-                </div>
-            </div>
-            <!-- LABLE AREA -->
-            <div class="row modal-signature-info center-content">
-                <div class="col-sm-3 center-content">
-                    <p><strong>REQUEST BY</strong></p>
-                </div>
-                <div class="col-sm-3 center-content">
-                    <p><strong>IT CUSTODIAN</strong></p>
-                </div>
-                <div class="col-sm-3 center-content">
-                    <p><strong>CHECKER</strong></p>
-                </div>
-            </div>
-            <!-- DATES -->
-            <div class="row modal-signature-info center-content">
-                <div class="col-sm-3 center-content">
-                    <p><strong>
-                            <span id="requestdatesig"></span>
-                        </strong></p>
-                </div>
-                <div class="col-sm-3 center-content">
-                    <p><strong>
-                            <span id="datesig"></span>
-                        </strong></p>
-                </div>
-
-                <div class="col-sm-3 center-content">
-                    <p><strong>
-                            <span id="checkdatesig"></span>
-                        </strong></p>
-                </div>
-            </div>
-
-        </div>
-
-        <div id="modal-button-container" class="center-content">
-            <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
-            <button class="approve-btn" id="printEquipmentRequestBtn" name="printEquipmentRequestBtn">PRINT</button>
-        </div>
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div class="modal-button-container">
+      <span id="requestprintspan" class="close">&times;</span>
     </div>
+    <div id="PrintArea" name="PrintArea">
+      <div class="modal-header center-content modal-print-background">
+        <div class="row">
+          <div class="col-xl-3 col-lg-2">
+            <img class="logo" src="/images/img/logo.jpg" alt="..." />
+          </div>
+        </div>
+      </div>
+      <div class="center-text modal-print-background">
+        <div class="modal-print-background modal-company-header">
+          <p>
+            <strong
+              ><span class="report-header"
+                >5L SOLUTIONS SUPPLY &amp; ALLIED SERVICES CORP.</span
+              ></strong
+            >
+          </p>
+        </div>
+        <div class="modal-print-background">
+          <p>
+            <span class="report-subheader"
+              >Lot 12 Block19 3B Pacita 1, Brgy. San Francisco, Bi&ntilde;an
+              Laguna</span
+            >
+          </p>
+        </div>
+        <div class="modal-print-background">
+          <p>
+            <span class="report-subheader"
+              >Contact No. : (8)952-15-60 , (8)273-44-69</span
+            >
+          </p>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div>
+          <h1 class="center-text">REQUESTING FORM</h1>
+          <br />
+          <div class="row modal-signature-info">
+            <div class="col-sm-6">
+              <p><strong>CONTROL NO: </strong><span id="requestid"></span></p>
+            </div>
+          </div>
+          <div class="row modal-signature-info">
+            <div class="col-sm-6">
+              <p><strong>DATE: </strong><span id="requestdate"></span></p>
+            </div>
+          </div>
+          <div class="row modal-signature-info">
+            <div class="col-sm-6">
+              <p>
+                <strong>DEPARTMENT: </strong><span id="department">IT</span>
+              </p>
+            </div>
+          </div>
+          <div>
+            <table id="print-requesttbl">
+              <thead>
+                <th>TICKET</th>
+                <th>STORE</th>
+                <th>BRAND</th>
+                <th>TYPE</th>
+                <th>SERIAL</th>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <br />
+      <br />
+      <br />
+      <!-- SIGNATURE AREA -->
+      <div class="row modal-signature-info center-content">
+        <div class="col-sm-3 center-content">
+          <p>
+            <strong><span id="requestbysig"></span></strong>
+          </p>
+        </div>
+        <div class="col-sm-3 center-content">
+          <p>
+            <strong><span id="officersig"></span></strong>
+          </p>
+        </div>
+        <div class="col-sm-3 center-content">
+          <p>
+            <strong><span id="checkersig"></span></strong>
+          </p>
+        </div>
+      </div>
+      <!-- LABLE AREA -->
+      <div class="row modal-signature-info center-content">
+        <div class="col-sm-3 center-content">
+          <p><strong>REQUEST BY</strong></p>
+        </div>
+        <div class="col-sm-3 center-content">
+          <p><strong>IT CUSTODIAN</strong></p>
+        </div>
+        <div class="col-sm-3 center-content">
+          <p><strong>CHECKER</strong></p>
+        </div>
+      </div>
+      <!-- DATES -->
+      <div class="row modal-signature-info center-content">
+        <div class="col-sm-3 center-content">
+          <p>
+            <strong>
+              <span id="requestdatesig"></span>
+            </strong>
+          </p>
+        </div>
+        <div class="col-sm-3 center-content">
+          <p>
+            <strong>
+              <span id="datesig"></span>
+            </strong>
+          </p>
+        </div>
+
+        <div class="col-sm-3 center-content">
+          <p>
+            <strong>
+              <span id="checkdatesig"></span>
+            </strong>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div id="modal-button-container" class="center-content">
+      <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
+      <button
+        class="approve-btn"
+        id="printEquipmentRequestBtn"
+        name="printEquipmentRequestBtn"
+      >
+        PRINT
+      </button>
+    </div>
+  </div>
 </div>
 
 <!-- The Modal -->
 <div id="transferModal" class="modal">
-    <!-- <div class="row">
-        <div class="col-xl-12 col-lg-11"> -->
-    <!-- Modal content -->
-    <div class="modal-content modal-print-background">
-        <div class="modal-button-container modal-print-background">
-            <span id="transfermodalclose" name="transfermodalclose" class="close">&times;</span>
-        </div>
-        <!-- AREA TO PRINT ONLY -->
-        <div id="transfer-PrintArea" name="transfer-PrintArea">
-            <div class="modal-header center-content modal-print-background">
-                <div class="row">
-                    <div class="col-xl-3 col-lg-2">
-                        <img class="logo" src="/images/img/logo.jpg" alt="...">
-                    </div>
-                </div>
-            </div>
-            <div class="center-text modal-print-background">
-                <div class="modal-print-background modal-company-header">
-                    <p><strong><span class="report-header">5L SOLUTIONS SUPPLY &amp; ALLIED SERVICES
-                                CORP.</span></strong></p>
-                </div>
-                <div class="modal-print-background">
-                    <p><span class="report-subheader">Phase 3B Block 18 Lot 15, Golf Drive Street Pacita
-                            Complex 1,
-                            City of Bi&ntilde;an, Laguna</span></p>
-                </div>
-                <div class="modal-print-background">
-                    <p><span class="report-subheader">Tel.Nos: 273-44-69/952-15-60</span></p>
-                </div>
-            </div>
-            <div class="modal-body modal-print-background">
-                <h2 class='report-header ' style="text-align: center"> TRANSFER REQUEST FORM </h2>
-                <br>
-                <br>
-                <div>
-                    <table id="modalTransferItems">
-                        <thead>
-                            <th>BRAND</th>
-                            <th>ITEM TYPE</th>
-                            <th>SERIAL</th>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <br>
-            <br>
-            <div class="row modal-signature-info center-content">
-                <div class="col-sm-4 center-text">
-                    <p><strong><span id="preparedsig"></span></strong></p>
-                </div>
-                <div class="col-sm-4 center-text">
-                    <p><strong><span id="approvedbysig"></span></strong></p>
-                </div>
-                <div class="col-sm-4 center-text">
-                    <p><strong><span id="checkbysig"></span></strong></p>
-                </div>
-            </div>
-
-            <div class="row modal-signature-info center-content">
-                <div class="col-sm-4 center-text">
-                    <p><strong>PREPARED BY</strong></p>
-                </div>
-                <div class="col-sm-4 center-text">
-                    <p><strong>APPROVED BY</strong></p>
-                </div>
-                <div class="col-sm-4 center-text">
-                    <p><strong>CHECKED BY</strong></p>
-                </div>
-            </div>
-
-            <div class="row modal-signature-info center-content">
-                <div class="col-sm-4 center-text">
-                    <p><strong>
-                            <%= date%>
-                        </strong></p>
-                </div>
-                <div class="col-sm-4 center-text">
-                    <p><strong>
-                            <%= date%>
-                        </strong></p>
-                </div>
-                <div class="col-sm-4 center-text">
-                    <p><strong>
-                            <%= date%>
-                        </strong></p>
-                </div>
-            </div>
-        </div>
-
-        <div class="center-content modal-print-background">
-            <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
-            <button id="printBtn" name="printBtn">PRINT</button>
-        </div>
+  <!-- <div class="row">
+            <div class="col-xl-12 col-lg-11"> -->
+  <!-- Modal content -->
+  <div class="modal-content modal-print-background">
+    <div class="modal-button-container modal-print-background">
+      <span id="transfermodalclose" name="transfermodalclose" class="close"
+        >&times;</span
+      >
     </div>
-    <!-- </div>
+    <!-- AREA TO PRINT ONLY -->
+    <div id="transfer-PrintArea" name="transfer-PrintArea">
+      <div class="modal-header center-content modal-print-background">
+        <div class="row">
+          <div class="col-xl-3 col-lg-2">
+            <img class="logo" src="/images/img/logo.jpg" alt="..." />
+          </div>
+        </div>
+      </div>
+      <div class="center-text modal-print-background">
+        <div class="modal-print-background modal-company-header">
+          <p>
+            <strong
+              ><span class="report-header"
+                >5L SOLUTIONS SUPPLY &amp; ALLIED SERVICES CORP.</span
+              ></strong
+            >
+          </p>
+        </div>
+        <div class="modal-print-background">
+          <p>
+            <span class="report-subheader"
+              >Phase 3B Block 18 Lot 15, Golf Drive Street Pacita Complex 1,
+              City of Bi&ntilde;an, Laguna</span
+            >
+          </p>
+        </div>
+        <div class="modal-print-background">
+          <p>
+            <span class="report-subheader">Tel.Nos: 273-44-69/952-15-60</span>
+          </p>
+        </div>
+      </div>
+      <div class="modal-body modal-print-background">
+        <h2 class="report-header" style="text-align: center">
+          TRANSFER REQUEST FORM
+        </h2>
+        <br />
+        <br />
+        <div>
+          <table id="modalTransferItems">
+            <thead>
+              <th>BRAND</th>
+              <th>ITEM TYPE</th>
+              <th>SERIAL</th>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
 
-    </div> -->
+      <br />
+      <br />
+      <div class="row modal-signature-info center-content">
+        <div class="col-sm-4 center-text">
+          <p>
+            <strong><span id="preparedsig"></span></strong>
+          </p>
+        </div>
+        <div class="col-sm-4 center-text">
+          <p>
+            <strong><span id="approvedbysig"></span></strong>
+          </p>
+        </div>
+        <div class="col-sm-4 center-text">
+          <p>
+            <strong><span id="checkbysig"></span></strong>
+          </p>
+        </div>
+      </div>
 
+      <div class="row modal-signature-info center-content">
+        <div class="col-sm-4 center-text">
+          <p><strong>PREPARED BY</strong></p>
+        </div>
+        <div class="col-sm-4 center-text">
+          <p><strong>APPROVED BY</strong></p>
+        </div>
+        <div class="col-sm-4 center-text">
+          <p><strong>CHECKED BY</strong></p>
+        </div>
+      </div>
+
+      <div class="row modal-signature-info center-content">
+        <div class="col-sm-4 center-text">
+          <p><strong> <%= date%> </strong></p>
+        </div>
+        <div class="col-sm-4 center-text">
+          <p><strong> <%= date%> </strong></p>
+        </div>
+        <div class="col-sm-4 center-text">
+          <p><strong> <%= date%> </strong></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="center-content modal-print-background">
+      <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
+      <button id="printBtn" name="printBtn">PRINT</button>
+    </div>
+  </div>
+  <!-- </div>
+    
+        </div> -->
 </div>
 
 <!-- The Modal -->
 <div id="cablingRequestModal" class="modal">
-    <!-- <div class="row">
-        <div class="col-xl-12 col-lg-11"> -->
-    <!-- Modal content -->
-    <div class="modal-content modal-print-background">
-        <div class="modal-button-container modal-print-background">
-            <span id="cablingmodalclose" name="cablingmodalclose" class="close">&times;</span>
-        </div>
-        <!-- AREA TO PRINT ONLY -->
-        <div id="cabling-PrintArea" name="cabling-PrintArea">
-            <div class="modal-header center-content modal-print-background">
-                <div class="row">
-                    <div class="col-xl-3 col-lg-2">
-                        <img class="logo" src="/images/img/logo.jpg" alt="...">
-                    </div>
-                </div>
-            </div>
-            <div class="center-text modal-print-background">
-                <div class="modal-print-background modal-company-header">
-                    <p><strong><span class="report-header">5L SOLUTIONS SUPPLY &amp; ALLIED SERVICES
-                                CORP.</span></strong></p>
-                </div>
-                <div class="modal-print-background">
-                    <p><span class="report-subheader">Phase 3B Block 18 Lot 15, Golf Drive Street Pacita
-                            Complex 1,
-                            City of Bi&ntilde;an, Laguna</span></p>
-                </div>
-                <div class="modal-print-background">
-                    <p><span class="report-subheader">Tel.Nos: 273-44-69/952-15-60</span></p>
-                </div>
-            </div>
-            <div class="modal-body modal-print-background">
-                <h2 class='report-header ' style="text-align: center"> EQUIPMENT REQUEST FORM </h2>
-                <br>
-                <br>
-                <div>
-                    <table id="modalCablingItems">
-                        <thead>
-                            <th>BRAND</th>
-                            <th>ITEM TYPE</th>
-                            <th>ITEM COUNT</th>
-                            <!-- <th>UNIT COST</th>
-                            <th>TOTAL COST</th> -->
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <br>
-            <br>
-            <br>
-            <br>
-            <div class="row modal-signature-info center-content">
-                <div class="col-sm-4 center-text">
-                    <p><strong><span id="requestby"></span></strong></p>
-                </div>
-                <div class="col-sm-4 center-text">
-                    <p><strong><span id="approvedby"></span></strong></p>
-                </div>
-            </div>
-
-            <div class="row modal-signature-info center-content">
-                <div class="col-sm-4 center-text">
-                    <p><strong>PREPARED BY</strong></p>
-                </div>
-                <div class="col-sm-4 center-text">
-                    <p><strong>APPROVED BY</strong></p>
-                </div>
-            </div>
-
-            <div class="row modal-signature-info center-content">
-                <div class="col-sm-4 center-text">
-                    <p><strong>
-                            <span id="requestcablingdatesig"></span>
-                        </strong></p>
-                </div>
-                <div class="col-sm-4 center-text">
-                    <p><strong>
-                            <span id="approveddatesig"></span>
-                        </strong></p>
-                </div>
-            </div>
-        </div>
-
-        <div class="center-content modal-print-background">
-            <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
-            <button class="approve-btn" id="cabling-printBtn" name="cabling-printBtn">PRINT</button>
-        </div>
+  <!-- <div class="row">
+            <div class="col-xl-12 col-lg-11"> -->
+  <!-- Modal content -->
+  <div class="modal-content modal-print-background">
+    <div class="modal-button-container modal-print-background">
+      <span id="cablingmodalclose" name="cablingmodalclose" class="close"
+        >&times;</span
+      >
     </div>
-    <!-- </div>
+    <!-- AREA TO PRINT ONLY -->
+    <div id="cabling-PrintArea" name="cabling-PrintArea">
+      <div class="modal-header center-content modal-print-background">
+        <div class="row">
+          <div class="col-xl-3 col-lg-2">
+            <img class="logo" src="/images/img/logo.jpg" alt="..." />
+          </div>
+        </div>
+      </div>
+      <div class="center-text modal-print-background">
+        <div class="modal-print-background modal-company-header">
+          <p>
+            <strong
+              ><span class="report-header"
+                >5L SOLUTIONS SUPPLY &amp; ALLIED SERVICES CORP.</span
+              ></strong
+            >
+          </p>
+        </div>
+        <div class="modal-print-background">
+          <p>
+            <span class="report-subheader"
+              >Phase 3B Block 18 Lot 15, Golf Drive Street Pacita Complex 1,
+              City of Bi&ntilde;an, Laguna</span
+            >
+          </p>
+        </div>
+        <div class="modal-print-background">
+          <p>
+            <span class="report-subheader">Tel.Nos: 273-44-69/952-15-60</span>
+          </p>
+        </div>
+      </div>
+      <div class="modal-body modal-print-background">
+        <h2 class="report-header" style="text-align: center">
+          EQUIPMENT REQUEST FORM
+        </h2>
+        <br />
+        <br />
+        <div>
+          <table id="modalCablingItems">
+            <thead>
+              <th>BRAND</th>
+              <th>ITEM TYPE</th>
+              <th>ITEM COUNT</th>
+              <!-- <th>UNIT COST</th>
+                                <th>TOTAL COST</th> -->
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
 
-    </div> -->
+      <br />
+      <br />
+      <br />
+      <br />
+      <div class="row modal-signature-info center-content">
+        <div class="col-sm-4 center-text">
+          <p>
+            <strong><span id="requestby"></span></strong>
+          </p>
+        </div>
+        <div class="col-sm-4 center-text">
+          <p>
+            <strong><span id="approvedby"></span></strong>
+          </p>
+        </div>
+      </div>
 
+      <div class="row modal-signature-info center-content">
+        <div class="col-sm-4 center-text">
+          <p><strong>PREPARED BY</strong></p>
+        </div>
+        <div class="col-sm-4 center-text">
+          <p><strong>APPROVED BY</strong></p>
+        </div>
+      </div>
+
+      <div class="row modal-signature-info center-content">
+        <div class="col-sm-4 center-text">
+          <p>
+            <strong>
+              <span id="requestcablingdatesig"></span>
+            </strong>
+          </p>
+        </div>
+        <div class="col-sm-4 center-text">
+          <p>
+            <strong>
+              <span id="approveddatesig"></span>
+            </strong>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="center-content modal-print-background">
+      <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
+      <button class="approve-btn" id="cabling-printBtn" name="cabling-printBtn">
+        PRINT
+      </button>
+    </div>
+  </div>
+  <!-- </div>
+    
+        </div> -->
 </div>
 
 <!-- The Modal -->
 <div id="deployModal" class="modal card shadow mb-4">
-    <!-- Modal content -->
-    <div class="modal-content">
-        <div class="modal-button-container">
-            <span id="deployspan" class="close">&times;</span>
-        </div>
-        <div class="modal-body">
-            <div>
-                <h1 class="center-text">DEPLOY ITEMS</h1>
-                <table id="deployitemlist">
-                    <thead>
-                        <th>TICKET</th>
-                        <th>STORE</th>
-                        <th>BRAND</th>
-                        <th>TYPE</th>
-                        <th>SERIAL</th>
-                        <th>ATF/TRF</th>
-                        <th>PULLOUT BRAND</th>
-                        <th>PULLOUT TYPE</th>
-                        <th>PULLOUT SERIAL</th>
-                        <th>ATF/APO</th>
-                    </thead>
-                    <tbody></tbody>
-
-                </table>
-            </div>
-        </div>
-
-        <div id="modal-button-container" class="center-content">
-            <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
-            <button class="btn-glow-modal" id="deployitemBtn" name="deployitemBtn">DEPLOY</button>
-        </div>
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div class="modal-button-container">
+      <span id="deployspan" class="close">&times;</span>
     </div>
+    <div class="modal-body">
+      <div>
+        <h1 class="center-text">DEPLOY ITEMS</h1>
+        <table id="deployitemlist">
+          <thead>
+            <th>TICKET</th>
+            <th>STORE</th>
+            <th>BRAND</th>
+            <th>TYPE</th>
+            <th>SERIAL</th>
+            <th>ATF/TRF</th>
+            <th>PULLOUT BRAND</th>
+            <th>PULLOUT TYPE</th>
+            <th>PULLOUT SERIAL</th>
+            <th>ATF/APO</th>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="modal-button-container" class="center-content">
+      <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
+      <button class="btn-glow-modal" id="deployitemBtn" name="deployitemBtn">
+        DEPLOY
+      </button>
+    </div>
+  </div>
 </div>
 
 <!-- The Modal -->
 <div id="detailsModal" class="modal card shadow mb-4">
-    <!-- Modal content -->
-    <div class="modal-content">
-        <div class="modal-button-container">
-            <span id="detailModalSpan" class="close">&times;</span>
-        </div>
-        <div class="modal-body">
-            <div>
-                <div class="row">
-                    <div class="col-xl-4 col-lg-4 col-sm-4">
-                        <div class="entry-area">
-                            <input type="text" class="entry-input" id="personel" name="personel" placeholder="FE NAME"
-                                disabled="disabled">
-                        </div>
-                        <div class="entry-area">
-                            <select class="entry-input" id=store>
-                                <option value="-" id="lisistores">DEPLOY TO</option>
-                            </select>
-                            <!-- <input type="text" class="entry-input" id="store" name="store" placeholder="STORE NO & NAME"> -->
-                        </div>
-                        <div class="entry-area">
-                            <input type="text" class="entry-input" id="ticket" name="ticket" placeholder="TICKET NO">
-                        </div>
-                        <div class="entry-area">
-                            <select class="entry-input" id=brandname>
-                                <option value="-" id="listbrandname">BRAND NAME</option>
-                            </select>
-                        </div>
-                        <div class="entry-area">
-                            <select class="entry-input" id=itemtype>
-                                <option value="-" id="lisitemtype">ITEM TYPE</option>
-                            </select>
-                        </div>
-                        <div class="entry-area">
-                            <input type="text" class="entry-input" id="quantity" name="quantity" placeholder="QUANTITY">
-                        </div>
-                        <div class="entry-area">
-                            <textarea id="remarks" name="remarks" rows="4" cols="50"
-                                placeholder="REMARKS / REQUEST MESSAGE"></textarea>
-                            <!-- <input type="text" class="entry-input" id="remarks" name="remarks" placeholder="REMARKS"> -->
-                        </div>
-
-                        <div class="entry-area">
-                            <button class="" id="addDetailBtn" name="addDetailBtn">ADD</button>
-                        </div>
-                    </div>
-
-                    <div class="col-xl-8 col-lg-8 col-sm-8">
-                        <table id="request-details-tbl">
-                            <thead>
-                                <th>FE NAME</th>
-                                <th>STORE</th>
-                                <th>TICKET</th>
-                                <th>BRANDNAME</th>
-                                <th>ITEM NAME</th>
-                                <th>QUANTITY</th>
-                                <th>REMARKS</th>
-                                <th>ACTIONS</th>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                        <!-- <div class="entry-area">
-                            <button class="" id="saveupdateRequestBtn" name="saveupdateRequestBtn">SAVE</button>
-                        </div> -->
-                    </div>
-                </div>
-                <hr>
-                <div>
-                    <table id="detail-request-items-table">
-                        <thead>
-                            <th>TICKET</th>
-                            <th>STORE</th>
-                            <th>BRAND</th>
-                            <th>TYPE</th>
-                            <th>SERIAL</th>
-                            <th>ACTIONS</th>
-                        </thead>
-                        <tbody></tbody>
-
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div id="modal-button-container" class="center-content">
-            <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
-            <button class="btn-glow-modal" id="updateDetailBtn" name="updateDetailBtn">UPDATE</button>
-        </div>
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div class="modal-button-container">
+      <span id="detailModalSpan" class="close">&times;</span>
     </div>
+    <div class="modal-body">
+      <div>
+        <div class="row">
+          <div class="col-xl-4 col-lg-4 col-sm-4">
+            <div class="entry-area">
+              <input
+                type="text"
+                class="entry-input"
+                id="personel"
+                name="personel"
+                placeholder="FE NAME"
+                disabled="disabled"
+              />
+            </div>
+            <div class="entry-area">
+              <select class="entry-input" id="store">
+                <option value="-" id="lisistores">DEPLOY TO</option>
+              </select>
+              <!-- <input type="text" class="entry-input" id="store" name="store" placeholder="STORE NO & NAME"> -->
+            </div>
+            <div class="entry-area">
+              <input
+                type="text"
+                class="entry-input"
+                id="ticket"
+                name="ticket"
+                placeholder="TICKET NO"
+              />
+            </div>
+            <div class="entry-area">
+              <select class="entry-input" id="brandname">
+                <option value="-" id="listbrandname">BRAND NAME</option>
+              </select>
+            </div>
+            <div class="entry-area">
+              <select class="entry-input" id="itemtype">
+                <option value="-" id="lisitemtype">ITEM TYPE</option>
+              </select>
+            </div>
+            <div class="entry-area">
+              <input
+                type="text"
+                class="entry-input"
+                id="quantity"
+                name="quantity"
+                placeholder="QUANTITY"
+              />
+            </div>
+            <div class="entry-area">
+              <textarea
+                id="remarks"
+                name="remarks"
+                rows="4"
+                cols="50"
+                placeholder="REMARKS / REQUEST MESSAGE"
+              ></textarea>
+              <!-- <input type="text" class="entry-input" id="remarks" name="remarks" placeholder="REMARKS"> -->
+            </div>
+
+            <div class="entry-area">
+              <button class="" id="addDetailBtn" name="addDetailBtn">
+                ADD
+              </button>
+            </div>
+          </div>
+
+          <div class="col-xl-8 col-lg-8 col-sm-8">
+            <table id="request-details-tbl">
+              <thead>
+                <th>FE NAME</th>
+                <th>STORE</th>
+                <th>TICKET</th>
+                <th>BRANDNAME</th>
+                <th>ITEM NAME</th>
+                <th>QUANTITY</th>
+                <th>REMARKS</th>
+                <th>ACTIONS</th>
+              </thead>
+              <tbody></tbody>
+            </table>
+            <!-- <div class="entry-area">
+                                <button class="" id="saveupdateRequestBtn" name="saveupdateRequestBtn">SAVE</button>
+                            </div> -->
+          </div>
+        </div>
+        <hr />
+        <div>
+          <table id="detail-request-items-table">
+            <thead>
+              <th>TICKET</th>
+              <th>STORE</th>
+              <th>BRAND</th>
+              <th>TYPE</th>
+              <th>SERIAL</th>
+              <th>ACTIONS</th>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="modal-button-container" class="center-content">
+      <!-- <a class="success btn-glow" href="/EquipmentPullout/returnReport"> GENERATE RETURN </a> -->
+      <button
+        class="btn-glow-modal"
+        id="updateDetailBtn"
+        name="updateDetailBtn"
+      >
+        UPDATE
+      </button>
+    </div>
+  </div>
 </div>
