@@ -1,0 +1,18 @@
+[
+  {
+    "controlno": 1000,
+    "personel": "Joren Jacinto Dipad",
+    "data": [
+      {
+        "store": "2297 500 SHAW 2",
+        "ticket": "INC-4585785",
+        "brandname": "POSIFLEX",
+        "itemtype": "POSIFLEX PRINTER PP9000",
+        "quantity": "1",
+        "remarks": "POS 1 PRINTER REPLACEMENT"
+      }
+    ],
+    "createddate": "2023-07-31",
+    "status": "ALLOC"
+  }
+]
