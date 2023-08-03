@@ -413,4 +413,21 @@ exports.InsertTable = (tablename, data, callback) => {
       callback(null, result);
     });
   }
+
+  if (tablename == "cabling_equipment") {
+    let sql = `INSERT INTO cabling_equipment(
+      ce_brandname,
+      ce_itemtype,
+      ce_itemcount,
+      ce_updateitemcount,
+      ce_updateby,
+      ce_updatedate) VALUES ?`;
+
+    this.Insert(sql, data, (err, result) => {
+      if (err) {
+        callback(err, null);
+      }
+      callback(null, result);
+    });
+  }
 };

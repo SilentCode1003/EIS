@@ -1,4 +1,4 @@
-export function MasterItems(data) {
+exports.MasterItems = (data) => {
   let dataResult = [];
 
   data.forEach((key, item) => {
@@ -13,9 +13,9 @@ export function MasterItems(data) {
   });
 
   return dataResult;
-}
+};
 
-export function MasterItemUnit(data) {
+exports.MasterItemUnit = (data) => {
   let dataResult = [];
 
   data.forEach((key, item) => {
@@ -30,9 +30,9 @@ export function MasterItemUnit(data) {
   });
 
   return dataResult;
-}
+};
 
-export function MasterItemPrice(data) {
+exports.MasterItemPrice = (data) => {
   let dataResult = [];
 
   data.forEach((key, item) => {
@@ -47,9 +47,9 @@ export function MasterItemPrice(data) {
   });
 
   return dataResult;
-}
+};
 
-export function MasterUser(data) {
+exports.MasterUser = (data) => {
   let dataResult = [];
 
   data.forEach((key, item) => {
@@ -65,9 +65,9 @@ export function MasterUser(data) {
   });
 
   return dataResult;
-}
+};
 
-export function MasterTool(data) {
+exports.MasterTool = (data) => {
   let dataResult = [];
 
   data.forEach((key, item) => {
@@ -83,9 +83,9 @@ export function MasterTool(data) {
   });
 
   return dataResult;
-}
+};
 
-export function MasterStockQuantity(data) {
+exports.MasterStockQuantity = (data) => {
   let dataResult = [];
 
   data.forEach((key, item) => {
@@ -101,9 +101,9 @@ export function MasterStockQuantity(data) {
   });
 
   return dataResult;
-}
+};
 
-export function RequestEquipmentDetail(data) {
+exports.RequestEquipmentDetail = (data) => {
   let dataResult = [];
 
   data.forEach((key, item) => {
@@ -120,9 +120,9 @@ export function RequestEquipmentDetail(data) {
   });
 
   return dataResult;
-}
+};
 
-export function RequestEquipmentItem(data) {
+exports.RequestEquipmentItem = (data) => {
   let dataResult = [];
 
   data.forEach((key, item) => {
@@ -142,9 +142,9 @@ export function RequestEquipmentItem(data) {
   });
 
   return dataResult;
-}
+};
 
-export function RequestToolDetail(data) {
+exports.RequestToolDetail = (data) => {
   let dataResult = [];
 
   data.forEach((key, item) => {
@@ -161,9 +161,9 @@ export function RequestToolDetail(data) {
   });
 
   return dataResult;
-}
+};
 
-export function RequestToolItem(data) {
+exports.RequestToolItem = (data) => {
   let dataResult = [];
 
   data.forEach((key, item) => {
@@ -181,9 +181,9 @@ export function RequestToolItem(data) {
   });
 
   return dataResult;
-}
+};
 
-export function ReturnEquipment(data) {
+exports.ReturnEquipment = (data) => {
   let dataResult = [];
 
   data.forEach((key, item) => {
@@ -201,9 +201,9 @@ export function ReturnEquipment(data) {
   });
 
   return dataResult;
-}
+};
 
-export function ReturnTool(data) {
+exports.ReturnTool = (data) => {
   let dataResult = [];
 
   data.forEach((key, item) => {
@@ -220,4 +220,4 @@ export function ReturnTool(data) {
   });
 
   return dataResult;
-}
+};
