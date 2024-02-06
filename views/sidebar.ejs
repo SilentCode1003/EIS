@@ -54,10 +54,15 @@
                 <a class="collapse-item" href="/clientname"><i class="fas fa-fw fa-users"></i><span>
                         CLIENT NAME</span></a>
 
+                <h6 class="collapse-header">SUPPLIER:</h6>
+                <a class="collapse-item" href="/supplier"><i class="fas fa-fw fa-handshake"></i><span>
+                        SUPPLIER</span></a>
+
                 <h6 class="collapse-header">LOCATION:</h6>
                 <a class="collapse-item" href="/warehouse"><i class="fas fa-fw fa-box"></i><span> WAREHOUSE</span></a>
                 <h6 class="collapse-header">INVENTORY:</h6>
                 <a class="collapse-item" href="/items"><i class="fas fa-fw fa-box"></i><span> ITEM</span></a>
+                <a class="collapse-item" href="/tool"><i class="fas fa-fw fa-box"></i><span> TOOLS</span></a>
 
                 <h6 class="collapse-header">CREDENTIALS:</h6>
                 <a class="collapse-item" href="/users"><i class="fas fa-fw fa-user-circle"></i><span> USERS</span></a>
@@ -79,7 +84,7 @@
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseInventory"
                 aria-expanded="true" aria-controls="collapseInventory">
-                <i class="fas fa-fw fa-money-bill-alt"></i>
+                <i class="fas fa-fw fa-boxes"></i>
                 <span>STOCKS</span>
             </a>
             <div id="collapseInventory" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
@@ -94,7 +99,7 @@
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReportsIT"
                 aria-expanded="true" aria-controls="collapseReportsIT">
-                <i class="fas fa-fw fa-money-bill-alt"></i>
+                <i class="fas fa-fw fa-file"></i>
                 <span>REPORTS</span>
             </a>
             <div id="collapseReportsIT" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
@@ -109,7 +114,7 @@
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTransaferIT"
                 aria-expanded="true" aria-controls="collapseTransaferIT">
-                <i class="fas fa-fw fa-money-bill-alt"></i>
+                <i class="fas fa-fw fa-handshake"></i>
                 <span>TRANSFER</span>
             </a>
             <div id="collapseTransaferIT" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
@@ -124,7 +129,7 @@
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSiteSpare"
                 aria-expanded="true" aria-controls="collapseSiteSpare">
-                <i class="fas fa-fw fa-money-bill-alt"></i>
+                <i class="fas fa-fw fa-box"></i>
                 <span>SITE SPARE</span>
             </a>
             <div id="collapseSiteSpare" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
@@ -142,7 +147,7 @@
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseRequestIT"
             aria-expanded="true" aria-controls="collapseRequestIT">
-            <i class="fas fa-fw fa-money-bill-alt"></i>
+            <i class="fas fa-fw fa-hand-holding"></i>
             <span>REQUEST</span>
         </a>
         <div id="collapseRequestIT" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
@@ -150,6 +155,8 @@
                 <h6 class="collapse-header">SELECTIONS:</h6>
                 <a class="collapse-item" href="/requestequipment"><i class="fas fa-fw fa-file-alt"></i><span>
                         EQUIPMENT</span></a>
+                <a class="collapse-item" href="/ittoolsrequest"><i class="fas fa-fw fa-file-alt"></i><span>
+                        TOOLS</span></a>
             </div>
         </div>
     </li>
@@ -167,7 +174,7 @@
         <div id="custodianonly">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseItemMaster"
                 aria-expanded="true" aria-controls="collapseItemMaster">
-                <i class="fas fa-fw fa-money-bill-wave"></i>
+                <i class="fas fa-fw fa-database"></i>
                 <span>ITEM MASTER</span>
             </a>
             <div id="collapseItemMaster" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
@@ -181,7 +188,7 @@
 
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePulloutInventory"
                 aria-expanded="true" aria-controls="collapsePulloutInventory">
-                <i class="fas fa-fw fa-money-bill-wave"></i>
+                <i class="fas fa-fw fa-boxes"></i>
                 <span>STOCKS</span>
             </a>
             <div id="collapsePulloutInventory" class="collapse" aria-labelledby="headingTwo"
@@ -196,33 +203,37 @@
 
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCablingReports"
                 aria-expanded="true" aria-controls="collapseCablingReports">
-                <i class="fas fa-fw fa-money-bill-wave"></i>
+                <i class="fas fa-fw fa-file"></i>
                 <span>REPORTS</span>
-                <div id="collapseCablingReports" class="collapse" aria-labelledby="headingTwo"
-                    data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">SELECTIONS:</h6>
-                        <a class="collapse-item" href="/cablingreport"><i class="fas fa-fw fa-money-check"></i><span>
-                                CABLING</span></a>
-                    </div>
-                </div>
+
             </a>
 
+            <div id="collapseCablingReports" class="collapse" aria-labelledby="headingTwo"
+                data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">SELECTIONS:</h6>
+                    <a class="collapse-item" href="/cablingreport"><i class="fas fa-fw fa-money-check"></i><span>
+                            CABLING</span></a>
+                </div>
+            </div>
         </div>
 
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCablingRequest"
             aria-expanded="true" aria-controls="collapseCablingRequest">
-            <i class="fas fa-fw fa-money-bill-wave"></i>
+            <i class="fas fa-fw fa-hand-holding"></i>
             <span>REQUEST</span>
-            <div id="collapseCablingRequest" class="collapse" aria-labelledby="headingTwo"
-                data-parent="#accordionSidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
-                    <h6 class="collapse-header">SELECTIONS:</h6>
-                    <a class="collapse-item" href="/cablingrequest"><i class="fas fa-fw fa-file-alt"></i><span> CABLING
-                            EQUIPMENT</span></a>
-                </div>
-            </div>
         </a>
+
+        <div id="collapseCablingRequest" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">SELECTIONS:</h6>
+                <a class="collapse-item" href="/cablingrequest"><i class="fas fa-fw fa-boxes"></i><span> CABLING
+                        EQUIPMENT</span></a>
+                <a class="collapse-item" href="/cablingrequesttool"><i class="fas fa-fw fa-wrench"></i><span>
+                        CABLING
+                        TOOLS</span></a>
+            </div>
+        </div>
     </li>
 </div>
 
@@ -235,24 +246,15 @@
     </div>
     <!-- Nav Item - Pages Collapse Menu -->
     <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCyberpower"
-            aria-expanded="true" aria-controls="collapseCyberpower">
-            <i class="fas fa-fw fa-money-bill-alt"></i>
-            <span>INVENTORY</span>
-        </a>
-        <div id="collapseCyberpower" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">SELECTIONS:</h6>
-                <a class="collapse-item" href="/cyberdashboard"><i class="fas fa-fw fa-file-alt"></i><span>
-                        DASHBOARD</span></a>
-                <a class="collapse-item" href="/cyberrequest"><i class="fas fa-fw fa-file-alt"></i><span>
-                        REQUEST</span></a>
-                <a class="collapse-item" href="/cyberstocks"><i class="fas fa-fw fa-file-alt"></i><span>
-                        EQUIPMENTS</span></a>
-                <a class="collapse-item" href="/cyberreport"><i class="fas fa-fw fa-file-alt"></i><span>
-                        REPORTS</span></a>
-            </div>
-        </div>
+
+        <a class="nav-link" href="/cyberdashboard"><i class="fas fa-fw fa-tachometer-alt"></i><span>
+                DASHBOARD</span></a>
+        <a class="nav-link" href="/cyberrequest"><i class="fas fa-fw fa-file-invoice"></i><span>
+                REQUEST</span></a>
+        <a class="nav-link" href="/cyberstocks"><i class="fas fa-fw fa-boxes"></i><span>
+                EQUIPMENTS</span></a>
+        <a class="nav-link" href="/cyberreport"><i class="fas fa-fw fa-file-alt"></i><span>
+                REPORTS</span></a>
     </li>
 </div>
 
@@ -281,6 +283,8 @@
                         REQUEST</span></a>
                 <a class="collapse-item" href="/purchasereport"><i class="fas fa-fw fa-file-alt"></i><span>
                         REPORTS</span></a>
+                <a class="collapse-item" href="/porequest"><i class="fas fa-fw fa-file-alt"></i><span>
+                        PO REQUEST</span></a>
             </div>
         </div>
     </li>
@@ -337,8 +341,6 @@
         </div>
     </li>
 </div>
-
-
 
 <!-- Sidebar Toggler (Sidebar) -->
 <div class="text-center d-none d-md-inline">

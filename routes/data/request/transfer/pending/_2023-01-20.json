@@ -1,0 +1,268 @@
+[
+  {
+    "personel": "",
+    "date": "2023-01-20 08:22",
+    "locationfrom": "MAIN",
+    "locationto": "BICOL",
+    "remarks": "ONHAND",
+    "status": "PND",
+    "details": [
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "X8YV000233",
+        "itemtype": "EPSON",
+        "serial": "EPSON POS PRINTER",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "X59E002271",
+        "itemtype": "EPSON",
+        "serial": "EPSON POS PRINTER",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "X8YV000266",
+        "itemtype": "EPSON",
+        "serial": "EPSON POS PRINTER",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "CDABS1660108429",
+        "itemtype": "NEC",
+        "serial": "G5200 CASH DRAWER",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "CDABS1660108583",
+        "itemtype": "NEC",
+        "serial": "G5200 CASH DRAWER",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "210529014134",
+        "itemtype": "NEC",
+        "serial": "G5200 CASH DRAWER",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "190526069663",
+        "itemtype": "NEC",
+        "serial": "G5200 CASH DRAWER",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "191223066927",
+        "itemtype": "NEC",
+        "serial": "G5200 CASH DRAWER",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "K01566K800297",
+        "itemtype": "NEC",
+        "serial": "NEC G9 Cashdrawer",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "K01566K800215",
+        "itemtype": "NEC",
+        "serial": "NEC G9 Cashdrawer",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "K01566K800370",
+        "itemtype": "NEC",
+        "serial": "NEC G9 Cashdrawer",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "K01566K800439",
+        "itemtype": "NEC",
+        "serial": "NEC G9 Cashdrawer",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "K01566K800195",
+        "itemtype": "NEC",
+        "serial": "NEC G9 Cashdrawer",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "1008807200-018",
+        "itemtype": "NEC",
+        "serial": "NEC G9 POS Customer Display",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "1008807200-018",
+        "itemtype": "NEC",
+        "serial": "NEC G9 POS Customer Display",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "1008809300-044",
+        "itemtype": "NEC",
+        "serial": "NEC G9 POS Customer Display",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "2430121120600-519",
+        "itemtype": "STAR",
+        "serial": "Star BSC10 Thermal POS Printer",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "DWJD1622010375",
+        "itemtype": "NEC",
+        "serial": "NEC G9 Power Supply",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "CRM1L0173",
+        "itemtype": "POSIFLEX",
+        "serial": "POSIFLEX CR-4100B CASH DRAWER",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "CRM1L0417",
+        "itemtype": "POSIFLEX",
+        "serial": "POSIFLEX CR-4100B CASH DRAWER",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "CRM1L0399",
+        "itemtype": "POSIFLEX",
+        "serial": "POSIFLEX CR-4100B CASH DRAWER",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "CRM1L0375",
+        "itemtype": "POSIFLEX",
+        "serial": "POSIFLEX CR-4100B CASH DRAWER",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "RI21092810040351",
+        "itemtype": "POSIFLEX",
+        "serial": "POSIFLEX SSD 2.5 SATA 128GB",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "RI21092810040304",
+        "itemtype": "POSIFLEX",
+        "serial": "POSIFLEX SSD 2.5 SATA 128GB",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "045533848B",
+        "itemtype": "STAR",
+        "serial": "STAR SK21 KIOSK PRINTER",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "2430122060600905",
+        "itemtype": "STAR",
+        "serial": "Star BSC10 Thermal POS Printer",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "22167010558268",
+        "itemtype": "ZEBRA",
+        "serial": "Zebra Barcode Scanner DS2208-SR",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "22167010558294",
+        "itemtype": "ZEBRA",
+        "serial": "Zebra Barcode Scanner DS2208-SR",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "CRJCN4359",
+        "itemtype": "POSIFLEX",
+        "serial": "POSIFLEX CR-4100B CASH DRAWER",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "CRJCN4273",
+        "itemtype": "POSIFLEX",
+        "serial": "POSIFLEX CR-4100B CASH DRAWER",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "045502773A",
+        "itemtype": "STAR",
+        "serial": "STAR SK21 KIOSK PRINTER",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      },
+      {
+        "personel": "MARK JAYSON SASOT",
+        "brand": "045502768A",
+        "itemtype": "STAR",
+        "serial": "STAR SK21 KIOSK PRINTER",
+        "createddate": "2023-01-20",
+        "status": "PENDING"
+      }
+    ]
+  }
+]

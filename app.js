@@ -46,6 +46,11 @@ var networkstocksRouter = require('./routes/networkstocks');
 var networkrequestRouter = require('./routes/networkrequest');
 var networkreportRouter = require('./routes/networkreport');
 var sitespareRouter = require('./routes/sitespare');
+var supplierRouter = require('./routes/supplier');
+var porequestRouter = require('./routes/porequest');
+var toolRouter = require('./routes/tool');
+var cablingrequesttoolRouter = require('./routes/cablingrequesttool');
+var ittoolsrequestRouter = require('./routes/ittoolsrequest');
 
 
 var app = express();
@@ -124,6 +129,11 @@ app.use('/networkstocks', networkstocksRouter);
 app.use('/networkrequest', networkrequestRouter);
 app.use('/networkreport', networkreportRouter);
 app.use('/sitespare', sitespareRouter);
+app.use('/supplier', supplierRouter);
+app.use('/porequest', porequestRouter);
+app.use('/tool', toolRouter);
+app.use('/cablingrequesttool', cablingrequesttoolRouter);
+app.use('/ittoolsrequest', ittoolsrequestRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

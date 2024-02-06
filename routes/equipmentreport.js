@@ -57,7 +57,7 @@ router.get('/load', (req, res) => {
 
 router.get('/loaddeploy', (req, res) => {
   try {
-    let sql = `select * from deploy_it_equipment`;
+    let sql = `select * from deploy_it_equipment order by die_deploydate`;
     mysql.Select(sql, 'DeployITEquipment', (err, result) => {
       if (err) throw err
       console.log(result);
@@ -76,7 +76,7 @@ router.get('/loaddeploy', (req, res) => {
 
 router.get('/loadpullout', (req, res) => {
   try {
-    let sql = `select * from pullout_it_equipment`;
+    let sql = `select * from pullout_it_equipment order by pie_pulloutdate`;
     mysql.Select(sql, 'PulloutITEquipment', (err, result) => {
       if (err) throw err
       console.log(result);

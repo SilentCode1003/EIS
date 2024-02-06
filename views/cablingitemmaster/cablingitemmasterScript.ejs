@@ -11,39 +11,46 @@
             var maxstocks = $('#maxstocks').val();
             var message = '';
 
-            if (brandname == '-') message += 'BRAND NAME ';
-            if (itemtype == '-') message += 'ITEM TYPE ';
-            if (minstocks == '') message += 'MIN STOCKS ';
-            if (maxstocks == '') message += 'MAX STOCKS ';
+            minstocks = parseFloat(minstocks);
+            maxstocks = parseFloat(maxstocks);
 
-            if (message != '') {
-                warning(`Warning, Please fill-up ${message}`)
+            if (minstocks > maxstocks) {
+                warning(`Warning, MIN STOCKS should be lower than MAX STOCKS`)
             }
             else {
-                $.ajax({
-                    type: "POST",
-                    url: "/cablingitemmaster/save",
-                    data: {
-                        brandname: brandname,
-                        itemtype: itemtype,
-                        minstocks: minstocks,
-                        maxstocks: maxstocks,
-                    },
-                    success: function (result) {
-                        if (result.msg == 'success') {
-                            success('Saved!', 'Data saved!')
-                        }
-                        else {
-                            success('Update!',`${brandname} - ${itemtype} min & max stocks update successfully...`);
-                        }
-                        LoadTable();
-                    },
-                    error: function (result) {
-                        error(result.data);
-                    }
-                });
-            }
+                if (brandname == '-') message += 'BRAND NAME ';
+                if (itemtype == '-') message += 'ITEM TYPE ';
+                if (minstocks == '') message += 'MIN STOCKS ';
+                if (maxstocks == '') message += 'MAX STOCKS ';
 
+                if (message != '') {
+                    warning(`Warning, Please fill-up ${message}`)
+                }
+                else {
+                    $.ajax({
+                        type: "POST",
+                        url: "/cablingitemmaster/save",
+                        data: {
+                            brandname: brandname,
+                            itemtype: itemtype,
+                            minstocks: minstocks,
+                            maxstocks: maxstocks,
+                        },
+                        success: function (result) {
+                            if (result.msg == 'success') {
+                                success('Saved!', 'Data saved!')
+                            }
+                            else {
+                                success('Update!', `${brandname} - ${itemtype} min & max stocks update successfully...`);
+                            }
+                            LoadTable();
+                        },
+                        error: function (result) {
+                            error(result.data);
+                        }
+                    });
+                }
+            }
         })
 
         $(document).on('change', "#brandname", function () {

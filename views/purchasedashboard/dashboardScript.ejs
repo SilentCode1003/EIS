@@ -41,10 +41,13 @@
                             })
 
                             if (status == 'PENDING') {
-                                action = '<button class="assign-btn" id="assignBtn" name="assignBtn">ASSIGN COST</button>'
+                                action = '<button class="assign-btn" id="assignBtn" name="assignBtn">APPROVE</button>'
                             }
                             if (status == 'REQUEST BUDGET') {
-                                action = '<button class="approve-btn" id="printBtn" name="printBtn">PRINT</button><br><button class="approve-btn" id="editBtn" name="editBtn">EDIT</button><br><button class="edit-btn" id="requestBudgetBtn" name="requestBudgetBtn">REQUEST BUDGET</button>'
+                                action = `<button class="approve-btn" id="printBtn" name="printBtn">REQUEST</button><br>
+                                <button class="approve-btn" id="generateBtn" name="generateBtn">GENERATE</button><br>
+                                <button class="approve-btn" id="editBtn" name="editBtn">DETAILS</button><br>
+                                <button class="edit-btn" id="requestBudgetBtn" name="requestBudgetBtn">BUDGET</button>`
                             }
                             if (status == 'WAITING') {
                                 action = '<button class="approve-btn" id="cancelRequestBtn" name="cancelRequestBtn">CANCEL</button>'
@@ -194,25 +197,55 @@
         var stocksmodalspan = document.getElementById("stocksrequest");
         var equipmentrequestspan = document.getElementById("equipmentrequestrequest");
 
+        var requestapproveModal = document.getElementById("requestapproveModal");
+        var requestapprovespan = document.getElementById("requestapprovespan");
+
+        var GeneratePOModal = document.getElementById("GeneratePOModal");
+        var GeneratePOModalSpan = document.getElementById("GeneratePOModalSpan");
+
+        GeneratePOModalSpan.onclick = function () {
+            GeneratePOModal.style.display = "none";
+        }
+
         stocksmodalspan.onclick = function () {
             stocksmodal.style.display = "none";
         }
+
         equipmentrequestspan.onclick = function () {
             equipmentrequestmodal.style.display = "none";
+        }
+
+        requestapprovespan.onclick = function () {
+            requestapproveModal.style.display = "none";
         }
 
         window.onclick = function () {
             if (event.target == stocksmodal) {
                 stocksmodal.style.display = "none";
             }
+
             if (event.target == equipmentrequestmodal) {
                 equipmentrequestmodal.style.display = "none";
             }
+
+            if (event.target == requestapproveModal) {
+                requestapproveModal.style.display = "none";
+            }
+
+            if (event.target == POEquimentModal) {
+                POEquimentModal.style.display = "none";
+            }
+
+            if (event.target == GeneratePOModal) {
+                GeneratePOModal.style.display = "none";
+            }
         }
+
 
         $('#stocks-request-tbl tbody').on('click', 'tr', function (e) {
             // var data = stocksrequest.row(this).data();
             var data = [];
+
             $(this).closest('tr').find('td').each(function () {
                 data.push([$(this).text()]);
 
@@ -235,28 +268,112 @@
             // console.log(data);
         })
 
+        let currentrow = '';
         $('#modal-stocks-request-tbl tbody').on('click', 'tr', function (e) {
-            e.preventDefault();
+            var data = [];
+            currentrow = $(this).closest('tr');
+            $(this).closest('tr').find('td').each(function () {
+                data.push([$(this).text()]);
 
-            if ($(this).attr('edit_type') == 'button') {
-                return false;
-            }
+            });
 
-            //make div editable
-            $(this).closest('div').attr('contenteditable', 'true');
-            //add bg css
-            $(this).addClass('edit-cost').css('padding', '5px');
+            // e.preventDefault();
 
-            $(this).focus();
+            // if ($(this).attr('edit_type') == 'button') {
+            //     return false;
+            // }
+
+            // //make div editable
+            // $(this).closest('div').attr('contenteditable', 'true');
+            // //add bg css
+            // $(this).addClass('edit-cost').css('padding', '5px');
+
+            // $(this).focus();
         });
+
+        $(document).on('click', '#removeBtn', function () {
+            currentrow.remove();
+        })
 
         $(document).on('click', "#printStocksBtn", function () {
             stocksmodal.style.display = "block";
         })
 
+        $(document).on('change click', '#supllierlist', function () {
+            var suppliername = $('#supllierlist').val();
+
+            $.ajax({
+                type: "POST",
+                url: "/supplier/getsupplierlocation",
+                data: {
+                    department: 'CABLING',
+                    suppliername: suppliername
+                },
+                success: function (result) {
+                    console.log(result.data);
+                    var data = result.data;
+
+                    $.each(data, function (key, item) {
+                        const _inputLocation = document.getElementById('supplierlocation');
+                        _inputLocation.value = item.location;
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+        })
+
+        $(document).on('click', '#poBtn', function () {
+            var suppliername = $('#supllierlist').val();
+            var location = $('#supplierlocation').val();
+
+            console.log('clicked!');
+            $.ajax({
+                type: 'POST',
+                url: '/purchasereport/save',
+                data: {
+                    suppliername: suppliername,
+                    location: location,
+                    requestid: requestid
+                },
+                success: function (result) {
+                    GeneratePOModal.style = 'none';
+                    success('Success', 'Data Saved!');
+                },
+                error: function (error) {
+                    error(error);
+                }
+            })
+        })
+
+        $(document).on('click', '#generateBtn', function () {
+            $("#supllierlist").empty();
+            $.ajax({
+                type: "POST",
+                url: "/supplier/getsupplier",
+                data: { department: 'CABLING' },
+                success: function (result) {
+                    console.log(result.data);
+                    var data = result.data;
+
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.suppliername, item.suppliername);
+                        $(options).html(item.suppliername);
+                        $('#supllierlist').append(options);
+                        console.log(item.suppliername);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+            GeneratePOModal.style.display = "block";
+        })
+
         $(document).on('click', "#assignBtn", function () {
 
-            var requestitemTabel = $('#modal-stocks-request-tbl').DataTable({
+            var requestitemTabel = $('#modal-approve-restock-list-tbl').DataTable({
                 'destroy': true,
                 'paging': false,
                 'searching': false,
@@ -316,7 +433,117 @@
                 }
             });
 
-            equipmentrequestmodal.style.display = "block";
+            requestapproveModal.style.display = "block";
+        })
+
+        $(document).on('change click', "#brandlist", function () {
+            var brandname = $('#brandlist').val();
+            $("#itemlist").empty();
+
+            $.ajax({
+                type: "POST",
+                url: "/items/itemtype",
+                data: { brandname: brandname },
+                success: function (result) {
+                    var data = result.data;
+                    console.log(result.data);
+
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.itemname, item.itemname);
+                        $(options).html(item.itemname);
+                        $('#itemlist').append(options);
+                        console.log(item.itemname);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+        });
+
+        $(document).on('change click', "#itemlist", function () {
+            var brandname = $('#brandlist').val();
+            var itemtype = $('#itemlist').val();
+            $("#cost").empty();
+
+            $.ajax({
+                type: "POST",
+                url: "/purchasepricemaster/getprice",
+                data: {
+                    brandname: brandname,
+                    itemtype: itemtype,
+                    department: 'CABLING',
+                },
+                success: function (result) {
+                    var data = result.data;
+                    console.log(result.data);
+                    const _const = document.getElementById('cost');
+
+                    if (data.length != 0) {
+                        $.each(data, function (key, item) {
+                            _const.value = item.currentprice
+                        });
+                    } else {
+                        warning('No Data', `Need to add current price for ${brandname} - ${itemtype}. Go to PURCHASE >> PRICE MASTER`)
+                    }
+
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+        });
+
+        $(document).on('click', '#addEquipmentBtn', function () {
+            var data = $("#modal-stocks-request-tbl tr");
+            var brand = $('#brandlist').val();
+            var type = $('#itemlist').val();
+            var quantity = $('#quantity').val();
+            var cost = $('#cost').val();
+            var dataArr = [];
+            var message = '';
+
+            if (brand == '-') { message += 'BRAND ' }
+            if (type == '-') { message += 'TYPE ' }
+            if (quantity == '') { message += 'QUANTITY ' }
+            if (cost == '') { message += 'COST ' }
+
+            if (message != '') {
+                warning('Warning', `Please fill-up ${message}`);
+            }
+            else {
+                console.log(data.length);
+                var index = 1;
+                for (x = 0; x < data.length; x++) {
+                    // console.log(header[x].innerText);
+                    console.log(data[x].innerText);
+                    var innerData = data[x].innerText;
+                    innerData = innerData.split("\t");
+
+                    if (innerData[0] == brand && innerData[1] == type) {
+                        return warning('Already Exist', `Already request ${brand}[${type}] quantity ${innerData[2]}`);
+                    }
+                }
+
+                console.log(dataArr);
+
+                requestitemTabel = document.getElementById("modal-stocks-request-tbl");
+                var row = requestitemTabel.insertRow(1);
+                var _BRAND = row.insertCell(0);
+                var _TYPE = row.insertCell(1);
+                var _QUANTITY = row.insertCell(2);
+                var _COST = row.insertCell(3);
+                var _ACTION = row.insertCell(4);
+                var action = `<button class="circle-btn" id="removeBtn" name="removeBtn">
+                                                <div class="delete-line"></div>
+                                            </button>`;
+
+                _BRAND.innerHTML = brand;
+                _TYPE.innerHTML = type;
+                _QUANTITY.innerHTML = quantity;
+                _COST.innerHTML = cost;
+                _ACTION.innerHTML = action;
+            }
         })
 
         $(document).on('click', "#editBtn", function () {
@@ -328,6 +555,28 @@
                 'scrollCollapse': true,
             });
 
+            $("#brandlist").empty();
+
+            $.ajax({
+                type: "POST",
+                url: "/items/brandnamedepartment",
+                data: { department: 'CABLING' },
+                success: function (result) {
+                    console.log(result.data);
+                    var data = result.data;
+
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.brandname, item.brandname);
+                        $(options).html(item.brandname);
+                        $('#brandlist').append(options);
+                        console.log(item.brandname);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+
             $.ajax({
                 type: "POST",
                 url: "/purchasedashboard/getdetailitems",
@@ -335,10 +584,13 @@
                 success: function (result) {
                     requestitemTabel.clear().draw();
                     var data = result.data;
+                    var action = `<button class="circle-btn" id="removeBtn" name="removeBtn">
+                                                <div class="delete-line"></div>
+                                            </button>`;
 
                     // console.log(result.data);
                     $.each(data, (key, item) => {
-                        requestitemTabel.row.add([item.brandname, item.itemtype, item.quantity, item.cost]).draw(false);
+                        requestitemTabel.row.add([item.brandname, item.itemtype, item.quantity, item.cost, action]).draw(false);
                     })
                 },
                 error: function (result) {
@@ -430,6 +682,7 @@
             var printContents = document.getElementById('PrintArea').innerHTML;
             var originalContents = document.body.innerHTML;
             document.body.innerHTML = printContents;
+            document.title=`MATERIAL_REQUEST_LIST_${requestby}`;
             window.print();
             document.body.innerHTML = originalContents;
             location.reload();
@@ -437,7 +690,7 @@
 
         $(document).on('click', "#saveRequestStocksBtn", async function () {
             console.log('clicked!');
-            var data = $('#modal-stocks-request-tbl tr');
+            var data = $('#modal-approve-restock-list-tbl tr');
             var dataRaw = [];
             console.log(data);
             console.log(data.length);
@@ -467,6 +720,8 @@
 
             }
 
+            console.log(est_budget);
+
             if (message != "") {
                 warning(`ITEM/S: ${message} cost per piece not assigned!`)
             } else {
@@ -486,6 +741,7 @@
                         details: dataRaw
                     },
                     success: function (result) {
+                        requestapproveModal.style.display = "NONE";
                         equipmentrequestmodal.style.display = 'NONE';
                         success('Saved!', 'Data Saved!');
                         LoadTableData();
@@ -496,6 +752,70 @@
                 });
             }
         });
+
+        $(document).on('click', '#saveUpdateDetails', function () {
+            var data = $('#modal-stocks-request-tbl tr');
+            var message = '';
+            var dataRaw = [];
+            var est_budget = 0;
+
+            var index = 1;
+            for (x = 1; x < data.length; x++) {
+                console.log(data[x].innerText);
+                var innerData = data[x].innerText;
+                innerData = innerData.split("\t");
+
+                if (innerData[3] == "") {
+                    message += `${innerData[1]}, `;
+                } else {
+                    dataRaw.push({
+                        brandname: innerData[0],
+                        itemtype: innerData[1],
+                        itemcount: innerData[2],
+                        itemcost: innerData[3],
+                    });
+
+                    est_budget += (parseFloat(innerData[3]) * parseFloat(innerData[2]));
+                    index += 1;
+                }
+            }
+
+
+            if (message != "") {
+                warning(`ITEM/S: ${message} cost per piece not assigned!`)
+            } else {
+                // console.log(dataRaw);
+                dataRaw = JSON.stringify(dataRaw, null, 2);
+
+                console.log(`${requestby} ${requestdate}`)
+
+                requestapproveModal.style.display = "NONE";
+                equipmentrequestmodal.style.display = 'NONE';
+
+                showloader();
+                $.ajax({
+                    type: "POST",
+                    url: "/purchasedashboard/updaterequest",
+                    data: {
+                        requestid: requestid,
+                        requestby: requestby,
+                        requestdate: requestdate,
+                        totalcost: est_budget,
+                        details: dataRaw
+                    },
+                    success: function (result) {
+
+                        success('Saved!', 'Data Saved!');
+                        LoadTableData();
+                        hideload();
+                    },
+                    error: function (result) {
+                        error('error: ' + result);
+                    }
+                });
+
+            }
+        })
         //#endregion
 
         //#region CYBERPOWER

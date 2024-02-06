@@ -38,7 +38,7 @@ router.post('/save', (req, res) => {
     var fileDir = `${ItemPath}${itemname}_${department}.json`;
     let master_item = [];
 
-    helper.CreateJSON(fileDir, data);
+    // helper.CreateJSON(fileDir, data);
     data = JSON.parse(data);
     data.forEach((key, item) => {
       master_item.push([
@@ -51,7 +51,7 @@ router.post('/save', (req, res) => {
     })
     console.log(master_item);
 
-    Insert_MasterItem = (data, callback) => {
+    function Insert_MasterItem(data, callback) {
       let sql = `INSERT INTO master_item(
         mi_department,
         mi_itemname,
@@ -69,7 +69,6 @@ router.post('/save', (req, res) => {
     console.log(master_item);
     Insert_MasterItem(master_item, (err, result) => {
       if (err) throw err;
-
       console.log('Insert_MasterItem');
     })
 

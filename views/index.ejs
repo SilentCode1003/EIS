@@ -24,7 +24,7 @@
     <div id="content-wrapper" class="d-flex flex-column">
 
       <!-- Main Content class="topbar" -->
-      <div id="content">
+      <div class="topbar" id="content">
 
         <!-- Topbar -->
         <%- include('topbar.ejs') %>
@@ -34,6 +34,10 @@
           <div class="container-fluid content-background">
             <%- include('./dashboard/dashboard.ejs') %>
           </div>
+
+        </div>
+        
+      </div>
           <!-- /.container-fluid -->
 
       </div>
@@ -54,8 +58,8 @@
     <i class="fas fa-angle-up"></i>
   </a>
   <%- include('scripts.ejs') %>
-    <%- include('./dashboard/dashboardScript.ejs') %>
-      <script src="/javascripts/equipment-chart.js"></script>
+  <%- include('./dashboard/dashboardScript.ejs') %>
+  <script src="/javascripts/equipment-chart.js"></script>
 </body>
 
 </html>

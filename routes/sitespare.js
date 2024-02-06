@@ -39,16 +39,18 @@ router.post('/getspare', (req, res) => {
   try {
     let site = req.body.site;
     let department = req.body.department;
-    let sql = `select rie_itembrand as itembrand,
-      rie_itemtype as itemtype,
-      count(*) as itemcount
-      from register_it_equipment
-      inner join (select distinct mi_itemname as itemtype from master_item where mi_department='${department}') as Itemtype
-      on Itemtype.itemtype = register_it_equipment.rie_itemtype
-      where register_it_equipment.rie_site='${site}'
-      group by register_it_equipment.rie_itembrand`;
+    // let sql = `select rie_itembrand as itembrand,
+    //   rie_itemtype as itemtype,
+    //   count(*) as itemcount
+    //   from register_it_equipment
+    //   inner join (select distinct mi_itemname as itemtype from master_item where mi_department='${department}') as Itemtype
+    //   on Itemtype.itemtype = register_it_equipment.rie_itemtype
+    //   where register_it_equipment.rie_site='${site}'
+    //   group by register_it_equipment.rie_itembrand`;
 
-    mysql.SelectCustomizeResult(sql, (err, result) => {
+    let sql = `call GetSpareCount('${site}')`;
+
+    mysql.StoredProcedureResult(sql, (err, result) => {
       if (err) console.log(err);
 
       console.log(result);
@@ -57,7 +59,91 @@ router.post('/getspare', (req, res) => {
         data.push({
           itembrand: key.itembrand,
           itemtype: key.itemtype,
-          itemcount: key.itemcount
+          itemcount: key.itemcount,
+        })
+      });
+
+      res.json({
+        msg: 'success',
+        data: data
+      });
+
+    })
+
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+})
+
+router.post('/getactivespare', (req, res) => {
+  try {
+    let site = req.body.site;
+    let department = req.body.department;
+    // let sql = `select rie_itembrand as itembrand,
+    //   rie_itemtype as itemtype,
+    //   count(*) as itemcount
+    //   from register_it_equipment
+    //   inner join (select distinct mi_itemname as itemtype from master_item where mi_department='${department}') as Itemtype
+    //   on Itemtype.itemtype = register_it_equipment.rie_itemtype
+    //   where register_it_equipment.rie_site='${site}'
+    //   group by register_it_equipment.rie_itembrand`;
+
+    let sql = `call GetSiteSpareCount('${site}','ACTIVE')`;
+
+    mysql.StoredProcedureResult(sql, (err, result) => {
+      if (err) console.log(err);
+
+      console.log(result);
+      var data = [];
+      result.forEach((key, item) => {
+        data.push({
+          itembrand: key.itembrand,
+          itemtype: key.itemtype,
+          itemcount: key.itemcount,
+        })
+      });
+
+      res.json({
+        msg: 'success',
+        data: data
+      });
+
+    })
+
+  } catch (error) {
+    res.json({
+      msg: error
+    })
+  }
+})
+
+router.post('/getdeployspare', (req, res) => {
+  try {
+    let site = req.body.site;
+    let department = req.body.department;
+    // let sql = `select rie_itembrand as itembrand,
+    //   rie_itemtype as itemtype,
+    //   count(*) as itemcount
+    //   from register_it_equipment
+    //   inner join (select distinct mi_itemname as itemtype from master_item where mi_department='${department}') as Itemtype
+    //   on Itemtype.itemtype = register_it_equipment.rie_itemtype
+    //   where register_it_equipment.rie_site='${site}'
+    //   group by register_it_equipment.rie_itembrand`;
+
+    let sql = `call GetSiteSpareCount('${site}','DEPLOYED')`;
+
+    mysql.StoredProcedureResult(sql, (err, result) => {
+      if (err) console.log(err);
+
+      console.log(result);
+      var data = [];
+      result.forEach((key, item) => {
+        data.push({
+          itembrand: key.itembrand,
+          itemtype: key.itemtype,
+          itemcount: key.itemcount,
         })
       });
 

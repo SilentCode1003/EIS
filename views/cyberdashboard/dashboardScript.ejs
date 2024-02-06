@@ -7,7 +7,6 @@
         let _clientname = '';
         let serialArr = [];
 
-
         LoadTable();
         var modal = document.getElementById("outgoingModal");
         var span = document.getElementById("outgoingspan");
@@ -21,6 +20,8 @@
         var modal4 = document.getElementById("paidModal");
         var span4 = document.getElementById("paidspan");
 
+        var delivermodal = document.getElementById("deliverModal");
+        var deliverspan = document.getElementById("deliverspan");
 
         span.onclick = function () {
             modal.style.display = "none";
@@ -40,6 +41,11 @@
         span4.onclick = function () {
             modal4.style.display = "none";
         }
+
+        deliverspan.onclick = function () {
+            delivermodal.style.display = "none";
+        }
+
 
         window.onclick = function (event) {
             if (event.target == modal) {
@@ -148,7 +154,7 @@
                                 ]).draw(false);
                             }
                         } else {
-                            dataJson = JSON.parse(dataJson);
+                            // dataJson = JSON.parse(dataJson);
                             console.log(dataJson);
                             $.each(dataJson, (key, item) => {
                                 requestlistTabel.row.add([
@@ -170,6 +176,10 @@
 
         $(document).on('click', "#paidBtn", function () {
             modal4.style.display = "block";
+        })
+
+        $(document).on('click', '#deliverBtn', function () {
+            delivermodal.style.display = "block";
         })
 
         $(document).on('click', "#printBtn", function () {
@@ -214,6 +224,38 @@
             hideload();
         })
 
+        $(document).on('click', '#submitDlvBtn', function () {
+            let dlvponumber = $('#dlvponumber').val();
+            let dlvdrnumber = $('#dlvdrnumber').val();
+            let dlvsinumber = $('#dlvsinumber').val();
+            var message = '';
+
+            if (dlvponumber == '') { message += "PO NUMBER " }
+            if (dlvdrnumber == '') { message += "DR NUMBER " }
+            if (dlvsinumber == '') { message += "SI NUMBER " }
+
+            if (message != '') { warning('Required', `Required to fillup ${message}`) }
+            else {
+                $.ajax({
+                    type: 'POST',
+                    url: '/cyberrequest/delivery',
+                    data: {
+                        requestid:_requestid,
+                        ponumber: dlvponumber,
+                        drnumber: dlvdrnumber,
+                        sinumber: dlvsinumber
+                    },
+                    success: function (result) {
+
+                    },
+                    error: function (err) {
+                        warning('Error', err);
+                    }
+                })
+
+            }
+        })
+
         $(document).on('click', "#batchBtn", function () {
             ClearTable('outgoingbatchtable');
             modal3.style.display = "none";
@@ -254,6 +296,7 @@
             } else {
                 // console.log(dataRaw);
                 dataRaw = JSON.stringify(dataRaw, null, 2);
+                showloader();
 
                 $.ajax({
                     type: "POST",
@@ -267,19 +310,29 @@
                         serials: dataRaw
                     },
                     success: function (result) {
-                        success('Saved!', 'Data Saved!');
-
+                        console.log(result.msg);
+                        if (result.msg == 'success') {
+                            setTimeout(() => {
+                                RequestDetailsTable();
+                                LoadTable();
+                                modal.style.display = "none";
+                                success('Saved!', 'Data Saved!');
+                            }, 3000)
+                        }
+                        if (result.msg == 'notexist') {
+                            warning('Not Exist', `List of serials no exist ${result.data}`);
+                        }
+                        if (result.msg == 'sold') {
+                            warning('Sold', `List of serials already sold ${result.data}`);
+                        }
                     },
                     error: function (result) {
                         error('error: ' + result);
                     }
                 });
             }
-            showloader();
-            setTimeout(() => {
-                LoadTable();
-                modal.style.display = "none";
-            }, 3000)
+
+
             hideload();
 
             serialArr = [];
@@ -303,21 +356,30 @@
                     },
                     success: function (result) {
 
-                        success('Saved!', 'Data Saved!');
+                        console.log(result.msg);
+                        if (result.msg == 'success') {
+                            setTimeout(() => {
+                                RequestDetailsTable();
+                                LoadTable();
+                                modal2.style.display = "none";
+                                modal3.style.display = "block";
+                            }, 3000);
+                            dataRaw = [];
+                            serialArr = [];
+                        }
+                        if (result.msg == 'notexist') {
+                            warning('Not Exist', `List of serials no exist ${result.data}`);
+                        }
+                        if (result.msg == 'sold') {
+                            warning('Sold', `List of serials already sold ${result.data}`);
+                        }
                     },
                     error: function (result) {
                         error('error: ' + result);
                     }
                 });
 
-                setTimeout(() => {
-                    RequestDetailsTable();
-                    LoadTable();
-                    modal2.style.display = "none";
-                    modal3.style.display = "block";
-                }, 2000);
-                dataRaw = [];
-                serialArr = [];
+
             } else {
                 warning('Oh no!', 'What are you doing, saving without uploading!')
             }
@@ -413,7 +475,8 @@
 
                             if (status == 'REQ') { action = '<button class="assign-btn" id="assignBtn" name="assignBtn">ASSIGN SERIAL</button>'; }
                             if (status == 'ALLOC') { action = '<button class="assign-btn" id="assignBtn" name="assignBtn">EDIT</button><button class="assign-btn" id="approvedBtn" name="approvedBtn">APPROVED</button>'; }
-                            if (status == 'APD') { action = '<button class="assign-btn" id="paidBtn" name="paidBtn">PAID</button><button class="assign-btn" id="cancelBtn" name="cancelBtn">CANCEL</button>'; }
+                            if (status == 'APD') { action = '<button class="assign-btn" id="deliverBtn" name="deliverBtn">DELIVER</button><button class="assign-btn" id="cancelBtn" name="cancelBtn">CANCEL</button>'; }
+                            if (status == 'DLV') { action = '<button class="assign-btn" id="paidBtn" name="paidBtn">PAID</button><button class="assign-btn" id="cancelBtn" name="cancelBtn">CANCEL</button>'; }
 
                             finalData.push({
                                 requestid: reqid,
@@ -486,9 +549,6 @@
                             itemcount,
                             action,
                         ]).draw(false);
-
-
-
                     })
                 },
                 error: function (result) {

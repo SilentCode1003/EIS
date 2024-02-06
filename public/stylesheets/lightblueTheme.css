@@ -101,7 +101,7 @@ th {
 
 td {
   color: white;
-
+  text-align: center;
 
 }
 
@@ -547,4 +547,22 @@ body {
 
 .edit-cost {
   background: linear-gradient(to right, #00cc00 1%, #003300 70%);
+}
+
+.circle-btn{
+  height: 40px;
+  width: 40px;
+  border: none;
+  border-radius: 50%;
+  outline: none;
+  background-color: lightcoral;
+  padding: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+
+.horizontal, .vertical{
+  width: 100%;
+  width: 2px;
+  background-color: white;
+  pointer-events: none;
 }

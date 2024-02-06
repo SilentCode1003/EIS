@@ -45,6 +45,9 @@ router.get('/loadbudgetrequest', (req, res) => {
 router.post('/approved', (req, res) => {
   try {
     let requestid = req.body.requestid;
+    let status = dictionary.GetValue(dictionary.REQB());
+    let date = helper.GetCurrentDatetime();
+    let approvedby = req.session.fullname;
 
     let purhcasedetails_sql = `UPDATE purchase_details 
     SET pd_status='APPROVED'
@@ -52,11 +55,13 @@ router.post('/approved', (req, res) => {
 
     let purchaseitems_sql = `UPDATE purchase_item
     SET pi_status='APPROVED'
-    WHERE pi_requestid='${requestid}'`;
+    WHERE pi_requestid='${requestid}'
+    AND pi_status='${status}'`;
 
     let transactionpurchaseitem_sql = `UPDATE transaction_purchase_item
     SET tpi_status='APPROVED'
-    WHERE tpi_requestid='${requestid}'`;
+    WHERE tpi_requestid='${requestid}'
+    AND tpi_status='${status}'`;
 
     let budgetdetails_sql = `UPDATE request_budget_details 
     SET rbd_approvedby='${req.session.fullname}',
@@ -65,13 +70,13 @@ router.post('/approved', (req, res) => {
     WHERE rbd_requestid='${requestid}'`;
 
     let transactionrequestbudget_sql = `UPDATE transaction_request_budget 
-    SET trb_approvedby='${req.session.fullname}',
-    trb_approveddate='${helper.GetCurrentDatetime()}',
+    SET trb_approvedby='${approvedby}',
+    trb_approveddate='${date}',
     trb_status='APPROVED'
     WHERE trb_requestid='${requestid}'`;
 
     let transactioncablingstocksdetails_sql = `UPDATE transaction_cabling_stocks_details 
-      SET tcsd_accountofficer='${req.session.fullname}'
+      SET tcsd_accountofficer='${approvedby}'
       WHERE tcsd_requestid='${requestid}'`;
 
 

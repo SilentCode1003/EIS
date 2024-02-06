@@ -46,6 +46,13 @@ router.post('/save', (req, res) => {
     var brandname = req.body.brandname;
     var itemtype = req.body.itemtype;
     var data = req.body.data;
+    var dataRaw = [];
+
+    console.log(serial);
+
+    dataRaw.push([
+      serial
+    ])
     // var folder = `${EquipmentPath}${brandname}`;
     // var fileDir = `${folder}/${itemtype}_${brandname}_${serial}.json`;
 
@@ -54,20 +61,35 @@ router.post('/save', (req, res) => {
     // helper.CreateFolder(folder);
     // helper.CreateJSON(fileDir, data);
 
-    Execute_TransactionItEquipment(data, (err, result) => {
-      if (err) console.log(err);
-      console.log(result);
-    });
+    Check_Duplicate(dataRaw)
+      .then(result => {
+        if (result != '') {
+          res.json({
+            msg: 'duplicate',
+            data: result
+          })
+        }
+        else {
+          Execute_TransactionItEquipment(data, (err, result) => {
+            if (err) console.log(err);
+            console.log(result);
+          });
 
-    Execute_RegisterItEquipment(data, (err, result) => {
-      if (err) console.log(err);
-      console.log(result);
-    })
+          Execute_RegisterItEquipment(data, (err, result) => {
+            if (err) console.log(err);
+            console.log(result);
+          })
 
-    res.json({
-      msg: 'success'
-    })
-
+          res.json({
+            msg: 'success'
+          })
+        }
+      })
+      .catch(error => {
+        res.json({
+          msg: error
+        })
+      });
   } catch (error) {
     res.json({
       msg: error
@@ -133,6 +155,7 @@ router.post('/saveexceldata', (req, res) => {
     var dataraw = JSON.parse(data);
     let excelData = [];
     let excelTransaction = [];
+    let serials = [];
 
     //console.log(`${dataraw}`);
     var dataArr = [];
@@ -187,6 +210,10 @@ router.post('/saveexceldata', (req, res) => {
         'ACTIVE',
       ])
 
+      serials.push([
+        serial
+      ])
+
       excelTransaction.push([
         brandname,
         itemtype,
@@ -217,18 +244,34 @@ router.post('/saveexceldata', (req, res) => {
       dataArr = [];
     });
 
-    Execute_ExcelRegisterItEquipment(excelData, (err) => {
-      if (err) throw err;
-    })
+    Check_Duplicate(serials)
+      .then(result => {
 
-    Execute_ExecelTransactionItEquipment(excelTransaction, (err) => {
-      if (err) throw err;
-    })
+        if (result != '') {
+          res.json({
+            msg: 'duplicate',
+            data: result
+          })
+        }
+        else {
+          Execute_ExcelRegisterItEquipment(excelData, (err) => {
+            if (err) throw err;
+          })
 
-    res.json({
-      msg: 'success'
-    })
+          Execute_ExecelTransactionItEquipment(excelTransaction, (err) => {
+            if (err) throw err;
+          })
 
+          res.json({
+            msg: 'success'
+          })
+        }
+      })
+      .catch(error => {
+        res.json({
+          msg: error
+        })
+      })
   } catch (error) {
     res.json({
       msg: error
@@ -415,7 +458,7 @@ router.get('/GetDetailedEquipmentSummary', (req, res) => {
   }
 })
 
-//SQL Functions
+//#region Functions
 function Execute_TransactionItEquipment(data, callback) {
   let dataJson = JSON.parse(data);
   let stmt = '';
@@ -505,3 +548,37 @@ function Execute_ExcelRegisterItEquipment(data, callback) {
 
   callback(null, mysql.InsertMultiple(stmt, data));
 }
+
+function Check_Duplicate(data) {
+  return new Promise((resolve, reject) => {
+    let data_length = data.length;
+    var serials = '';
+    var count = 0;
+
+    console.log(`data length: ${data_length}`);
+    for (x = 0; x < data_length; x++) {
+      let sql = `select rie_serial as serial from register_it_equipment where rie_serial='${data[x]}'`;
+
+      mysql.SelectCustomizeResult(sql, (err, result) => {
+        if (err) reject(err);
+
+        if (result.length != 0) {
+          result.forEach((key, item) => {
+            serials += `${key.serial},`;
+          })
+
+        }
+
+        count += 1;
+        console.log(count);
+        if (data_length == count) {
+          console.log(serials);
+          console.log('DONE');
+          resolve(serials);
+        }
+      });
+    }
+  })
+}
+
+//#endregion

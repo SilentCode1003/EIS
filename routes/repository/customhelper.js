@@ -372,3 +372,27 @@ exports.GetByClientStores = (data, index, callback) => {
     }
 }
 //#endregion
+
+//#region 
+exports.JSONNoSpace = (data) => {
+    const jsonString = JSON.stringify(data, (key, value) => {
+        if (typeof value === 'string') {
+            return value.replace(/\s/g, '');
+        }
+        console.log(jsonString);
+        return value;
+    })
+}
+
+exports.JSONRevert = (json) => {
+
+}
+//#endregion
+
+//#region number padding
+exports.GeneratePO = (year, number) => {
+    const padded = number.toString().padStart(4, '0');
+    const ponumber = `${year}-${padded}`;
+    return ponumber;
+}
+//#endregion

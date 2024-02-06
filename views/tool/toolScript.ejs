@@ -1,0 +1,83 @@
+<script>
+    $(document).ready(function () {
+
+        LoadTable();
+
+
+        $(document).on('click', '#addBtn', function () {
+            var serialno = $('#serialno').val();
+            var tag = $('#tag').val();
+            var itemname = $('#itemname').val();
+            var brand = $('#brand').val();
+            var department = $('#department').val();
+            var data = [];
+
+            var message = '';
+
+            if (serialno == '' && tag == '') (message += 'SERIAL NO / TAG ');
+            if (itemname == '') (message += 'ITEM NAME ');
+            if (brand == '') (message += 'BRAND ');
+            if (department == '-') (message += 'DEPARTMENT ');
+
+            if (message != '') {
+                warning('Required', `Required to fillup ${message}`);
+            }
+            else {
+                data.push({
+                    serialno: serialno == '' ? 'N/A' : serialno,
+                    tag: tag == '' ? 'N/A' : tag,
+                    itemname: itemname,
+                    brand: brand,
+                    department: department,
+                });
+
+                data = JSON.stringify(data, null, 2);
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/tool/save',
+                    data: {
+                        data: data
+                    },
+                    success: function (result) {
+                        if (result.msg != 'exist') {
+                            success('Success', 'Data saved!');
+                            LoadTable();
+                        }
+                        else {
+                            warning('Exist', `Data already exist brand:${brand} itemname:${itemname} serial/tag:${serialno}/${tag}`);
+                        }
+                    },
+                    error: function (err) {
+                        warning('Error', err);
+                    }
+                })
+            }
+        })
+
+        function LoadTable() {
+            var table = $('#toolTable').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'get',
+                'ajax': {
+                    'url': '/tool/load',
+                },
+                'columns': [
+                    { data: 'toolid' },
+                    { data: 'brand' },
+                    { data: 'itemname' },
+                    { data: 'serial' },
+                    { data: 'tag' },
+                    { data: 'department' },
+                ]
+            });
+        }
+    })
+</script>
