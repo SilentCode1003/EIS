@@ -7,7 +7,7 @@ const mysql = require('./repository/cyberpowerdb');
 const dictionary = require('./repository/dictionary')
 
 function isAuthAdmin(req, res, next) {
- 
+
   if (req.session.isAuth && req.session.accounttype == "CYBERPOWER") {
     next();
   }
@@ -51,17 +51,6 @@ router.post('/gettransaction', (req, res) => {
       if (err) console.log(err);
 
       result.forEach((key, item) => {
-        var serial = key.unitserial;
-        var serial_list = [];
-        serial = serial.split('@');
-
-        serial.forEach(itemserial => {
-          serial_list.push({
-            serial: itemserial
-          })
-        })
-
-        serial_list = JSON.stringify(serial_list, null, 2);
         data_result.push({
           transactionid: key.transactionid,
           transactiondate: key.transactiondate,
@@ -69,7 +58,7 @@ router.post('/gettransaction', (req, res) => {
           modelname: key.modelname,
           itemtype: key.itemtype,
           quantity: key.quantity,
-          unitserial: serial_list,
+          unitserial: key.unitserial,
           ponumber: key.ponumber,
           drnumber: key.drnumber,
           sinumber: key.sinumber,

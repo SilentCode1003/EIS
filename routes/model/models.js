@@ -851,3 +851,146 @@ exports.MasterItemPrice = (data) => {
     return dataResult;
 }
 
+exports.MasterSupplier = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            suppliercode: key.ms_suppliercode,
+            suppliername: key.ms_suppliername,
+            location: key.ms_location,
+            department: key.ms_supplierdepartment,
+            createdby: key.ms_createdby,
+            createddate: key.ms_createddate,
+            status: key.ms_status,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.PORequestDetails = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            year: key.prd_year,
+            ponumber: key.prd_ponumber,
+            detailid: key.prd_detailid,
+            supplier: key.prd_supplier,
+            location: key.prd_location,
+            details: key.prd_details,
+            createdby: key.prd_createdby,
+            createddate: key.prd_createddate,
+            remarks: key.prd_remarks,
+            status: key.prd_status,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.PORequestItems = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            transactionid: key.pri_transactionid,
+            itembrand: key.pri_itembrand,
+            itemname: key.pri_itemname,
+            quantity: key.pri_quantity,
+            costperunit: key.pri_costperunit,
+            subtotal: key.pri_subtotal,
+            detailid: key.pri_detailid,
+            ponumber: key.pri_ponumber,
+            preparedby: key.pri_preparedby,
+            prepareddate: key.pri_prepareddate,
+            remarks: key.pri_remarks,
+            status: key.pri_status,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.MasterTool = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            toolid: key.mt_toolid,
+            brand: key.mt_brand,
+            itemname: key.mt_itemname,
+            serial: key.mt_serial,
+            tag: key.mt_tag,
+            department: key.mt_department,
+            createdby: key.mt_createdby,
+            createddate: key.mt_createddate,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.RequestToolDetail = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            requestid: key.rtd_requestid,
+            requestdate: key.rtd_requestdate,
+            requestby: key.rtd_requestby,
+            details: key.rtd_details,
+            approvedby: key.rtd_approvedby,
+            approveddate: key.rtd_approveddate,
+            status: key.rtd_status,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.RequestToolItem = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            transactionid: key.rti_transactionid,
+            requestid: key.rti_requestid,
+            requestdate: key.rti_requestdate,
+            requestby: key.rti_requestby,
+            brand: key.rti_brand,
+            item: key.rti_item,
+            serialtag: key.rti_serialtag,
+            status: key.rti_status,
+        })
+    });
+
+    return dataResult;
+}
+
+exports.ReturnToolItem = (data) => {
+    let dataResult = [];
+
+    data.forEach((key, item) => {
+
+        dataResult.push({
+            transactionid: key.rti_transactionid,
+            requestid: key.rti_requestid,
+            requestdate: key.rti_requestdate,
+            requestby: key.rti_requestby,
+            brand: key.rti_brand,
+            item: key.rti_item,
+            serial: key.rti_serial,
+            tag: key.rti_tag,
+        })
+    });
+
+    return dataResult;
+}

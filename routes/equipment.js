@@ -40,12 +40,19 @@ router.get('/', isAuthAdmin, function (req, res, next) {
 
 module.exports = router;
 
-router.post('/save', async (req, res) => {
+router.post('/save', (req, res) => {
   try {
     var serial = req.body.serial;
     var brandname = req.body.brandname;
     var itemtype = req.body.itemtype;
     var data = req.body.data;
+    var dataRaw = [];
+
+    console.log(serial);
+
+    dataRaw.push([
+      serial
+    ])
     // var folder = `${EquipmentPath}${brandname}`;
     // var fileDir = `${folder}/${itemtype}_${brandname}_${serial}.json`;
 
@@ -54,19 +61,35 @@ router.post('/save', async (req, res) => {
     // helper.CreateFolder(folder);
     // helper.CreateJSON(fileDir, data);
 
-    await Execute_TransactionItEquipment(data, (err) => {
-      if (err) throw err;
+    Check_Duplicate(dataRaw)
+      .then(result => {
+        if (result != '') {
+          res.json({
+            msg: 'duplicate',
+            data: result
+          })
+        }
+        else {
+          Execute_TransactionItEquipment(data, (err, result) => {
+            if (err) console.log(err);
+            console.log(result);
+          });
 
-    });
+          Execute_RegisterItEquipment(data, (err, result) => {
+            if (err) console.log(err);
+            console.log(result);
+          })
 
-    await Execute_RegisterItEquipment(data, (err) => {
-      if (err) throw err;
-    })
-
-    res.json({
-      msg: 'success'
-    })
-
+          res.json({
+            msg: 'success'
+          })
+        }
+      })
+      .catch(error => {
+        res.json({
+          msg: error
+        })
+      });
   } catch (error) {
     res.json({
       msg: error
@@ -132,6 +155,7 @@ router.post('/saveexceldata', (req, res) => {
     var dataraw = JSON.parse(data);
     let excelData = [];
     let excelTransaction = [];
+    let serials = [];
 
     //console.log(`${dataraw}`);
     var dataArr = [];
@@ -182,7 +206,12 @@ router.post('/saveexceldata', (req, res) => {
         itemtype,
         receivedby,
         helper.GetCurrentDate(),
-        'ACTIVE'
+        'MAIN',
+        'ACTIVE',
+      ])
+
+      serials.push([
+        serial
       ])
 
       excelTransaction.push([
@@ -215,18 +244,34 @@ router.post('/saveexceldata', (req, res) => {
       dataArr = [];
     });
 
-    Execute_ExcelRegisterItEquipment(excelData, (err) => {
-      if (err) throw err;
-    })
+    Check_Duplicate(serials)
+      .then(result => {
 
-    Execute_ExecelTransactionItEquipment(excelTransaction, (err) => {
-      if (err) throw err;
-    })
+        if (result != '') {
+          res.json({
+            msg: 'duplicate',
+            data: result
+          })
+        }
+        else {
+          Execute_ExcelRegisterItEquipment(excelData, (err) => {
+            if (err) throw err;
+          })
 
-    res.json({
-      msg: 'success'
-    })
+          Execute_ExecelTransactionItEquipment(excelTransaction, (err) => {
+            if (err) throw err;
+          })
 
+          res.json({
+            msg: 'success'
+          })
+        }
+      })
+      .catch(error => {
+        res.json({
+          msg: error
+        })
+      })
   } catch (error) {
     res.json({
       msg: error
@@ -413,9 +458,8 @@ router.get('/GetDetailedEquipmentSummary', (req, res) => {
   }
 })
 
-
-//SQL Functions
-Execute_TransactionItEquipment = (data, callback) => {
+//#region Functions
+function Execute_TransactionItEquipment(data, callback) {
   let dataJson = JSON.parse(data);
   let stmt = '';
 
@@ -444,7 +488,7 @@ Execute_TransactionItEquipment = (data, callback) => {
 
 }
 
-Execute_RegisterItEquipment = (data, callback) => {
+function Execute_RegisterItEquipment(data, callback) {
   let dataJson = JSON.parse(data);
   let stmt = '';
 
@@ -455,8 +499,9 @@ Execute_RegisterItEquipment = (data, callback) => {
       rie_itemtype,
       rie_receivedby,
       rie_receiveddate,
+      rie_site,
       rie_status
-      ) VALUES('${key.serial}','${key.brandname}','${key.itemtype}','${key.receivedby}','${key.receiveddate}','ACTIVE')`;
+      ) VALUES('${key.serial}','${key.brandname}','${key.itemtype}','${key.receivedby}','${key.receiveddate}','MAIN','ACTIVE')`;
   });
 
   callback(null, mysql.Insert(stmt));
@@ -497,8 +542,43 @@ function Execute_ExcelRegisterItEquipment(data, callback) {
       rie_itemtype,
       rie_receivedby,
       rie_receiveddate,
+      rie_site,
       rie_status
       ) VALUES ?`;
 
   callback(null, mysql.InsertMultiple(stmt, data));
 }
+
+function Check_Duplicate(data) {
+  return new Promise((resolve, reject) => {
+    let data_length = data.length;
+    var serials = '';
+    var count = 0;
+
+    console.log(`data length: ${data_length}`);
+    for (x = 0; x < data_length; x++) {
+      let sql = `select rie_serial as serial from register_it_equipment where rie_serial='${data[x]}'`;
+
+      mysql.SelectCustomizeResult(sql, (err, result) => {
+        if (err) reject(err);
+
+        if (result.length != 0) {
+          result.forEach((key, item) => {
+            serials += `${key.serial},`;
+          })
+
+        }
+
+        count += 1;
+        console.log(count);
+        if (data_length == count) {
+          console.log(serials);
+          console.log('DONE');
+          resolve(serials);
+        }
+      });
+    }
+  })
+}
+
+//#endregion

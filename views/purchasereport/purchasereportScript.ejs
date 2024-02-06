@@ -1,0 +1,175 @@
+<script>
+    $(document).ready(function () {
+        let ponumber = '';
+        CablingTable();
+
+        $("#podate-dtbox").DateTimePicker({
+            dateFormat: "yyyy-MM-dd"
+        });
+
+        function CablingTable() {
+            showloader();
+            purchaseOrderDetailsTbl = $('#cabling-table').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'GET',
+                'ajax': {
+                    'url': '/purchaserequest/load',
+                    'dataSrc': (json) => {
+                        var finalData = [];
+                        var data = json.data;
+
+                        console.log(data);
+                        $.each(data, (key, item) => {
+                            var action = '';
+                            var details = '';
+                            var detailsjson = JSON.parse(item.details);
+                            var totalcost = 0;
+                            var ponumber = '';
+
+                            $.each(detailsjson, (key, item) => {
+                                ponumber = item.ponumber;
+                                totalcost += parseFloat(item.subtotal);
+                                details += `(${item.ponumber})${item.brandname}${item.itemtype}@${item.quantity}<br>`;
+                            })
+
+                            totalcost = `₱ ${(totalcost).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+
+                            finalData.push({
+                                ponumber: ponumber,
+                                details: details,
+                                totalcost: totalcost,
+                                officer: item.officer,
+                                entrydate: item.entrydate,
+                                action: action = '<button class="assign-btn" id="printBtn" name="printBtn">PRINT</button>',
+                            })
+
+                            details = '';
+                        })
+
+                        return finalData;
+                    },
+                },
+                'columnDefs': [{
+                    targets: 1,
+                    className: 'td-indent',
+                }],
+                'columns': [
+                    { data: 'ponumber' },
+                    { data: 'officer' },
+                    { data: 'entrydate' },
+                    { data: 'totalcost' },
+                    { data: 'details' },
+                    { data: 'action' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            });
+        }
+
+        var POEquimentModal = document.getElementById("POEquimentModal");
+        var POEquimentModalSpan = document.getElementById("POEquimentModalSpan");
+
+        POEquimentModalSpan.onclick = function () {
+            POEquimentModal.style.display = "none";
+        }
+
+        window.onclick = function () {
+            if (event.target == POEquimentModal) {
+                POEquimentModal.style.display = "none";
+            }
+        }
+
+        $('#cabling-table tbody').on('click', 'tr', function (e) {
+            var data = [];
+            $(this).closest('tr').find('td').each(function () {
+                data.push([$(this).text()]);
+            });
+
+            console.log(data);
+            ponumber = data[0];
+            data = [];
+        })
+
+        $(document).on('click', '#printBtn', function () {
+            var requestitemTabel = $('#po-equipments-tbl').DataTable({
+                'destroy': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollCollapse': true,
+            });
+
+            requestitemTabel.clear().draw();
+
+            $.ajax({
+                type: 'POST',
+                url: '/purchasereport/getporequestitems',
+                data: {
+                    ponumber: ponumber,
+                },
+                success: function (result) {
+                    var data = result.data;
+                    var length = data.length;
+                    console.log(data.length);
+                    var index = 1;
+                    var total = 0;
+                    $.each(data, (key, item) => {
+                        var cost = parseFloat(item.costperunit);
+                        var subtotal = parseFloat(item.subtotal);
+                        var _subtotal = subtotal;
+                        cost = `${(cost).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+                        subtotal = `₱ ${(subtotal).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+
+                        requestitemTabel.row.add([index, `${item.itembrand} ${item.itemname}`, item.quantity, cost, subtotal]);
+
+                        document.getElementById('custodian').innerText = item.createdby;
+                        document.getElementById('officer').innerText = item.preparedby;
+                        document.getElementById('ponumber').innerText = item.ponumber;
+                        document.getElementById('company').innerText = item.supplier;
+                        document.getElementById('location').innerText = item.location;
+                        document.getElementById('podate').innerText = item.podate;
+                        total += _subtotal
+
+
+                        console.log(`index: ${index} length: ${length}`)
+                        if (index === length) {
+                            total = `₱ ${(total).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+                            requestitemTabel.row.add(['TOTAL', ``, '', '', total]);
+                            requestitemTabel.draw();
+                        }
+                        index += 1;
+                    })
+
+                    requestitemTabel
+                        .column('0:visible')
+                        .order('asc')
+                        .draw();
+                },
+                error: function (error) {
+                    error(error);
+                }
+            });
+
+            POEquimentModal.style.display = 'block';
+        })
+
+        $(document).on('click', "#POEquimentModalPrintBtn", function () {
+            console.log('clicked!');
+            var printContents = document.getElementById('PrintArea').innerHTML;
+            var originalContents = document.body.innerHTML;
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+            location.reload();
+        })
+    })
+</script>

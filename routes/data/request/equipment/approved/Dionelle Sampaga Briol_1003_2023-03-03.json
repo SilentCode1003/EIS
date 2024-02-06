@@ -1,0 +1,18 @@
+[
+  {
+    "controlno": 1003,
+    "personel": "Dionelle Sampaga Briol",
+    "data": [
+      {
+        "store": "3438 15TH AVE. CUBAO",
+        "ticket": "INC-562362",
+        "brandname": "Cyberpower UPS",
+        "itemtype": "UT650EGU",
+        "quantity": "1",
+        "remarks": "POS UPS REPLACEMENT"
+      }
+    ],
+    "createddate": "2023-03-03",
+    "status": "ALLOC"
+  }
+]

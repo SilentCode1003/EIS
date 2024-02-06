@@ -1,7 +1,7 @@
 
 exports.GetValue = (abr) => {
     if (abr == 'WH') return 'WAREHOUSE';
-    if (abr == 'DLV') return 'TO BE DELIVER TO CLIENT';
+    if (abr == 'DLV') return 'TO BE DELIVERED';
     if (abr == 'NPD') return 'NOT PAID';
     if (abr == 'SLD') return 'SOLD';
     if (abr == 'PIC') return 'FOR PICKUP TO WAREHOUSE';
@@ -20,6 +20,10 @@ exports.GetValue = (abr) => {
     if (abr == 'DLY') return 'DEPLOYED';
     if (abr == 'RET') return 'RETURNED';
     if (abr == 'ACT') return 'ACTIVE';
+    if (abr == 'REM') return 'REMOVE';
+    if (abr == 'UPD') return 'UPDATE';
+    if (abr == 'INST') return 'INST';
+    if (abr == 'DLVR') return 'DELIVERED';
 }
 
 //#region STATUS CODE
@@ -101,5 +105,21 @@ exports.RET = () => {
 
 exports.ACT = () => {
     return 'ACT';
+}
+
+exports.REM = () => {
+    return 'REM';
+}
+
+exports.UPD = () => {
+    return 'UPD';
+}
+
+exports.INST = () => {
+    return 'INST';
+}
+
+exports.DLVR = () => {
+    return 'DLVR';
 }
 //#endregion

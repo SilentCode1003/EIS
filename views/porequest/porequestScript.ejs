@@ -1,0 +1,207 @@
+<script>
+    $(document).ready(function () {
+        var requestid = '';
+        var ponumber = '';
+        var supplier = '';
+        var location = '';
+
+        $("#dtbox").DateTimePicker({
+            dateFormat: "yyyy-MM-dd"
+        });
+
+        LoadTable();
+
+        var POEquimentModal = document.getElementById("POEquimentModal");
+        var POEquimentModalSpan = document.getElementById("POEquimentModalSpan");
+
+        POEquimentModalSpan.onclick = function () {
+            POEquimentModal.style.display = "none";
+        }
+
+        window.onclick = function () {
+
+            if (event.target == POEquimentModal) {
+                POEquimentModal.style.display = "none";
+            }
+        }
+
+        $(document).on('click', '#searchBtn', function () {
+            var datefrom = $('#datefrom').val();
+            var dateto = $('#dateto').val();
+            var message = '';
+
+            if (datefrom == '') { message += 'DATE FROM' };
+            if (dateto == '') { message += 'DATE TO ' }
+
+            if (message != '') {
+                warning('Empty!', `Required to fillup ${message}`);
+            }
+            else {
+                showloader();
+                dataTable = $('#porequest-table').DataTable({
+                    'destroy': true,
+                    'processing': true,
+                    'serverSide': true,
+                    'paging': false,
+                    'searching': false,
+                    'info': false,
+                    'scrollY': 400,
+                    'scrollCollapse': true,
+                    'serverMethod': 'POST',
+                    'ajax': {
+                        'url': '/porequest/getporequest',
+                        'data': {
+                            datefrom: datefrom,
+                            dateto: dateto
+                        }
+                    },
+                    'columns': [
+                        { data: 'detailid' },
+                        { data: 'ponumber' },
+                        { data: 'supplier' },
+                        { data: 'location' },
+                        { data: 'details' },
+                        { data: 'podate' },
+                        { data: 'action' },
+                    ],
+                    initComplete: function () {
+                        console.log('init complete');
+                        hideload();
+                    }
+                });
+            }
+        })
+
+        $(document).on('click', '#printBtn', function () {
+            var requestitemTabel = $('#po-equipments-tbl').DataTable({
+                'destroy': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollCollapse': true,
+            });
+
+            requestitemTabel.clear().draw();
+
+            $.ajax({
+                type: 'POST',
+                url: '/porequest/getporequestitems',
+                data: {
+                    ponumber: ponumber,
+                },
+                success: function (result) {
+                    var data = result.data;
+                    var length = data.length;
+                    console.log(data.length);
+                    var index = 1;
+                    var total = 0;
+                    $.each(data, (key, item) => {
+                        var cost = parseFloat(item.costperunit);
+                        var subtotal = parseFloat(item.subtotal);
+                        var _subtotal = subtotal;
+                        cost = `${(cost).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+                        subtotal = `₱ ${(subtotal).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+
+                        requestitemTabel.row.add([index, `${item.itembrand} ${item.itemname}`, item.quantity, cost, subtotal]);
+
+                        document.getElementById('custodian').innerText = item.requestby;
+                        document.getElementById('officer').innerText = item.preparedby;
+                        document.getElementById('ponumber').innerText = item.ponumber;
+                        document.getElementById('company').innerText = supplier;
+                        document.getElementById('location').innerText = location;
+                        document.getElementById('podate').innerText = item.prepareddate;
+                        total += _subtotal
+
+
+                        console.log(`index: ${index} length: ${length}`)
+                        if (index === length) {
+                            total = `₱ ${(total).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+                            requestitemTabel.row.add(['TOTAL', ``, '', '', total]);
+                            requestitemTabel.draw();
+                        }
+                        index += 1;
+                    })
+
+                    requestitemTabel
+                        .column('0:visible')
+                        .order('asc')
+                        .draw();
+                },
+                error: function (error) {
+                    error(error);
+                }
+            });
+
+            POEquimentModal.style.display = 'block';
+        })
+
+        $('#porequest-table tbody').on('click', 'tr', function (e) {
+            // var data = stocksrequest.row(this).data();
+            var data = [];
+
+            $(this).closest('tr').find('td').each(function () {
+                data.push([$(this).text()]);
+
+            });
+
+            console.log(data);
+
+            requestid = data[0];
+            ponumber = data[1];
+            supplier = data[2];
+            location = data[3];
+
+            data = [];
+
+            // budgetrequest = budgetrequest.replace(/₱ /g,'');
+            // budgetrequest = budgetrequest.replace(/,/g,'');
+            // detailrequest = detailrequest.replace(/<br>/g,'')
+            // console.log(data);
+        })
+
+        $(document).on('click', '#POEquimentModalPrintBtn', function () {
+            console.log('clicked!');
+            var printContents = document.getElementById('PrintArea').innerHTML;
+            var originalContents = document.body.innerHTML;
+            document.body.innerHTML = printContents;
+            document.title = `PURCHASE_ORDER_${ponumber}`;
+            window.print();
+            document.body.innerHTML = originalContents;
+            window.location.reload();
+        })
+
+        function LoadTable() {
+            var table = $('#porequest-table').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'GET',
+                'ajax': {
+                    'url': '/porequest/load',
+                },
+                'columnDefs': [{
+                    targets: 1,
+                    className: 'td-indent',
+                }],
+                'columns': [
+                    { data: 'detailid' },
+                    { data: 'ponumber' },
+                    { data: 'supplier' },
+                    { data: 'location' },
+                    { data: 'details' },
+                    { data: 'podate' },
+                    { data: 'action' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            })
+        }
+    })
+</script>

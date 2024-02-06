@@ -1,0 +1,43 @@
+[
+  {
+    "requestid": 1,
+    "personel": "AYLWIN BAGAPURO",
+    "date": "2023-02-02 16:02",
+    "details": [
+      {
+        "personel": "AYLWIN BAGAPURO",
+        "brandname": "ALANTEK",
+        "itemtype": "CAT 6",
+        "itemcount": "10",
+        "createddate": "2023-02-02 16:02",
+        "status": "PENDING"
+      },
+      {
+        "personel": "AYLWIN BAGAPURO",
+        "brandname": "ALANTEK",
+        "itemtype": "CAT 5E",
+        "itemcount": "10",
+        "createddate": "2023-02-02 16:02",
+        "status": "PENDING"
+      },
+      {
+        "personel": "AYLWIN BAGAPURO",
+        "brandname": "ALANTEK",
+        "itemtype": "INFORMATION OUTLET (I/O) CAT 5E",
+        "itemcount": "10",
+        "createddate": "2023-02-02 16:02",
+        "status": "PENDING"
+      },
+      {
+        "personel": "AYLWIN BAGAPURO",
+        "brandname": "ALANTEK",
+        "itemtype": "INFORMATION OUTLET (I/O) CAT 6",
+        "itemcount": "10",
+        "createddate": "2023-02-02 16:02",
+        "status": "PENDING"
+      }
+    ],
+    "remarks": "REQUEST NEW STOCKS",
+    "status": "PENDING"
+  }
+]

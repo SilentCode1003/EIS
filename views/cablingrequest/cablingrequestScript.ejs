@@ -6,7 +6,6 @@
         let date = '<%= date%>'
         let selection = '';
 
-
         // var material_list_tbl = $('#request-list-tbl').DataTable({
         //     'paging': false,
         //     'scrollY': 400,
@@ -27,6 +26,10 @@
         loadlist();
         // loadtable();
 
+        $("#dtbox").DateTimePicker({
+            dateFormat: "yyyy-MM-dd"
+        });
+
         $(document).on('click', "#sofBtn", function () {
             var i, tabcontent, tablinks;
             tabcontent = document.getElementsByClassName("tabcontent");
@@ -40,6 +43,8 @@
             document.getElementById('materials').style.display = "block";
             // evt.currentTarget.className += " active";
 
+            ClearListTable('request-list-tbl');
+            dataArr = [];
             LoadMaterialRequestTbl();
 
         });
@@ -57,8 +62,9 @@
             document.getElementById('stocks').style.display = "block";
             // evt.currentTarget.className += " active";
 
+            ClearListTable('request-stocks-list-tbl');
+            dataArr = [];
             LoadStocksRequestTbl();
-
         });
 
         var modal = document.getElementById("requestModal");
@@ -98,21 +104,66 @@
         })
 
         $(document).on('click', "#saveBtn", async function () {
+            var requestlist = $("#request-list-tbl tr");
+            var data_length = requestlist.length;
+            var dataArr = [];
+            var createddate = $('#requestdate').val();
+
+            for (x = 1; x < data_length; x++) {
+                console.log(requestlist[x].innerText);
+                var innerData = requestlist[x].innerText;
+                innerData = innerData.split("\t");
+
+                dataArr.push({
+                    personel: innerData[0],
+                    brandname: innerData[1],
+                    itemtype: innerData[2],
+                    // itemcost: itemcost,
+                    itemcount: innerData[3],
+                    createddate: createddate,
+                    status: 'PENDING'
+                });
+            }
+
+            console.log(dataArr);
+
             if (dataArr.length == 0) {
-                warning('You have no request? IDIOT!');
+                warning('Empty', 'No data request list');
             } else {
                 let data = JSON.stringify(dataArr, null, 2);
                 // let data = dataArr;
                 let remarks = $('#remarks').val();
 
                 console.log(remarks);
-                savedata(data, remarks, selection);
+                savedata(dataArr, remarks, selection);
+                dataArr = [];
             }
         })
 
         $(document).on('click', "#requeststocksaveBtn", async function () {
+            var requestlist = $("#request-stocks-list-tbl tr");
+            var data_length = requestlist.length;
+            var dataArr = [];
+            var createddate = '<%=date%>';
+
+            for (x = 1; x < data_length; x++) {
+                console.log(requestlist[x].innerText);
+                var innerData = requestlist[x].innerText;
+                innerData = innerData.split("\t");
+
+                dataArr.push({
+                    personel: innerData[0],
+                    brandname: innerData[1],
+                    itemtype: innerData[2],
+                    // itemcost: itemcost,
+                    itemcount: innerData[3],
+                    createddate: createddate,
+                    status: 'PENDING'
+                });
+            }
+
             if (dataArr.length == 0) {
-                warning('You have no request? IDIOT!');
+                warning('Empty', 'No data request list');
             } else {
                 let data = JSON.stringify(dataArr, null, 2);
                 // let data = dataArr;
@@ -123,17 +174,19 @@
         })
 
         $(document).on('click', "#addBtn", function () {
-            var personel = '<%= fullname%>'
+            var personel = $('#personel').val();
             var brandname = $('#brandname').val();
             var itemtype = $('#itemtype').val();
             var itemcount = $('#itemcount').val();
             // var itemcost = $('#itemcost').val();
             // var remarks = $('#remarks').val();
-            var createddate = '<%= date%>';
+            var requestdate = $('#requestdate').val();
+            var data = $("#request-list-tbl tr");
 
             var message = "";
 
             if (personel == "-") { message += "FE NAME " }
+            if (requestdate == "-") { message += "REQUEST DATE " }
             if (brandname == "-") { message += "BRAND NAME " }
             if (itemtype == "-") { message += "ITEM TYPE " }
             if (itemcount == "") { message += "QUANTITY " }
@@ -141,6 +194,17 @@
 
             if (message != "") { warning("Warning!", "Must fill-up " + message + " field!") }
             else {
+
+                for (x = 0; x < data.length; x++) {
+                    // console.log(header[x].innerText);
+                    console.log(data[x].innerText);
+                    var innerData = data[x].innerText;
+                    innerData = innerData.split("\t");
+
+                    if (innerData[2] == itemtype && innerData[1] == brandname) {
+                        return warning('Already Exist', `Already request ${brandname}[${itemtype}] with item count of ${innerData[3]}`);
+                    }
+                }
 
                 $.ajax({
                     type: 'POST',
@@ -151,66 +215,90 @@
                         itemcount, itemcount,
                     },
                     success: function (result) {
+                        if (result.msg == 'nodata') {
+                            warning('Warning', `${itemtype} has no data on inventory, Go to STOCKS >> EQUIPMENTS >> REGISTER to add ${itemtype} data..."`)
+                        }
                         if (result.msg == 'success') {
-                            if (dataArr.length == 0) {
-                                dataArr.push({
-                                    personel: personel,
-                                    brandname: brandname,
-                                    itemtype: itemtype,
-                                    // itemcost: itemcost,
-                                    itemcount: itemcount,
-                                    createddate: createddate,
-                                    status: 'PENDING'
-                                });
+                            // if (dataArr.length == 0) {
+                            //     // dataArr.push({
+                            //     //     personel: personel,
+                            //     //     brandname: brandname,
+                            //     //     itemtype: itemtype,
+                            //     //     // itemcost: itemcost,
+                            //     //     itemcount: itemcount,
+                            //     //     createddate: createddate,
+                            //     //     status: 'PENDING'
+                            //     // });
 
-                                material_list_tbl = document.getElementById("request-list-tbl");
-                                var row = material_list_tbl.insertRow(1);
-                                var FE_NAME = row.insertCell(0);
-                                var BRAND_NAME = row.insertCell(1);
-                                var ITEM_NAME = row.insertCell(2);
-                                var ITEM_COUNT = row.insertCell(3);
-                                // var ITEM_COST = row.insertCell(4);
+                            //     material_list_tbl = document.getElementById("request-list-tbl");
+                            //     var row = material_list_tbl.insertRow(1);
+                            //     var FE_NAME = row.insertCell(0);
+                            //     var BRAND_NAME = row.insertCell(1);
+                            //     var ITEM_NAME = row.insertCell(2);
+                            //     var ITEM_COUNT = row.insertCell(3);
+                            //     var TABLE_ACTION = row.insertCell(4);
+                            //     var action = `<button class="circle-btn" id="decrementBtn" name="decrementBtn">
+                            //                         <div class="horizontal-line"></div></button>
+                            //                         <button class="circle-btn" id="incrementBtn" name="incrementBtn">
+                            //                         <div class="horizontal-line">
+                            //                         </div>
+                            //                         <div class="vertical-line">
+                            //                         </div>
+                            //                    </button>`;
+                            //     // var ITEM_COST = row.insertCell(4);
 
-                                FE_NAME.innerHTML = personel;
-                                BRAND_NAME.innerHTML = brandname;
-                                ITEM_NAME.innerHTML = itemtype;
-                                ITEM_COUNT.innerHTML = itemcount;
-                                // ITEM_COST.innerHTML = itemcost;
+                            //     FE_NAME.innerHTML = personel;
+                            //     BRAND_NAME.innerHTML = brandname;
+                            //     ITEM_NAME.innerHTML = itemtype;
+                            //     ITEM_COUNT.innerHTML = itemcount;
+                            //     TABLE_ACTION.innerHTML = action;
+                            //     // ITEM_COST.innerHTML = itemcost;
 
-                            } else {
-                                if (!dataArr.map(item => {
-                                    if (item.itemtype == itemtype) {
-                                        return `${item.itemtype}`
-                                    }
+                            // } else {
+                            //     if (!dataArr.map(item => {
+                            //         if (item.itemtype == itemtype) {
+                            //             return `${item.itemtype}`
+                            //         }
 
-                                }).includes(`${itemtype}`)) {
-                                    dataArr.push({
-                                        personel: personel,
-                                        brandname: brandname,
-                                        itemtype: itemtype,
-                                        // itemcost: itemcost,
-                                        itemcount: itemcount,
-                                        createddate: createddate,
-                                        status: 'PENDING'
-                                    });
+                            //     }).includes(`${itemtype}`)) {
+                            // dataArr.push({
+                            //     personel: personel,
+                            //     brandname: brandname,
+                            //     itemtype: itemtype,
+                            //     // itemcost: itemcost,
+                            //     itemcount: itemcount,
+                            //     createddate: createddate,
+                            //     status: 'PENDING'
+                            // });
 
-                                    material_list_tbl = document.getElementById("request-list-tbl");
-                                    var row = material_list_tbl.insertRow(1);
-                                    var FE_NAME = row.insertCell(0);
-                                    var BRAND_NAME = row.insertCell(1);
-                                    var ITEM_NAME = row.insertCell(2);
-                                    var ITEM_COUNT = row.insertCell(3);
-                                    // var ITEM_COST = row.insertCell(4);
+                            material_list_tbl = document.getElementById("request-list-tbl");
+                            var row = material_list_tbl.insertRow(1);
+                            var FE_NAME = row.insertCell(0);
+                            var BRAND_NAME = row.insertCell(1);
+                            var ITEM_NAME = row.insertCell(2);
+                            var ITEM_COUNT = row.insertCell(3);
+                            var TABLE_ACTION = row.insertCell(4);
+                            var action = `<button class="circle-btn" id="decrementBtn" name="decrementBtn">
+                                                    <div class="horizontal-line"></div></button>
+                                                    <button class="circle-btn" id="incrementBtn" name="incrementBtn">
+                                                    <div class="horizontal-line">
+                                                    </div>
+                                                    <div class="vertical-line">
+                                                    </div>
+                                               </button>`;
+                            // var ITEM_COST = row.insertCell(4);
 
-                                    FE_NAME.innerHTML = personel;
-                                    BRAND_NAME.innerHTML = brandname;
-                                    ITEM_NAME.innerHTML = itemtype;
-                                    ITEM_COUNT.innerHTML = itemcount;
-                                    // ITEM_COST.innerHTML = itemcost;
-                                } else {
-                                    warning(`Already request ${itemtype} with item count of ${itemcount}...`)
-                                }
-                            }
+                            FE_NAME.innerHTML = personel;
+                            BRAND_NAME.innerHTML = brandname;
+                            ITEM_NAME.innerHTML = itemtype;
+                            ITEM_COUNT.innerHTML = itemcount;
+                            TABLE_ACTION.innerHTML = action;
+
+                            // ITEM_COST.innerHTML = itemcost;
+                            // } else {
+                            //     warning(`Already request ${itemtype} with item count of ${itemcount}...`)
+                            // }
+                            // }
                         }
                         if (result.msg == 'insufficient') {
                             warning('Insufficient Supply', `${result.details}`);
@@ -231,6 +319,7 @@
             // var itemcost = $('#itemcost').val();
             // var remarks = $('#remarks').val();
             var createddate = '<%= date%>';
+            var data = $("#request-stocks-list-tbl tr");
 
             var message = "";
 
@@ -242,66 +331,38 @@
 
             if (message != "") { warning("Warning!", "Must fill-up " + message + " field!") }
             else {
+                for (x = 0; x < data.length; x++) {
+                    // console.log(header[x].innerText);
+                    console.log(data[x].innerText);
+                    var innerData = data[x].innerText;
+                    innerData = innerData.split("\t");
 
-                if (dataArr.length == 0) {
-                    dataArr.push({
-                        personel: personel,
-                        brandname: brandname,
-                        itemtype: itemtype,
-                        // itemcost: itemcost,
-                        itemcount: itemcount,
-                        createddate: createddate,
-                        status: 'PENDING'
-                    });
-
-                    stock_list_tbl = document.getElementById("request-stocks-list-tbl");
-                    var row = stock_list_tbl.insertRow(1);
-                    var FE_NAME = row.insertCell(0);
-                    var BRAND_NAME = row.insertCell(1);
-                    var ITEM_NAME = row.insertCell(2);
-                    var ITEM_COUNT = row.insertCell(3);
-                    // var ITEM_COST = row.insertCell(4);
-
-                    FE_NAME.innerHTML = personel;
-                    BRAND_NAME.innerHTML = brandname;
-                    ITEM_NAME.innerHTML = itemtype;
-                    ITEM_COUNT.innerHTML = itemcount;
-                    // ITEM_COST.innerHTML = itemcost;
-
-                } else {
-                    if (!dataArr.map(item => {
-                        if (item.itemtype == itemtype) {
-                            return `${item.itemtype}`
-                        }
-
-                    }).includes(`${itemtype}`)) {
-                        dataArr.push({
-                            personel: personel,
-                            brandname: brandname,
-                            itemtype: itemtype,
-                            // itemcost: itemcost,
-                            itemcount: itemcount,
-                            createddate: createddate,
-                            status: 'PENDING'
-                        });
-
-                        stock_list_tbl = document.getElementById("request-stocks-list-tbl");
-                        var row = stock_list_tbl.insertRow(1);
-                        var FE_NAME = row.insertCell(0);
-                        var BRAND_NAME = row.insertCell(1);
-                        var ITEM_NAME = row.insertCell(2);
-                        var ITEM_COUNT = row.insertCell(3);
-                        // var ITEM_COST = row.insertCell(4);
-
-                        FE_NAME.innerHTML = personel;
-                        BRAND_NAME.innerHTML = brandname;
-                        ITEM_NAME.innerHTML = itemtype;
-                        ITEM_COUNT.innerHTML = itemcount;
-                        // ITEM_COST.innerHTML = itemcost;
-                    } else {
-                        warning(`Already request ${itemtype} with item count of ${itemcount}...`)
+                    if (innerData[2] == itemtype && innerData[1] == brandname) {
+                        return warning('Already Exist', `Already request ${brandname}[${itemtype}] with item count of ${innerData[3]}`);
                     }
                 }
+
+                stock_list_tbl = document.getElementById("request-stocks-list-tbl");
+                var row = stock_list_tbl.insertRow(1);
+                var FE_NAME = row.insertCell(0);
+                var BRAND_NAME = row.insertCell(1);
+                var ITEM_NAME = row.insertCell(2);
+                var ITEM_COUNT = row.insertCell(3);
+                var TABLE_ACTION = row.insertCell(4);
+                var action = `<button class="circle-btn" id="decrementStocksBtn" name="decrementStocksBtn">
+                                                    <div class="horizontal-line"></div></button>
+                                                    <button class="circle-btn" id="incrementStocksBtn" name="incrementStocksBtn">
+                                                    <div class="horizontal-line">
+                                                    </div>
+                                                    <div class="vertical-line">
+                                                    </div>
+                                               </button>`
+
+                FE_NAME.innerHTML = personel;
+                BRAND_NAME.innerHTML = brandname;
+                ITEM_NAME.innerHTML = itemtype;
+                ITEM_COUNT.innerHTML = itemcount;
+                TABLE_ACTION.innerHTML = action;
             }
         })
 
@@ -355,6 +416,82 @@
             });
         });
 
+        $(document).on('click', '#decrementBtn', function (e) {
+            if (current_count == 1) {
+                current_row.remove();
+            }
+            else {
+                current_count -= 1;
+                $(`#request-list-tbl tr:eq(${current_row_index}) td:eq(3)`).text(`${current_count}`);
+            }
+        })
+
+        $(document).on('click', '#incrementBtn', function (e) {
+            current_count += 1;
+            $(`#request-list-tbl tr:eq(${current_row_index}) td:eq(3)`).text(`${current_count}`);
+        })
+
+        let row_index = '';
+        let current_count = 0;
+        let current_brand = '';
+        let current_itemtype = '';
+        let current_row_index = ''
+        let current_row = '';
+        $('#request-list-tbl').on('click', 'tr', function () {
+            var data = [];
+            row_index = this;
+            current_row_index = $(this).index();
+            current_row = $(this).closest('tr');
+            $(this).closest('tr').find('td').each(function () {
+                data.push([$(this).text()]);
+            });
+
+            current_brand = data[1];
+            current_itemtype = data[2];
+            current_count = parseFloat(data[3]);
+
+            console.log(data);
+        })
+
+        $(document).on('click', '#decrementStocksBtn', function (e) {
+            if (stocks_current_count == 1) {
+                stocks_current_row.remove();
+            }
+            else {
+                stocks_current_count -= 1;
+                $(`#request-stocks-list-tbl tr:eq(${stocks_current_row_index}) td:eq(3)`).text(`${stocks_current_count}`);
+            }
+        })
+
+        $(document).on('click', '#incrementStocksBtn', function (e) {
+            stocks_current_count += 1;
+            $(`#request-stocks-list-tbl tr:eq(${stocks_current_row_index}) td:eq(3)`).text(`${stocks_current_count}`);
+        })
+
+        let stocks_row_index = '';
+        let stocks_current_count = 0;
+        let stocks_current_brand = '';
+        let stocks_current_itemtype = '';
+        let stocks_current_row_index = ''
+        let stocks_current_row = '';
+        $('#request-stocks-list-tbl').on('click', 'tr', function () {
+            var data = [];
+            stocks_row_index = this;
+            stocks_current_row_index = $(this).index();
+            stocks_current_row = $(this).closest('tr');
+            $(this).closest('tr').find('td').each(function () {
+                data.push([$(this).text()]);
+            });
+
+            stocks_current_brand = data[1];
+            stocks_current_itemtype = data[2];
+            stocks_current_count = parseFloat(data[3]);
+
+            console.log(data);
+        })
+
+
+
         function loadlist() {
             $.ajax({
                 type: "POST",
@@ -396,52 +533,72 @@
                 }
             });
 
-            // $.ajax({
-            //     type: "POST",
-            //     url: "/personel/personelposition",
-            //     data: { position: 'CABLING' },
-            //     success: function (result) {
-            //         console.log(result.data);
-            //         var data = result.data;
+            $.ajax({
+                type: "POST",
+                url: "/personel/personelposition",
+                data: { position: 'CABLING' },
+                success: function (result) {
+                    console.log(result.data);
+                    var data = result.data;
 
-            //         $.each(data, function (key, item) {
-            //             var options = new Option(item.fullname, item.fullname);
-            //             $(options).html(item.fullname);
-            //             $('#personel').append(options);
-            //             console.log(item.fullname);
-            //         });
-            //     },
-            //     error: function (result) {
-            //         alert('error: ' + result.data);
-            //     }
-            // });
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.fullname, item.fullname);
+                        $(options).html(item.fullname);
+                        $('#personel').append(options);
+                        console.log(item.fullname);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
         }
 
         function savedata(data, remarks, type) {
+            let request_data = [];
+            let requestdate = $('#requestdate').val();
+            let personel = $('#personel').val();
 
-            console.log(`${data} ${remarks} ${type}`);
+            // console.log(`${data} ${remarks} ${type}`);
             if (type == 'MATERIALS') {
+                let request_material = $("#request-list-tbl tr");
+                var data_length = request_material.length;
+
+                for (x = 1; x < data_length; x++) {
+                    var innerData = request_material[x].innerText;
+                    innerData = innerData.split("\t");
+
+                    request_data.push({
+                        personel: innerData[0],
+                        brandname: innerData[1],
+                        itemtype: innerData[2],
+                        itemcount: innerData[3],
+                        requestdate: requestdate = '' ? '<%= date%>' : requestdate,
+                        status: 'PENDING'
+                    });
+                }
+
+
                 $.ajax({
                     type: "POST",
                     url: "/cablingrequest/requestmaterial",
                     data: {
-                        date: date,
                         personel: personel,
-                        details: data,
+                        requestdate: requestdate,
+                        details: request_data,
                         remarks: remarks,
-                        status: 'PENDING',
                     },
                     success: function (result) {
                         if (result.msg == 'success') {
                             ClearListTable('request-list-tbl');
-                            
+
                             LoadMaterialRequestTbl();
                             success('Saved!', 'Data saved!')
                         }
                         else {
-                            warning('Use you own account to make request. System detected that this user was already request equipment today!')
+                            warning('Warning', 'This user has already done request for today.')
                         }
-                        dataArr = [];
+                        // dataArr = [];
                         modal.style.display = "none";
                     },
                     error: function (result) {

@@ -187,6 +187,7 @@ exports.Insert = (stmt, todos, callback) => {
             if (err) {
                 callback(err, null);
             }
+            // callback(null, `Row inserted: ${results}`);
             callback(null, `Row inserted: ${results.affectedRows}`);
             // console.log(`Row inserted: ${results.affectedRows}`);
         });

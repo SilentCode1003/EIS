@@ -1,0 +1,70 @@
+<script>
+    $(document).ready(function () {
+
+        LoadTable();
+
+        $(document).on('click', '#addBtn', function () {
+            var suppliername = $('#supplier').val();
+            var location = $('#location').val();
+            var department = $('#department').val();
+            var message = '';
+
+            if (suppliername == '') { message += 'SUPPLIER ' }
+            if (department == '-') { message += 'DEPARTMENT ' }
+
+            if (message != '') { warning('Empty', `Please fill ${message}`) }
+            else {
+                $.ajax({
+                    type: 'POST',
+                    url: '/supplier/save',
+                    data: {
+                        suppliername: suppliername,
+                        location: location,
+                        department: department,
+                    },
+                    success: function (result) {
+                        LoadTable();
+                        success('Success', 'Data Saved!');
+                    },
+                    error: function (error) {
+                        error(error);
+                    }
+                })
+            }
+        })
+
+        function LoadTable() {
+            var table = $('#supplier-table').DataTable({
+                'destroy': true,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'scrollY': 400,
+                'scrollCollapse': true,
+                'serverMethod': 'GET',
+                'ajax': {
+                    'url': '/supplier/load',
+                },
+                'columnDefs': [{
+                    targets: 1,
+                    className: 'td-indent',
+                }],
+                'columns': [
+                    { data: 'suppliercode' },
+                    { data: 'suppliername' },
+                    { data: 'location' },
+                    { data: 'department' },
+                    { data: 'createdby' },
+                    { data: 'createddate' },
+                    { data: 'status' },
+                ],
+                initComplete: function () {
+                    console.log('init complete');
+                    hideload();
+                }
+            })
+        }
+    })
+</script>

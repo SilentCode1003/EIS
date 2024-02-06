@@ -1,0 +1,43 @@
+[
+  {
+    "requestid": 1,
+    "personel": "JOSEPH ORENCIO",
+    "date": "2023-01-13 08:48",
+    "details": [
+      {
+        "personel": "JOSEPH ORENCIO",
+        "brandname": "ALANTEK",
+        "itemtype": "CAT 6",
+        "itemcount": "10",
+        "createddate": "2023-01-13 08:48",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JOSEPH ORENCIO",
+        "brandname": "ROYU",
+        "itemtype": "AMCO BOX",
+        "itemcount": "50",
+        "createddate": "2023-01-13 08:48",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JOSEPH ORENCIO",
+        "brandname": "NO BRAND",
+        "itemtype": "PVC PIPE 1\"",
+        "itemcount": "50",
+        "createddate": "2023-01-13 08:48",
+        "status": "PENDING"
+      },
+      {
+        "personel": "JOSEPH ORENCIO",
+        "brandname": "NO BRAND",
+        "itemtype": "G.I WIRE",
+        "itemcount": "10",
+        "createddate": "2023-01-13 08:48",
+        "status": "PENDING"
+      }
+    ],
+    "remarks": "FOR SEVEN BANK",
+    "status": "PENDING"
+  }
+]

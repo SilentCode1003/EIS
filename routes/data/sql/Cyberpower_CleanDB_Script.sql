@@ -1,0 +1,15 @@
+truncate table master_item;
+truncate table cyber_purchase_item;
+truncate table cyberpower_equipments;
+truncate table cyberpower_icomming_details;
+truncate table cyberpower_outgoing_details;
+truncate table cyberpower_purchase_details;
+truncate table purchase_order_details;
+truncate table purchase_order_item;
+truncate table request_budget_details;
+truncate table transaction_cyberpower;
+truncate table transaction_cyberpower_outgoing_equipment;
+truncate table transaction_cyberpower_purchase_item;
+truncate table transaction_incomming_equipment;
+truncate table transaction_request_budget;
+truncate table transaction_cyberpower_equipment;

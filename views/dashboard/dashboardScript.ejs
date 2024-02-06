@@ -1,50 +1,55 @@
 <script>
     $(document).ready(function () {
         var filename = '';
+        var requestid = '';
         var personel = '';
         var date = '';
         var dataTable;
         var dataTable2;
         let requestdate = '';
         let requestby = '';
+        let controlno = '';
 
         EquipmentRequestLoadTables();
 
-        $.ajax({
-            type: "GET",
-            url: "/equipment/getitemrequest",
-            success: function (result) {
-                console.log(result);
-                document.getElementById('itequipmentrequest').textContent = result.data;
-            },
-            error: function (result) {
-                alert('error: ' + result.data);
-            }
-        });
+        LoadRequestList();
+        function LoadRequestList() {
+            $.ajax({
+                type: "GET",
+                url: "/equipment/getitemrequest",
+                success: function (result) {
+                    console.log(result);
+                    document.getElementById('itequipmentrequest').textContent = result.data;
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
 
-        $.ajax({
-            type: "GET",
-            url: "/equipment/gettransferrequest",
-            success: function (result) {
-                console.log(result);
-                document.getElementById('equipmentrequesttransfer').textContent = result.data;
-            },
-            error: function (result) {
-                alert('error: ' + result.data);
-            }
-        });
+            $.ajax({
+                type: "GET",
+                url: "/equipment/gettransferrequest",
+                success: function (result) {
+                    console.log(result);
+                    document.getElementById('equipmentrequesttransfer').textContent = result.data;
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
 
-        $.ajax({
-            type: "GET",
-            url: "/cabling/materialcablingrequest",
-            success: function (result) {
-                console.log(result);
-                document.getElementById('cablingequipmentrequest').textContent = result.data;
-            },
-            error: function (result) {
-                alert('error: ' + result.data);
-            }
-        });
+            $.ajax({
+                type: "GET",
+                url: "/cabling/materialcablingrequest",
+                success: function (result) {
+                    console.log(result);
+                    document.getElementById('cablingequipmentrequest').textContent = result.data;
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+        }
 
         function EquipmentRequestLoadTables() {
             showloader();
@@ -69,6 +74,7 @@
                         var createddate = '';
                         var status = '';
                         var personel = '';
+                        var controlid = '';
 
                         // console.log(data);
                         $.each(data, (key, item) => {
@@ -76,6 +82,7 @@
                             personel = item.requestby;
                             createddate = item.requestdate;
                             status = item.status;
+                            controlid = item.requestid;
 
                             var datajson = JSON.parse(item.details)
                             $.each(datajson, (key, item) => {
@@ -87,16 +94,17 @@
                                 action = '<button class="assign-btn" id="assignBtn" name="assignBtn">ASSIGN SERIAL</button>'
                             }
                             if (status == 'FAPR') {
-                                action = '<button class="approve-btn" id="approvedBtn" name="approvedBtn">APPROVED</button><br><button class="edit-btn" id="editBtn" name="editBtn">EDIT</button>'
+                                action = '<button class="approve-btn" id="approvedBtn" name="approvedBtn">APPROVED</button><br><button class="edit-btn" id="editBtn" name="editBtn">EDIT</button><br><button class="edit-btn" id="detailsBtn" name="detailsBtn">DETAILS</button>'
                             }
 
                             if (status == 'ALLOC') {
-                                action = '<button class="approve-btn" id="deploybtn" name="deploybtn">DEPLOY</button><br><button class="edit-btn" id="printRequestBtn" name="printRequestBtn">PRINT</button>'
+                                action = '<button class="approve-btn" id="deploybtn" name="deploybtn">DEPLOY</button><br><button class="edit-btn" id="printRequestBtn" name="printRequestBtn">PRINT</button><br><button class="edit-btn" id="cancelRequestBtn" name="cancelRequestBtn">CANCEL</button>'
                             }
 
                             finalData.push({
                                 personel: personel,
                                 details: details,
+                                controlno: controlid,
                                 createddate: createddate,
                                 status: item.remarks,
                                 action: action
@@ -115,6 +123,7 @@
                 'columns': [
                     { data: 'createddate' },
                     { data: 'personel' },
+                    { data: 'controlno' },
                     { data: 'details' },
                     { data: 'status' },
                     { data: 'action' }
@@ -354,6 +363,13 @@
         var deploymodal = document.getElementById("deployModal");
         var deployspan = document.getElementById("deployspan");
 
+        var detailsModal = document.getElementById("detailsModal");
+        var detailModalSpan = document.getElementById("detailModalSpan");
+
+        detailModalSpan.onclick = function () {
+            detailsModal.style.display = "none";
+        }
+
         span.onclick = function () {
             modal.style.display = "none";
         }
@@ -374,7 +390,6 @@
             modalrequestprint.style.display = "none";
         }
 
-
         window.onclick = function (event) {
             if (event.target == modal) {
                 modal.style.display = "none";
@@ -390,6 +405,10 @@
             }
             if (event.target == deploymodal) {
                 deploymodal.style.display = "none";
+            }
+
+            if (event.target == detailsModal) {
+                detailsModal.style.display = "none";
             }
         }
 
@@ -411,11 +430,11 @@
         })
 
         $('#cabling-equipment-item-tbl').on('click', 'td', function () {
-            var data = dataTable3.row(this).data();
-            let date = data.date;
-            const dateArr = date.split(" ");
-            filename = `${dateArr[0]}_${data.personel}.json`;
-
+            var data = [];
+            $(this).closest('tr').find('td').each(function () {
+                data.push([$(this).text()]);
+            })
+            cabling_requestid = data[0];
 
         })
 
@@ -434,6 +453,7 @@
 
             requestdate = dataRow[0];
             requestby = dataRow[1];
+            controlno = dataRow[2];
 
             console.log(dataRow);
 
@@ -469,9 +489,534 @@
             $(this).focus();
         });
 
+        $(document).on('change', "#brandname", function () {
+            var brandname = $('#brandname').val();
+            $("#itemtype").empty();
+
+            $.ajax({
+                type: "POST",
+                url: "/items/itemtype",
+                data: { brandname: brandname },
+                success: function (result) {
+                    var data = result.data;
+                    console.log(result.data);
+
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.itemname, item.itemname);
+                        $(options).html(item.itemname);
+                        $('#itemtype').append(options);
+                        console.log(item.itemname);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+        });
+
+        let _input_details = [];
+        $(document).on('click', '#addDetailBtn', function () {
+            let requestby = $('#personel').val();
+            let store = $('#store').val();
+            let ticket = $('#ticket').val();
+            let brandname = $('#brandname').val();
+            let itemtype = $('#itemtype').val();
+            let quantity = $('#quantity').val();
+            let remarks = $('#remarks').val();
+            var action = `<button class="circle-btn" id="removedetailBtn" name="removedetailBtn">
+                                <div class="delete-line"></div>
+                            </button>`;
+
+
+            var message = '';
+
+            if (requestby == '-') { message += 'FE NAME ' };
+            if (store == '-') { message += 'STORE ' };
+            if (ticket == '-') { message += 'TICKET ' };
+            if (brandname == '-') { message += 'BRANDNAME ' };
+            if (itemtype == '-') { message += 'ITEM TYPE ' };
+            if (quantity == '-') { message += 'QUANTITY ' };
+            if (remarks == '-') { message += 'REMARKS ' };
+
+            if (message != '') {
+                warning('Empty', `Required to fillup ${message}`);
+            }
+            else {
+                if (_input_details.length == 0) {
+                    _input_details.push({
+                        ticket: ticket,
+                        store: store,
+                        brandname: brandname,
+                        itemtype: itemtype
+                    });
+
+                    requestdetail.row.add([requestby,
+                        store,
+                        ticket,
+                        brandname,
+                        itemtype,
+                        quantity,
+                        remarks,
+                        action]).draw(false);
+
+                    requestitems.row.add([
+                        ticket,
+                        store,
+                        brandname,
+                        itemtype,
+                        '',
+                        action]).draw(false);
+                }
+                else {
+                    if (!_input_details.map(item => {
+                        if (item.ticket == ticket && item.itemtype == itemtype) {
+                            return `${item.ticket}${item.itemtype}`
+                        }
+                    }).includes(`${ticket}${itemtype}`)) {
+                        _input_details.push({
+                            ticket: ticket,
+                            store: store,
+                            brandname: brandname,
+                            itemtype: itemtype
+                        });
+
+                        requestdetail.row.add([requestby,
+                            store,
+                            ticket,
+                            brandname,
+                            itemtype,
+                            quantity,
+                            remarks,
+                            action]).draw(false);
+
+                        requestitems.row.add([
+                            ticket,
+                            store,
+                            brandname,
+                            itemtype,
+                            '',
+                            action]).draw(false);
+                    }
+                    else {
+                        warning(`Already request ${itemtype} on ticket number ${ticket}...`)
+                    }
+                }
+            }
+        })
+
+        $(document).on('click', '#updateDetailBtn', function () {
+            let _details = $('#request-details-tbl tr');
+            let _items = $('#detail-request-items-table tr');
+            let _data_items = [];
+            let _data_details = [];
+            var message = '';
+
+            console.log(rem_data);
+            //#region DETAILS
+            for (x = 1; x < _details.length; x++) {
+                console.log(_details[x].innerText);
+                var innerData = _details[x].innerText;
+                innerData = innerData.split("\t");
+
+                _data_details.push({
+                    personel: innerData[0],
+                    store: innerData[1],
+                    ticket: innerData[2],
+                    brandname: innerData[3],
+                    itemtype: innerData[4],
+                    quantity: innerData[5],
+                    remarks: innerData[6],
+                    createddate: '<%= date%>',
+                    status: 'PENDING'
+                });
+            }
+            //#endregion
+
+            //#region ITEMS
+            var index = 1;
+            for (x = 1; x < _items.length; x++) {
+                console.log(_items[x].innerText);
+                var innerData = _items[x].innerText;
+                innerData = innerData.split("\t");
+
+                if (innerData[4] == "") {
+                    message += `${innerData[0]}, `;
+                } else {
+                    _data_items.push({
+                        ticket: innerData[0],
+                        store: innerData[1],
+                        brandname: innerData[2],
+                        itemtype: innerData[3],
+                        serial: innerData[4],
+                        status: 'ALLOCATE',
+                        index: index,
+                    });
+
+                    index += 1;
+                }
+
+            }
+            //#endregion
+            // _data_items = JSON.stringify(_data_items, null, 2);
+            // _data_details = JSON.stringify(_data_details, null, 2);
+            // console.log(`ITEMS: ${_data_items}`);
+            // console.log(`DETAILS: ${_data_details}`);
+
+            if (_data_items.length == 0) {
+                warning('Empty', 'If you want to cancel all the request, just DEPLOY it wihtout ATF or any input to return to ACTIVE');
+            } else {
+                if (message != '') {
+                    warning('Empty', `No serial assign at ticket no. ${message}`);
+                }
+                else {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/requestequipment/updatedetails',
+                        data: {
+                            requestby: requestby,
+                            requestdate: requestdate,
+                            controlno: controlno,
+                            items: _data_items,
+                            details: _data_details,
+                            remove: rem_data,
+                        },
+                        success: function (result) {
+                            console.log(result.msg);
+                            if (result.msg == 'success') {
+                                success('Successfull', 'Update details successfully');
+                                EquipmentRequestLoadTables();
+                            }
+
+                            if (result.msg == 'serials') {
+                                warning('Not Exist', `Please check serial/s ${result.data}. Go to REPORTS >> SEARCH to check serial exist on database.`)
+                            }
+
+                            if (result.msg == 'items') {
+                                var data = result.data;
+                                var message = '';
+                                data = JSON.parse(data);
+
+                                $.each(data, (key, item) => {
+                                    message += `[Control ID: ${item.requestid} (${item.requestby} ${item.requestdate}) Ticket:${item.ticket} Store:${item.store} Serial:${item.serial}]\n`;
+                                })
+                                warning('Exist', `There are certain items that have already been allocated but have not yet been returned. \n ${message}`);
+                            }
+                        },
+                        error: function (error) {
+                            warning('Error', error);
+                        }
+                    });
+                }
+
+            }
+
+            _data_items = [];
+            _data_details = [];
+            rem_data = [];
+        })
+
+        $('#detail-request-items-table tbody').on('click', 'tr', function (e) {
+            e.preventDefault();
+
+            if ($(this).attr('edit_type') == 'button') {
+                return false;
+            }
+
+            //make div editable
+            $(this).closest('div').attr('contenteditable', 'true');
+            //add bg css
+            $(this).addClass('edit-cost').css('padding', '5px');
+
+            $(this).focus();
+        });
+
+        let detailrow = '';
+        let detailbrand = '';
+        let detailitem = '';
+
+        var requestdetail = $('#request-details-tbl').DataTable({
+            'destroy': true,
+            'paging': false,
+            'searching': false,
+            'info': false,
+            'scrollCollapse': true,
+        });
+
+        var requestitems = $('#detail-request-items-table').DataTable({
+            'destroy': true,
+            'paging': false,
+            'searching': false,
+            'info': false,
+            'scrollCollapse': true,
+        });
+
+        $('#request-details-tbl tbody').on('click', 'tr', function (e) {
+            var data = [];
+            detailrow = $(this).closest('tr');
+            $(this).closest('tr').find('td').each(function () {
+                data.push([$(this).text()]);
+
+            });
+
+            detailbrand = data[3];
+            detailitem = data[4];
+
+            console.log(data);
+        });
+
+        $(document).on('click', '#removedetailBtn', function () {
+            // var items = [];
+            // var index = 0;
+            // $('#detail-request-items-table tbody').find('tr').each(function () {
+            //     var datatd = [];
+            //     $(this).find('td').each(function () {
+            //         datatd.push([$(this).text()]);
+            //     })
+
+            //     let ticket = datatd[0];
+            //     let store = datatd[1];
+            //     let brand = datatd[2];
+            //     let type = datatd[3];
+            //     let serial = datatd[4];
+
+            //     items.push({
+            //         ticket: ticket,
+            //         store: store,
+            //         brand: brand,
+            //         type: type,
+            //         serial: serial,
+            //         index: index
+            //     });
+
+            //     index += 1;
+            // })
+
+            // console.log(detailbrand);
+            // console.log(detailitem);
+            // console.log(items);
+
+            var _detailitem = detailitem[0];
+            requestitems.rows().every(function () {
+                var rowdata = this.data();
+                console.log(rowdata[3]);
+                console.log(_detailitem);
+
+                if (_detailitem === rowdata[3]) {
+                    rem_data.push({
+                        controlno: controlno,
+                        serial: rowdata[4],
+                    })
+                    this.remove();
+                }
+            });
+
+            requestitems.draw();
+            detailrow.remove();
+        })
+
+        let itemsrow = '';
+        let itemrow_type = '';
+        let itemrow_brand = '';
+        let rem_data = [];
+        $('#detail-request-items-table tbody').on('click', 'tr', function (e) {
+            var data = [];
+            itemsrow = $(this).closest('tr');
+            $(this).closest('tr').find('td').each(function () {
+                data.push([$(this).text()]);
+
+            });
+
+
+            itemrow_type = data[3];
+            itemrow_brand = data[2];
+
+            rem_data.push({
+                controlno: controlno,
+                serial: data[4],
+            })
+
+        });
+
+        $(document).on('click', '#removeitemsBtn', function () {
+            var details = [];
+
+            var index = 0;
+            $('#request-details-tbl tbody').find('tr').each(function () {
+                var datatd = [];
+                $(this).find('td').each(function () {
+                    datatd.push([$(this).text()]);
+                })
+
+                let requestby = datatd[0];
+                let store = datatd[1];
+                let ticket = datatd[2];
+                let brand = datatd[3];
+                let type = datatd[4];
+                let total = parseInt(datatd[5]);
+                let remarks = datatd[6];
+
+                details.push({
+                    requestby,
+                    store,
+                    ticket,
+                    brand,
+                    type,
+                    total,
+                    remarks,
+                    index
+                });
+
+                index += 1;
+            })
+
+            console.log(itemrow_type);
+            console.log(itemrow_brand);
+            console.log(details);
+
+            requestdetail.clear().draw();
+
+            $.each(details, (key, item) => {
+                // console.log(item.type[0]);
+                var itemtype = item.type[0];
+                var itemrow = itemrow_type[0]
+
+                if (itemrow === itemtype) {
+                    var quantity = item.total - 1;
+
+
+
+                    console.log(`type: ${itemrow} quantity: ${quantity}`)
+
+                    if (quantity > 0) {
+                        var action = `<button class="circle-btn" id="removedetailBtn" name="removedetailBtn">
+                                <div class="delete-line"></div>
+                            </button>`;
+                        requestdetail.row.add([item.requestby,
+                        item.store,
+                        item.ticket,
+                        item.brand,
+                        item.type,
+                            quantity,
+                        item.remarks,
+                            action]).draw(false);
+                    }
+                    else {
+                        requestdetail.row(item.index).remove().draw();
+                    }
+                }
+                else {
+                    var action = `<button class="circle-btn" id="removedetailBtn" name="removedetailBtn">
+                                <div class="delete-line"></div>
+                            </button>`;
+                    requestdetail.row.add([item.requestby,
+                    item.store,
+                    item.ticket,
+                    item.brand,
+                    item.type,
+                    item.total,
+                    item.remarks,
+                        action]).draw(false);
+                }
+            })
+
+            itemsrow.remove();
+        })
+
+
         $('#requestModal').on('hidden.bs.modal', function (e) {
             EquipmentRequestLoadTables();
         });
+
+        $(document).on('click', '#detailsBtn', function () {
+            showloader();
+            _input_details = [];
+            requestdetail.clear().draw();
+            requestitems.clear().draw();
+            loadlist();
+
+            const _fename = document.getElementById('personel');
+            _fename.value = requestby;
+
+            $.ajax({
+                type: "POST",
+                url: "/requestequipment/getrequestdetails",
+                data: {
+                    requestby: requestby,
+                    requestdate: requestdate,
+                    requestid: controlno,
+                },
+                success: function (result) {
+
+                    console.log(result.data['details']);
+                    console.log(result.data['items']);
+
+                    var items = result.data['items'];
+                    var details = result.data['details'];
+
+                    $.each(details, (key, item) => {
+                        var requestlist = item.details;
+                        var action = `<button class="circle-btn" id="removedetailBtn" name="removedetailBtn">
+                                                <div class="delete-line"></div>
+                                            </button>`;
+                        requestlist = JSON.parse(requestlist);
+                        $.each(requestlist, (ket, value) => {
+                            requestdetail.row.add([item.requestby,
+                            value.store,
+                            value.ticket,
+                            value.brandname,
+                            value.itemtype,
+                            value.quantity,
+                            value.remarks,
+                                action]).draw(false);
+                        })
+                    })
+
+                    $.each(items, (key, item) => {
+                        var action = `<button class="circle-btn" id="removeitemsBtn" name="removeitemsBtn">
+                                                <div class="delete-line"></div>
+                                            </button>`;
+                        requestitems.row.add([
+                            item.ticket,
+                            item.store,
+                            item.brandname,
+                            item.itemtype,
+                            item.serial,
+                            action]).draw(false);
+
+                    })
+
+                    setTimeout(() => {
+                        hideload();
+                        detailsModal.style.display = "block";
+                    }, 1000);
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+
+
+        })
+
+        $(document).on('click', '#cancelRequestBtn', function () {
+            $.ajax({
+                type: 'POST',
+                url: '/requestequipment/cancelrequest',
+                data: {
+                    requestby: requestby,
+                    requestdate: requestdate,
+                    requestid: controlno,
+                },
+                success: function () {
+                    EquipmentRequestLoadTables();
+
+                    success('Success', 'Cancel Request Successfull');
+                },
+                error: function (error) {
+                    warning('Error', error);
+                }
+            })
+        })
 
         $(document).on('click', "#printRequestBtn", function () {
             var requestitemTabel = $('#print-requesttbl').DataTable({
@@ -488,6 +1033,7 @@
                 data: {
                     requestby: requestby,
                     requestdate: requestdate,
+                    requestid: controlno,
                 },
                 success: function (result) {
                     var data = result.data;
@@ -508,6 +1054,7 @@
                 data: {
                     requestby: requestby,
                     requestdate: requestdate,
+                    requestid: controlno,
                 },
                 success: function (result) {
                     requestitemTabel.clear().draw();
@@ -549,7 +1096,8 @@
                 url: "/requestequipment/getassign",
                 data: {
                     requestby: requestby,
-                    requestdate: requestdate
+                    requestdate: requestdate,
+                    requestid: controlno,
                 },
                 success: function (result) {
                     requestlistTabel.clear().draw();
@@ -615,6 +1163,7 @@
                 data: {
                     requestby: requestby,
                     requestdate: requestdate,
+                    requestid: controlno,
                     data: dataRaw
                 },
                 success: function (result) {
@@ -631,7 +1180,7 @@
 
             // }
 
-
+            LoadRequestList();
             EquipmentRequestLoadTables();
             deploymodal.style.display = "none";
         })
@@ -650,7 +1199,7 @@
             location.reload();
         })
 
-        $(document).on('click', "#saveBtn", async function () {
+        $(document).on('click', "#saveBtn", function () {
             console.log('clicked!');
             var data = $('#requesttbl tr');
             var dataRaw = [];
@@ -687,23 +1236,43 @@
             } else {
                 console.log(personel, date, dataRaw);
                 dataRaw = JSON.stringify(dataRaw, null, 2);
-                await assignequipemnt(personel, date, dataRaw)
+                assignequipemnt(personel, date, dataRaw, controlno)
+                modal.style.display = "none";
             }
         });
 
-        function assignequipemnt(personel, date, data) {
+        function assignequipemnt(personel, date, data, controlid) {
             console.log(`${personel} ${date} ${data}`);
             $.ajax({
                 type: "POST",
                 url: "/requestequipment/assign",
                 data: {
+                    requestid: controlid,
                     personel: personel,
                     date: date,
                     data: data
                 },
                 success: function (result) {
-                    success('Saved!', 'Data saved!')
-                    EquipmentRequestLoadTables();
+                    console.log(result.msg);
+                    if (result.msg == 'success') {
+                        success('Saved!', 'Data saved!')
+                        EquipmentRequestLoadTables();
+                    }
+
+                    if (result.msg == 'serials') {
+                        warning('Not Exist', `Please check serial/s ${result.data}. Go to REPORTS >> SEARCH to check serial exist on database.`)
+                    }
+
+                    if (result.msg == 'items') {
+                        var data = result.data;
+                        var message = '';
+                        data = JSON.parse(data);
+
+                        $.each(data, (key, item) => {
+                            message += `[Control ID: ${item.requestid} (${item.requestby} ${item.requestdate}) Ticket:${item.ticket} Store:${item.store} Serial:${item.serial}]\n`;
+                        })
+                        warning('Exist', `There are certain items that have already been allocated but have not yet been returned. \n ${message}`);
+                    }
                 },
                 error: function (result) {
                     error(result.data);
@@ -720,6 +1289,7 @@
                 data: {
                     requestby: requestby,
                     requestdate: requestdate,
+                    requestid: controlno,
                 },
                 success: function (result) {
                     success('Approved!', 'Request approved!')
@@ -755,7 +1325,8 @@
                 url: "/requestequipment/getdetails",
                 data: {
                     requestby: requestby,
-                    requestdate: requestdate
+                    requestdate: requestdate,
+                    requestid: controlno,
                 },
                 success: function (result) {
                     requestlistTabel.clear().draw();
@@ -808,13 +1379,13 @@
             });
 
 
-
             $.ajax({
                 type: "POST",
                 url: "/requestequipment/getdetails",
                 data: {
                     requestby: requestby,
-                    requestdate: requestdate
+                    requestdate: requestdate,
+                    requestid: controlno,
                 },
                 success: function (result) {
                     requestlistTabel.clear().draw();
@@ -843,6 +1414,7 @@
                 data: {
                     requestby: requestby,
                     requestdate: requestdate,
+                    requestid: controlno,
                 },
                 success: function (result) {
                     requestitemTabel.clear().draw();
@@ -929,11 +1501,11 @@
                 type: "POST",
                 url: "/cablingrequest/approve",
                 data: {
-                    filename: filename
+                    requestid: cabling_requestid
                 },
                 success: function (result) {
                     success('Approved!', 'Request approved!')
-                    EquipmentRequestLoadTables();
+                    location.reload();
                 },
                 error: function (result) {
                     alert('error: ' + result.data);
@@ -978,7 +1550,7 @@
                 type: "POST",
                 url: "/cablingrequest/getcablingrequestdetail",
                 data: {
-                    filename: filename
+                    requestid: cabling_requestid
                 },
                 success: function (result) {
                     t.clear().draw();
@@ -987,7 +1559,7 @@
                         // let count = parseFloat(item.itemcount);
                         // let total = cost * count;
 
-                        t.row.add([item.brandname, item.itemtype, item.itemcount]).draw(false);
+                        t.row.add([item.brandname, item.itemtype, item.quantity]).draw(false);
                     })
 
                     document.getElementById('requestby').innerText = cabling_requestby;
@@ -1012,5 +1584,71 @@
             document.body.innerHTML = originalContents;
             location.reload();
         })
+
+        function loadlist() {
+            $.ajax({
+                type: "POST",
+                url: "/items/brandnamedepartment",
+                data: { department: 'IT' },
+                success: function (result) {
+                    console.log(result.data);
+                    var data = result.data;
+                    $('#brandname').empty();
+
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.brandname, item.brandname);
+                        $(options).html(item.brandname);
+                        $('#brandname').append(options);
+                        console.log(item.brandname);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+
+            // $.ajax({
+            //     type: "POST",
+            //     url: "/personel/personelposition",
+            //     data: { position: 'IT' },
+            //     success: function (result) {
+            //         console.log(result.data);
+            //         var data = result.data;
+
+            //         $.each(data, function (key, item) {
+            //             var options = new Option(item.fullname, item.fullname);
+            //             $(options).html(item.fullname);
+            //             $('#personel').append(options);
+            //             console.log(item.fullname);
+            //         });
+            //     },
+            //     error: function (result) {
+            //         alert('error: ' + result.data);
+            //     }
+            // });
+
+            $.ajax({
+                type: "POST",
+                url: "/clientstores/clientstore",
+                data: { clientname: '7ELEVEN' },
+                success: function (result) {
+                    console.log(result.data);
+                    var data = result.data;
+                    $('#store').empty();
+
+                    $.each(data, function (key, item) {
+                        var options = new Option(item.storename, item.storename);
+                        $(options).html(item.storename);
+                        $('#store').append(options);
+                        console.log(item.storename);
+                    });
+                },
+                error: function (result) {
+                    alert('error: ' + result.data);
+                }
+            });
+
+        }
+
     })
 </script>

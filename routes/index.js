@@ -22,7 +22,7 @@ function isAuthAdmin(req, res, next) {
     res.redirect('/cablingrequest');
   }
   else if (req.session.isAuth && req.session.accounttype == "CYBERPOWER") {
-    next();
+    res.redirect('/cyberdashboard');
   }
   else if (req.session.isAuth && req.session.accounttype == "ACCOUNTING") {
     res.redirect('/accountingdashboard');
